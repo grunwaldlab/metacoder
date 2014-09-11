@@ -25,13 +25,15 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = 
     command <- paste(command, extra_args_string)
   }
   system(command)
-  return(command)
+  return(output_path)
 }
 
 
 #===================================================================================================
 #' Parse EMBOSS primersearch output
 #' 
+#' Parses the output file from EMBOSS primersearch into a data.frame with rows corresponding to 
+#' predicted amplicons and their associated information.
 #' @param file_path The path to a primersearch output file.
 #' @return A data frame with each row corresponding to amplicon data
 #' @seealso \code{\link{run_primersearch}}
@@ -57,7 +59,7 @@ parse_primersearch <- function(file_path) {
   # Reformat amplicon data -------------------------------------------------------------------------
   primer_data <- name_rows(as.data.frame(primer_data))
   colnames(primer_data) <- c("amplimer", "sequence", "info", "forward_primer", "forward_index",
-                            "forward_mismatch",  "reverse_primer", "reverse_index",
+                             "forward_mismatch",  "reverse_primer", "reverse_index",
                              "reverse_mismatch", "length", "primer_pair")
   primer_data <- primer_data[c("primer_pair", "amplimer", "length", "sequence", "info",
                                "forward_primer", "forward_index", "forward_mismatch",
@@ -68,3 +70,39 @@ parse_primersearch <- function(file_path) {
   for (col in numeric_cols) primer_data[[col]] <- as.numeric(primer_data[[col]])
   return(primer_data)
 } 
+
+
+#===================================================================================================
+#' Use EMBOSS primersearch for in silico PCR 
+#' 
+#' @param sequence A list of character vectors of DNA sequence.
+#' @param forward A character vector or list of primer sequences. If named and pair_name is not set, 
+#'   the names are used to construct the primer pair names.
+#' @param reverse A character vector or list of primer sequences. If named and pair_name is not set, 
+#'   the names are used to construct the primer pair names.
+#' @param pair_name A character vector of names for primer pairs.
+#' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
+#' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
+#' @return Output from \code{\link{parse_primersearch}} (A dataframe)
+#' @importFrom ape write.dna
+#' @export
+primersearch <- function(sequence, forward, reverse, pair_name = NULL, mismatch = 5, ...) {
+  # Write fasta file for primersearch input---------------------------------------------------------
+  sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
+  on.exit(file.remove(sequence_path))
+  write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")
+  # Write primer file for primersearch input--------------------------------------------------------
+  if (is.null(names(forward))) names(forward) <- seq_along(forward)
+  if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
+  if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep="__and__")
+  forward <- unlist(lapply(forward, paste, collapse=""))
+  reverse <- unlist(lapply(reverse, paste, collapse=""))
+  primer_path <- tempfile("primersearch_primer_input_", fileext=".txt")
+  on.exit(file.remove(primer_path))
+  write.table(cbind(pair_name, forward, reverse), primer_path,
+              quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
+  # Run and parse primersearch ---------------------------------------------------------------------
+  output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch, ...)
+  on.exit(file.remove(output_path))
+  parse_primersearch(output_path)
+}

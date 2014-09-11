@@ -12,7 +12,8 @@ parse_primersearch(file_path)
 A data frame with each row corresponding to amplicon data
 }
 \description{
-Parse EMBOSS primersearch output
+Parses the output file from EMBOSS primersearch into a data.frame with rows corresponding to
+predicted amplicons and their associated information.
 }
 \seealso{
 \code{\link{run_primersearch}}
