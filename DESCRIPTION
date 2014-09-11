@@ -1,8 +1,9 @@
 Package: metacoder
-Title: What the package does (short line)
-Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (paragraph)
-Depends: R (>= 3.1.0)
-License: What license is it under?
+Title: Tools for metabarcoding experiment planning
+Version: 0.1.0
+Authors@R: "Zachary Foster <zacharyfoster1989@gmail.com> [aut, cre]"
+Description: Tools for metabarcoding experiment planning
+Depends:
+    R (>= 3.1.0)
+License: GPL2
 LazyData: true
