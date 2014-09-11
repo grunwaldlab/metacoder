@@ -4,7 +4,7 @@
 \title{NOTE: dist.dna with a list of only 2 breaks R once in a while. DONT USE
 Calculates a pairwise distance matrix from unaligned sequences}
 \usage{
-pairwise_distance(sequences)
+pairwise_distance(sequences, seq_name = NULL)
 }
 \arguments{
 \item{sequences}{A list or vector of sequence data}

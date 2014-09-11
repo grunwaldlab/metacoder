@@ -1,3 +1,28 @@
+#===================================================================================================
+#' Get taxonomy levels using taxize
+#' 
+#' @return A character vector of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+#'   hiearchy.
+#' @import taxize
+#' @export
+get_taxonomy_levels <- function() {
+  levels <- sapply(strsplit(rank_ref$ranks, ","), `[`, 1)
+  names(levels) <- levels
+}
+
+#===================================================================================================
+#' Format taxize output to string
+#' 
+#' @param taxa Output from taxize::classification
+#' @return A character vecotr of taxonomy strings pasted together with delimiters.
+#' @export
+format_taxize <- function(taxa) {
+  vapply(taxa, function(x) paste(paste(x$rank, gsub(' ', '_', x$name), sep = "__"), collapse = ";"), character(1))
+}
+
+
+#===================================================================================================
+#' filter_taxonomy_string
 filter_taxonomy_string <- function(taxon, min_level, max_level, taxon_levels) {
   parsed_taxonomy <- sapply(unlist(strsplit(taxon, split=';', fixed=T)),
                             strsplit, split='__', fixed=T)
@@ -6,6 +31,8 @@ filter_taxonomy_string <- function(taxon, min_level, max_level, taxon_levels) {
   paste(sapply(parsed_taxonomy, paste, collapse='__'), collapse=';')
 }
 
+#===================================================================================================
+#' subsample_by_taxonomy
 subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_order, triangular=TRUE, level_to_analyze = 'subtaxon', max_subset=NA) {
   base_level <- offset_ordered_factor(taxon_level, 1)
   if (level_to_analyze == 'subtaxon') {
@@ -35,6 +62,8 @@ subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_ord
   return(submatrix)
 }
 
+#===================================================================================================
+#' taxon_info
 taxon_info <- function(identifications, level_order, separator=';') {
   split_taxonomy <- strsplit(identifications, separator, fixed=TRUE)
   taxonomy <- unlist(lapply(split_taxonomy, function(x) sapply(seq(1, length(x)), function(y) paste(x[1:y], collapse=separator))))
@@ -55,8 +84,8 @@ taxon_info <- function(identifications, level_order, separator=';') {
 }
 
 
-
-#Functions for calculating taxon-specific statiscs
+#===================================================================================================
+#' taxon_output_path_preparation
 taxon_output_path_preparation <- function(output_directory, sub_directory=NULL, name=NULL, id=NULL, level_name=NULL, ext="", ...) {
   #get directory path
   if (!is.null(sub_directory)) {
@@ -81,6 +110,8 @@ taxon_output_path_preparation <- function(output_directory, sub_directory=NULL, 
   file.path(output_directory, file_name, fsep = .Platform$file.sep)
 } 
 
+#===================================================================================================
+#' overall_statistics
 overall_statistics <- function(distance, ...) {
   if (!is.matrix(distance)) {
     return(list(distance_mean=NA, 
@@ -99,6 +130,8 @@ overall_statistics <- function(distance, ...) {
               subsampled_count=nrow(distance)))
 }
 
+#===================================================================================================
+#' intertaxon_statistics
 intertaxon_statistics <- function(distance, identity=NULL, ...) {
   output <- list()
   
@@ -121,6 +154,8 @@ intertaxon_statistics <- function(distance, identity=NULL, ...) {
   return(output)
 }
 
+#===================================================================================================
+#' intrataxon_statistics
 intrataxon_statistics <- function(distance, identity=NULL, ...) {
   output <- list()
   
@@ -149,6 +184,9 @@ intrataxon_statistics <- function(distance, identity=NULL, ...) {
   return(output)
 }
 
+#===================================================================================================
+#' distance_distribution
+#' @export
 distance_distribution <- function(distance, identity=NULL, distance_bin_width=0.001, output_file_path=NULL,  plot_file_path=NULL, name=NULL, ...) {
   output <- list()
   
@@ -223,6 +261,11 @@ distance_distribution <- function(distance, identity=NULL, distance_bin_width=0.
   return(output)
 }
 
+#===================================================================================================
+#' Optimize clustering threshold
+#' @export
+#' @importFrom spider threshOpt
+#' @importFrom plyr ldply
 threshold_optimization <- function(distance, threshold_resolution=0.001, output_file_path=NULL, plot_file_path=NULL, name=NULL, ...) {
   output <- list()
   
@@ -239,7 +282,7 @@ threshold_optimization <- function(distance, threshold_resolution=0.001, output_
     #     max_x = quantile(distance, .8, na.rm=TRUE, type=3)
     max_x <- max(distance)
     threshold <- seq(min_x, max_x, by = threshold_resolution)
-    my_test <<- distance
+#     my_test <<- distance
     statistics <- lapply(threshold, function(x) threshOpt(distance, row.names(distance), thresh = x))
     statistics <- ldply(statistics)
     colnames(statistics) <- c("threshold", "true_negative", "true_positive", "false_negative", "false_positive", "cumulative_error")
@@ -300,7 +343,10 @@ threshold_optimization <- function(distance, threshold_resolution=0.001, output_
   
   return(output)
 }
-
+#===================================================================================================
+#' Calculate barcode statistics
+#' 
+#' @export
 calculate_barcode_statistics <- function(distance_matrix, taxonomy_levels,
                                          saved_output_path = getwd(),
                                          level_to_analyze = 's',
@@ -346,7 +392,7 @@ calculate_barcode_statistics <- function(distance_matrix, taxonomy_levels,
   }
   
   #Calculate taxonomy statistics
-  taxonomy_data <- taxon_info(distance_matrix_taxonomy, names(taxonomy_levels))
+  taxonomy_data <- taxon_info(row.names(distance_matrix), names(taxonomy_levels))
   taxonomy_data <- taxonomy_data[order(taxonomy_data$level), ]
   taxonomy_data$id <- 1:nrow(taxonomy_data)
   

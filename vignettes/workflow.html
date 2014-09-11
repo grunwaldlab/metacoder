@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Vignette Info</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+</head>
+
+<body>
+<p>Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The <code>html_vignette</code> output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The <code>html_vignette</code> format:</p>
+
+<ul>
+<li>Never uses retina figures</li>
+<li>Has a smaller default figure size</li>
+<li>Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style</li>
+</ul>
+
+<h2>Vignette Info</h2>
+
+<p>Note the various macros within the <code>vignette</code> setion of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the <code>title</code> field and the <code>\VignetteIndexEntry</code> to match the title of your vignette.</p>
+
+<h2>Styles</h2>
+
+<p>The <code>html_vignette</code> template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:</p>
+
+<pre><code>output: 
+  rmarkdown::html_vignette:
+    css: mystyles.css
+</code></pre>
+
+<h2>Figures</h2>
+
+<p>The figure sizes have been customised so that you can easily put two images side-by-side. </p>
+
+<pre><code class="r">plot(1:10)
+plot(10:1)
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-1"/> <img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-1"/> </p>
+
+<p>You can enable figure captions by <code>fig_caption: yes</code> in YAML:</p>
+
+<pre><code>output:
+  rmarkdown::html_vignette:
+    fig_caption: yes
+</code></pre>
+
+<p>Then you can use the chunk option <code>fig.cap = &quot;Your figure caption.&quot;</code> in <strong>knitr</strong>.</p>
+
+<h2>More Examples</h2>
+
+<p>You can write math expressions, e.g. \( Y = X\beta + \epsilon \), footnotes<sup>[A</sup> footnote here.], and tables, e.g. using <code>knitr::kable()</code>.</p>
+
+<table><thead>
+<tr>
+<th align="left"></th>
+<th align="right">mpg</th>
+<th align="right">cyl</th>
+<th align="right">disp</th>
+<th align="right">hp</th>
+<th align="right">drat</th>
+<th align="right">wt</th>
+<th align="right">qsec</th>
+<th align="right">vs</th>
+<th align="right">am</th>
+<th align="right">gear</th>
+<th align="right">carb</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">Mazda RX4</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160.0</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.620</td>
+<td align="right">16.46</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td align="left">Mazda RX4 Wag</td>
+<td align="right">21.0</td>
+<td align="right">6</td>
+<td align="right">160.0</td>
+<td align="right">110</td>
+<td align="right">3.90</td>
+<td align="right">2.875</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td align="left">Datsun 710</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">108.0</td>
+<td align="right">93</td>
+<td align="right">3.85</td>
+<td align="right">2.320</td>
+<td align="right">18.61</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">Hornet 4 Drive</td>
+<td align="right">21.4</td>
+<td align="right">6</td>
+<td align="right">258.0</td>
+<td align="right">110</td>
+<td align="right">3.08</td>
+<td align="right">3.215</td>
+<td align="right">19.44</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">Hornet Sportabout</td>
+<td align="right">18.7</td>
+<td align="right">8</td>
+<td align="right">360.0</td>
+<td align="right">175</td>
+<td align="right">3.15</td>
+<td align="right">3.440</td>
+<td align="right">17.02</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">Valiant</td>
+<td align="right">18.1</td>
+<td align="right">6</td>
+<td align="right">225.0</td>
+<td align="right">105</td>
+<td align="right">2.76</td>
+<td align="right">3.460</td>
+<td align="right">20.22</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">Duster 360</td>
+<td align="right">14.3</td>
+<td align="right">8</td>
+<td align="right">360.0</td>
+<td align="right">245</td>
+<td align="right">3.21</td>
+<td align="right">3.570</td>
+<td align="right">15.84</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td align="left">Merc 240D</td>
+<td align="right">24.4</td>
+<td align="right">4</td>
+<td align="right">146.7</td>
+<td align="right">62</td>
+<td align="right">3.69</td>
+<td align="right">3.190</td>
+<td align="right">20.00</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">Merc 230</td>
+<td align="right">22.8</td>
+<td align="right">4</td>
+<td align="right">140.8</td>
+<td align="right">95</td>
+<td align="right">3.92</td>
+<td align="right">3.150</td>
+<td align="right">22.90</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">Merc 280</td>
+<td align="right">19.2</td>
+<td align="right">6</td>
+<td align="right">167.6</td>
+<td align="right">123</td>
+<td align="right">3.92</td>
+<td align="right">3.440</td>
+<td align="right">18.30</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">4</td>
+</tr>
+</tbody></table>
+
+<p>Also a quote using <code>&gt;</code>:</p>
+
+<blockquote>
+<p>&ldquo;He who gives up [code] safety for [code] speed deserves neither.&rdquo;
+(<a href="https://twitter.com/hadleywickham/status/504368538874703872">via</a>)</p>
+</blockquote>
+
+</body>
+
+</html>
+

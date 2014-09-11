@@ -1,10 +1,15 @@
 ### Generic internal functions
+
+#===================================================================================================
+#' offset_ordered_factor
 offset_ordered_factor <- function(ordered_factor, offset) { 
   my_levels <-  levels(ordered_factor)
   new_level <- my_levels[which(my_levels == ordered_factor) + offset]
   ordered(new_level, my_levels)
 }
 
+#===================================================================================================
+#' fapply
 fapply <- function(iterable, functions, 
                    .preprocessor={function(x) x},
                    .preprocessor_args=list(),
@@ -54,11 +59,17 @@ fapply <- function(iterable, functions,
   return(output)
 }
 
+
+#===================================================================================================
+#' remove_all_na_rows
 remove_all_na_rows <- function(input) {
   na_rows <- sapply(1:nrow(input), function(x) sum(!is.na(input[x,])) != 0)
   input[na_rows, ]
 }
 
+
+#===================================================================================================
+#' remove_outliers
 remove_outliers <- function(x, na.rm = TRUE, ...) {
   qnt <- quantile(x, probs=c(.01, .99), na.rm = na.rm, ...)
   H <- 1.5 * IQR(x, na.rm = na.rm)
@@ -68,18 +79,31 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
   y
 }
 
+
+#===================================================================================================
+#' which_median
 which_median <- function(x) which.min(abs(x - median(x)))
 
+
+#===================================================================================================
+#' which_middle
 which_middle <- function(x) {
   middle <- (max(x) + min(x)) / 2
   which.min(abs(x - middle))
 }
 
+
 ### File system functions
+
+#===================================================================================================
+#' rm_ext
 rm_ext <- function(file) {
   sub("[.][^.]*$", "", file, perl=TRUE)
 }
 
+
+#===================================================================================================
+#' next_incremental_file_number
 next_incremental_file_number <-function(directory) {
   current_numbers <- as.integer(rm_ext(list.files(directory, no..=TRUE)))
   if (length(current_numbers) == 0) {
@@ -89,6 +113,10 @@ next_incremental_file_number <-function(directory) {
 }
 
 ### iGraph-associated functions
+
+
+#===================================================================================================
+#' taxon_edge_list
 taxon_edge_list <- function(taxonomy, separator) {
   get_taxon_edge_list <- function(taxon) {
     apply(matrix(c(1:(length(taxon)-1),2:length(taxon)), ncol = 2), 1, function(x) c(taxon[x[1]], taxon[x[2]]))
@@ -101,18 +129,33 @@ taxon_edge_list <- function(taxonomy, separator) {
   edge_list[!duplicated(edge_list),]
 }
 
+
+#===================================================================================================
+#' get_edge_parents
+#' @importFrom igraph get.edges ecount
 get_edge_parents <-function(graph) {
   get.edges(graph, 1:ecount(graph))[,1]
 }
 
+
+#===================================================================================================
+#' get_edge_children
+#' @importFrom igraph get.edges ecount
 get_edge_children <- function(graph) {
   get.edges(graph, 1:ecount(graph))[,2]
 }
 
+
+#===================================================================================================
+#' get_vertex_children
+#' @importFrom igraph shortest.paths V
 get_vertex_children <- function(graph, vertex) {
   which(shortest.paths(graph, V(graph)[vertex], mode="out") != Inf)
 }
 
+#===================================================================================================
+#' delete_vetices_and_children
+#' @importFrom igraph delete.vertices
 delete_vetices_and_children <- function(graph, vertices) {
   #delete children
   vertices <- unlist(sapply(vertices, function(x) get_vertex_children(graph, x)))
@@ -120,7 +163,12 @@ delete_vetices_and_children <- function(graph, vertices) {
   return(graph)
 }
 
+
 ### Generic ploting functions
+
+
+#===================================================================================================
+#' add_alpha
 add_alpha <- function(col, alpha=1){
   apply(sapply(col, col2rgb)/255, 2,
         function(x)
@@ -128,9 +176,12 @@ add_alpha <- function(col, alpha=1){
 }
 
 
-
-
 ### iGraph-associated plotting functions
+
+
+#===================================================================================================
+#' mycircle
+#' 
 mycircle <- function(coords, v=NULL, params) {
   vertex.color <- params("vertex", "color")
   if (length(vertex.color) != 1 && !is.null(v)) {
@@ -156,26 +207,34 @@ mycircle <- function(coords, v=NULL, params) {
                    circles=size, add=TRUE, inches=FALSE)
          })
 }
-add.vertex.shape("fcircle", 
-                 plot=mycircle, 
-                 parameters=list(vertex.frame.color=1, vertex.frame.width=1))
 
-continuous_color_legend <- function(values, background="#00000000", ...) {
-  #Extract Legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
-  g_legend<-function(a.gplot){ 
-    tmp <- ggplot_gtable(ggplot_build(a.gplot)) 
-    leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box") 
-    legend <- tmp$grobs[[leg]] 
-    return(legend)} 
-  mid_point = (max(values) + min(values)) / 2
-  label_points <- seq(min(values), max(values), length.out=7)
-  labels <- as.character(signif(label_points, 2))
-  full_plot <- qplot(x,y, colour=value, data=data.frame(x=1, y=1, value=values)) + 
-    scale_colour_gradient2(breaks = label_points, labels = labels, midpoint=mid_point, ...) + 
-    theme(legend.key.size = unit(5, "cm"), 
-          legend.text = element_text(size=85),
-          legend.title = element_text(size=85),
-          legend.background = element_rect(fill = background))
-  g_legend(full_plot)
-}
+# #' @importFrom igraph add.vertex.shape
+# init_igraph <- function() {
+#   add.vertex.shape("fcircle", 
+#                    plot=mycircle, 
+#                    parameters=list(vertex.frame.color=1, vertex.frame.width=1))
+# }
 
+#===================================================================================================
+#' continuous_color_legend
+#' 
+#' @import ggplot2
+# my_continuous_color_legend <- function(values, background="#00000000", ...) {
+#   #Extract Legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
+#   g_legend<-function(a.gplot){ 
+#     tmp <- ggplot_gtable(ggplot_build(a.gplot)) 
+#     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box") 
+#     legend <- tmp$grobs[[leg]] 
+#     return(legend)} 
+#   mid_point = (max(values) + min(values)) / 2
+#   label_points <- seq(min(values), max(values), length.out=7)
+#   labels <- as.character(signif(label_points, 2))
+#   full_plot <- qplot(x,y, colour=value, data=data.frame(x=1, y=1, value=values)) + 
+#     scale_colour_gradient2(breaks = label_points, labels = labels, midpoint=mid_point, ...) + 
+#     theme(legend.key.size = unit(5, "cm"), 
+#           legend.text = element_text(size=85),
+#           legend.title = element_text(size=85),
+#           legend.background = element_rect(fill = background))
+#   g_legend(full_plot)
+# }
+# 

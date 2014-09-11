@@ -12,6 +12,7 @@
 #' @param ... Additional arguments are passed to Biostrings::pairwiseAlignment
 #' @return A Kimura2 distance metric as a numeric vector of length 1.
 #' @importFrom Biostrings pairwiseAlignment
+#' @importClassesFrom Biostrings PairwiseAlignments
 #' @export
 model_kimura2 <- function(x, y, ...) {
   is_transition <- function(x, y) {
@@ -54,10 +55,9 @@ model_kimura2 <- function(x, y, ...) {
 #' @param sequences A list or vector of sequence data
 #' @return A distance matrix of class \code{dist}
 #' @importFrom proxy dist
-#' @importFrom Biostrings pairwiseAlignment
-#' @importFrom seqinr s2c
-#' @importFrom ape as.DNAbin dist.dna
 #' @export
-pairwise_distance <- function(sequences) {
-  dist(as.list(sequences), method = model_kimura2)
+pairwise_distance <- function(sequences, seq_name = NULL) {
+  sequences <- as.list(sequences)
+  if (!is.null(seq_name)) names(sequences) <- seq_name
+  dist(sequences, method = model_kimura2)
 }

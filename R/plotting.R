@@ -1,3 +1,7 @@
+#===================================================================================================
+#' plot_threshold_optimization
+#' 
+#' @import ggplot2
 plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent") {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -45,6 +49,11 @@ plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, displa
   return(my_plot)
 }
 
+
+#===================================================================================================
+#' plot_distance_distribution
+#' 
+#' @import ggplot2
 plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent", smoothness=3, bin_width=NULL) {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -124,6 +133,10 @@ plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display
 }
 
 
+#===================================================================================================
+#' Makes igraph from images
+#' 
+#' @importFrom igraph graph.edgelist V get.shortest.paths E
 plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclude=c(), root_index=1, label_color = "black") {
   #store the distance of all verticies and edges from the root
   root <- V(graph)[root_index]
@@ -173,7 +186,13 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
   return(plot)
 }
 
+
+#===================================================================================================
+#' Makes igraph from values
+#' 
+#' @importFrom igraph graph.edgelist V get.shortest.paths E
 plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1, label_color = "black", display=FALSE, fade=FALSE, legend_text="", value_range=c(0,1), highlight_outliers=TRUE, background="#00000000", save=NULL) {
+  init_igraph()
   #make graph if nessesary
   if (class(graph) == "character") {
     graph <- graph.edgelist(taxon_edge_list(graph, taxonomy_separator))
@@ -251,14 +270,14 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                   vertex.frame.color='black')
   
   #Make legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
-  legend <- continuous_color_legend(color_values,
-                                    low=V(graph)$color[which.min(color_values)], 
-                                    mid=V(graph)$color[which_middle(color_values)], 
-                                    high=V(graph)$color[which.max(color_values)],
-                                    name=legend_text,
-                                    background=background)  
-  pushViewport(viewport(x=0.9, y=0.15))
-  grid.draw(legend)
+#   legend <- continuous_color_legend(color_values,
+#                                     low=V(graph)$color[which.min(color_values)], 
+#                                     mid=V(graph)$color[which_middle(color_values)], 
+#                                     high=V(graph)$color[which.max(color_values)],
+#                                     name=legend_text,
+#                                     background=background)  
+#   pushViewport(viewport(x=0.9, y=0.15))
+#   grid.draw(legend)
   
   if (!is.null(save)) {
     dev.off()
@@ -266,6 +285,10 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   return(my_plot)
 }
 
+#===================================================================================================
+#' plot_value_distribution_by_level
+#' 
+#' @import ggplot2
 plot_value_distribution_by_level <- function(taxon_data, value_column, level_column = "level", ...) {
   ggplot(taxon_data, aes_string(x=level_column, y=value_column)) + 
     geom_boxplot(width=.5, outlier.colour="transparent") +

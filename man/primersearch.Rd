@@ -3,8 +3,8 @@
 \alias{primersearch}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
-primersearch(sequence, forward, reverse, pair_name = NULL, mismatch = 5,
-  ...)
+primersearch(sequence, forward, reverse, seq_name = NULL, pair_name = NULL,
+  mismatch = 5, ...)
 }
 \arguments{
 \item{sequence}{A list of character vectors of DNA sequence.}
@@ -14,6 +14,8 @@ the names are used to construct the primer pair names.}
 
 \item{reverse}{A character vector or list of primer sequences. If named and pair_name is not set,
 the names are used to construct the primer pair names.}
+
+\item{seq_name}{Names of sequences}
 
 \item{pair_name}{A character vector of names for primer pairs.}
 

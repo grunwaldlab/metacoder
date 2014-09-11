@@ -58,10 +58,10 @@ parse_primersearch <- function(file_path) {
   primer_data <- do.call(rbind, str_match_all(primer_chunks, pattern))[,-1]
   # Reformat amplicon data -------------------------------------------------------------------------
   primer_data <- name_rows(as.data.frame(primer_data))
-  colnames(primer_data) <- c("amplimer", "sequence", "info", "forward_primer", "forward_index",
+  colnames(primer_data) <- c("amplimer", "sequence", "name", "forward_primer", "forward_index",
                              "forward_mismatch",  "reverse_primer", "reverse_index",
                              "reverse_mismatch", "length", "primer_pair")
-  primer_data <- primer_data[c("primer_pair", "amplimer", "length", "sequence", "info",
+  primer_data <- primer_data[c("primer_pair", "amplimer", "length", "sequence", "name",
                                "forward_primer", "forward_index", "forward_mismatch",
                                "reverse_primer", "reverse_index", "reverse_mismatch")]
   for (i in seq_along(primer_data)) primer_data[[i]] <- as.character(primer_data[[i]])
@@ -80,13 +80,19 @@ parse_primersearch <- function(file_path) {
 #'   the names are used to construct the primer pair names.
 #' @param reverse A character vector or list of primer sequences. If named and pair_name is not set, 
 #'   the names are used to construct the primer pair names.
+#' @param seq_name Names of sequences
 #' @param pair_name A character vector of names for primer pairs.
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
 #' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
 #' @return Output from \code{\link{parse_primersearch}} (A dataframe)
 #' @importFrom ape write.dna
+#' @importFrom seqinr s2c
 #' @export
-primersearch <- function(sequence, forward, reverse, pair_name = NULL, mismatch = 5, ...) {
+primersearch <- function(sequence, forward, reverse,
+                         seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
+  if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), s2c)
+  if (!is.null(seq_name)) names(sequence) <- seq_name
+  names(sequence) <- paste(seq_along(sequence), names(sequence))
   # Write fasta file for primersearch input---------------------------------------------------------
   sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
   on.exit(file.remove(sequence_path))
@@ -104,5 +110,13 @@ primersearch <- function(sequence, forward, reverse, pair_name = NULL, mismatch 
   # Run and parse primersearch ---------------------------------------------------------------------
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch, ...)
   on.exit(file.remove(output_path))
-  parse_primersearch(output_path)
+  output <- parse_primersearch(output_path)
+  # Extract amplicon sequence ---------------------------------------------------------------------
+  output$sequence <- as.numeric(output$sequence)
+  output$amp_start <- output$forward_index + nchar(output$forward_primer)
+  output$amp_end <- vapply(sequence[output$sequence], length, numeric(1)) -
+    (output$reverse_index + nchar(output$reverse_primer)) + 1
+  output$amplicon <- Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
+                         sequence[output$sequence], output$amp_start, output$amp_end)
+  return(output)
 }

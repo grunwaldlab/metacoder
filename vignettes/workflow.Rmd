@@ -1,0 +1,45 @@
+---
+title: "Workflow Example"
+author: "Zachary Foster"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+%\VignetteIndexEntry{Vignette Title}
+%\VignetteEngine{knitr::rmarkdown}
+%\usepackage[utf8]{inputenc}
+---
+
+```{r}
+seq <- download_gb_taxon(taxon = c("phytophthora", "pythium"),
+                         key = c("@18S@", "@28S@"),
+                         type = "RRNA",
+                         seq_length=c(3000, 100000))
+
+library(taxize)
+tax <- classification(seq$taxon, db="col", verbose=FALSE)
+ranks <- tax[[1]]
+
+
+pcr <- primersearch(sequence = seq$sequence,
+                    forward = "TCCGTAGGTGAACCTGCGG",
+                    reverse = "CGCATTACGTATCGCAGTTCGCAG",
+                    seq_name = format_taxize(tax),
+                    pair_name = "ITS1__and__OOM-LO5.8S47B",
+                    mismatch = 10)
+
+dist_matrix <- pairwise_distance(sequences = pcr$amplicon,
+                                 seq_name = pcr$name)
+
+
+calculate_barcode_statistics(as.matrix(dist_matrix),
+                             get_taxonomy_levels(),
+                             level_to_analyze = "Species",
+                             saved_output_path = "~/test",
+                             save_statistics = TRUE,
+                             save_raw_data = TRUE,
+                             save_plots = TRUE, 
+                             distance_bin_width = 0.001,
+                             threshold_resolution = 0.001,
+                             max_sequences_to_compare = 500)
+
+```
