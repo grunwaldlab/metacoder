@@ -3,14 +3,14 @@
 \alias{calculate_barcode_statistics}
 \title{Calculate barcode statistics}
 \usage{
-calculate_barcode_statistics(distance_matrix, taxonomy_levels,
-  saved_output_path = getwd(), level_to_analyze = "s",
-  distance_type = "PID", max_sequences_to_compare = 1000,
-  return_raw_data = FALSE, save_statistics = FALSE, save_raw_data = FALSE,
-  save_plots = FALSE, taxonomy_separator = ";",
-  functions_to_apply = list("overall_statistics", "intertaxon_statistics",
-  "intrataxon_statistics", "distance_distribution", "threshold_optimization"),
-  ...)
+calculate_barcode_statistics(distance_matrix,
+  taxonomy_levels = get_taxonomy_levels(), saved_output_path = getwd(),
+  level_to_analyze = "Species", distance_type = "distance",
+  max_sequences_to_compare = 500, return_raw_data = FALSE,
+  save_statistics = FALSE, save_raw_data = FALSE, save_plots = FALSE,
+  taxonomy_separator = ";", functions_to_apply = list("overall_statistics",
+  "intertaxon_statistics", "intrataxon_statistics", "distance_distribution",
+  "threshold_optimization"), ...)
 }
 \description{
 Calculate barcode statistics

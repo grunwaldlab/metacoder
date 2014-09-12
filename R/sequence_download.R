@@ -137,6 +137,9 @@ query_req_to_dataframe <- function(query_req) {
 #'   results are found than `max_count`. "subsample": randomly select using `sample`; "head": use
 #'   first results; "tail": use last results.
 #' @param standardize If TRUE, validate binomial taxon names using `taxize`.
+#' @param separate If TRUE, each taxon supplied is searched for separately and the `max_count`
+#'   option is applied to each separately, therefore the resulting max count of all results would be  
+#'   \code{max_count * length(taxon)}.
 #' @param use_acnuc If TRUE, sequences are downloaded using tools from `sequinr`. This is typically
 #'   slower. 
 #' @note When `use_acnuc = FALSE`, some sequences that are found during searching with `seqinr` are
@@ -159,38 +162,54 @@ download_gb_taxon <- function(taxon, key, type,
                               max_count = 100,
                               subsample = c("random", "head", "tail"),
                               standardize = TRUE,
+                              separate = FALSE,
                               use_acnuc = FALSE) {
   # Verify arguments -------------------------------------------------------------------------------
   subsample <- match.arg(subsample)
   stopifnot(length(seq_length) == 2, seq_length[1] <= seq_length[2])
-  # Search for potential sequences -----------------------------------------------------------------
+  # Prepare connection -----------------------------------------------------------------------------
   choosebank("genbank")
   on.exit(closebank())
-  query_taxon("taxon_query", taxon, key, type)
-  results <- query_req_to_dataframe(taxon_query$req)
-  results$index <- 1:nrow(results)
-  # Filter by sequence length ----------------------------------------------------------------------
-  results <- results[results$length >= seq_length[1] & results$length <= seq_length[2], ]
-  # Subsample if necessary -------------------------------------------------------------------------
-  max_count <- min(nrow(results), max_count)
-  results <- switch(subsample,
-                    "random" = results[sample(1:nrow(results), max_count), ],
-                    "head"   = head(results, max_count), 
-                    "tail"   = tail(results, max_count))
-  # Download sequences -----------------------------------------------------------------------------
-  if (use_acnuc) {
-    sequences <- download_gb_query(taxon_query$req[results$index]) #seqinr used
+  
+  run_once <- function(taxon) {
+    if (taxon == "rhizoctonia") browser()
+    cat("Searching: ", taxon)
+    # Search for potential sequences ---------------------------------------------------------------
+    query_taxon("taxon_query", taxon, key, type)
+    results <- query_req_to_dataframe(taxon_query$req)
+    results$index <- 1:nrow(results)
+    # Filter by sequence length --------------------------------------------------------------------
+    results <- results[results$length >= seq_length[1] & results$length <= seq_length[2], ]
+    # Subsample if necessary -----------------------------------------------------------------------
+    sub_count <- min(nrow(results), max_count)
+    results <- switch(subsample,
+                      "random" = results[sample(1:nrow(results), sub_count), ],
+                      "head"   = head(results, sub_count), 
+                      "tail"   = tail(results, sub_count))
+    if (nrow(results) == 0) return(NULL)
+    # Download sequences ---------------------------------------------------------------------------
+    if (use_acnuc) {
+      sequences <- download_gb_query(taxon_query$req[results$index]) #seqinr used
+    } else {
+      sequences <- ncbi_getbyid(rownames(results), verbose=FALSE) #taxize used
+    }
+    if (nrow(sequences) == 0) return(NULL)
+    # Standardize binomial names -------------------------------------------------------------------
+    if (standardize) {
+      gnr_result <- gnr_resolve(sequences$taxon,
+                                data_source_ids = 4, #4 is the code for NCBI
+                                stripauthority = TRUE,
+                                best_match_only = TRUE)
+      gnr_result <- gnr_result$result
+      sequences$taxon <- gnr_result$matched_name2[order(as.integer(rownames(gnr_result)))]
+    }
+    cat("complete")
+    return(sequences)
+  }
+  
+  if (separate) {
+    return(do.call(rbind, lapply(taxon, run_once)))
   } else {
-    sequences <- ncbi_getbyid(rownames(results), verbose=FALSE) #taxize used
+    return(run_once(taxon))
   }
-  # Standardize binomial names ---------------------------------------------------------------------
-  if (standardize) {
-    gnr_result <- gnr_resolve(sequences$taxon,
-                              data_source_ids = 4, #4 is the code for NCBI
-                              stripauthority = TRUE,
-                              best_match_only = TRUE)
-    gnr_result <- gnr_result$result
-    sequences$taxon <- gnr_result$matched_name2[order(as.integer(rownames(gnr_result)))]
-  }
-  return(sequences)
 }

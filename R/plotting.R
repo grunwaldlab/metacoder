@@ -1,7 +1,8 @@
 #===================================================================================================
 #' plot_threshold_optimization
 #' 
-#' @import ggplot2
+#' @importFrom reshape2 melt
+#' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank
 plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent") {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -53,7 +54,9 @@ plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, displa
 #===================================================================================================
 #' plot_distance_distribution
 #' 
-#' @import ggplot2
+#' @importFrom zoo rollmean
+#' @importFrom reshape2 melt
+#' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank geom_bar
 plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent", smoothness=3, bin_width=NULL) {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -191,11 +194,13 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
 #' Makes igraph from values
 #' 
 #' @importFrom igraph graph.edgelist V get.shortest.paths E
+#' @importFrom plotrix color.scale
+#' @export
 plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1, label_color = "black", display=FALSE, fade=FALSE, legend_text="", value_range=c(0,1), highlight_outliers=TRUE, background="#00000000", save=NULL) {
   init_igraph()
   #make graph if nessesary
   if (class(graph) == "character") {
-    graph <- graph.edgelist(taxon_edge_list(graph, taxonomy_separator))
+    graph <- graph.edgelist(taxon_edge_list(graph, ";"))
   } else if (class(graph) != "igraph") {
     stop("Incorrect input. 'graph' must be an igraph object or a list of taxonomy strings.")
   } 
@@ -288,7 +293,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
 #===================================================================================================
 #' plot_value_distribution_by_level
 #' 
-#' @import ggplot2
+#' @importFrom ggplot2 aes_string geom_boxplot geom_violin geom_point facet_grid position_jitter labs theme element_text element_blank
 plot_value_distribution_by_level <- function(taxon_data, value_column, level_column = "level", ...) {
   ggplot(taxon_data, aes_string(x=level_column, y=value_column)) + 
     geom_boxplot(width=.5, outlier.colour="transparent") +
