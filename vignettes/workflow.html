@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Vignette Info</title>
+<title>%\usepackage[utf8]{inputenc}</title>
 
 <style type="text/css">
 body, td {
@@ -173,223 +173,129 @@ hljs.initHighlightingOnLoad();
 </script>
 
 
-<!-- MathJax scripts -->
-<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
 
 
 </head>
 
 <body>
-<p>Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The <code>html_vignette</code> output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The <code>html_vignette</code> format:</p>
+<hr/>
 
-<ul>
-<li>Never uses retina figures</li>
-<li>Has a smaller default figure size</li>
-<li>Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style</li>
-</ul>
+<p>title: &ldquo;Workflow Example&rdquo;
+author: &ldquo;Zachary Foster&rdquo;
+date: &ldquo;2014-09-12&rdquo;
+output: rmarkdown::html_vignette
+vignette: &gt;
+%\VignetteIndexEntry{Vignette Title}
+%\VignetteEngine{knitr::rmarkdown}</p>
 
-<h2>Vignette Info</h2>
+<h2>%\usepackage[utf8]{inputenc}</h2>
 
-<p>Note the various macros within the <code>vignette</code> setion of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the <code>title</code> field and the <code>\VignetteIndexEntry</code> to match the title of your vignette.</p>
+<pre><code class="r"># Download example sequences -------------------------------
+search_for &lt;- c(&quot;Albuginales&quot;, &quot;Lagenidiales&quot;,
+                &quot;Leptomitales&quot;, &quot;Peronosporales&quot;,
+                &quot;Saprolegniales&quot;, &quot;Pythiales&quot;,
+                &quot;ascomycota&quot;, &quot;basidiomycota&quot;)
 
-<h2>Styles</h2>
+seq &lt;- download_gb_taxon(taxon = search_for,
+                         key = c(&quot;@18S@&quot;, &quot;@28S@&quot;),
+                         type = &quot;RRNA&quot;,
+                         seq_length=c(2000, 100000),
+                         max_count = 300, 
+                         separate = TRUE)
 
-<p>The <code>html_vignette</code> template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:</p>
+# Download and format taxonomy information -----------------
+raw_taxonomy &lt;- taxize::classification(seq$taxon,
+                                       db=&quot;col&quot;)
 
-<pre><code>output: 
-  rmarkdown::html_vignette:
-    css: mystyles.css
+seq &lt;- seq[!is.na(raw_taxonomy), ]
+taxonomy &lt;- raw_taxonomy[!is.na(raw_taxonomy)]
+taxonomy &lt;- format_taxize(taxonomy)
+
+# Simulate PCR to evaluate primers -------------------------
+pcr &lt;- primersearch(sequence = seq$sequence,
+                    forward = &quot;TCCGTAGGTGAACCTGCGG&quot;,
+                    reverse = &quot;CGCATTACGTATCGCAGTTCGCAG&quot;,
+                    seq_name = taxonomy,
+                    pair_name = &quot;ITS1__and__OOM-LO5.8S47B&quot;,
+                    mismatch = 10)
+
+# Calculate taxon-specific PCR success ---------------------
+nodes &lt;- get_nodes_from_leafs(taxonomy)
+seq_counts &lt;- count_nodes_in_leafs(taxonomy, nodes)
+pcr_counts &lt;- count_nodes_in_leafs(pcr$name, nodes)
+pcr_proportions &lt;- pcr_counts / seq_counts
+
+# Plot results ---------------------------------------------
+plot_value_tree(nodes, pcr_proportions,
+                labels = get_tips(nodes),
+                save = &quot;~/test.png&quot;, 
+                scaling = seq_counts * 3)
 </code></pre>
 
-<h2>Figures</h2>
+<pre><code class="r">search_for &lt;- c(&quot;Albuginales&quot;, &quot;Lagenidiales&quot;, &quot;Leptomitales&quot;, &quot;Peronosporales&quot;, &quot;Saprolegniales&quot;, &quot;Pythiales&quot;, &quot;ascomycota&quot;, &quot;basidiomycota&quot;, &quot;Bacillariophyta&quot;)
 
-<p>The figure sizes have been customised so that you can easily put two images side-by-side. </p>
+seq &lt;- download_gb_taxon(taxon = search_for,
+                         standardize=FALSE,
+                         key = c(&quot;@18S@&quot;, &quot;@28S@&quot;),
+                         type = &quot;RRNA&quot;,
+                         seq_length=c(2000, 100000),
+                         max_count = 300, 
+                         separate = TRUE)
 
-<pre><code class="r">plot(1:10)
-plot(10:1)
+
+raw_taxonomy &lt;- taxize::classification(seq$taxon, db=&quot;col&quot;, verbose=FALSE, ask=FALSE)
+seq &lt;- seq[!is.na(raw_taxonomy), ]
+taxonomy &lt;- raw_taxonomy[!is.na(raw_taxonomy)]
+taxonomy &lt;- format_taxize(taxonomy)
+
+
+
+pcr &lt;- primersearch(sequence = seq$sequence,
+                    forward = &quot;TCCGTAGGTGAACCTGCGG&quot;,
+                    reverse = &quot;CGCATTACGTATCGCAGTTCGCAG&quot;,
+                    seq_name = taxonomy,
+                    pair_name = &quot;ITS1__and__OOM-LO5.8S47B&quot;,
+                    mismatch = 10)
+
+nodes &lt;- get_nodes_from_leafs(taxonomy)
+seq_counts &lt;- count_nodes_in_leafs(taxonomy, nodes)
+pcr_counts &lt;- count_nodes_in_leafs(pcr$name, nodes)
+pcr_proportions &lt;- pcr_counts / seq_counts
+
+plot_value_tree(nodes, pcr_proportions,
+                labels = get_tips(nodes),
+                save = &quot;~/test.png&quot;, 
+                scaling = seq_counts * 3)
+
+
+dist_matrix &lt;- pairwise_distance(sequences = pcr$amplicon,
+                                 seq_name = pcr$name)
+
+
+stats &lt;- calculate_barcode_statistics(dist_matrix,
+                                      level_to_analyze=&quot;Species&quot;,
+                                      saved_output_path = &quot;~/test&quot;,
+                                      save_statistics = TRUE,
+                                      save_raw_data = TRUE,
+                                      save_plots = TRUE,
+                                      distance_bin_width = 0.001,
+                                      threshold_resolution = 0.001)
+
+
+#Plot distance distribution tree graph
+png(file = distance_tree_plot_path, bg = &quot;transparent&quot;, width = 10000, height = 10000)
+plot_image_tree(stats$taxon, stats$distance_graph,
+                scaling= stats$count, 
+                exclude=taxa_to_exclude)
+dev.off()
+
+#Plot optimal threshold tree graph
+png(file = threshold_tree_plot_path, bg = &quot;transparent&quot;, width = 10000, height = 10000)
+plot_image_tree(stats$taxon, stats$threshold_graph,
+                scaling= stats$count, 
+                exclude=taxa_to_exclude)
+dev.off()
 </code></pre>
-
-<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-1"/> <img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-1"/> </p>
-
-<p>You can enable figure captions by <code>fig_caption: yes</code> in YAML:</p>
-
-<pre><code>output:
-  rmarkdown::html_vignette:
-    fig_caption: yes
-</code></pre>
-
-<p>Then you can use the chunk option <code>fig.cap = &quot;Your figure caption.&quot;</code> in <strong>knitr</strong>.</p>
-
-<h2>More Examples</h2>
-
-<p>You can write math expressions, e.g. \( Y = X\beta + \epsilon \), footnotes<sup>[A</sup> footnote here.], and tables, e.g. using <code>knitr::kable()</code>.</p>
-
-<table><thead>
-<tr>
-<th align="left"></th>
-<th align="right">mpg</th>
-<th align="right">cyl</th>
-<th align="right">disp</th>
-<th align="right">hp</th>
-<th align="right">drat</th>
-<th align="right">wt</th>
-<th align="right">qsec</th>
-<th align="right">vs</th>
-<th align="right">am</th>
-<th align="right">gear</th>
-<th align="right">carb</th>
-</tr>
-</thead><tbody>
-<tr>
-<td align="left">Mazda RX4</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160.0</td>
-<td align="right">110</td>
-<td align="right">3.90</td>
-<td align="right">2.620</td>
-<td align="right">16.46</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">4</td>
-</tr>
-<tr>
-<td align="left">Mazda RX4 Wag</td>
-<td align="right">21.0</td>
-<td align="right">6</td>
-<td align="right">160.0</td>
-<td align="right">110</td>
-<td align="right">3.90</td>
-<td align="right">2.875</td>
-<td align="right">17.02</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">4</td>
-</tr>
-<tr>
-<td align="left">Datsun 710</td>
-<td align="right">22.8</td>
-<td align="right">4</td>
-<td align="right">108.0</td>
-<td align="right">93</td>
-<td align="right">3.85</td>
-<td align="right">2.320</td>
-<td align="right">18.61</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">4</td>
-<td align="right">1</td>
-</tr>
-<tr>
-<td align="left">Hornet 4 Drive</td>
-<td align="right">21.4</td>
-<td align="right">6</td>
-<td align="right">258.0</td>
-<td align="right">110</td>
-<td align="right">3.08</td>
-<td align="right">3.215</td>
-<td align="right">19.44</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1</td>
-</tr>
-<tr>
-<td align="left">Hornet Sportabout</td>
-<td align="right">18.7</td>
-<td align="right">8</td>
-<td align="right">360.0</td>
-<td align="right">175</td>
-<td align="right">3.15</td>
-<td align="right">3.440</td>
-<td align="right">17.02</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">2</td>
-</tr>
-<tr>
-<td align="left">Valiant</td>
-<td align="right">18.1</td>
-<td align="right">6</td>
-<td align="right">225.0</td>
-<td align="right">105</td>
-<td align="right">2.76</td>
-<td align="right">3.460</td>
-<td align="right">20.22</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1</td>
-</tr>
-<tr>
-<td align="left">Duster 360</td>
-<td align="right">14.3</td>
-<td align="right">8</td>
-<td align="right">360.0</td>
-<td align="right">245</td>
-<td align="right">3.21</td>
-<td align="right">3.570</td>
-<td align="right">15.84</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">4</td>
-</tr>
-<tr>
-<td align="left">Merc 240D</td>
-<td align="right">24.4</td>
-<td align="right">4</td>
-<td align="right">146.7</td>
-<td align="right">62</td>
-<td align="right">3.69</td>
-<td align="right">3.190</td>
-<td align="right">20.00</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">4</td>
-<td align="right">2</td>
-</tr>
-<tr>
-<td align="left">Merc 230</td>
-<td align="right">22.8</td>
-<td align="right">4</td>
-<td align="right">140.8</td>
-<td align="right">95</td>
-<td align="right">3.92</td>
-<td align="right">3.150</td>
-<td align="right">22.90</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">4</td>
-<td align="right">2</td>
-</tr>
-<tr>
-<td align="left">Merc 280</td>
-<td align="right">19.2</td>
-<td align="right">6</td>
-<td align="right">167.6</td>
-<td align="right">123</td>
-<td align="right">3.92</td>
-<td align="right">3.440</td>
-<td align="right">18.30</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">4</td>
-<td align="right">4</td>
-</tr>
-</tbody></table>
-
-<p>Also a quote using <code>&gt;</code>:</p>
-
-<blockquote>
-<p>&ldquo;He who gives up [code] safety for [code] speed deserves neither.&rdquo;
-(<a href="https://twitter.com/hadleywickham/status/504368538874703872">via</a>)</p>
-</blockquote>
 
 </body>
 

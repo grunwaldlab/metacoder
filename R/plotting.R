@@ -214,6 +214,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   V(graph)$size <- (log(scaling + .5) / max(log(scaling) + .5)) * 10
   if (is.na(labels)) {
     V(graph)$label.cex <- 0
+    V(graph)$label <- NA
   } else if (labels == TRUE) {
     V(graph)$label <- as.character(signif(values, 2))
     V(graph)$label.cex <- V(graph)$size * .45 + .15
@@ -259,7 +260,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   graph_layout <- layout.reingold.tilford(graph, root = root_index, circular = TRUE)
   
   #Load vertex images 
-  V(graph)$raster <- lapply(as.character(V(graph)$raster_file), readPNG)
+#   V(graph)$raster <- lapply(as.character(V(graph)$raster_file), readPNG)
   
   if (!is.null(save)) {
     png(file = save, bg = background, width=5000, height=5000)
@@ -275,14 +276,14 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                   vertex.frame.color='black')
   
   #Make legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
-#   legend <- continuous_color_legend(color_values,
-#                                     low=V(graph)$color[which.min(color_values)], 
-#                                     mid=V(graph)$color[which_middle(color_values)], 
-#                                     high=V(graph)$color[which.max(color_values)],
-#                                     name=legend_text,
-#                                     background=background)  
-#   pushViewport(viewport(x=0.9, y=0.15))
-#   grid.draw(legend)
+  legend <- continuous_color_legend(color_values,
+                                    low=V(graph)$color[which.min(color_values)], 
+                                    mid=V(graph)$color[which_middle(color_values)], 
+                                    high=V(graph)$color[which.max(color_values)],
+                                    name=legend_text,
+                                    background=background)  
+  pushViewport(viewport(x=0.9, y=0.15))
+  grid.draw(legend)
   
   if (!is.null(save)) {
     dev.off()

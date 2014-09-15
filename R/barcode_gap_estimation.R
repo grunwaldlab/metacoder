@@ -17,7 +17,8 @@ get_taxonomy_levels <- function() {
 #' @return A character vecotr of taxonomy strings pasted together with delimiters.
 #' @export
 format_taxize <- function(taxa) {
-  vapply(taxa, function(x) paste(paste(x$rank, gsub(' ', '_', x$name), sep = "__"), collapse = ";"), character(1))
+  output <- vapply(taxa, function(x) paste(paste(x$rank, gsub(' ', '_', x$name), sep = "__"), collapse = ";"), character(1))
+  paste("Superkingdom__Life;", output, sep="")
 }
 
 

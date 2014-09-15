@@ -250,7 +250,7 @@ init_igraph <- function() {
 #' @importFrom ggplot2 ggplot_gtable ggplot_build qplot scale_colour_gradient2 theme element_text element_rect
 #' @importFrom grid unit
 #' @export
-my_continuous_color_legend <- function(values, background="#00000000", ...) {
+continuous_color_legend <- function(values, background="#00000000", ...) {
   #Extract Legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
   g_legend<-function(a.gplot){ 
     tmp <- ggplot_gtable(ggplot_build(a.gplot)) 
@@ -288,4 +288,9 @@ get_nodes_from_leafs <- function(leafs, sep = ";") {
 count_nodes_in_leafs <- function(leafs, nodes = NULL, sep = ";") {
   if (is.null(nodes)) nodes <- get_nodes_from_leafs(leafs, sep = sep)
   vapply(nodes, function(x) sum(grepl(x, leafs, fixed = TRUE)), numeric(1))
+}
+
+get_tips <- function(nodes, sep = "__") {
+  split_nodes <- strsplit(nodes, "__", fixed=TRUE)
+  sapply(split_nodes, function(x) x[length(x)])
 }

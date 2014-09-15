@@ -45,21 +45,23 @@ query_taxon <- function(query_id, taxon, key = character(0), type)   {
 #===================================================================================================
 #' Extract the binomial organism name from genbank annotations.
 #' 
-#' @importFrom stringr str_match
+#' Takes a genebank annotation as a character vector with one line per element and returns the 
+#' organism name
 extract_organism <- function(annotation) {
   index <- vapply(annotation, grep, FUN.VALUE=numeric(1), pattern="^SOURCE")
   value <- mapply(`[`, annotation, index)
-  str_match(value, "^SOURCE[ \t]+(.+)$")[, 2]
+  stringr::str_match(value, "^SOURCE[ \t]+(.+)$")[, 2]
 }
 
 
 #===================================================================================================
 #' Extract the description from genbank annotations.
 #' 
-#' @importFrom stringr str_match
+#' Takes a genebank annotation as a character vector with one line per element and returns the 
+#' description. 
 extract_description <- function(annotation) {
   annotation <- vapply(annotation, paste, character(1), collapse="")
-  result <- str_match(annotation, "DEFINITION[ \t]+(.+)ACCESSION")[, 2]
+  result <- stringr::str_match(annotation, "DEFINITION[ \t]+(.+)ACCESSION")[, 2]
   gsub("[ \t]+", " ", result)
 }
 
@@ -67,11 +69,12 @@ extract_description <- function(annotation) {
 #===================================================================================================
 #' Extract the gi from genbank annotations.
 #' 
-#' @importFrom stringr str_match
+#' Takes a genebank annotation as a character vector with one line per element and returns the 
+#' gi.
 extract_gi <- function(annotation) {
   index <- vapply(annotation, grep, FUN.VALUE=numeric(1), pattern="^VERSION")
   value <- mapply(`[`, annotation, index)
-  str_match(value, "^VERSION[ \t]+.+GI:([0-9]+)$")[, 2]
+  stringr::str_match(value, "^VERSION[ \t]+.+GI:([0-9]+)$")[, 2]
 }
 
 
@@ -104,13 +107,21 @@ download_gb_query <- function(query_req) {
 #===================================================================================================
 #' Converts a list of class seqinr::SeqAcnucWeb to a data.frame
 #' 
+#' 
 #' @param query_req A list of class seqinr::SeqAcnucWeb
 #' @return A data frame with rows named after the sequence names and columns 'length' and 'frame'. 
 query_req_to_dataframe <- function(query_req) {
-  data.frame(length = vapply(query_req, attr, numeric(1), "length"),
-             frame = vapply(query_req, attr, numeric(1), "frame"),
-             row.names = as.character(query_req),
-             stringsAsFactors = FALSE)
+  cat(query_req)
+#   data.frame(length = vapply(query_req, attr, numeric(1), "length"),
+#              frame = vapply(query_req, attr, numeric(1), "frame"),
+#              row.names = as.character(query_req),
+#              stringsAsFactors = FALSE)
+}
+
+
+
+as.data.frame.SeqAcnucWeb <- function(x, ...) {
+  query_req_to_dataframe(x)
 }
 
 
@@ -162,7 +173,6 @@ download_gb_taxon <- function(taxon, key, type,
                               max_count = 100,
                               subsample = c("random", "head", "tail"),
                               standardize = TRUE,
-                              separate = FALSE,
                               use_acnuc = FALSE) {
   # Verify arguments -------------------------------------------------------------------------------
   subsample <- match.arg(subsample)
@@ -172,7 +182,6 @@ download_gb_taxon <- function(taxon, key, type,
   on.exit(closebank())
   
   run_once <- function(taxon) {
-    if (taxon == "rhizoctonia") browser()
     cat("Searching: ", taxon)
     # Search for potential sequences ---------------------------------------------------------------
     query_taxon("taxon_query", taxon, key, type)
