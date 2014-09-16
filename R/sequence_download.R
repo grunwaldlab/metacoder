@@ -1,45 +1,75 @@
 #===================================================================================================
-#' Queries sequences for a given taxon
+#' Queries ACNUC for taxa
 #'
-#' Produces a sequinr query object that can be used to download sequences. 
+#' Produces a \pkg{seqinr} query object that can be used to download sequences with other
+#' \pkg{seqinr} functions. It can also be parsed for result sequence IDs and lengths. Note that 
+#' this function requires an open connection to a database provided by
+#' \code{\link[seqinr]{choosebank}} (see examples). 
 #' 
-#' @param query_id A character vector of length 1 specifying the variable name the query will be
-#'   bound to.
-#' @param taxon A character vector of taxa. Specifing multiple taxa is equivalent to 
-#'    running the command multiple times with each taxa and concatenating the results. 
+#' This function uses \code{\link[seqinr]{query}} to search for sequences.
+#' \code{\link[seqinr]{query}} assignes results to a varaible in the global environment as well as
+#' returning the variable. By default, this function avoids this behavior by using a temporary
+#' variable and deleting it on function exit, even if an error is encountered. If you want to let
+#' \code{\link[seqinr]{query}} assign to the global environment, use the \code{query_id} option.
+#' 
+#' @param taxon A character vector of taxa to search for.  
 #' @param key A character vector of keywords. All keywords must be present for a given
-#'    sequence to be returned.
-#' @param type The type of the sequence to return (e.g. RRNA). Use `getType()` to see options. 
-#' @return A instance of class seqinr::qaw, as returned by seqinr::query. 
-#' @details Based off a exercise in the seqinr vignette.
+#'   sequence to be returned.
+#' @param type The type of the sequence to return (e.g. RRNA). Use \code{\link[seqinr]{getType}}
+#' to see options. 
+#' @param query_id A character vector of length 1. The name of the query passed to
+#'   \code{\link[seqinr]{query}}. The result will be saved in a global variable with this name. If
+#'   NULL, a temporary variable is made and deleted upon completion of the function. 
+#' @param execute If FALSE, the query is not executed. Instead the query string will be returned.
+#' @param parent If TRUE, results are replaced with their parent sequences (i.e. subsequences are
+#' replaced with full sequences). See ACNUC documentation for more info.
+#' @return If \code{execute == TRUE} A instance of class \code{\link[seqinr]{qaw}}, as returned by
+#' \code{\link[seqinr]{query}}. Otherwise, a query string will be returned as a character vector.
 #' @examples
 #' \dontrun{
 #' choosebank("genbank")
-#' query_taxon("test",
-#'             c("phytophthora", "pythium"),
-#'             c("@@18S@@", "@@28S@@"),
-#'             "RRNA")
-#' str(test)
+#' x <- query_taxon(c("Phytophthora", "Pythium"), key=c("@@18S@@"), type="RRNA")
 #' closebank()}
-#' @seealso \code{\link[taxize]{ncbi_getbyname}} \code{\link[seqinr]{query}}
-#' @importFrom seqinr query
+#' @seealso
+#'   \code{\link[taxize]{ncbi_getbyname}}, 
+#'   \code{\link[seqinr]{getSequence}}, 
+#'   \code{\link[seqinr]{query}}, 
+#'   \code{\link[seqinr]{getType}}
 #' @export
-query_taxon <- function(query_id, taxon, key = character(0), type)   {
+query_taxon <- function(taxon, key = NULL, type = NULL, query_id = NULL, execute = TRUE,
+                        parent = FALSE, ...)   {
   
-  single_query <- function(query_id, taxon, key) {
-    query("single_query", paste('sp=', taxon, sep=''), virtual=TRUE)
-    if (length(key) >= 1) names(key) <- paste("key_query", seq_along(key), sep="_")
-    for (item in names(key)) {
-      query(item, paste('single_query AND T=', type, ' AND K=', key[item], sep=""), virtual=TRUE)
-      query(item, paste("PAR", item), virtual=TRUE) # Replace by parent sequences
-    }
-    return(query(query_id, paste(names(key), collapse=" AND "), virtual=TRUE))
+  query_paste <- function(x, key, sep) {
+    if (length(x) == 0) return(NULL)
+    sep <- paste0(" ", sep, " ")
+    paste0("(", paste(paste0('"', key, "=", x, '"'), collapse = sep), ")")
   }
-  
-  queries <- mapply(single_query, paste("taxon_query", seq_along(taxon), sep="_"), taxon, key)
-  query_names <- apply(queries, MARGIN=2, function(x) x$name)
-  query(query_id, paste(query_names, collapse=" OR "))
+  # Input validation -------------------------------------------------------------------------------
+  if (length(taxon) == 0 || is.null(taxon)) return(NULL)
+  if (length(taxon) <= 1 && is.na(taxon)) return(NA)
+  # Construct query text ---------------------------------------------------------------------------
+  search <- c(query_paste(taxon, "SP", "OR"),
+              query_paste(key, "K", "AND"),
+              query_paste(type, "T", "AND"))
+  query_text <- paste(search, collapse = " AND ")
+  if (execute) {
+    # Clean up after seqinr::query -----------------------------------------------------------------
+    if (is.null(query_id)) {
+      query_id <- R.utils::tempvar(prefix = "query_temp_", envir = .GlobalEnv)
+      on.exit(force(rm(list = query_id, envir = .GlobalEnv)))
+    }
+    # Execute query --------------------------------------------------------------------------------
+    result <- seqinr::query(query_id, query_text, ...)
+    if (parent) {
+      query_text <- paste("PAR", query_id)
+      result <- seqinr::query(query_id, query_text, ...)     
+    }
+    return(result)
+  } else {
+    return(query_text)
+  }
 }
+
 
 
 #===================================================================================================
@@ -81,12 +111,13 @@ extract_gi <- function(annotation) {
 #===================================================================================================
 #' Download the sequences from an seqinr query object and formats them with their annotations
 #' 
-#' Formats the output of `sequinr::getSequence` and `sequinr::getAnnot` to the output of 
-#' `taxize::ncbi_getbyid`.
-#' @param query_req A list of class `SeqAcnucWeb` (e.g. what `sequinr::query` produces in the
-#'    `x$req` element of the output.
-#' @return A data.frame in the format of the output of `taxize::ncbi_getbyid`.
-#' @importFrom seqinr choosebank closebank getSequence getAnnot
+#' Formats the output of \code{\link[seqinr]{getSequence}} and \code{\link[seqinr]{getAnnot}}
+#' to the output of \code{\link[taxize]{ncbi_getbyid}}.
+#' 
+#' @param query_req A list of class  \code{\link[seqinr]{SeqAcnucWeb}} (e.g. what
+#' \code{\link[seqinr]{query}} produces in the \code{x$req} element of the output.
+#' @return A data.frame in the format of the output of \code{\link[taxize]{ncbi_getbyid}}.
+#' @import seqinr
 #' @export
 download_gb_query <- function(query_req) {
   choosebank("genbank")
@@ -105,25 +136,35 @@ download_gb_query <- function(query_req) {
 
 
 #===================================================================================================
-#' Converts a list of class seqinr::SeqAcnucWeb to a data.frame
+#' Converts seqinr::qaw to data.frame
 #' 
+#' Converts a list of class \code{\link[seqinr]{SeqAcnucWeb}} or \code{\link[seqinr]{qaw}} to a
+#' data.frame.
 #' 
-#' @param query_req A list of class seqinr::SeqAcnucWeb
-#' @return A data frame with rows named after the sequence names and columns 'length' and 'frame'. 
+#' @param query_req A list of class \code{\link[seqinr]{SeqAcnucWeb}} or a single
+#'   \code{\link[seqinr]{qaw}} object.
+#' @return A data frame with columns corresponding to \code{\link[seqinr]{SeqAcnucWeb}} attributes.
+#' @export 
 query_req_to_dataframe <- function(query_req) {
-  cat(query_req)
-#   data.frame(length = vapply(query_req, attr, numeric(1), "length"),
-#              frame = vapply(query_req, attr, numeric(1), "frame"),
-#              row.names = as.character(query_req),
-#              stringsAsFactors = FALSE)
+  if (class(query_req) == "qaw") query_req <- query_req$req
+  data.frame(name = as.character(query_req),
+             length = vapply(query_req, attr, numeric(1), "length"),
+             frame = vapply(query_req, attr, numeric(1), "frame"),
+             stringsAsFactors = FALSE)
 }
 
 
-
-as.data.frame.SeqAcnucWeb <- function(x, ...) {
+#===================================================================================================
+#' Coerce seqinr::qaw to a Data Frame
+#' 
+#' Coerce an object of class \code{\link[seqinr]{qaw}} to a Data Frame.
+#' 
+#' @param x An object of class \code{\link[seqinr]{qaw}}
+#' @return A data frame with columns corresponding to \code{\link[seqinr]{SeqAcnucWeb}} attributes.
+#' @export
+as.data.frame.qaw <- function(x, ...) {
   query_req_to_dataframe(x)
 }
-
 
 #===================================================================================================
 #' Downloads sequences that result from a taxon and keyword search

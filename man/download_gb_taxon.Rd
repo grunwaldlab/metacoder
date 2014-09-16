@@ -5,7 +5,7 @@
 \usage{
 download_gb_taxon(taxon, key, type, seq_length = c(1, 10000),
   max_count = 100, subsample = c("random", "head", "tail"),
-  standardize = TRUE, separate = FALSE, use_acnuc = FALSE)
+  standardize = TRUE, use_acnuc = FALSE)
 }
 \arguments{
 \item{taxon}{A character vector of taxa.}
@@ -26,12 +26,12 @@ first results; "tail": use last results.}
 
 \item{standardize}{If TRUE, validate binomial taxon names using `taxize`.}
 
+\item{use_acnuc}{If TRUE, sequences are downloaded using tools from `sequinr`. This is typically
+slower.}
+
 \item{separate}{If TRUE, each taxon supplied is searched for separately and the `max_count`
 option is applied to each separately, therefore the resulting max count of all results would be
 \code{max_count * length(taxon)}.}
-
-\item{use_acnuc}{If TRUE, sequences are downloaded using tools from `sequinr`. This is typically
-slower.}
 }
 \description{
 This function is meant to download sequences associated with a taxon and a set of keywords from

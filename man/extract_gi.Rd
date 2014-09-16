@@ -6,6 +6,7 @@
 extract_gi(annotation)
 }
 \description{
-Extract the gi from genbank annotations.
+Takes a genebank annotation as a character vector with one line per element and returns the
+gi.
 }
 

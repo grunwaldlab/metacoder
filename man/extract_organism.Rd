@@ -6,6 +6,7 @@
 extract_organism(annotation)
 }
 \description{
-Extract the binomial organism name from genbank annotations.
+Takes a genebank annotation as a character vector with one line per element and returns the
+organism name
 }
 

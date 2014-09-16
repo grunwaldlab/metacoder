@@ -6,6 +6,7 @@
 extract_description(annotation)
 }
 \description{
-Extract the description from genbank annotations.
+Takes a genebank annotation as a character vector with one line per element and returns the
+description.
 }
 

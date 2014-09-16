@@ -6,14 +6,14 @@
 download_gb_query(query_req)
 }
 \arguments{
-\item{query_req}{A list of class `SeqAcnucWeb` (e.g. what `sequinr::query` produces in the
-`x$req` element of the output.}
+\item{query_req}{A list of class  \code{\link[seqinr]{SeqAcnucWeb}} (e.g. what
+\code{\link[seqinr]{query}} produces in the \code{x$req} element of the output.}
 }
 \value{
-A data.frame in the format of the output of `taxize::ncbi_getbyid`.
+A data.frame in the format of the output of \code{\link[taxize]{ncbi_getbyid}}.
 }
 \description{
-Formats the output of `sequinr::getSequence` and `sequinr::getAnnot` to the output of
-`taxize::ncbi_getbyid`.
+Formats the output of \code{\link[seqinr]{getSequence}} and \code{\link[seqinr]{getAnnot}}
+to the output of \code{\link[taxize]{ncbi_getbyid}}.
 }
 
