@@ -23,6 +23,8 @@
 #' @param execute If FALSE, the query is not executed. Instead the query string will be returned.
 #' @param parent If TRUE, results are replaced with their parent sequences (i.e. subsequences are
 #' replaced with full sequences). See ACNUC documentation for more info.
+#' @param all_taxa If TRUE, require all taxa to be present for a given seuquence. Typically, this
+#'   would be used to specify additional taxonomic levels.
 #' @return If \code{execute == TRUE} A instance of class \code{\link[seqinr]{qaw}}, as returned by
 #' \code{\link[seqinr]{query}}. Otherwise, a query string will be returned as a character vector.
 #' @examples
@@ -37,7 +39,7 @@
 #'   \code{\link[seqinr]{getType}}
 #' @export
 query_taxon <- function(taxon, key = NULL, type = NULL, query_id = NULL, execute = TRUE,
-                        parent = FALSE, ...)   {
+                        parent = FALSE, all_taxa = FALSE, ...)   {
   
   query_paste <- function(x, key, sep) {
     if (length(x) == 0) return(NULL)
@@ -48,7 +50,8 @@ query_taxon <- function(taxon, key = NULL, type = NULL, query_id = NULL, execute
   if (length(taxon) == 0 || is.null(taxon)) return(NULL)
   if (length(taxon) <= 1 && is.na(taxon)) return(NA)
   # Construct query text ---------------------------------------------------------------------------
-  search <- c(query_paste(taxon, "SP", "OR"),
+  if (all_taxa) and_or <- "AND" else and_or <- "OR"
+  search <- c(query_paste(taxon, "SP", and_or),
               query_paste(key, "K", "AND"),
               query_paste(type, "T", "AND"))
   query_text <- paste(search, collapse = " AND ")
@@ -278,15 +281,26 @@ download_gb_taxon <- function(taxon, key, type,
 #'   taxonomic level. The names correspond to taxonomic levels. See
 #'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
 #'   levels. 
-get_taxon_sample <- function(taxon, target_level, max_counts = NULL, interpolate_max = TRUE,
-                             min_counts = NULL, interpolate_min = TRUE,
-                             query_function = query_taxon, cat_function = rbind, u...) {
+get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
+                             interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
+                             verbose = TRUE, ...) {
   
-  # Initialize argument data -----------------------------------------------------------------------
   default_target_max <- 20
   default_target_min <- 5
   taxonomy_levels <- get_taxonomy_levels()
-  taxon_classification <- classification(taxon, db = 'col')[[1]]
+  
+  # Argument validation ----------------------------------------------------------------------------
+  if (sum(c(is.null(name), is.null(id))) != 1) {
+    stop("Either name or id must be speficied, but not both")
+  }
+  
+  # Argument parsing -------------------------------------------------------------------------------
+  if (!is.null(name)) {
+    result <- get_colid(name, verbose = verbose)
+    if (is.na(result)) stop(cat("Could not find taxon ", name))
+    id <- result
+  }  
+  taxon_classification <- classification(id, db = 'col')[[1]]
   taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
                         levels = levels(taxonomy_levels),
                         ordered = TRUE)
@@ -328,8 +342,17 @@ get_taxon_sample <- function(taxon, target_level, max_counts = NULL, interpolate
   level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
   level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
   
-  
-  
+  # Recursivly sample taxon ------------------------------------------------------------------------
+  recursive_sample <- function(id, level) {
+    if (level >= target_level) {
+      # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+      taxon_name <- col_search(id = id)[[1]]$name
+    } else {
+      # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      children <- col_children(id)
+      
+    }
+  }
   
 }
 
