@@ -280,7 +280,8 @@ download_gb_taxon <- function(taxon, key, type,
 #'   levels. 
 get_taxon_sample <- function(taxon, target_level, max_counts = NULL, interpolate_max = TRUE,
                              min_counts = NULL, interpolate_min = TRUE,
-                             query_function = query_taxon) {
+                             query_function = query_taxon, cat_function = rbind, u...) {
+  
   # Initialize argument data -----------------------------------------------------------------------
   default_target_max <- 20
   default_target_min <- 5
@@ -292,6 +293,7 @@ get_taxon_sample <- function(taxon, target_level, max_counts = NULL, interpolate
   target_level <- factor(target_level,
                          levels = levels(taxonomy_levels),
                          ordered = TRUE)
+  
   # Generate taxonomic level sequences count limits ------------------------------------------------
   get_level_limit <- function(user_limits, default_value, default_level, interpolate) {
     # Provide defaults if NULL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
