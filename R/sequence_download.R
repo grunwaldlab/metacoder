@@ -263,3 +263,72 @@ download_gb_taxon <- function(taxon, key, type,
     return(run_once(taxon))
   }
 }
+
+
+#===================================================================================================
+#' Download representative sequences for a taxon
+#' 
+#' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
+#' 
+#' @param taxon A character vector of length 1. The taxon to download a sample of sequences for.
+#' @param target_level A character vector of length 1. The level finest taxonomic level at which
+#'   to sample. The finest level at which replication occurs. Must be a finer level than 
+#'   \code{taxon}.
+#' @param max_counts A named numeric vector. The maximum number of sequences to download for each
+#'   taxonomic level. The names correspond to taxonomic levels. See
+#'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
+#'   levels. 
+get_taxon_sample <- function(taxon, target_level, max_counts = NULL, interpolate_max = TRUE,
+                             min_counts = NULL, interpolate_min = TRUE,
+                             query_function = query_taxon) {
+  # Initialize argument data -----------------------------------------------------------------------
+  default_target_max <- 20
+  default_target_min <- 5
+  taxonomy_levels <- get_taxonomy_levels()
+  taxon_classification <- classification(taxon, db = 'col')[[1]]
+  taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
+                        levels = levels(taxonomy_levels),
+                        ordered = TRUE)
+  target_level <- factor(target_level,
+                         levels = levels(taxonomy_levels),
+                         ordered = TRUE)
+  # Generate taxonomic level sequences count limits ------------------------------------------------
+  get_level_limit <- function(user_limits, default_value, default_level, interpolate) {
+    # Provide defaults if NULL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (is.null(user_limits)) {
+      user_limits <- c(default_value)
+      names(user_limits) <- default_level
+    } else if (length(user_limits) == 1 && is.null(names(user_limits))) {
+      names(user_limits) <- default_level
+    }
+    # Order by taxonomic level - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    limit_levels <- factor(names(user_limits),
+                           levels = levels(taxonomy_levels),
+                           ordered = TRUE)
+    user_limits <- user_limits[order(limit_levels)]
+    # place input values in vector with all levels - - - - - - - - - - - - - - - - - - - - - - - - -
+    all_user_limits <- rep(as.integer(NA), length(taxonomy_levels))
+    names(all_user_limits) <- levels(taxonomy_levels)
+    all_user_limits[names(user_limits)] <- user_limits
+    # Interpolate limits for undefined intermediate levels - - - - - - - - - - - - - - - - - - - - -
+    if (interpolate && length(user_limits) >= 2) {
+      set_default_counts <- function(range) {
+        between <- which(taxonomy_levels >= range[1] & taxonomy_levels <= range[2])
+        all_user_limits[between] <<- as.integer(seq(user_limits[range[1]],
+                                                    user_limits[range[2]],
+                                                    along.with = between))
+        return(NULL)
+      }
+      zoo::rollapply(names(user_limits), width = 2, set_default_counts)    
+    }
+    return(all_user_limits)
+  }
+  level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
+  level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
+  
+  
+  
+  
+}
+
+
