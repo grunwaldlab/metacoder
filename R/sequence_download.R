@@ -374,8 +374,8 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   
 }
 
-
-ncbi_children <- function()
+#http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&term=Oomycetes[Next+Level]
+ncbi_children <- function() {}
 
 
 classification.uid <- function(id, ...) {
