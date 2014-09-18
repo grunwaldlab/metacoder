@@ -281,6 +281,8 @@ download_gb_taxon <- function(taxon, key, type,
 #'   taxonomic level. The names correspond to taxonomic levels. See
 #'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
 #'   levels. 
+#' @examples
+#' get_taxon_sample(name = "oomycetes", target_level = "Genus")
 get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
                              verbose = TRUE, ...) {
@@ -296,11 +298,14 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   
   # Argument parsing -------------------------------------------------------------------------------
   if (!is.null(name)) {
-    result <- get_colid(name, verbose = verbose)
+    result <- get_uid(name, verbose = verbose)
     if (is.na(result)) stop(cat("Could not find taxon ", name))
     id <- result
-  }  
-  taxon_classification <- classification(id, db = 'col')[[1]]
+  }  else {
+    id <- as.character(id)
+    attr(id, "class") <- "uid"
+  }
+  taxon_classification <- classification(id, db = 'ncbi')[[1]]
   taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
                         levels = levels(taxonomy_levels),
                         ordered = TRUE)
@@ -346,14 +351,59 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   recursive_sample <- function(id, level) {
     if (level >= target_level) {
       # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-      taxon_name <- col_search(id = id)[[1]]$name
+      taxonomy <- classification(id = id)[[1]]
+      taxon_name <- taxonomy$name[nrow(taxonomy)]
+      result <- ncbi_search(taxon_name, limit = 1000)
+      # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      if (level %in% levels(taxonomy_levels)) {
+        if (nrow(results) > level_max_count[level]) {
+          result <- result[sample(seq_along(result), level_max_count[level])]
+        } else if (nrow(results) < level_min_count[level]) {
+          return(NULL)
+        }
+      }
+      return(results)
     } else {
       # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      children <- col_children(id)
-      
+      children <- ncbi_children(id)[[1]]
+      results <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
+      results <- do.call(rbind, results)
+      return(results)
     }
   }
   
 }
 
 
+ncbi_children <- function()
+
+
+classification.uid <- function(id, ...) {
+  fun <- function(x){
+    # return NA if NA is supplied
+    if(is.na(x)){
+      out <- NA
+    } else {
+      baseurl <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy"
+      ID <- paste("ID=", x, sep = "")
+      searchurl <- paste(baseurl, ID, sep = "&")
+      tt <- getURL(searchurl)
+      ttp <- xmlTreeParse(tt, useInternalNodes = TRUE)
+      out <- data.frame(name = xpathSApply(ttp, "//TaxaSet/Taxon/LineageEx/Taxon/ScientificName", xmlValue),
+                        rank = xpathSApply(ttp, "//TaxaSet/Taxon/LineageEx/Taxon/Rank", xmlValue),
+                        stringsAsFactors = FALSE)
+      out <- rbind(out, c(xpathSApply(ttp, "//TaxaSet/Taxon/ScientificName", xmlValue),
+                          xpathSApply(ttp, "//TaxaSet/Taxon/Rank", xmlValue),
+                          xpathSApply(ttp, "//TaxaSet/Taxon/TaxId", xmlValue)))
+      return(out)
+    }
+    # NCBI limits requests to three per second
+    Sys.sleep(0.33)
+    return(out)
+  }
+  out <- lapply(id, fun)
+  names(out) <- id
+  class(out) <- 'classification'
+  attr(out, 'db') <- 'ncbi'
+  return(out)
+}
