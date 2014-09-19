@@ -393,21 +393,27 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
 #' @param max_return (\code{numeric; length=1}) The maximum number of children to return.
 #' @param ancestor (\code{character}) The ancestor of the taxon being searched for. This is useful
 #'   if there could be more than one taxon with the same name. Has no effect if \code{id} is used.
-#' @return A list of character vectors of children uids. The names of the list elements are the
-#'   input \code{name} or \code{id} values.
+#' @param out_type (character) Currently either \code{"summary"} or \code{"uid"}:
+#'   \describe{
+#'     \item{summary}{The output is a list of \code{data.frame} with children uid, name, and rank.}
+#'     \item{uid}{A list of character vectors of children uids}
+#'   }
+#' @return The output type depends on the value of the \code{out_type} parameter. 
+#' @seealso \code{\link{ncbi_get_taxon_summary}}, \code{\link[taxize]{children}}
 #' @examples
-#' ncbi_children_uid(name="Satyrium") #Satyrium is the name of two different genera
-#' ncbi_children_uid(name="Satyrium", ancestor="Eumaeini") # A genus of butterflies
-#' ncbi_children_uid(name="Satyrium", ancestor="Orchidaceae") # A genus of orchids
-#' ncbi_children_uid(id="266948") #"266948" is the uid for the butterfly genus
-#' ncbi_children_uid(id="62858") #"62858" is the uid for the orchid genus
+#' ncbi_children(name="Satyrium") #Satyrium is the name of two different genera
+#' ncbi_children(name="Satyrium", ancestor="Eumaeini") # A genus of butterflies
+#' ncbi_children(name="Satyrium", ancestor="Orchidaceae") # A genus of orchids
+#' ncbi_children(id="266948") #"266948" is the uid for the butterfly genus
+#' ncbi_children(id="62858") #"62858" is the uid for the orchid genus
 #' @export
-ncbi_children_uid <- function(name = NULL, id = NULL, start = 0, max_return = 1000,
-                              ancestor = NULL) {
+ncbi_children <- function(name = NULL, id = NULL, start = 0, max_return = 1000,
+                              ancestor = NULL, out_type = c("summary", "uid")) {
   # Argument validation ----------------------------------------------------------------------------
   if (sum(c(is.null(name), is.null(id))) != 1) {
     stop("Either name or id must be speficied, but not both")
   }
+  out_type <- match.arg(out_type)
   # Get name from id -------------------------------------------------------------------------------
   if (is.null(name)) {
     if (class(id) != 'uid') attr(id, 'class') <- 'uid'
@@ -441,6 +447,10 @@ ncbi_children_uid <- function(name = NULL, id = NULL, start = 0, max_return = 10
   }
   #Combine the result of multiple searches ----------------------------------------------------------
   output <- Map(single_search, name, ancestor)
+  if (out_type == "summary") {
+    output <- lapply(output, ncbi_get_taxon_summary)
+    output <- Map(setNames, output, list(c("childtaxa_id", "childtaxa_name", "childtaxa_rank")))
+  }
   if (is.null(id)) names(output) <- name else names(output) <- id
   return(output)
 }
@@ -480,5 +490,7 @@ ncbi_get_taxon_summary <- function(id) {
                             XML::xmlValue),
     rank = XML::xpathSApply(results, "/eSummaryResult//DocSum/Item[@Name='Rank']", XML::xmlValue)
     )
+  output$rank[output$rank == ''] <- "no rank"
+  Sys.sleep(0.34) # NCBI limits requests to three per second
   return(output)
 }
