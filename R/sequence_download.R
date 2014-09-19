@@ -397,8 +397,8 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
 #'   input \code{name} or \code{id} values.
 #' @examples
 #' ncbi_children_uid(name="Satyrium") #Satyrium is the name of two different genera
-#' ncbi_children_uid(name="Satyrium", parent="Eumaeini") # A genus of butterflies
-#' ncbi_children_uid(name="Satyrium", parent="Orchidaceae") # A genus of orchids
+#' ncbi_children_uid(name="Satyrium", ancestor="Eumaeini") # A genus of butterflies
+#' ncbi_children_uid(name="Satyrium", ancestor="Orchidaceae") # A genus of orchids
 #' ncbi_children_uid(id="266948") #"266948" is the uid for the butterfly genus
 #' ncbi_children_uid(id="62858") #"62858" is the uid for the orchid genus
 #' @export
@@ -435,12 +435,35 @@ ncbi_children_uid <- function(name = NULL, id = NULL, start = 0, max_return = 10
     raw_results <- RCurl::getURL(query)
     # Parse results --------------------------------------------------------------------------------
     results <- XML::xmlTreeParse(raw_results, useInternalNodes = TRUE)
-    children_uid <- xpathSApply(results, "//eSearchResult/IdList/Id", xmlValue)
+    children_uid <- XML::xpathSApply(results, "//eSearchResult/IdList/Id", XML::xmlValue)
     Sys.sleep(0.34) # NCBI limits requests to three per second
     return(children_uid)
   }
   #Combine the result of multiple searches ----------------------------------------------------------
   output <- Map(single_search, name, ancestor)
   if (is.null(id)) names(output) <- name else names(output) <- id
+  return(output)
+}
+
+
+
+ncbi_get_taxon_summary <- function(id) {
+  # Argument validation ----------------------------------------------------------------------------
+  if (length(id) <= 1 && is.na(id)) return(NA)
+  if (is.null(id)) return(NULL)
+  id <- as.character(id)
+  # Make eutils esummary query ---------------------------------------------------------------------
+  base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy"
+  query <- paste0(base_url, "&id=", paste(id, collapse = "+"))
+  # Search ncbi taxonomy for uid -------------------------------------------------------------------
+  raw_results <- RCurl::getURL(query)
+  # Parse results ----------------------------------------------------------------------------------
+  results <- XML::xmlTreeParse(raw_results, useInternalNodes = TRUE)
+  output <- data.frame(stringsAsFactors = FALSE,
+    uid = XML::xpathSApply(results, "/eSummaryResult//DocSum/Id", XML::xmlValue),
+    name = XML::xpathSApply(results, "/eSummaryResult//DocSum/Item[@Name='ScientificName']",
+                            XML::xmlValue),
+    rank = XML::xpathSApply(results, "/eSummaryResult//DocSum/Item[@Name='Rank']", XML::xmlValue)
+    )
   return(output)
 }
