@@ -446,7 +446,22 @@ ncbi_children_uid <- function(name = NULL, id = NULL, start = 0, max_return = 10
 }
 
 
-
+#' NCBI taxon information from uids
+#' 
+#' Downloads summary taxon information from the NCBI taxonomy databases for a set of taxonomy uids
+#' using eutils esummary.
+#' 
+#' @param id (character) NCBI taxonomy uids to retrieve information for.
+#' @return A \code{data.frame} with the following rows:
+#'   \describe{
+#'     \item{uid}{The uid queried for}
+#'     \item{name}{The name of the taxon; a binomial name if the taxon is of rank species}
+#'     \item{rank}{The taxonomic rank (e.g. 'Genus')}
+#'   }
+#' @examples
+#' \dontrun{
+#' ncbi_get_taxon_summary(c(1430660, 4751))}
+#' @export
 ncbi_get_taxon_summary <- function(id) {
   # Argument validation ----------------------------------------------------------------------------
   if (length(id) <= 1 && is.na(id)) return(NA)

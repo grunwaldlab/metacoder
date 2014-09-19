@@ -4,7 +4,7 @@
 \title{Queries ACNUC for taxa}
 \usage{
 query_taxon(taxon, key = NULL, type = NULL, query_id = NULL,
-  execute = TRUE, parent = FALSE, ...)
+  execute = TRUE, parent = FALSE, all_taxa = FALSE, ...)
 }
 \arguments{
 \item{taxon}{A character vector of taxa to search for.}
@@ -23,6 +23,9 @@ NULL, a temporary variable is made and deleted upon completion of the function.}
 
 \item{parent}{If TRUE, results are replaced with their parent sequences (i.e. subsequences are
 replaced with full sequences). See ACNUC documentation for more info.}
+
+\item{all_taxa}{If TRUE, require all taxa to be present for a given seuquence. Typically, this
+would be used to specify additional taxonomic levels.}
 }
 \value{
 If \code{execute == TRUE} A instance of class \code{\link[seqinr]{qaw}}, as returned by
