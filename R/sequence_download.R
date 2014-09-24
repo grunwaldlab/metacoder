@@ -376,7 +376,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
 
 #' Search NCBI for children of a taxon
 #' 
-#' Search the NCBI Taxonomy databse for uids of children of taxa. Taxa can be referenced by name
+#' Search the NCBI Taxonomy database for uids of children of taxa. Taxa can be referenced by name
 #' or uid. Referencing by name is faster.
 #' 
 #' In a few cases, different taxa have the same name (e.g. Satyrium; see examples). If one of these
@@ -411,7 +411,7 @@ ncbi_children <- function(name = NULL, id = NULL, start = 0, max_return = 1000,
                               ancestor = NULL, out_type = c("summary", "uid")) {
   # Argument validation ----------------------------------------------------------------------------
   if (sum(c(is.null(name), is.null(id))) != 1) {
-    stop("Either name or id must be speficied, but not both")
+    stop("Either name or id must be specified, but not both")
   }
   out_type <- match.arg(out_type)
   # Get name from id -------------------------------------------------------------------------------
