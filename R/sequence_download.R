@@ -285,7 +285,8 @@ download_gb_taxon <- function(taxon, key, type,
 #' get_taxon_sample(name = "oomycetes", target_level = "Genus")
 get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
-                             verbose = TRUE, ...) {
+                             verbose = TRUE, max_length = 10000, min_length = 1,
+                             max_children = NULL, min_children = NULL, ...) {
   
   default_target_max <- 20
   default_target_min <- 5
@@ -312,6 +313,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   target_level <- factor(target_level,
                          levels = levels(taxonomy_levels),
                          ordered = TRUE)
+  length_range <- paste(min_length, max_length, sep = ":")
   
   # Generate taxonomic level sequences count limits ------------------------------------------------
   get_level_limit <- function(user_limits, default_value, default_level, interpolate) {
@@ -346,30 +348,38 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   }
   level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
   level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
+  level_max_children <- get_level_limit(max_children, default_target_max, target_level, interpolate_max)
+  level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min)
   
   # Recursivly sample taxon ------------------------------------------------------------------------
   recursive_sample <- function(id, level) {
-    if (level >= target_level) {
-      # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-      taxonomy <- classification(id = id)[[1]]
-      taxon_name <- taxonomy$name[nrow(taxonomy)]
-      result <- ncbi_search(taxon_name, limit = 1000)
-      # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      if (level %in% levels(taxonomy_levels)) {
-        if (nrow(results) > level_max_count[level]) {
-          result <- result[sample(seq_along(result), level_max_count[level])]
-        } else if (nrow(results) < level_min_count[level]) {
-          return(NULL)
-        }
+    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    children <- ncbi_children(id)[[1]]
+    # Filter by subtaxon count
+    if (level %in% levels(taxonomy_levels)) {
+      if (nrow(children) > level_max_children[level]) {
+        result <- result[sample(seq_along(result), level_max_children[level]), ]
+      } else if (nrow(results) < level_min_children[level]) {
+        return(NULL)
       }
-      return(results)
-    } else {
-      # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      children <- ncbi_children(id)[[1]]
-      results <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
-      results <- do.call(rbind, results)
-      return(results)
     }
+    
+    # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
+    if (level >= target_level || nrow(children) == 0) {
+      result <- ncbi_search(id = id, limit = 10000, seqrange = length_range)
+    } else {
+      result <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
+      result <- do.call(rbind, results)
+    }
+    # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (level %in% levels(taxonomy_levels)) {
+      if (nrow(results) > level_max_count[level]) {
+        result <- result[sample(seq_along(result), level_max_count[level]), ]
+      } else if (nrow(results) < level_min_count[level]) {
+        return(NULL)
+      }
+    }
+    
   }
   
 }
