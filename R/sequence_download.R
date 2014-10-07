@@ -406,6 +406,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
 #' ncbi_children(name="Satyrium", ancestor="Orchidaceae") # A genus of orchids
 #' ncbi_children(id="266948") #"266948" is the uid for the butterfly genus
 #' ncbi_children(id="62858") #"62858" is the uid for the orchid genus
+#' @author Zachary Foster \email{zacharyfoster1989@gmail.com}
 #' @export
 ncbi_children <- function(name = NULL, id = NULL, start = 0, max_return = 1000,
                               ancestor = NULL, out_type = c("summary", "uid")) {
