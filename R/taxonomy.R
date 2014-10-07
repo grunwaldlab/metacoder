@@ -6,6 +6,7 @@
 #' @export
 get_taxonomy_levels <- function() {
   unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
+  unique_levels <- tolower(unique_levels)
   output <- sort(factor(unique_levels, labels = unique_levels, ordered = TRUE))
   return(output)
 }
