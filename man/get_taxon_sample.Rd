@@ -24,6 +24,6 @@ levels.}
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 }
 \examples{
-get_taxon_sample(name = "oomycetes", target_level = "Genus")
+get_taxon_sample(name = "oomycetes", target_level = "genus")
 }
 

@@ -282,7 +282,7 @@ download_gb_taxon <- function(taxon, key, type,
 #'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
 #'   levels. 
 #' @examples
-#' get_taxon_sample(name = "oomycetes", target_level = "Genus")
+#' get_taxon_sample(name = "oomycetes", target_level = "genus")
 #' @export
 get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
@@ -360,7 +360,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
     cat("Searching for ", id, "\n")
     # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     children <- taxize::ncbi_children(id = id)[[1]]
-    # Filter by subtaxon count
+    # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (level %in% levels(taxonomy_levels)) {
       if (!is.na(level_max_children[level]) && nrow(children) > level_max_children[level]) {
         children <- children[sample(1:nrow(children), level_max_children[level]), ]
@@ -370,21 +370,22 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
     }
     # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
     if ((level %in% levels(taxonomy_levels) && level >= target_level) || nrow(children) == 0) {
-      cat("Getting sequences for ", id, "\n")
+      cat("Getting sequences for", id, "\n")
       result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
-                                    hypothetical = TRUE)
+                                    hypothetical = TRUE, ...)
     } else {
       result <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
       result <- do.call(rbind, result)
     }
     # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% levels(taxonomy_levels)) {
+    if (level %in% levels(taxonomy_levels) && !is.null(result)) {
       if (!is.na(level_max_count[level]) && nrow(result) > level_max_count[level]) {
         result <- result[sample(1:nrow(result), level_max_count[level]), ]
       } else if (!is.na(level_min_count[level]) && nrow(result) < level_min_count[level]) {
         return(NULL)
       }
     }
+    return(result)
   }
   
   recursive_sample(id, taxon_level)
