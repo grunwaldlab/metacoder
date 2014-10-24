@@ -274,7 +274,7 @@ download_gb_taxon <- function(taxon, key, type,
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 #' 
 #' @param taxon A character vector of length 1. The taxon to download a sample of sequences for.
-#' @param target_level A character vector of length 1. The level finest taxonomic level at which
+#' @param target_level A character vector of length 1. The finest taxonomic level at which
 #'   to sample. The finest level at which replication occurs. Must be a finer level than 
 #'   \code{taxon}.
 #' @param max_counts A named numeric vector. The maximum number of sequences to download for each
@@ -282,7 +282,9 @@ download_gb_taxon <- function(taxon, key, type,
 #'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
 #'   levels. 
 #' @examples
-#' get_taxon_sample(name = "oomycetes", target_level = "Genus")
+#' get_taxon_sample(name = "oomycetes", target_level = "genus")
+#' fungi <- get_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
+#' @export
 get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
                              verbose = TRUE, max_length = 10000, min_length = 1,
@@ -296,17 +298,21 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   if (sum(c(is.null(name), is.null(id))) != 1) {
     stop("Either name or id must be speficied, but not both")
   }
+  if (!(target_level %in% levels(taxonomy_levels))) {
+    stop("'target_level' is not a valid taxonomic level.")
+  }
   
   # Argument parsing -------------------------------------------------------------------------------
   if (!is.null(name)) {
-    result <- get_uid(name, verbose = verbose)
+    result <- taxize::get_uid(name, verbose = verbose)
     if (is.na(result)) stop(cat("Could not find taxon ", name))
     id <- result
   }  else {
     id <- as.character(id)
     attr(id, "class") <- "uid"
   }
-  taxon_classification <- classification(id, db = 'ncbi')[[1]]
+  taxon_classification <- taxize::classification(id, db = 'ncbi')[[1]]
+  name <- taxon_classification[nrow(taxon_classification), "name"]
   taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
                         levels = levels(taxonomy_levels),
                         ordered = TRUE)
@@ -348,159 +354,48 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   }
   level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
   level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
-  level_max_children <- get_level_limit(max_children, default_target_max, target_level, interpolate_max)
+  level_max_children <- get_level_limit(max_children, NA, target_level,
+                                        interpolate_max)
   level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min)
   
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_sample <- function(id, level) {
-    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    children <- ncbi_children(id)[[1]]
-    # Filter by subtaxon count
-    if (level %in% levels(taxonomy_levels)) {
-      if (nrow(children) > level_max_children[level]) {
-        result <- result[sample(seq_along(result), level_max_children[level]), ]
-      } else if (nrow(results) < level_min_children[level]) {
+  recursive_sample <- function(id, level, name) {
+    cat("Processing '", name, "' (uid: ", id, ", level: ", as.character(level), ")", "\n",
+        sep = "")
+    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (!(level %in% taxonomy_levels) || level < target_level) {
+      sub_taxa <- taxize::ncbi_children(id = id)[[1]]
+      print(sub_taxa)
+    }
+    # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (level %in% taxonomy_levels && level < target_level) {
+      if (!is.na(level_max_children[level]) && nrow(sub_taxa) > level_max_children[level]) {
+        sub_taxa <- sub_taxa[sample(1:nrow(sub_taxa), level_max_children[level]), ]
+      } else if (!is.na(level_min_children[level]) && nrow(sub_taxa) < level_min_children[level]) {
         return(NULL)
       }
     }
-    
     # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
-    if (level >= target_level || nrow(children) == 0) {
-      result <- ncbi_search(id = id, limit = 10000, seqrange = length_range)
+    if ((level %in% taxonomy_levels && level >= target_level) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
+      cat("Getting sequences for", name, "\n")
+      result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
+                                    hypothetical = TRUE, ...)
     } else {
-      result <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
-      result <- do.call(rbind, results)
+      child_ranks <- factor(sub_taxa$childtaxa_rank,
+                            levels = levels(taxonomy_levels), ordered = TRUE) 
+      result <- Map(recursive_sample, sub_taxa$childtaxa_id, child_ranks, sub_taxa$childtaxa_name)
+      result <- do.call(rbind, result)
     }
     # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% levels(taxonomy_levels)) {
-      if (nrow(results) > level_max_count[level]) {
-        result <- result[sample(seq_along(result), level_max_count[level]), ]
-      } else if (nrow(results) < level_min_count[level]) {
+    if (level %in% taxonomy_levels && !is.null(result)) {
+      if (!is.na(level_max_count[level]) && nrow(result) > level_max_count[level]) {
+        result <- result[sample(1:nrow(result), level_max_count[level]), ]
+      } else if (!is.na(level_min_count[level]) && nrow(result) < level_min_count[level]) {
         return(NULL)
       }
     }
-    
+    return(result)
   }
   
-}
-
-#' Search NCBI for children of a taxon
-#' 
-#' Search the NCBI Taxonomy database for uids of children of taxa. Taxa can be referenced by name
-#' or uid. Referencing by name is faster.
-#' 
-#' In a few cases, different taxa have the same name (e.g. Satyrium; see examples). If one of these
-#' are searched for then the children of both taxa will be returned. This can be avoided by
-#' using a uid instead of the name or specifying an ancestor. If an ancestor is provided, only 
-#' children of both the taxon and its ancestor are returned. This will only fail if there are two
-#' taxa with the same name and the same specified ancestor. 
-#' 
-#' @param name (\code{character}) The string to search for. Only exact matches found the name given
-#' will be returned. Not compatible with \code{id}.
-#' @param id (\code{character}) The uid to search for. Not compatible with \code{name}.
-#' @param start The first record to return. If omitted, the results are returned from the first
-#'   record (start=0). 
-#' @param max_return (\code{numeric; length=1}) The maximum number of children to return.
-#' @param ancestor (\code{character}) The ancestor of the taxon being searched for. This is useful
-#'   if there could be more than one taxon with the same name. Has no effect if \code{id} is used.
-#' @param out_type (character) Currently either \code{"summary"} or \code{"uid"}:
-#'   \describe{
-#'     \item{summary}{The output is a list of \code{data.frame} with children uid, name, and rank.}
-#'     \item{uid}{A list of character vectors of children uids}
-#'   }
-#' @return The output type depends on the value of the \code{out_type} parameter. 
-#' @seealso \code{\link{ncbi_get_taxon_summary}}, \code{\link[taxize]{children}}
-#' @examples
-#' ncbi_children(name="Satyrium") #Satyrium is the name of two different genera
-#' ncbi_children(name="Satyrium", ancestor="Eumaeini") # A genus of butterflies
-#' ncbi_children(name="Satyrium", ancestor="Orchidaceae") # A genus of orchids
-#' ncbi_children(id="266948") #"266948" is the uid for the butterfly genus
-#' ncbi_children(id="62858") #"62858" is the uid for the orchid genus
-#' @export
-ncbi_children <- function(name = NULL, id = NULL, start = 0, max_return = 1000,
-                              ancestor = NULL, out_type = c("summary", "uid")) {
-  # Argument validation ----------------------------------------------------------------------------
-  if (sum(c(is.null(name), is.null(id))) != 1) {
-    stop("Either name or id must be specified, but not both")
-  }
-  out_type <- match.arg(out_type)
-  # Get name from id -------------------------------------------------------------------------------
-  if (is.null(name)) {
-    if (class(id) != 'uid') attr(id, 'class') <- 'uid'
-    id_taxonomy <- classification(id, db = 'ncbi')
-    name <- vapply(id_taxonomy, function(x) x$name[nrow(x)], character(1))
-    ancestor <- vapply(id_taxonomy,
-                     function(x) ifelse(nrow(x) > 1, x$name[nrow(x) - 1], NA),
-                     character(1)) 
-  } else if (is.null(ancestor)) {
-    ancestor <- rep(NA, length(name))
-  }
-  single_search <- function(name, ancestor) {
-    # Make eutils esearch query --------------------------------------------------------------------
-    base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy"
-    if (is.na(ancestor)) {
-      ancestor_query <- NULL
-    } else {
-      ancestor_query <- paste0("+AND+", ancestor, "[subtree]")
-    }
-    taxon_query <- paste0("term=", name, "[Next+Level]", ancestor_query)
-    max_return_query <- paste0("RetMax=", max_return)
-    start_query <- paste0("RetStart=", start)
-    query <- paste(base_url, taxon_query, max_return_query, start_query, sep="&")
-    # Search ncbi for children ---------------------------------------------------------------------
-    raw_results <- RCurl::getURL(query)
-    # Parse results --------------------------------------------------------------------------------
-    results <- XML::xmlTreeParse(raw_results, useInternalNodes = TRUE)
-    children_uid <- XML::xpathSApply(results, "//eSearchResult/IdList/Id", XML::xmlValue)
-    Sys.sleep(0.34) # NCBI limits requests to three per second
-    return(children_uid)
-  }
-  #Combine the result of multiple searches ----------------------------------------------------------
-  output <- Map(single_search, name, ancestor)
-  if (out_type == "summary") {
-    output <- lapply(output, ncbi_get_taxon_summary)
-    output <- Map(setNames, output, list(c("childtaxa_id", "childtaxa_name", "childtaxa_rank")))
-  }
-  if (is.null(id)) names(output) <- name else names(output) <- id
-  return(output)
-}
-
-
-#' NCBI taxon information from uids
-#' 
-#' Downloads summary taxon information from the NCBI taxonomy databases for a set of taxonomy uids
-#' using eutils esummary.
-#' 
-#' @param id (character) NCBI taxonomy uids to retrieve information for.
-#' @return A \code{data.frame} with the following rows:
-#'   \describe{
-#'     \item{uid}{The uid queried for}
-#'     \item{name}{The name of the taxon; a binomial name if the taxon is of rank species}
-#'     \item{rank}{The taxonomic rank (e.g. 'Genus')}
-#'   }
-#' @examples
-#' \dontrun{
-#' ncbi_get_taxon_summary(c(1430660, 4751))}
-#' @export
-ncbi_get_taxon_summary <- function(id) {
-  # Argument validation ----------------------------------------------------------------------------
-  if (length(id) <= 1 && is.na(id)) return(NA)
-  if (is.null(id)) return(NULL)
-  id <- as.character(id)
-  # Make eutils esummary query ---------------------------------------------------------------------
-  base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy"
-  query <- paste0(base_url, "&id=", paste(id, collapse = "+"))
-  # Search ncbi taxonomy for uid -------------------------------------------------------------------
-  raw_results <- RCurl::getURL(query)
-  # Parse results ----------------------------------------------------------------------------------
-  results <- XML::xmlTreeParse(raw_results, useInternalNodes = TRUE)
-  output <- data.frame(stringsAsFactors = FALSE,
-    uid = XML::xpathSApply(results, "/eSummaryResult//DocSum/Id", XML::xmlValue),
-    name = XML::xpathSApply(results, "/eSummaryResult//DocSum/Item[@Name='ScientificName']",
-                            XML::xmlValue),
-    rank = XML::xpathSApply(results, "/eSummaryResult//DocSum/Item[@Name='Rank']", XML::xmlValue)
-    )
-  output$rank[output$rank == ''] <- "no rank"
-  Sys.sleep(0.34) # NCBI limits requests to three per second
-  return(output)
+  recursive_sample(id, taxon_level, name)
 }
