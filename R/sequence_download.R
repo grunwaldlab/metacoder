@@ -274,7 +274,7 @@ download_gb_taxon <- function(taxon, key, type,
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 #' 
 #' @param taxon A character vector of length 1. The taxon to download a sample of sequences for.
-#' @param target_level A character vector of length 1. The level finest taxonomic level at which
+#' @param target_level A character vector of length 1. The finest taxonomic level at which
 #'   to sample. The finest level at which replication occurs. Must be a finer level than 
 #'   \code{taxon}.
 #' @param max_counts A named numeric vector. The maximum number of sequences to download for each
@@ -283,6 +283,7 @@ download_gb_taxon <- function(taxon, key, type,
 #'   levels. 
 #' @examples
 #' get_taxon_sample(name = "oomycetes", target_level = "genus")
+#' fungi <- get_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
 #' @export
 get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
@@ -300,10 +301,10 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   if (!(target_level %in% levels(taxonomy_levels))) {
     stop("'target_level' is not a valid taxonomic level.")
   }
-    
+  
   # Argument parsing -------------------------------------------------------------------------------
   if (!is.null(name)) {
-    result <- get_uid(name, verbose = verbose)
+    result <- taxize::get_uid(name, verbose = verbose)
     if (is.na(result)) stop(cat("Could not find taxon ", name))
     id <- result
   }  else {
@@ -311,6 +312,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
     attr(id, "class") <- "uid"
   }
   taxon_classification <- taxize::classification(id, db = 'ncbi')[[1]]
+  name <- taxon_classification[nrow(taxon_classification), "name"]
   taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
                         levels = levels(taxonomy_levels),
                         ordered = TRUE)
@@ -352,33 +354,40 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   }
   level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
   level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
-  level_max_children <- get_level_limit(max_children, default_target_max, target_level, interpolate_max)
+  level_max_children <- get_level_limit(max_children, NA, target_level,
+                                        interpolate_max)
   level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min)
   
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_sample <- function(id, level) {
-    cat("Searching for ", id, "\n")
-    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    children <- taxize::ncbi_children(id = id)[[1]]
+  recursive_sample <- function(id, level, name) {
+    cat("Processing '", name, "' (uid: ", id, ", level: ", as.character(level), ")", "\n",
+        sep = "")
+    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (!(level %in% taxonomy_levels) || level < target_level) {
+      sub_taxa <- taxize::ncbi_children(id = id)[[1]]
+      print(sub_taxa)
+    }
     # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% levels(taxonomy_levels)) {
-      if (!is.na(level_max_children[level]) && nrow(children) > level_max_children[level]) {
-        children <- children[sample(1:nrow(children), level_max_children[level]), ]
-      } else if (!is.na(level_min_children[level]) && nrow(children) < level_min_children[level]) {
+    if (level %in% taxonomy_levels && level < target_level) {
+      if (!is.na(level_max_children[level]) && nrow(sub_taxa) > level_max_children[level]) {
+        sub_taxa <- sub_taxa[sample(1:nrow(sub_taxa), level_max_children[level]), ]
+      } else if (!is.na(level_min_children[level]) && nrow(sub_taxa) < level_min_children[level]) {
         return(NULL)
       }
     }
     # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
-    if ((level %in% levels(taxonomy_levels) && level >= target_level) || nrow(children) == 0) {
-      cat("Getting sequences for", id, "\n")
+    if ((level %in% taxonomy_levels && level >= target_level) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
+      cat("Getting sequences for", name, "\n")
       result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
                                     hypothetical = TRUE, ...)
     } else {
-      result <- Map(recursive_sample, children$childtaxa_id, children$childtaxa_rank)
+      child_ranks <- factor(sub_taxa$childtaxa_rank,
+                            levels = levels(taxonomy_levels), ordered = TRUE) 
+      result <- Map(recursive_sample, sub_taxa$childtaxa_id, child_ranks, sub_taxa$childtaxa_name)
       result <- do.call(rbind, result)
     }
     # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% levels(taxonomy_levels) && !is.null(result)) {
+    if (level %in% taxonomy_levels && !is.null(result)) {
       if (!is.na(level_max_count[level]) && nrow(result) > level_max_count[level]) {
         result <- result[sample(1:nrow(result), level_max_count[level]), ]
       } else if (!is.na(level_min_count[level]) && nrow(result) < level_min_count[level]) {
@@ -388,5 +397,5 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
     return(result)
   }
   
-  recursive_sample(id, taxon_level)
+  recursive_sample(id, taxon_level, name)
 }
