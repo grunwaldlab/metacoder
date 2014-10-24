@@ -9,7 +9,7 @@ get_taxon_sample(name = NULL, id = NULL, target_level, max_counts = NULL,
   max_children = NULL, min_children = NULL, ...)
 }
 \arguments{
-\item{target_level}{A character vector of length 1. The level finest taxonomic level at which
+\item{target_level}{A character vector of length 1. The finest taxonomic level at which
 to sample. The finest level at which replication occurs. Must be a finer level than
 \code{taxon}.}
 
@@ -24,6 +24,7 @@ levels.}
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 }
 \examples{
-get_taxon_sample(name = "oomycetes", target_level = "Genus")
+get_taxon_sample(name = "oomycetes", target_level = "genus")
+fungi <- get_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
 }
 
