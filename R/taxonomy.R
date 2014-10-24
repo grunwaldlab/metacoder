@@ -1,11 +1,12 @@
 #===================================================================================================
-#' Get taxonomy levels using taxize
+#' Get taxonomy levels
 #' 
-#' @return A character vector of taxonomy levels, such as "Subkingdom" and "Order", in order of the
-#'   hiearchy.
+#' @return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+#'   hierarchy.
 #' @export
 get_taxonomy_levels <- function() {
   unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
+  unique_levels <- tolower(unique_levels)
   output <- sort(factor(unique_levels, labels = unique_levels, ordered = TRUE))
   return(output)
 }
