@@ -5,7 +5,8 @@
 \usage{
 get_taxon_sample(name = NULL, id = NULL, target_level, max_counts = NULL,
   interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
-  verbose = TRUE, ...)
+  verbose = TRUE, max_length = 10000, min_length = 1,
+  max_children = NULL, min_children = NULL, ...)
 }
 \arguments{
 \item{target_level}{A character vector of length 1. The level finest taxonomic level at which

@@ -30,7 +30,7 @@ if there could be more than one taxon with the same name. Has no effect if \code
 The output type depends on the value of the \code{out_type} parameter.
 }
 \description{
-Search the NCBI Taxonomy databse for uids of children of taxa. Taxa can be referenced by name
+Search the NCBI Taxonomy database for uids of children of taxa. Taxa can be referenced by name
 or uid. Referencing by name is faster.
 }
 \details{
