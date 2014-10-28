@@ -86,3 +86,43 @@ taxon_info <- function(identifications, level_order, separator=';') {
              count=counts)
   
 }
+
+#===================================================================================================
+#' Extract taxonomy information from sequence headers
+#' 
+#' Extracts the taxonomy used by a set of sequences based on their header information. A data 
+#' structure representing the heirerarchical nature of the taxonomy as well as a vector
+#' identifing the taxon of each sequence is returned. Taxa are translated into unique codes if they
+#' are not already encoded this way.
+#' 
+#' @param input (\code{character}) A vector from which to extract taxonomy information. 
+#' @param parser (\code{character; length == 1}) A regular expression with custom replacement
+#'  patterns indicating the locations of relevant information. Supported patterns include:
+#'  \describe{
+#'    \item{\code{\%tax_id\%}}{A unique numeric id indicating representing a taxon.}
+#'    \item{\code{\%name\%}}{The name of a taxon. Not necessarily unique.}
+#'    \item{\code{\%lineage:<sep>\%}}{A list of taxa names that consitute the full taxonomic classification
+#'  from broad to specific. Individual names are not necessarily unique. Inidivudal names 
+#'  are separated by the \code{sep} term. See examples for usage.}
+#'    \item{\code{\%lineage_id:<sep>\%}}{A list of taxa unique ids that consitute the full taxonomic
+#'  classification from broad to specific. Inidivudal names  are separated by the \code{sep} term.
+#'  See examples for usage.}
+#'    \item{\code{\%seq_id\%}}{An unique sequence identifier. The taxonomy information will be
+#'  looked up if available. Requires an internet connection.}
+#'  }
+#' @return Returns a list of two elements:
+#'  \describe{
+#'    \item{\code{taxonomy}}{A list of numeric vectors of unique taxa ids reprsenting the lineage of each
+#'  taxon encountered. If taxon names are available, they will be assigned to the names of the list
+#'  terms and the vector terms. }
+#'    \item{\code{assignment}}{A numeric vector of unique ids corresponding to the taxon id of each
+#'  element in \code{input}. If taxon names are available, they will be assigned to the names
+#'  of the vector. }
+#'  }
+#' @param database (\code{character}): The name of the database that patterns given in 
+#'  \code{parser} will apply to. Currently, only \code{ncbi} is being supported.
+#' @export
+#===================================================================================================
+extract_taxonomy <- function(input, parser, database = 'ncbi') {
+  
+}
