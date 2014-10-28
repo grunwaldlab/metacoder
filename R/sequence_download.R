@@ -321,8 +321,9 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
                          ordered = TRUE)
   length_range <- paste(min_length, max_length, sep = ":")
   
-  # Generate taxonomic level sequences count limits ------------------------------------------------
-  get_level_limit <- function(user_limits, default_value, default_level, interpolate) {
+  # Generate taxonomic level filtering limits ------------------------------------------------------
+  get_level_limit <- function(user_limits, default_value, default_level, interpolate, 
+                              extend_max = FALSE, extend_min = FALSE) {
     # Provide defaults if NULL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (is.null(user_limits)) {
       user_limits <- c(default_value)
@@ -350,13 +351,30 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
       }
       zoo::rollapply(names(user_limits), width = 2, set_default_counts)    
     }
+    
+    # Extend boundry values to adjacent undefined values - - - - - - - - - - - - - - - - - - - - - -
+    defined <- which(!is.na(all_user_limits))
+    if (length(defined) > 0) {
+      if (extend_max) {
+        highest_defined <- max(defined)
+        all_user_limits[highest_defined:length(all_user_limits)] = all_user_limits[highest_defined]      
+      }
+      if (extend_min) {
+        lowest_defined <- min(defined)
+        all_user_limits[1:lowest_defined] = all_user_limits[lowest_defined]      
+      }      
+    }
     return(all_user_limits)
   }
-  level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max)
-  level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min)
+  
+  level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max,
+                                     extend_max = TRUE)
+  level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min,
+                                     extend_min = TRUE)
   level_max_children <- get_level_limit(max_children, NA, target_level,
-                                        interpolate_max)
-  level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min)
+                                        interpolate_max, extend_max = TRUE)
+  level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min,
+                                        extend_min = TRUE)
   
   # Recursivly sample taxon ------------------------------------------------------------------------
   recursive_sample <- function(id, level, name) {
