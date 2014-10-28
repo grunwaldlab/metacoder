@@ -1,0 +1,28 @@
+---
+title: "Creating a taxonomically balanced reference sequence set"
+author: "Zachary Foster"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating a balanced reference sequence set}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+There are three primary taxonomy-specific criteria that should be met when creating an ideal set of reference sequences for evaluating metabarcoding primers.
+I say "taxonomy-specific" because there are obviously other considerations that deal with sequence characteristics, such as quality and the presence of primer binding sites, but these will be dealt with separately.
+
+The three taxonomy-specific criteria are: 
+
+1. taxonomic coverage: All taxa of interest should be represented by enough sequences to capture their diversity.
+2. balance: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. 
+3. size: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analyses. 
+
+Online sequence databases typically do have these characteristics, even those designed for metabarcoding. 
+Sequences are not available for many taxa and the numbers of sequences vary dramatically for different taxa. 
+For these reasons, a simple random sample of sequences for a given taxon from an online database will often not constitute an ideal reference sequence set. 
+Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
+
+When evaluating potential primers for metabarcoding experiments it is important to have reference sequences representative of every taxon of interest.
+The number of sequences of each taxon at each taxonomic level should be approximately equal, or perhaps more accurately, proportional to the diversity within that taxon.
+If the sequence of a given locus correlates with characters used to determine taxonomy, as is the case for an ideal barcoding locus, the number of sub-taxa should be proportional to diversity of a given taxon. 
