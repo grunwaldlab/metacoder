@@ -99,30 +99,47 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' @param parser (\code{character; length == 1}) A regular expression with custom replacement
 #'  patterns indicating the locations of relevant information. Supported patterns include:
 #'  \describe{
-#'    \item{\code{\%tax_id\%}}{A unique numeric id indicating representing a taxon.}
-#'    \item{\code{\%name\%}}{The name of a taxon. Not necessarily unique.}
-#'    \item{\code{\%lineage:<sep>\%}}{A list of taxa names that consitute the full taxonomic classification
-#'  from broad to specific. Individual names are not necessarily unique. Inidivudal names 
-#'  are separated by the \code{sep} term. See examples for usage.}
-#'    \item{\code{\%lineage_id:<sep>\%}}{A list of taxa unique ids that consitute the full taxonomic
-#'  classification from broad to specific. Inidivudal names  are separated by the \code{sep} term.
-#'  See examples for usage.}
-#'    \item{\code{\%seq_id\%}}{An unique sequence identifier. The taxonomy information will be
+#'    \item{\code{\%\%tax_id\%\%}}{A unique numeric id for a taxon.}
+#'    \item{\code{\%\%name\%\%}}{The name of a taxon. Not necessarily unique.}
+#'    \item{\code{\%\%lineage<sep1><sep2>\%\%}}{A list of taxa names that consitute the full taxonomic classification
+#'  from broad to specific. Individual names are not necessarily unique. Individual names are separated
+#'  by the \code{<sep>} terms. \code{<sep1>}
+#'  is required, as it defines the characters the deliminate taxa in the lineage. \code{<sep2>} is optional, 
+#'  and further splits each taxon into its name and its level. For example: 
+#'  \href{http://unite.ut.ee/repository.php}{UNITE} uses a format for taxonomy like
+#'  "k__Fungi;p__Ascomycota;c__Dothideomycetes...". For this format use \code{\%\%lineage<;><__>\%\%}}
+#'    \item{\code{\%\%lineage_id<sep1><sep2>\%\%}}{A list of taxa unique ids that consitute the full taxonomic
+#'  classification from broad to specific. Same usage as \code{\%\%lineage<sep1><sep2>\%\%}}
+#'    \item{\code{\%\%seq_id\%\%}}{An unique sequence identifier. The taxonomy information will be
 #'  looked up if available. Requires an internet connection.}
 #'  }
 #' @return Returns a list of two elements:
 #'  \describe{
-#'    \item{\code{taxonomy}}{A list of numeric vectors of unique taxa ids reprsenting the lineage of each
-#'  taxon encountered. If taxon names are available, they will be assigned to the names of the list
-#'  terms and the vector terms. }
-#'    \item{\code{assignment}}{A numeric vector of unique ids corresponding to the taxon id of each
-#'  element in \code{input}. If taxon names are available, they will be assigned to the names
-#'  of the vector. }
+#'    \item{\code{taxonomy}}{An type of \href{http://en.wikipedia.org/wiki/Adjacency_list}{adjacency list}
+#'    represented as a data.frame with 3  columns. The first column is the taxon id and the second two
+#'    are ids of a taxon and its subtaxon respectivly. If a taxon has more than subtaxon, it will be
+#'    present multiple times in the 2nd "parent taxon" column. However, a taxon can only be 
+#'    present once in the 3rd "sub taxon" column; otherwise, it would imply the taxon has more than
+#'    one "parent". This data structure can be converted to more intuitive ones with ... TO BE CONTINUED.}
+#'    \item{\code{taxon_info}}{A data.frame with one row per taxon, containing available information
+#'    on each taxon. The number and nature of columns depend on the input data. Typically, a column
+#'    of taxon names is present. }
+#'    \item{\code{item_info}}{A data.frame corresponding to input items (typically sequences)
+#'    containing their taxon ids. In addition, the content of any
+#'    \href{http://en.wikipedia.org/wiki/Regular_expression}{regex} capturing groups (i.e. parts bound
+#'    by parenthesis) in the \code{parser} argument will be present as columns of type
+#'    \code{character}.}
 #'  }
 #' @param database (\code{character}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Currently, only \code{ncbi} is being supported.
 #' @export
 #===================================================================================================
 extract_taxonomy <- function(input, parser, database = 'ncbi') {
+  replacement_delim <- "%%"
+  # Parse parsing regex ----------------------------------------------------------------------------
+  replacments <- strsplit("%%lineage<;><__>%%|%%seq_id%%", replacement_delim)[[1]]
+  replacments <- replacments[seq(2, length(replacments), by = 2)]
+  # Get taxon id -----------------------------------------------------------------------------------
   
+  # Get taxon lineage ------------------------------------------------------------------------------
 }
