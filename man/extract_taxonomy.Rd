@@ -3,50 +3,70 @@
 \alias{extract_taxonomy}
 \title{Extract taxonomy information from sequence headers}
 \usage{
-extract_taxonomy(input, parser, database = "ncbi")
+extract_taxonomy(input, regex, key, lineage.tax.sep = ";",
+  lineage.rank.sep = "__", lineage.tax.rev = FALSE,
+  lineage.rank.rev = FALSE, database = "ncbi")
 }
 \arguments{
 \item{input}{(\code{character}) A vector from which to extract taxonomy information.}
 
-\item{parser}{(\code{character; length == 1}) A regular expression with custom replacement
-patterns indicating the locations of relevant information. Supported patterns include:
+\item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
+indicating the locations of relevant information. The identity of the information must
+be specified using the \code{key} argument.}
+
+\item{key}{(\code{character}) The identity of the caturing groups defined using \code{regex}.
+The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
+Any names added to the terms will be used as column names in the output.
+Each term must be one of those decribed below:
 \describe{
-  \item{\code{\%\%tax_id\%\%}}{A unique numeric id for a taxon.}
-  \item{\code{\%\%name\%\%}}{The name of a taxon. Not necessarily unique.}
-  \item{\code{\%\%lineage<sep1><sep2>\%\%}}{A list of taxa names that consitute the full taxonomic classification
-from broad to specific. Individual names are not necessarily unique. Individual names are separated
-by the \code{<sep>} terms. \code{<sep1>}
-is required, as it defines the characters the deliminate taxa in the lineage. \code{<sep2>} is optional,
-and further splits each taxon into its name and its level. For example:
-\href{http://unite.ut.ee/repository.php}{UNITE} uses a format for taxonomy like
-"k__Fungi;p__Ascomycota;c__Dothideomycetes...". For this format use \code{\%\%lineage<;><__>\%\%}}
-  \item{\code{\%\%lineage_id<sep1><sep2>\%\%}}{A list of taxa unique ids that consitute the full taxonomic
-classification from broad to specific. Same usage as \code{\%\%lineage<sep1><sep2>\%\%}}
-  \item{\code{\%\%seq_id\%\%}}{An unique sequence identifier. The taxonomy information will be
+  \item{\code{tax_name}}{The name of a taxon. Not necessarily unique.}
+  \item{\code{tax_id}}{A unique numeric id for a taxon.}
+  \item{\code{tax_rank}}{A taxonomic rank name (e.g. "genus").}
+  \item{\code{tax_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
+  \item{\code{lineage}}{A list of taxa names that consitute the full taxonomic classification
+from broad to specific (see \code{lineage.tax.rev}). Individual names are not necessarily unique.
+Individual taxa are separated by the \code{lineage.tax.sep} argument and the taxon-rank group is separated
+by the \code{lineage.rank.sep} argument.}
+  \item{\code{lineage_id}}{A list of taxa unique ids that consitute the full taxonomic
+classification from broad to specific. Same usage as \code{lineage}}.
+  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
+  \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
 looked up if available. Requires an internet connection.}
+  \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 }}
 
-\item{database}{(\code{character}): The name of the database that patterns given in
+\item{lineage.tax.sep}{(\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+argument. The characters used to separate individual taxa within a lineage.}
+
+\item{lineage.rank.sep}{(\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+argument when a lineage contiains both taxon and rank information. This is the characters used to separate
+th rank and the taxon name within an individual taxa in a lineage.}
+
+\item{lineage.tax.rev}{Used with the \code{lineage} term in the \code{key} argument.
+If TRUE, the rank order of taxa read in a lineage is reversed to be specific to broad.}
+
+\item{lineage.rank.rev}{Used with the \code{lineage} term in the \code{key} argument  when a lineage
+contiains both taxon and rank information. If TRUE, the rank information come after the taxon information.}
+
+\item{database}{(\code{character; length == 1}): The name of the database that patterns given in
 \code{parser} will apply to. Currently, only \code{ncbi} is being supported.}
 }
 \value{
 Returns a list of two elements:
  \describe{
-   \item{\code{taxonomy}}{An type of \href{http://en.wikipedia.org/wiki/Adjacency_list}{adjacency list}
-   represented as a data.frame with 3  columns. The first column is the taxon id and the second two
-   are ids of a taxon and its subtaxon respectivly. If a taxon has more than subtaxon, it will be
-   present multiple times in the 2nd "parent taxon" column. However, a taxon can only be
-   present once in the 3rd "sub taxon" column; otherwise, it would imply the taxon has more than
+   \item{\code{taxonomy}}{A data.frame with 2 columns representing A type of
+   \href{http://en.wikipedia.org/wiki/Adjacency_list}{adjacency list}.
+   The columns are the ids of a taxon and its subtaxon
+   respectivly. If a taxon has more than subtaxon, it will be
+   present multiple times in the first "parent taxon" column. However, a taxon can only be
+   present once in the second "sub taxon" column; otherwise, it would imply the taxon has more than
    one "parent". This data structure can be converted to more intuitive ones with ... TO BE CONTINUED.}
-   \item{\code{taxon_info}}{A data.frame with one row per taxon, containing available information
+   \item{\code{taxa}}{A data.frame with one row per taxon, containing available information
    on each taxon. The number and nature of columns depend on the input data. Typically, a column
-   of taxon names is present. }
-   \item{\code{item_info}}{A data.frame corresponding to input items (typically sequences)
-   containing their taxon ids. In addition, the content of any
-   \href{http://en.wikipedia.org/wiki/Regular_expression}{regex} capturing groups (i.e. parts bound
-   by parenthesis) in the \code{parser} argument will be present as columns of type
-   \code{character}.}
- }
+   of taxon names is present.}
+   \item{\code{items}}{A data.frame with one row per input item (typically sequences)
+   containing their taxon ids and other informtion, depending on input.}
+   }
 }
 \description{
 Extracts the taxonomy used by a set of sequences based on their header information. A data
