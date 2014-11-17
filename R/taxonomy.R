@@ -149,11 +149,57 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #===================================================================================================
 extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.rank.sep = "__", 
                              lineage.tax.rev = FALSE, lineage.rank.rev = FALSE, database = 'ncbi') {
-  replacement_delim <- "%%"
-  # Parse parsing regex ----------------------------------------------------------------------------
-  replacments <- strsplit("%%lineage<;><__>%%|%%seq_id%%", replacement_delim)[[1]]
-  replacments <- replacments[seq(2, length(replacments), by = 2)]
+  parse_lineage <- function(lineage) {
+    taxa <- strsplit(lineage, split = lineage.tax.sep)
+    if (lineage.tax.rev) taxa <- rev(taxa)
+    lineage <- lapply(taxa, strsplit, split = lineage.rank.sep, fixed = TRUE)
+    if (lineage.rank.rev) lineage <- lapply(lineage, function(x) lapply(x, rev))
+    lineage <- lapply(lineage, function(x) plyr::ldply(x))
+    if (length(unique(vapply(lineage, ncol, numeric(1)))) > 1) stop("Inconsistent lineage.")
+    if (ncol(lineage[[1]]) == 1) col_names <- "taxon" else if
+    (ncol(lineage[[1]]) == 2) col_names <- c("rank", "taxon") else 
+      stop("Error parsing lineage.")
+    lineage <- lapply(lineage, setNames, nm = col_names)
+    return(lineage)
+  }
+  get_most_specific <- function(lineage) {
+    lineage <- parse_lineage(lineage)
+    vapply(lineage, function(x) x[nrow(x), ncol(x)], character(1))
+  }
+  # Argument validation ----------------------------------------------------------------------------
+  valid_keys <- c("tax_name", "tax_id", "tax_rank", "tax_info", "lineage", "lineage_id",
+                  "item_name", "item_id", "item_info")
+  if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
+  # Parse input using regex ------------------------------------------------------------------------
+  item_data <- data.frame(stringr::str_match(input, regex))
+  names(item_data) <- c("input", key)
+  if (ncol(item_data) != length(key)) stop("The number of capture groups and keys do not match.")
+  
   # Get taxon id -----------------------------------------------------------------------------------
+  if (!("tax_id" %in% names(item_data))) {
+    if ("lineage_id" %in% names(item_data)) item_data$tax_id <- get_most_specific(item_data$lineage_id) else if
+    ("tax_name" %in% names(item_data)) item_data$tax_id <- get_uid(item_data$tax_name) else if
+    ("lineage" %in% names(item_data)) item_data$tax_id <- get_uid(get_most_specific(item_data$lineage)) else
+      warning("Could not get taxon ids.")
+  }
+  
+  # Get taxon id lineage ---------------------------------------------------------------------------
+  format_lineage  <- function() {}
+  if ("lineage_id" %in% key) format_lineage(parse_lineage(item_data$lineage_id)) else if
+  ("tax_id" %in% names(item_data)) #classificaation else if
+    ("lineage" %in% names(item_data)) #get_uid else 
+  warning("Could not get lineage taxon id information.")
   
   # Get taxon lineage ------------------------------------------------------------------------------
+  
+  # Get taxon name ---------------------------------------------------------------------------------
+  
+  # Get taxon rank ---------------------------------------------------------------------------------
+  
+  # Get item id ------------------------------------------------------------------------------------
+  
+  # Get item name ----------------------------------------------------------------------------------
+  
+  # Rename columns ---------------------------------------------------------------------------------
+  
 }
