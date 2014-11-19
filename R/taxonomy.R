@@ -181,38 +181,56 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
     names(output) <- c("taxon", "subtaxon")
     return(output)
   }
-  # Argument validation ----------------------------------------------------------------------------
+  valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn")
   valid_keys <- c("taxon_name", "taxon_id", "taxon_rank", "taxon_info", "lineage", "lineage_id",
                   "item_name", "item_id", "item_info")
+  database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
+                           tropicos = "tpsid", nbn = "nbnid")
+  get_functions <- c(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
+                     col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
+  # Argument validation ----------------------------------------------------------------------------
   if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
+  database <- match.arg(database, choices = valid_databases)
+  # Argument parseing ------------------------------------------------------------------------------
+  id_class <- database_id_classes[database]
+  get_id_func <- get_functions[database]
   # Parse input using regex ------------------------------------------------------------------------
   item_data <- data.frame(stringr::str_match(input, regex))
   names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key)) stop("The number of capture groups and keys do not match.")
-  
   # Get taxon id -----------------------------------------------------------------------------------
+  report_found <- function(get_id_result) {
+    not_found <- sum(attr(get_id_result, "match") ==  "not found")
+    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items.")    
+  }
+  arbitrary_taxon_ids <- FALSE
   if ("taxon_id" %in% names(item_data)) {
-    class(item_data$taxon_id) <- "uid"
+    class(item_data$taxon_id) <- id_class
   } else {
     if ("lineage_id" %in% names(item_data)) {
       item_data$taxon_id <- map_unique(item_data$lineage_id, get_most_specific)
+      class(item_data$taxon_id) <- id_class
     } else if ("taxon_name" %in% names(item_data)) {
-      item_data$taxon_id <- map_unique(item_data$taxon_name, taxize::get_uid)
+      item_data$taxon_id <- map_unique(item_data$taxon_name, get_id_func)
+      report_found(item_data$taxon_id)
     } else if ("lineage" %in% names(item_data)) {
-      item_data$taxon_id <- map_unique(get_most_specific(item_data$lineage), taxize::get_uid)
-    } else warning("Insufficient information supplied to infer taxon ids.")
-    not_found <- sum(attr(item_data$taxon_id, "match") ==  "not found")
-    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items.")
+      item_data$taxon_id <- map_unique(get_most_specific(item_data$lineage), get_id_func)
+      report_found(item_data$taxon_id)
+    } else {
+      warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
+      arbitrary_taxon_ids <-TRUE
+    }
   }
   taxon_data <- data.frame(taxon_id = unique(item_data$taxon_id))
+  if (!arbitrary_taxon_ids) class(taxon_data$taxon_id) <- id_class
   # Get taxon id lineage ---------------------------------------------------------------------------
   if ("lineage_id" %in% key)  {
     taxonomy <- parse_lineage(item_data$lineage_id)
     tax_adj_list <- taxonomy_to_adj_list(taxonomy)
-  } else if ("taxon_id" %in% names(item_data)) {
-    item_data$lineage_id <- format_lineage(parse_lineage(item_data$lineage_id))
+  } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
+    taxonomy <- classification(taxon_data$taxon_id, return_id = TRUE)
+    tax_adj_list <- taxonomy_to_adj_list(taxonomy)
   } else warning("Insufficient information supplied to infer lineage taxon ids.")
-  
   # Get taxon lineage ------------------------------------------------------------------------------
   
   # Get taxon name ---------------------------------------------------------------------------------
@@ -225,4 +243,5 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
   
   # Rename columns ---------------------------------------------------------------------------------
   
+  item_data$taxon_id <- 1:nrow(data)
 }
