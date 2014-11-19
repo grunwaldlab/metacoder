@@ -104,10 +104,10 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #'  Any names added to the terms will be used as column names in the output.
 #'  Each term must be one of those decribed below:
 #'  \describe{
-#'    \item{\code{tax_name}}{The name of a taxon. Not necessarily unique.}
-#'    \item{\code{tax_id}}{A unique numeric id for a taxon.}
-#'    \item{\code{tax_rank}}{A taxonomic rank name (e.g. "genus").}
-#'    \item{\code{tax_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
+#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique.}
+#'    \item{\code{taxon_id}}{A unique numeric id for a taxon.}
+#'    \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
+#'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'    \item{\code{lineage}}{A list of taxa names that consitute the full taxonomic classification
 #'  from broad to specific (see \code{lineage.tax.rev}). Individual names are not necessarily unique.
 #'  Individual taxa are separated by the \code{lineage.tax.sep} argument and the taxon-rank group is separated
@@ -166,8 +166,23 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
     lineage <- parse_lineage(lineage)
     vapply(lineage, function(x) x[nrow(x), ncol(x)], character(1))
   }
+  map_unique <- function(input, func) {
+    mapping <- vapply(input, function(x) which(x == unique(input)), numeric(1))
+    func(unique(input))[mapping]
+  }
+  taxonomy_to_adj_list  <- function(taxonomy) {
+    process_one <- function(taxon) {
+      t(mapply(function(x, y) taxon$taxon[c(x,y)],
+               1:(nrow(taxon) - 1),
+               2:nrow(taxon)))
+    }
+    output <- do.call(rbind, lapply(taxonomy, process_one))
+    output <- data.frame(unique(output))
+    names(output) <- c("taxon", "subtaxon")
+    return(output)
+  }
   # Argument validation ----------------------------------------------------------------------------
-  valid_keys <- c("tax_name", "tax_id", "tax_rank", "tax_info", "lineage", "lineage_id",
+  valid_keys <- c("taxon_name", "taxon_id", "taxon_rank", "taxon_info", "lineage", "lineage_id",
                   "item_name", "item_id", "item_info")
   if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
   # Parse input using regex ------------------------------------------------------------------------
@@ -176,19 +191,27 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
   if (ncol(item_data) != length(key)) stop("The number of capture groups and keys do not match.")
   
   # Get taxon id -----------------------------------------------------------------------------------
-  if (!("tax_id" %in% names(item_data))) {
-    if ("lineage_id" %in% names(item_data)) item_data$tax_id <- get_most_specific(item_data$lineage_id) else if
-    ("tax_name" %in% names(item_data)) item_data$tax_id <- get_uid(item_data$tax_name) else if
-    ("lineage" %in% names(item_data)) item_data$tax_id <- get_uid(get_most_specific(item_data$lineage)) else
-      warning("Could not get taxon ids.")
+  if ("taxon_id" %in% names(item_data)) {
+    class(item_data$taxon_id) <- "uid"
+  } else {
+    if ("lineage_id" %in% names(item_data)) {
+      item_data$taxon_id <- map_unique(item_data$lineage_id, get_most_specific)
+    } else if ("taxon_name" %in% names(item_data)) {
+      item_data$taxon_id <- map_unique(item_data$taxon_name, taxize::get_uid)
+    } else if ("lineage" %in% names(item_data)) {
+      item_data$taxon_id <- map_unique(get_most_specific(item_data$lineage), taxize::get_uid)
+    } else warning("Insufficient information supplied to infer taxon ids.")
+    not_found <- sum(attr(item_data$taxon_id, "match") ==  "not found")
+    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items.")
   }
-  
+  taxon_data <- data.frame(taxon_id = unique(item_data$taxon_id))
   # Get taxon id lineage ---------------------------------------------------------------------------
-  format_lineage  <- function() {}
-  if ("lineage_id" %in% key) format_lineage(parse_lineage(item_data$lineage_id)) else if
-  ("tax_id" %in% names(item_data)) #classificaation else if
-    ("lineage" %in% names(item_data)) #get_uid else 
-  warning("Could not get lineage taxon id information.")
+  if ("lineage_id" %in% key)  {
+    taxonomy <- parse_lineage(item_data$lineage_id)
+    tax_adj_list <- taxonomy_to_adj_list(taxonomy)
+  } else if ("taxon_id" %in% names(item_data)) {
+    item_data$lineage_id <- format_lineage(parse_lineage(item_data$lineage_id))
+  } else warning("Insufficient information supplied to infer lineage taxon ids.")
   
   # Get taxon lineage ------------------------------------------------------------------------------
   
