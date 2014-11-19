@@ -166,9 +166,12 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
     lineage <- parse_lineage(lineage)
     vapply(lineage, function(x) x[nrow(x), ncol(x)], character(1))
   }
+  unique_mapping <- function(input) {
+    unique_input <- unique(input)
+    vapply(input, function(x) which(x == unique_input), numeric(1))
+  }
   map_unique <- function(input, func) {
-    mapping <- vapply(input, function(x) which(x == unique(input)), numeric(1))
-    func(unique(input))[mapping]
+    func(unique(input))[unique_mapping(input)]
   }
   taxonomy_to_adj_list  <- function(taxonomy) {
     process_one <- function(taxon) {
@@ -188,6 +191,7 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
                            tropicos = "tpsid", nbn = "nbnid")
   get_functions <- c(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
                      col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
+  taxon_in_lineage = TRUE
   # Argument validation ----------------------------------------------------------------------------
   if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
   database <- match.arg(database, choices = valid_databases)
@@ -207,13 +211,13 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
   if ("taxon_id" %in% names(item_data)) {
     class(item_data$taxon_id) <- id_class
   } else {
-    if ("lineage_id" %in% names(item_data)) {
+    if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
       item_data$taxon_id <- map_unique(item_data$lineage_id, get_most_specific)
       class(item_data$taxon_id) <- id_class
     } else if ("taxon_name" %in% names(item_data)) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, get_id_func)
       report_found(item_data$taxon_id)
-    } else if ("lineage" %in% names(item_data)) {
+    } else if ("lineage" %in% names(item_data) && taxon_in_lineage) {
       item_data$taxon_id <- map_unique(get_most_specific(item_data$lineage), get_id_func)
       report_found(item_data$taxon_id)
     } else {
@@ -224,19 +228,39 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
   taxon_data <- data.frame(taxon_id = unique(item_data$taxon_id))
   if (!arbitrary_taxon_ids) class(taxon_data$taxon_id) <- id_class
   # Get taxon id lineage ---------------------------------------------------------------------------
-  if ("lineage_id" %in% key)  {
+  if ("lineage_id" %in% names(item_data))  {
     taxonomy <- parse_lineage(item_data$lineage_id)
     tax_adj_list <- taxonomy_to_adj_list(taxonomy)
-  } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
-    taxonomy <- classification(taxon_data$taxon_id, return_id = TRUE)
-    tax_adj_list <- taxonomy_to_adj_list(taxonomy)
-  } else warning("Insufficient information supplied to infer lineage taxon ids.")
-  # Get taxon lineage ------------------------------------------------------------------------------
+  } else if ("taxon_id" %in% names(item_data)) {
+    if (arbitrary_taxon_ids && "lineage" %in% names(item_data)) {
+#       taxonomy <- parse_lineage(item_data$lineage)
+    } else {
+      taxonomy <- classification(taxon_data$taxon_id, return_id = TRUE)
+      tax_adj_list <- taxonomy_to_adj_list(taxonomy)
+    }
+  } else {
+    warning("Insufficient information supplied to infer lineage taxon ids. Taxonomy structure cannot be determined.")
+    taxonomy <- NULL
+    tax_adj_list <- NULL
+  } 
   
   # Get taxon name ---------------------------------------------------------------------------------
-  
+  if (!("taxon_name" %in% names(item_data))) {
+    if ("lineage" %in% names(item_data) && taxon_in_lineage) {
+      name_taxonomy <- parse_lineage(item_data$lineage)
+      taxon_data$taxon_name <- vapply(name_taxonomy, function(x) x$taxon[nrow(x)], character(1))
+    } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids && !("lineage_id" %in% key)) {
+      taxon_data$taxon_name <- vapply(taxonomy, function(x) x$name[nrow(x)], character(1))
+    }
+    item_data$taxon_name <-  taxon_data$taxon_name[unique_mapping(item_data$taxon_id)]
+  }
   # Get taxon rank ---------------------------------------------------------------------------------
-  
+  if (!("taxon_rank" %in% names(item_data))) {
+    rank_in_taxonomy <- !is.null(taxonomy) && ("rank" %in% unlist(lapply(taxonomy, names)))
+    if (rank_in_taxonomy && taxon_in_lineage) {
+      taxon_data$taxon_rank <- vapply(taxonomy, function(x) x$rank[nrow(x)], character(1))
+    } else if ("lineage" %in% names(item_data) && taxon_in_lineage && rank_innam_taxonomy) {}
+  }
   # Get item id ------------------------------------------------------------------------------------
   
   # Get item name ----------------------------------------------------------------------------------
