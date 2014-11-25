@@ -88,6 +88,33 @@ taxon_info <- function(identifications, level_order, separator=';') {
 }
 
 #===================================================================================================
+#' Parse lineage strings
+#' 
+#' Parses lineage strings (i.e. taxonomic classification) into a list of \code{data.frame}
+#' Can extract taxonomic ranks if present.
+#' 
+#' @param lineage (\code{character}) Taxonomic classifications in the form of delimited strings.
+#' @param taxon_sep (\code{character; length = 1}) Character that deliminates individual taxa 
+#' and potentially their ranks
+#' @param rank_sep (\code{character; length = 1}) Character that deliminates a taxon and its rank.
+#' @param rev_taxon If \code{TRUE}, the rank order of taxa read in a lineage is reversed to be
+#' specific to broad.
+#' @param rev_rank If \code{TRUE}, the rank information come after the taxon information.
+parse_lineage <- function(lineage, taxon_sep, rank_sep), rev_taxon, rev_rank {
+  taxa <- strsplit(lineage, split = taxon_sep)
+  if (rev_taxon) taxa <- rev(taxa)
+  lineage <- lapply(taxa, strsplit, split = rank_sep, fixed = TRUE)
+  if (rev_rank) lineage <- lapply(lineage, function(x) lapply(x, rev))
+  lineage <- lapply(lineage, function(x) plyr::ldply(x))
+  if (length(unique(vapply(lineage, ncol, numeric(1)))) > 1) stop("Inconsistent lineage.")
+  if (ncol(lineage[[1]]) == 1) col_names <- "taxon" else if
+  (ncol(lineage[[1]]) == 2) col_names <- c("rank", "taxon") else 
+    stop("Error parsing lineage.")
+  lineage <- lapply(lineage, setNames, nm = col_names)
+  return(lineage)
+}
+
+#===================================================================================================
 #' Extract taxonomy information from sequence headers
 #' 
 #' Extracts the taxonomy used by a set of sequences based on their header information. A data 
@@ -109,9 +136,9 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #'    \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'    \item{\code{lineage}}{A list of taxa names that consitute the full taxonomic classification
-#'  from broad to specific (see \code{lineage.tax.rev}). Individual names are not necessarily unique.
-#'  Individual taxa are separated by the \code{lineage.tax.sep} argument and the taxon-rank group is separated
-#'  by the \code{lineage.rank.sep} argument.}
+#'  from broad to specific (see \code{lineage_tax_rev}). Individual names are not necessarily unique.
+#'  Individual taxa are separated by the \code{lineage_tax_sep} argument and the taxon-rank group is separated
+#'  by the \code{lineage_rank_sep} argument.}
 #'    \item{\code{lineage_id}}{A list of taxa unique ids that consitute the full taxonomic
 #'  classification from broad to specific. Same usage as \code{lineage}}.
 #'    \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
@@ -119,14 +146,14 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #'  looked up if available. Requires an internet connection.}
 #'    \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 #'  }
-#' @param lineage.tax.sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+#' @param lineage_tax_sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
 #' argument. The characters used to separate individual taxa within a lineage.
-#' @param lineage.rank.sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+#' @param lineage_rank_sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
 #' argument when a lineage contiains both taxon and rank information. This is the characters used to separate
 #' th rank and the taxon name within an individual taxa in a lineage.
-#' @param lineage.tax.rev Used with the \code{lineage} term in the \code{key} argument.
+#' @param lineage_tax_rev Used with the \code{lineage} term in the \code{key} argument.
 #' If TRUE, the rank order of taxa read in a lineage is reversed to be specific to broad.
-#' @param lineage.rank.rev Used with the \code{lineage} term in the \code{key} argument  when a lineage
+#' @param lineage_rank_rev Used with the \code{lineage} term in the \code{key} argument  when a lineage
 #' contiains both taxon and rank information. If TRUE, the rank information come after the taxon information.
 #' @param database (\code{character; length == 1}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Currently, only \code{ncbi} is being supported.
@@ -147,21 +174,8 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #'    }
 #' @export
 #===================================================================================================
-extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.rank.sep = "__", 
-                             lineage.tax.rev = FALSE, lineage.rank.rev = FALSE, database = 'ncbi') {
-  parse_lineage <- function(lineage) {
-    taxa <- strsplit(lineage, split = lineage.tax.sep)
-    if (lineage.tax.rev) taxa <- rev(taxa)
-    lineage <- lapply(taxa, strsplit, split = lineage.rank.sep, fixed = TRUE)
-    if (lineage.rank.rev) lineage <- lapply(lineage, function(x) lapply(x, rev))
-    lineage <- lapply(lineage, function(x) plyr::ldply(x))
-    if (length(unique(vapply(lineage, ncol, numeric(1)))) > 1) stop("Inconsistent lineage.")
-    if (ncol(lineage[[1]]) == 1) col_names <- "taxon" else if
-    (ncol(lineage[[1]]) == 2) col_names <- c("rank", "taxon") else 
-      stop("Error parsing lineage.")
-    lineage <- lapply(lineage, setNames, nm = col_names)
-    return(lineage)
-  }
+extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_rank_sep = "__", 
+                             lineage_tax_rev = FALSE, lineage_rank_rev = FALSE, database = 'ncbi') {
   get_most_specific <- function(lineage) {
     lineage <- parse_lineage(lineage)
     vapply(lineage, function(x) x[nrow(x), ncol(x)], character(1))
@@ -233,7 +247,7 @@ extract_taxonomy <- function(input, regex, key, lineage.tax.sep = ";", lineage.r
     tax_adj_list <- taxonomy_to_adj_list(taxonomy)
   } else if ("taxon_id" %in% names(item_data)) {
     if (arbitrary_taxon_ids && "lineage" %in% names(item_data)) {
-#       taxonomy <- parse_lineage(item_data$lineage)
+      #       taxonomy <- parse_lineage(item_data$lineage)
     } else {
       taxonomy <- classification(taxon_data$taxon_id, return_id = TRUE)
       tax_adj_list <- taxonomy_to_adj_list(taxonomy)
