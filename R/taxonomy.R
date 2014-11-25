@@ -88,9 +88,9 @@ taxon_info <- function(identifications, level_order, separator=';') {
 }
 
 #===================================================================================================
-#' Parse lineage strings
+#' Parse taxonomic classification strings
 #' 
-#' Parses lineage strings (i.e. taxonomic classification) into a list of \code{data.frame}
+#' Parses taxonomic classification strings into a list of \code{data.frame}
 #' Can extract taxonomic ranks if present.
 #' 
 #' @param lineage (\code{character}) Taxonomic classifications in the form of delimited strings.
@@ -114,6 +114,25 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank) {
     stop("Error parsing lineage.")
   lineage <- lapply(lineage, setNames, nm = col_names)
   return(lineage)
+}
+
+#===================================================================================================
+#' Indentify unique taxa in classifications
+#' 
+#' Indentifies unique taxa in a list of taxonomic classifications.
+#' 
+#' @param classifications (\code{list} of \code{data.frame})
+#' Each classification must be a \code{data.frame} with a column named "taxon".
+#' 
+#' @return (\code{list} of \code{data.frame}) Taxonomic classifications of every unique taxon in 
+#' the list of classifications given. 
+#' 
+#' @export
+unique_taxa <- function(classifications) {
+  split_classification <- function(a_classification) {
+    lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
+  }
+  unique(unlist(lapply(classifications, split_classification), recursive = FALSE))
 }
 
 #===================================================================================================
