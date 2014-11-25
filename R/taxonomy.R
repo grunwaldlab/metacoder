@@ -179,6 +179,30 @@ add_to_classification <- function(classifications, taxa, ranks = NULL) {
 }
 
 #===================================================================================================
+#' Generate unique ids for classifications
+#' 
+#' Generates unique ids for every taxon in a list of classifications.
+#' 
+#' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications. 
+#' 
+#' @export
+make_unique_ids <- function(classification) {
+  
+}
+
+#===================================================================================================
+#' Add ids for classifications
+#' 
+#' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications. 
+#' @param ids (\code{list} of named \code{data.frame}) A list defining what classification every 
+#' unique id is. If not provided, unique ids will be generated from \code{classifications}.
+#' 
+#' @export
+add_taxon_ids <- function(classification, ids = NULL) {
+  
+}
+
+#===================================================================================================
 #' Extract taxonomy information from sequence headers
 #' 
 #' Extracts the taxonomy used by a set of sequences based on their header information. A data 
