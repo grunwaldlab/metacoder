@@ -100,7 +100,9 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' @param rev_taxon If \code{TRUE}, the rank order of taxa read in a lineage is reversed to be
 #' specific to broad.
 #' @param rev_rank If \code{TRUE}, the rank information come after the taxon information.
-parse_lineage <- function(lineage, taxon_sep, rank_sep), rev_taxon, rev_rank {
+#' 
+#' @export
+parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank) {
   taxa <- strsplit(lineage, split = taxon_sep)
   if (rev_taxon) taxa <- rev(taxa)
   lineage <- lapply(taxa, strsplit, split = rank_sep, fixed = TRUE)
@@ -112,6 +114,28 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep), rev_taxon, rev_rank {
     stop("Error parsing lineage.")
   lineage <- lapply(lineage, setNames, nm = col_names)
   return(lineage)
+}
+
+#===================================================================================================
+#' Make an adjacency list from classifications
+#' 
+#' Makes an adjacency list from a list of taxonomic classifications meant to represent the tree 
+#' structure shared by the classifications given. 
+#' 
+#' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications used to build
+#' adjacency list. Each classification must be a \code{data.frame} with a column named "taxon".
+#' 
+#' @export
+taxonomy_to_adj_list  <- function(classifications) {
+  process_one <- function(taxon) {
+    t(mapply(function(x, y) taxon$taxon[c(x,y)],
+             1:(nrow(taxon) - 1),
+             2:nrow(taxon)))
+  }
+  output <- do.call(rbind, lapply(classifications, process_one))
+  output <- data.frame(unique(output))
+  names(output) <- c("taxon", "subtaxon")
+  return(output)
 }
 
 #===================================================================================================
@@ -187,21 +211,10 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   map_unique <- function(input, func) {
     func(unique(input))[unique_mapping(input)]
   }
-  taxonomy_to_adj_list  <- function(taxonomy) {
-    process_one <- function(taxon) {
-      t(mapply(function(x, y) taxon$taxon[c(x,y)],
-               1:(nrow(taxon) - 1),
-               2:nrow(taxon)))
-    }
-    output <- do.call(rbind, lapply(taxonomy, process_one))
-    output <- data.frame(unique(output))
-    names(output) <- c("taxon", "subtaxon")
-    return(output)
-  }
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn")
   valid_keys <- c("taxon_name", "taxon_id", "taxon_rank", "taxon_info", "lineage", "lineage_id",
                   "item_name", "item_id", "item_info")
-  database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
+  database_id_classes <- c(ncbi = "uid", itis = "tsnicebox igloo", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
   get_functions <- c(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
                      col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
