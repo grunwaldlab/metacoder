@@ -268,18 +268,6 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   item_data <- data.frame(stringr::str_match(input, regex))
   names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key)) stop("The number of capture groups and keys do not match.")
-  
-  
-  # Parse taxonomy information ---------------------------------------------------------------------
-  if ("lineage_id" %in% names(item_data) && taxon_in_lineage) { #all taxon ids in lineage
-    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
-                                         rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev)
-    taxa <- unique_taxa(item_classification)
-  }
-  
-  
-  
   # Get taxon id -----------------------------------------------------------------------------------
   report_found <- function(get_id_result) {
     not_found <- sum(attr(get_id_result, "match") ==  "not found")
@@ -309,8 +297,6 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
       arbitrary_taxon_ids <-TRUE
     }
   }
-#   taxon_data <- data.frame(taxon_id = unique(item_data$taxon_id))
-#   if (!arbitrary_taxon_ids) class(taxon_data$taxon_id) <- id_class
   # Get taxon id lineage ---------------------------------------------------------------------------
   if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
