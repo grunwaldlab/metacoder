@@ -269,13 +269,9 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 #'  \code{parser} will apply to. Currently, only \code{ncbi} is being supported.
 #' @return Returns a list of two elements:
 #'  \describe{
-#'    \item{\code{taxonomy}}{A data.frame with 2 columns representing A type of
-#'    \href{http://en.wikipedia.org/wiki/Adjacency_list}{adjacency list}.
-#'    The columns are the ids of a taxon and its subtaxon
-#'    respectivly. If a taxon has more than subtaxon, it will be
-#'    present multiple times in the first "parent taxon" column. However, a taxon can only be 
-#'    present once in the second "sub taxon" column; otherwise, it would imply the taxon has more than
-#'    one "parent". This data structure can be converted to more intuitive ones with ... TO BE CONTINUED.}
+#'    \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
+#'    unique taxon. The order of the elements corresponds to the rows in the "taxa" 
+#'    \code{data.frame} described below.}
 #'    \item{\code{taxa}}{A data.frame with one row per taxon, containing available information
 #'    on each taxon. The number and nature of columns depend on the input data. Typically, a column
 #'    of taxon names is present.}
@@ -315,7 +311,7 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   # Get taxon id -----------------------------------------------------------------------------------
   report_found <- function(get_id_result) {
     not_found <- sum(attr(get_id_result, "match") ==  "not found")
-    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items.")    
+    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items."))    
   }
   arbitrary_taxon_ids <- FALSE
   if ("taxon_id" %in% names(item_data)) {
@@ -338,7 +334,7 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
       report_found(item_data$taxon_id)
     } else {
       warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
-      arbitrary_taxon_ids <-TRUE
+      arbitrary_taxon_ids <- TRUE
     }
   }
   # Get taxon id lineage ---------------------------------------------------------------------------
@@ -358,41 +354,47 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
                                          rev_rank = lineage_rank_rev, taxon_col_name = "taxon")
-    item_classification <- add_unique_ids(item_classification)
+    item_classification <- add_taxon_ids(item_classification)
   } else if (arbitrary_taxon_ids && "lineage" %in% names(item_data) && !taxon_in_lineage && "taxon_name" %in% names(item_data)) {
     item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
                                          rev_rank = lineage_rank_rev, taxon_col_name = "taxon")
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_name", "taxon_rank")])
-    item_classification <- add_unique_ids(item_classification)
+    item_classification <- add_taxon_ids(item_classification)
   } else {
-    warning("Insufficient information supplied to infer lineage taxon ids. Taxonomy structure cannot be determined.")
+    stop("Insufficient information supplied to infer lineage taxon ids. Taxonomy structure cannot be determined.")
     item_classification <- NULL
   } 
-  
-  # Get taxon name ---------------------------------------------------------------------------------
-  if (!("taxon_name" %in% names(item_data))) {
-    if ("lineage" %in% names(item_data) && taxon_in_lineage) {
-      name_taxonomy <- parse_lineage(item_data$lineage)
-      taxon_data$taxon_name <- vapply(name_taxonomy, function(x) x$taxon[nrow(x)], character(1))
-    } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids && !("lineage_id" %in% key)) {
-      taxon_data$taxon_name <- vapply(taxonomy, function(x) x$name[nrow(x)], character(1))
+  # Add arbitrary taxon ids to item data if necessary ----------------------------------------------
+  if (arbitrary_taxon_ids) item_data$taxon_id <- extract_last(item_classification, "id")
+  # Get taxon id key -------------------------------------------------------------------------------
+  taxon_id_key <- unique_taxa(item_classification, id_column = "id")
+  taxon_data < do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
+  class(taxon_data$id) <- id_class
+  # Get taxon name and rank if necessary -----------------------------------------------------------
+  if (!arbitrary_taxon_ids) {
+    if (!("taxon" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
+      result <- taxize::classification(taxon_data$id)
     }
-    item_data$taxon_name <-  taxon_data$taxon_name[unique_mapping(item_data$taxon_id)]
+    if (!("taxon" %in% names(taxon_data))) {
+      taxon_data$name <- extract_last(result, column = "taxon")
+      taxon_id_key <- lapply(seq_along(taxon_id_key),
+                             function(i) cbind(taxon_id_key[[i]], result[[i]][ , "taxon", drop = FALSE]))
+    }    
+    if (!("rank" %in% names(taxon_data))) {
+      taxon_data$name <- extract_last(result, column = "rank")
+      taxon_id_key <- lapply(seq_along(taxon_id_key),
+                             function(i) cbind(taxon_id_key[[i]], result[[i]][ , "rank", drop = FALSE]))
+    }
   }
-  # Get taxon rank ---------------------------------------------------------------------------------
-  if (!("taxon_rank" %in% names(item_data))) {
-    rank_in_taxonomy <- !is.null(taxonomy) && ("rank" %in% unlist(lapply(taxonomy, names)))
-    if (rank_in_taxonomy && taxon_in_lineage) {
-      taxon_data$taxon_rank <- vapply(taxonomy, function(x) x$rank[nrow(x)], character(1))
-    } else if ("lineage" %in% names(item_data) && taxon_in_lineage && rank_innam_taxonomy) {}
+  # Add arbitrary item ids to item data if necessary -----------------------------------------------
+  if (!("item_id" %in% names(item_data))) {
+    item_data$item_id <- 1:nrow(item_data)
+    arbitrary_item_id <- TRUE
+  } else {
+    arbitrary_item_id <- FALSE
   }
-  # Get item id ------------------------------------------------------------------------------------
-  
-  # Get item name ----------------------------------------------------------------------------------
-  
-  # Rename columns ---------------------------------------------------------------------------------
-  
-  item_data$taxon_id <- 1:nrow(data)
+  # Return output ----------------------------------------------------------------------------------
+  return(list(taxonomy = taxon_id_key, taxa = taxon_data, items = item_data))
 }
