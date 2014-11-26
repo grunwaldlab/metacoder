@@ -100,17 +100,22 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' @param rev_taxon If \code{TRUE}, the rank order of taxa read in a lineage is reversed to be
 #' specific to broad.
 #' @param rev_rank If \code{TRUE}, the rank information come after the taxon information.
+#' @param taxon_col_name (\code{character}) The name of the taxon column in the \code{data.frame}s 
+#' representing each classification. 
+#' @param rank_col_name (\code{character}) The name of the rank column in the \code{data.frame}s 
+#' representing each classification. 
 #' 
 #' @export
-parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank) {
+parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank,
+                          taxon_col_name = "taxon", rank_col_name = "rank") {
   taxa <- strsplit(lineage, split = taxon_sep)
   if (rev_taxon) taxa <- rev(taxa)
   lineage <- lapply(taxa, strsplit, split = rank_sep, fixed = TRUE)
   if (rev_rank) lineage <- lapply(lineage, function(x) lapply(x, rev))
   lineage <- lapply(lineage, function(x) plyr::ldply(x))
   if (length(unique(vapply(lineage, ncol, numeric(1)))) > 1) stop("Inconsistent lineage.")
-  if (ncol(lineage[[1]]) == 1) col_names <- "taxon" else if
-  (ncol(lineage[[1]]) == 2) col_names <- c("rank", "taxon") else 
+  if (ncol(lineage[[1]]) == 1) col_names <- taxon_col_name else if
+  (ncol(lineage[[1]]) == 2) col_names <- c(rank_col_name, taxon_col_name) else 
     stop("Error parsing lineage.")
   lineage <- lapply(lineage, setNames, nm = col_names)
   return(lineage)
@@ -118,8 +123,8 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank) {
 
 
 #===================================================================================================
-extract_most_specific <- function(classifications) {
-  vapply(classifications, function(x) x[nrow(x), "taxon"], character(1))
+extract_last <- function(classifications, column) {
+  vapply(classifications, function(x) x[nrow(x), column], character(1))
 }
 
 #===================================================================================================
@@ -129,18 +134,24 @@ extract_most_specific <- function(classifications) {
 #' 
 #' @param classifications (\code{list} of \code{data.frame})
 #' Each classification must be a \code{data.frame} with a column named "taxon".
+#' @param id_column (\code{character}) The column name in each classification \code{data.frame}
+#' that will be used to name the elements of the returned list.
 #' 
 #' @return (\code{list} of \code{data.frame}) Taxonomic classifications of every unique taxon in 
 #' the list of classifications given. 
 #' 
 #' @export
-unique_taxa <- function(classifications) {
+unique_taxa <- function(classifications, id_column = NULL) {
   split_classification <- function(a_classification) {
     lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
   }
   output <- unlist(lapply(classifications, split_classification), recursive = FALSE)
   output <- unique(output)
-  if ("taxon" %in% names(output[[1]])) names(output) <- extract_most_specific(output)
+  if (is.null(id_column)) {
+    names(output) <- seq_along(output)
+  } else {
+    names(output) <- extract_last(output, column = id_column)
+  }
   return(output)
 }
 
@@ -168,38 +179,47 @@ taxonomy_to_adj_list  <- function(classifications) {
 
 
 #===================================================================================================
-add_to_classification <- function(classifications, taxa, ranks = NULL) {
-  process_one <- function(x, taxon, rank) {
-    x <- rbind(x, rep(NA, ncol(x)))
-    x[nrow(x), "taxon"] <- taxon
-    if (!is.null(rank)) x[nrow(x), "rank"] <- rank
-    return(x)
+#' Append each data.frame in list
+#' 
+#' Add a row to each \code{data.frame} in a list.
+#' 
+#' @param my_list  (\code{list} of \code{data.frame})
+#' @param data (named \code{list}) The column content to add. The name of each element 
+#' should match a column in the \code{data.frame}s in \code{my_list}. Each element should consist
+#' of as many values as their are \code{data.frame}s in \code{my_list}.
+append_to_each <- function(my_list, data) {
+  process_one <- function(element, index) {
+    element <- rbind(element, rep(NA, length(element)))
+    for (key in names(data)) {
+      element[nrow(element), key] <- data[[key]][index]
+    }
+    return(element)
   }
-  lapply(classifications, process_one)
+  lapply(seq_along(my_list), function(i) process_one(my_list[[i]], i))
 }
 
-#===================================================================================================
-#' Generate unique ids for classifications
-#' 
-#' Generates unique ids for every taxon in a list of classifications.
-#' 
-#' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications. 
-#' 
-#' @export
-make_unique_ids <- function(classification) {
-  
-}
 
 #===================================================================================================
 #' Add ids for classifications
 #' 
 #' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications. 
-#' @param ids (\code{list} of named \code{data.frame}) A list defining what classification every 
+#' @param id_key (\code{list} of named \code{data.frame}) A list defining what classification every 
 #' unique id is. If not provided, unique ids will be generated from \code{classifications}.
+#' @param id_col_name (\code{character}) The name of the column of unique ids that will be added
+#' to each classification.
+#' 
+#' @seealso unique_taxa
 #' 
 #' @export
-add_taxon_ids <- function(classification, ids = NULL) {
-  
+add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
+  if (is.null(id_key)) id_key <- unique_taxa(classifications)
+  add_ids_to_one <- function(a_classification) {
+    taxa_in_class <- lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
+    ids <- vapply(taxa_in_class, function(x) names(id_key)[id_key == x], numeric(1))
+    a_classification[id_col_name] <- ids
+  }
+  output <- lapply(classifications, add_ids_to_one)
+  return(output)
 }
 
 #===================================================================================================
@@ -304,8 +324,8 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
       item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
                                            rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                           rev_rank = lineage_rank_rev)
-      item_data$taxon_id <- extract_most_specific(item_classification)
+                                           rev_rank = lineage_rank_rev, taxon_col_name = "id")
+      item_data$taxon_id <- extract_last(item_classification, "id")
       class(item_data$taxon_id) <- id_class
     } else if ("taxon_name" %in% names(item_data)) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, get_id_func)
@@ -313,8 +333,8 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     } else if ("lineage" %in% names(item_data) && taxon_in_lineage) {
       item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
                                            rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                           rev_rank = lineage_rank_rev)
-      item_data$taxon_id <- map_unique(extract_most_specific(item_classification), get_id_func)
+                                           rev_rank = lineage_rank_rev, taxon_col_name = "taxon")
+      item_data$taxon_id <- map_unique(extract_last(item_classification, "taxon"), get_id_func)
       report_found(item_data$taxon_id)
     } else {
       warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
@@ -325,26 +345,26 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev)
+                                         rev_rank = lineage_rank_rev, taxon_col_name = "id")
   } else if ("lineage_id" %in% names(item_data) && !taxon_in_lineage && "taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
     item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev)
-    item_classification <- add_to_classification(item_classification, item_data$taxon_id,
-                                                 item_data$taxon_rank)
+                                         rev_rank = lineage_rank_rev, taxon_col_name = "id")
+    item_classification <- append_to_each(item_classification, 
+                                          item_data[ , c("taxon_id", "taxon_rank")])
   } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
     item_classification <- map_unique(item_data$taxon_id, classification)
   } else if (arbitrary_taxon_ids && "lineage" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev)
+                                         rev_rank = lineage_rank_rev, taxon_col_name = "taxon")
     item_classification <- add_unique_ids(item_classification)
   } else if (arbitrary_taxon_ids && "lineage" %in% names(item_data) && !taxon_in_lineage && "taxon_name" %in% names(item_data)) {
     item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
                                          rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev)
-    item_classification <- add_to_classification(item_classification, item_data$taxon_name,
-                                                 item_data$taxon_rank)
+                                         rev_rank = lineage_rank_rev, taxon_col_name = "taxon")
+    item_classification <- append_to_each(item_classification, 
+                                          item_data[ , c("taxon_name", "taxon_rank")])
     item_classification <- add_unique_ids(item_classification)
   } else {
     warning("Insufficient information supplied to infer lineage taxon ids. Taxonomy structure cannot be determined.")
