@@ -31,13 +31,32 @@ tax_info <- extract_taxonomy(names(sequences),
 
 ### UNITE FASTA headers
 
+The format of the UNITE fasta release has two peices of information from which taxonomy can be determined.
+The genbank sequence identifier can be used to look up the taxon id from Genbank.
+Alternativly, the classifications specified in the header can be used to make an arbitrarily coded taxonomy.
+
+#### Using the sequece identifier
+
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-tax_info <- extract_taxonomy(names(sequences),
+tax_info <- extract_taxonomy(names(sequences)[1:5],
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c("taxon_name", "item_id", sh = "taxon_info", "lineage"),
+                             key = c("taxon_name", "item_id", other_id = "item_info", "lineage"),
                              database = "ncbi")
 ```
+
+#### Using the included classifications
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
+tax_info <- extract_taxonomy(names(sequences)[1:5],
+                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                             key = c(name = "item_info", item_id = "item_info",
+                                     other_id = "item_info", "lineage"),
+                             database = "ncbi")
+```
+
+
 
 
 ### ITS1 DB FASTA headers

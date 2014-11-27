@@ -284,6 +284,7 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_rank_sep = "__", 
                              lineage_tax_rev = FALSE, lineage_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi') {
+  browser()
   unique_mapping <- function(input) {
     unique_input <- unique(input)
     vapply(input, function(x) which(x == unique_input), numeric(1))
@@ -300,7 +301,7 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
   id_from_name_funcs <- list(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
-                     col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
+                             col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
   taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid)
   taxon_in_lineage = TRUE
   # Argument validation ----------------------------------------------------------------------------
@@ -311,7 +312,7 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   id_from_name <- id_from_name_funcs[[database]]
   taxid_from_seqid <- taxid_from_seqid_funcs[[database]]
   # Parse input using regex ------------------------------------------------------------------------
-  item_data <- data.frame(stringr::str_match(input, regex))
+  item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
   names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key) + 1) stop("The number of capture groups and keys do not match.")
   # Get taxon id -----------------------------------------------------------------------------------
@@ -329,6 +330,9 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
                                            rev_rank = lineage_rank_rev, taxon_col_name = "id")
       item_data$taxon_id <- extract_last(item_classification, "id")
       class(item_data$taxon_id) <- id_class
+    } else if ("item_id" %in% names(item_data)) {
+      if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
+      item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
     } else if ("taxon_name" %in% names(item_data)) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
       report_found(item_data$taxon_id)
@@ -338,9 +342,6 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
                                            rev_rank = lineage_rank_rev, taxon_col_name = "name")
       item_data$taxon_id <- map_unique(extract_last(item_classification, "name"), id_from_name)
       report_found(item_data$taxon_id)
-    } else if ("item_id" %in% names(item_data)) {
-      if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
-      item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
     } else {
       warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
       arbitrary_taxon_ids <- TRUE
