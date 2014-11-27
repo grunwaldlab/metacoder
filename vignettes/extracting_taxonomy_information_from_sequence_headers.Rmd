@@ -50,3 +50,15 @@ tax_info <- extract_taxonomy(names(sequences),
                                      "taxon_id", description = "taxon_info"),
                              database = "ncbi")
 ```
+
+
+### PR2 FASTA headers
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/pr2_stramenopiles_gb203.fasta")
+tax_info <- extract_taxonomy(names(sequences),
+                             regex = "^(.*\\..*)\\..*\\|(.*)$",
+                             key = c("item_id", "lineage"),
+                             database = "ncbi", 
+                             lineage_tax_sep = "|")
+```
