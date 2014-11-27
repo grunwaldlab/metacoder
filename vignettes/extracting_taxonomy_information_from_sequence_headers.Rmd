@@ -22,8 +22,7 @@ library(metacoder)
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
-headers <- names(sequences)
-tax_info <- extract_taxonomy(headers,
+tax_info <- extract_taxonomy(names(sequences),
                              regex = "^.*\\|(.*)\\|.*\\|(.*)\\|.*$",
                              key = c("item_id", other_id = "item_info"),
                              database = "ncbi")
@@ -34,9 +33,8 @@ tax_info <- extract_taxonomy(headers,
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-headers <- names(sequences)
-tax_info <- extract_taxonomy(headers,
-                             regex = "^.*\\|(.*)\\|.*\\|(.*)\\|.*$",
-                             key = c("item_id", other_id = "item_info"),
+tax_info <- extract_taxonomy(names(sequences),
+                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                             key = c("taxon_name", "item_id", sh = "taxon_info", "lineage"),
                              database = "ncbi")
 ```
