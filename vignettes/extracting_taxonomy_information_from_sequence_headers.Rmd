@@ -62,3 +62,18 @@ tax_info <- extract_taxonomy(names(sequences),
                              database = "ncbi", 
                              lineage_tax_sep = "|")
 ```
+
+
+### RDP FASTA headers
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/rdp_release11_3_Archaea_unaligned.fa")
+tax_info <- extract_taxonomy(names(sequences),
+                             regex = "^(.*) (.*);(.*)\\tLineage=(.*)",
+                             key = c(id = "item_info", description = "item_info",
+                                     other_id = "item_info", "lineage"),
+                             database = "ncbi", 
+                             lineage_tax_sep = ";",
+                             lineage_rank_sep = ";", 
+                             lineage_rank_rev)
+```
