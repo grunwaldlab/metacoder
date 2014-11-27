@@ -29,12 +29,24 @@ tax_info <- extract_taxonomy(names(sequences),
 ```
 
 
-### UNITE FATA headers
+### UNITE FASTA headers
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 tax_info <- extract_taxonomy(names(sequences),
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                              key = c("taxon_name", "item_id", sh = "taxon_info", "lineage"),
+                             database = "ncbi")
+```
+
+
+### ITS1 DB FASTA headers
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
+tax_info <- extract_taxonomy(names(sequences),
+                             regex = "^(.*)_.*\\|(.*)\\|(.*)\\|(.*)$",
+                             key = c("item_id", name = "taxon_info",
+                                     "taxon_id", description = "taxon_info"),
                              database = "ncbi")
 ```
