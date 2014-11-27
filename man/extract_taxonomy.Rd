@@ -14,7 +14,7 @@ extract_taxonomy(input, regex, key, lineage_tax_sep = ";",
 indicating the locations of relevant information. The identity of the information must
 be specified using the \code{key} argument.}
 
-\item{key}{(\code{character}) The identity of the caturing groups defined using \code{regex}.
+\item{key}{(\code{character}) The identity of the capturing groups defined using \code{regex}.
 The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
 Any names added to the terms will be used as column names in the output.
 Each term must be one of those decribed below:
@@ -52,18 +52,15 @@ contiains both taxon and rank information. If TRUE, the rank information come af
 classification.}
 
 \item{database}{(\code{character; length == 1}): The name of the database that patterns given in
-\code{parser} will apply to. Currently, only \code{ncbi} is being supported.}
+\code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
+and "nbn".}
 }
 \value{
 Returns a list of two elements:
  \describe{
-   \item{\code{taxonomy}}{A data.frame with 2 columns representing A type of
-   \href{http://en.wikipedia.org/wiki/Adjacency_list}{adjacency list}.
-   The columns are the ids of a taxon and its subtaxon
-   respectivly. If a taxon has more than subtaxon, it will be
-   present multiple times in the first "parent taxon" column. However, a taxon can only be
-   present once in the second "sub taxon" column; otherwise, it would imply the taxon has more than
-   one "parent". This data structure can be converted to more intuitive ones with ... TO BE CONTINUED.}
+   \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
+   unique taxon. The order of the elements corresponds to the rows in the "taxa"
+   \code{data.frame} described below.}
    \item{\code{taxa}}{A data.frame with one row per taxon, containing available information
    on each taxon. The number and nature of columns depend on the input data. Typically, a column
    of taxon names is present.}
