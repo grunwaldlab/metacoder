@@ -1,5 +1,5 @@
 ---
-title: "Extracting taxonomy information from sequence headers"
+title: "Extracting taxonomy information from sequence metadata"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,18 +10,19 @@ vignette: >
 ---
 
 
+```{r}
+library(ape)
+library(metacoder)
+```
+
 
 
 
 ### Genbank FASTA headers
 
 ```{r}
-library(ape)
-library(metacoder)
-seq_path <- "/home/fosterz/Downloads/sequence.fasta"
-sequences <- ape::read.FASTA(seq_path)
+sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
 headers <- names(sequences)[1:10]
-
 tax_info <- extract_taxonomy(headers,
                              regex = "^.*\\|(.*)\\|.*\\|(.*)\\|.*$",
                              key = c("item_id", other_id = "item_info"),
