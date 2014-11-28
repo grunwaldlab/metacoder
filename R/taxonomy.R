@@ -320,6 +320,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
   names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key) + 1) stop("The number of capture groups and keys do not match.")
+  # Save location of '_info' columns, since they all have the same name ----------------------------
+  class_info_cols <- 1 + which(key == "class_info")
   # Get taxon id -----------------------------------------------------------------------------------
   report_found <- function(get_id_result) {
     not_found <- sum(attr(get_id_result, "match") ==  "not found")
@@ -404,6 +406,17 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
                              function(i) cbind(taxon_id_key[[i]], result[[i]][ , "rank", drop = FALSE]))
     }
   }
+  # Add taxon info ---------------------------------------------------------------------------------
+  map_item_to_taxon <- function(col_index) {
+    data <- lapply(taxon_data$taxon_id,
+                   function(x) unique(item_data[x == item_data$taxon_id, col_index]))
+    if (max(vapply(data, length, numeric(1))) > 1)
+      stop(paste0("taxon_info field ", col_index - 1," content does not correspond to taxa ids.", 
+                  " Perhaps an item_info field would be more appropriate."))
+    return(unlist(data))
+  }
+  taxon_info_cols <- 1 + which(key == "taxon_info")
+  taxon_data <- cbind(taxon_data, data.frame(lapply(taxon_info_cols, map_item_to_taxon)))
   # Add arbitrary item ids to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) {
     item_data$item_id <- 1:nrow(item_data)
