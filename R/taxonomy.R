@@ -239,19 +239,22 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 #'  Any names added to the terms will be used as column names in the output.
 #'  Each term must be one of those decribed below:
 #'  \describe{
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique.}
-#'    \item{\code{taxon_id}}{A unique numeric id for a taxon.}
-#'    \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
+#'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database}}
+#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
+#'    to a particular \code{database}.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-#'    \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic classification
-#'  from broad to specific (see \code{class_tax_rev}). Individual names are not necessarily unique,
-#'  but are specific (i.e. interperable) to a particular database.
-#'  Individual taxa are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated
-#'  by the \code{class_rank_sep} argument.}
-#'    \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic
-#'  classification from broad to specific. Same usage as \code{class_name}}.
-#'    \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
+#'    \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
+#'    \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic classification
+#'  from broad to specific (see \code{class_tax_rev}) for a particular \code{database}. Individual taxa
+#'  are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
+#'  \code{class_rank_sep} argument.}
+#'    \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic
+#'  classification from broad to specific. Same usage as \code{class_id}}.
+#'  Individual names are not necessarily unique, but are specific (i.e. interperable)
+#'  to a particular \code{database}.
+#'    \item{\code{class_info}}{}
 #'    \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
+#'    \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
 #'  looked up if available. Requires an internet connection.}
 #'    \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 #'  }
