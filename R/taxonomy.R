@@ -361,7 +361,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_id", "taxon_rank")])
   } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
-    item_classification <- map_unique(item_data$taxon_id, taxize::classification, db = database, return_id = TRUE)
+    item_classification <- map_unique(item_data$taxon_id, taxize::classification,
+                                      db = database, return_id = TRUE)
   } else if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
