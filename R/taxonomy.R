@@ -243,25 +243,26 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon.}
 #'    \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-#'    \item{\code{lineage}}{A list of taxa names that consitute the full taxonomic classification
-#'  from broad to specific (see \code{lineage_tax_rev}). Individual names are not necessarily unique.
-#'  Individual taxa are separated by the \code{lineage_tax_sep} argument and the taxon-rank group is separated
-#'  by the \code{lineage_rank_sep} argument.}
-#'    \item{\code{lineage_id}}{A list of taxa unique ids that consitute the full taxonomic
-#'  classification from broad to specific. Same usage as \code{lineage}}.
+#'    \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic classification
+#'  from broad to specific (see \code{class_tax_rev}). Individual names are not necessarily unique,
+#'  but are specific (i.e. interperable) to a particular database.
+#'  Individual taxa are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated
+#'  by the \code{class_rank_sep} argument.}
+#'    \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic
+#'  classification from broad to specific. Same usage as \code{class_name}}.
 #'    \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
 #'    \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
 #'  looked up if available. Requires an internet connection.}
 #'    \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 #'  }
-#' @param lineage_tax_sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+#' @param class_tax_sep (\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
 #' argument. The characters used to separate individual taxa within a lineage.
-#' @param lineage_rank_sep (\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+#' @param class_rank_sep (\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
 #' argument when a lineage contiains both taxon and rank information. This is the characters used to separate
 #' th rank and the taxon name within an individual taxa in a lineage.
-#' @param lineage_tax_rev Used with the \code{lineage} term in the \code{key} argument.
+#' @param class_tax_rev Used with the \code{class_name} term in the \code{key} argument.
 #' If TRUE, the rank order of taxa read in a lineage is reversed to be specific to broad.
-#' @param lineage_rank_rev Used with the \code{lineage} term in the \code{key} argument  when a lineage
+#' @param class_rank_rev Used with the \code{class_name} term in the \code{key} argument  when a lineage
 #' contiains both taxon and rank information. If TRUE, the rank information come after the taxon information.
 #' @param taxon_in_lineage If \code{TRUE}, the lineage string included the taxon itself as its most specific
 #' classification.
@@ -281,8 +282,8 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 #'    }
 #' @export
 #===================================================================================================
-extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_rank_sep = "__", 
-                             lineage_tax_rev = FALSE, lineage_rank_rev = FALSE,
+extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
+                             class_tax_rev = FALSE, class_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi') {
   browser()
   unique_mapping <- function(input) {
@@ -296,8 +297,9 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     func(unique_input, ...)[unique_mapping(input)]
   }
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn")
-  valid_keys <- c("taxon_name", "taxon_id", "taxon_rank", "taxon_info", "lineage", "lineage_id",
-                  "item_name", "item_id", "item_info")
+  valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "taxon_rank",
+                  "class_id", "class_name", "class_info",
+                  "item_id", "item_name", "item_info")
   database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
   id_from_name_funcs <- list(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
@@ -324,10 +326,10 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
   if ("taxon_id" %in% names(item_data)) {
     class(item_data$taxon_id) <- id_class
   } else {
-    if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
-      item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
-                                           rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                           rev_rank = lineage_rank_rev, taxon_col_name = "id")
+    if ("class_id" %in% names(item_data) && taxon_in_lineage) {
+      item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+                                           rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                           rev_rank = class_rank_rev, taxon_col_name = "id")
       item_data$taxon_id <- extract_last(item_classification, "id")
       class(item_data$taxon_id) <- id_class
     } else if ("item_id" %in% names(item_data)) {
@@ -336,10 +338,10 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     } else if ("taxon_name" %in% names(item_data)) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
       report_found(item_data$taxon_id)
-    } else if ("lineage" %in% names(item_data) && taxon_in_lineage) {
-      item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
-                                           rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                           rev_rank = lineage_rank_rev, taxon_col_name = "name")
+    } else if ("class_name" %in% names(item_data) && taxon_in_lineage) {
+      item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+                                           rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                           rev_rank = class_rank_rev, taxon_col_name = "name")
       item_data$taxon_id <- map_unique(extract_last(item_classification, "name"), id_from_name)
       report_found(item_data$taxon_id)
     } else {
@@ -348,27 +350,27 @@ extract_taxonomy <- function(input, regex, key, lineage_tax_sep = ";", lineage_r
     }
   }
   # Get taxon id lineage ---------------------------------------------------------------------------
-  if ("lineage_id" %in% names(item_data) && taxon_in_lineage) {
-    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
-                                         rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev, taxon_col_name = "id")
-  } else if ("lineage_id" %in% names(item_data) && !taxon_in_lineage && "taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
-    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = lineage_tax_sep,
-                                         rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev, taxon_col_name = "id")
+  if ("class_id" %in% names(item_data) && taxon_in_lineage) {
+    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+                                         rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                         rev_rank = class_rank_rev, taxon_col_name = "id")
+  } else if ("class_id" %in% names(item_data) && !taxon_in_lineage && "taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
+    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+                                         rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                         rev_rank = class_rank_rev, taxon_col_name = "id")
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_id", "taxon_rank")])
   } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
     item_classification <- map_unique(item_data$taxon_id, taxize::classification, db = database, return_id = TRUE)
-  } else if (arbitrary_taxon_ids && "lineage" %in% names(item_data) && taxon_in_lineage) {
-    item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
-                                         rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev, taxon_col_name = "name")
+  } else if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && taxon_in_lineage) {
+    item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+                                         rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                         rev_rank = class_rank_rev, taxon_col_name = "name")
     item_classification <- add_taxon_ids(item_classification)
-  } else if (arbitrary_taxon_ids && "lineage" %in% names(item_data) && !taxon_in_lineage && "taxon_name" %in% names(item_data)) {
-    item_classification <- parse_lineage(item_data$lineage, taxon_sep = lineage_tax_sep,
-                                         rank_sep = lineage_rank_sep, rev_taxon = lineage_tax_rev,
-                                         rev_rank = lineage_rank_rev, taxon_col_name = "name")
+  } else if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && !taxon_in_lineage && "taxon_name" %in% names(item_data)) {
+    item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+                                         rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+                                         rev_rank = class_rank_rev, taxon_col_name = "name")
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_name", "taxon_rank")])
     item_classification <- add_taxon_ids(item_classification)
