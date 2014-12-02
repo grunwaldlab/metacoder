@@ -223,6 +223,24 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 }
 
 #===================================================================================================
+#' Generate new unique ids
+#' 
+#' Makes a vector of unique ids that differ from a previously defined set of unique ids. 
+#' @param count (\code{numeric} of length 1) The number of new unique ids to generate
+#' @param existing (\code{character}) Existing unique ids. These will not appear in the output.
+make_new_ids <- function(count, existing) {
+  output <- rep(NA, count)
+  current = 1
+  while (any(is.na(output))) {
+    if (!(as.character(current) %in% existing)) {
+      output[which(is.na(output))[1]] <- as.character(current)
+    }
+    current += 1
+  }
+  return(output)
+}
+
+#===================================================================================================
 #' Extract taxonomy information from sequence headers
 #' 
 #' Extracts the taxonomy used by a set of sequences based on their header information. A data 
@@ -342,12 +360,12 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     } else if ("taxon_name" %in% names(item_data) && use_internet) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
       report_found(item_data$taxon_id)
-    } else if ("class_name" %in% names(item_data) && taxon_in_lineage && use_internet) {
-      item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
-                                           rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
-                                           rev_rank = class_rank_rev, taxon_col_name = "name")
-      item_data$taxon_id <- map_unique(extract_last(item_classification, "name"), id_from_name)
-      report_found(item_data$taxon_id)
+#     } else if ("class_name" %in% names(item_data) && taxon_in_lineage && use_internet) {
+#       item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+#                                            rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
+#                                            rev_rank = class_rank_rev, taxon_col_name = "name")
+#       item_data$taxon_id <- map_unique(extract_last(item_classification, "name"), id_from_name)
+#       report_found(item_data$taxon_id)
     } else {
       warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
       arbitrary_taxon_ids <- TRUE
@@ -389,6 +407,15 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxon_id_key <- unique_taxa(item_classification, id_column = "id")
   taxon_data <- do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
   class(taxon_data$id) <- id_class
+  # Get taxon id of classifications if necessary ---------------------------------------------------
+  if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && use_internet) {
+    taxon_ids <- id_from_name(taxon_data$name)
+    ids_found <- !is.na(taxon_ids)
+    taxon_data$id[ids_found] <- taxon_ids[ids_found]
+    taxon_data$id[!ids_found] <- make_new_ids(sum(!ids_found), existing = taxon_data$id[ids_found])
+    taxon_data$id_type <- "arbitrary"
+    taxon_data$id_type[ids_found] <- database
+  }
   # Get taxon name and rank if necessary -----------------------------------------------------------
   if (!arbitrary_taxon_ids && use_internet) {
     if (!("name" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
