@@ -50,10 +50,8 @@ tax_info <- extract_taxonomy(names(sequences)[1:5],
                              database = "ncbi")
 ```
 
-#### Using the included classifications
+#### Using the included classifications to look up taxon id
 
-It is also possible to build a custom taxonomy encoding using the taxonomy string (e.g. `k__Fungi;p__Ascomycota;c__Leotiomycetes`) in the sequence headers.
-Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data. 
 This means that 
 
@@ -61,12 +59,26 @@ This means that
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 tax_info <- extract_taxonomy(names(sequences)[1:5],
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "item_info", item_id = "item_info",
+                             key = c(name = "item_info", seq_id = "item_info",
                                      other_id = "item_info", "class_name"),
                              database = "ncbi")
 ```
 
+#### Using the included classifications to generate arbitrary ids
 
+It is also possible to build a custom taxonomy encoding using the taxonomy string (e.g. `k__Fungi;p__Ascomycota;c__Leotiomycetes`) in the sequence headers without looking up the unique taxon ids of each taxon.
+Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
+To do this, set the `use_internet` option to `FALSE`.
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
+tax_info <- extract_taxonomy(names(sequences)[1:5],
+                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                             key = c(name = "item_info", seq_id = "item_info",
+                                     other_id = "item_info", "class_name"),
+                             database = "ncbi", 
+                             allow_arbitrary_ids = TRUE)
+```
 
 
 ### ITS1 DB FASTA headers
