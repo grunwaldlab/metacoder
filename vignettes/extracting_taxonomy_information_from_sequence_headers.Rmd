@@ -4,48 +4,84 @@ author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Extracting taxonomy information from sequence headers}
-%\VignetteEngine{knitr::rmarkdown}
-%\usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
 
 
 ```{r}
 library(ape)
 library(metacoder)
+library(knitr)
+opts_chunk$set(eval = FALSE)
 ```
 
 
+## Introduction to `extract_taxonomy`
 
+There are an unnecessarily large number of sequence header/metadata formats and most of them are specific to a particular database.
+This makes it difficult to compare and combine data from diverse sources. 
+Rather than exacerbating the syntactic pollution with another custom format or creating a parser for every database-specific format, the function `extract_taxonomy` parses taxonomy information from arbitrary characters strings (e.g. sequence headers) identified by a regex expression.
+Although the motivation for creating `extract_taxonomy` is to parse FASTA sequence headers, the function is not specific to FASTA or even to sequence information, so I will use the word "sample" instead of "sequence header".
+Any list of strings that represent the identity and taxonomy of a set of "samples" is valid.
+
+The function communicates with online databases (principally implemented using `taxize`) to infer missing information from information supplied.
+For example, if a GenBank accession number was the only information available, the taxon id and classification would be retreived from the NCBI taxonomy database.
+The output of `extract_taxonomy` consists of at least unique sample identifiers, unique taxon identifers, and the tree structure of the taxonomy shared by all sequences.
+This is all the information to fully characteize the taxonomic classification of a set of sequences
+The function is designed to work in *most* cases, but it cannot do everything. 
+
+
+### Argument intuition
+
+There are three important arguments that will usually be relevant: `regex`, `key`, and `database`.
+
+* The `regex` argument defines the structure of the strings and the location of relevant information (e.g. GenBank accession numbers) via regex capture groups (i.e. pairs of unescaped parentheses).
+* The `key` argument defines what kind of information is in each capture group, determining how it will be parsed.
+The elements of `key` has a defined set of possible values; see the `extract_taxonomy` help page for options. 
+* The other important option is `database`, which determins the online taxonomy database that will be queried when necessary.
+Usually, this is ncbi, but others databases are possible, but less tested; see the `extract_taxonomy` help page for options.
+
+### Output intuition
+
+The output is a list of three items:
+
+* __Sequence data__: A `data.frame` with rows corresponding to the input samples. This would contain things like sequence ids and descriptions. 
+* __Taxon data__: A `data.frame` with rows corresponding to unique taxa. This would contain things like taxon ids and taxon names
+* __Taxonomy structure__: A `list` of `data.frame`, with each element being the classification of each unique taxon. The elements of the list correspond to the rows of the taxon `data.frame` mentioned above. This can be used to infer other data structures (e.g. adjacency list/matrix) that are useful in graphing and network analysis. 
+
+
+## Common usage examples
 
 ### Genbank FASTA headers
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
-tax_info <- extract_taxonomy(names(sequences),
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^.*\\|(.*)\\|.*\\|(.*)\\|.*$",
-                             key = c("item_id", other_id = "item_info"),
-                             database = "ncbi")
+                             key = c("item_id", other_id = "item_info"))
 ```
 
 
 ### UNITE FASTA headers
 
-The format of the UNITE fasta release has two peices of information from which taxonomy can be determined.
-The genbank sequence identifier can be used to look up the taxon id from Genbank.
-Alternativly, the classifications specified in the header can be used to make an arbitrarily coded taxonomy.
+The format of the UNITE fasta release has two pieces of information from which taxonomy can be determined.
+The GenBank sequence identifier can be used to look up the taxon id from GenBank.
+Alternatively, the classifications specified in the header can be used to make an arbitrarily coded taxonomy.
 
-#### Using the sequece identifier
+#### Using the sequence identifier
 
-The genbank accession number in the second entry of UNITE sequence headers can be used to look up the taxon assigned to each sequence by genbank. 
-This is better than using the taxonomy from the sequence header since the genbank unique taxon ids (uids) will be used to identify taxa instead of arbitrary ids. 
-Also, looking up the taxon assignment using the sequence accession number means changes in sequence taxonomy since the UNITE databsae was downloaded will be included. 
-Note that the taxonmy returned by genbank could be different than the one in the header.
+The GenBank accession number in the second entry of UNITE sequence headers can be used to look up the taxon assigned to each sequence by GenBank. 
+This is better than using the taxonomy from the sequence header since the GenBank unique taxon ids (uids) will be used to identify taxa instead of arbitrary ids. 
+Also, looking up the taxon assignment using the sequence accession number means changes in sequence taxonomy since the UNITE database was downloaded will be included. 
+Note that the taxonomy returned by GenBank could be different than the one in the header.
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[1:5],
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                              key = c(name = "taxon_name", seq_id = "item_id",
                                      other_id = "item_info", tax_string = "taxon_info"),
@@ -61,7 +97,8 @@ The unique taxon id for each taxon encountered will be looked up and taxa not fo
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-tax_info <- extract_taxonomy(names(sequences)[1:5],
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                              key = c(name = "item_info", seq_id = "item_info",
                                      other_id = "item_info", "class_name"))
@@ -71,15 +108,16 @@ tax_info <- extract_taxonomy(names(sequences)[1:5],
 
 It is also possible to build a custom taxonomy encoding using the taxonomy in the sequence headers without looking up the unique taxon ids of each taxon.
 Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
-To do this, set the `use_internet` option to `FALSE` to prevent `extract_taxonomy` from trying to look up the taxon id.
+To do this, set the `use_database` option to `FALSE` to prevent `extract_taxonomy` from trying to look up the taxon id, causing all taxa to be assigned arbitrary unique ids.
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-tax_info <- extract_taxonomy(names(sequences)[1:5],
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                              key = c(name = "item_info", seq_id = "item_info",
                                      other_id = "item_info", "class_name"),
-                             use_internet = FALSE)
+                             use_database = FALSE)
 ```
 
 
@@ -87,7 +125,8 @@ tax_info <- extract_taxonomy(names(sequences)[1:5],
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
-tax_info <- extract_taxonomy(names(sequences),
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*)_.*\\|(.*)\\|(.*)\\|(.*)$",
                              key = c("item_id", name = "taxon_info",
                                      "taxon_id", description = "taxon_info"))
@@ -98,7 +137,8 @@ tax_info <- extract_taxonomy(names(sequences),
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/pr2_stramenopiles_gb203.fasta")
-tax_info <- extract_taxonomy(names(sequences),
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*\\..*)\\..*\\|(.*)$",
                              key = c("item_id", "lineage"),
                              lineage_tax_sep = "|")
@@ -109,7 +149,8 @@ tax_info <- extract_taxonomy(names(sequences),
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/rdp_release11_3_Archaea_unaligned.fa")
-tax_info <- extract_taxonomy(names(sequences),
+cat(names(sequences)[1])
+tax_info <- extract_taxonomy(names(sequences)[1:3],
                              regex = "^(.*) (.*);(.*)\\tLineage=(.*)",
                              key = c(id = "item_info", description = "item_info",
                                      other_id = "item_info", "lineage"),
