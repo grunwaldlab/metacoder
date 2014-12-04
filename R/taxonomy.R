@@ -215,8 +215,10 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
   if (is.null(id_key)) id_key <- unique_taxa(classifications)
   add_ids_to_one <- function(a_classification) {
     taxa_in_class <- lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
-    ids <- vapply(taxa_in_class, function(x) names(id_key)[id_key == x], numeric(1))
+    ids <- vapply(taxa_in_class,
+                  function(x) names(id_key)[sapply(id_key, identical, x)], character(1))
     a_classification[id_col_name] <- ids
+    return(a_classification)
   }
   output <- lapply(classifications, add_ids_to_one)
   return(output)
@@ -230,12 +232,12 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
 #' @param existing (\code{character}) Existing unique ids. These will not appear in the output.
 make_new_ids <- function(count, existing) {
   output <- rep(NA, count)
-  current = 1
+  current <- 1
   while (any(is.na(output))) {
     if (!(as.character(current) %in% existing)) {
       output[which(is.na(output))[1]] <- as.character(current)
     }
-    current += 1
+    current <-  1 + current
   }
   return(output)
 }
@@ -288,7 +290,7 @@ make_new_ids <- function(count, existing) {
 #' @param database (\code{character; length == 1}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  and "nbn".
-#' @param use_internet If \code{FALSE}, no online databases will be used to look up taxonomy information.
+#' @param use_database If \code{FALSE}, no online databases will be used to look up taxonomy information.
 #' @return Returns a list of two elements:
 #'  \describe{
 #'    \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
@@ -304,7 +306,7 @@ make_new_ids <- function(count, existing) {
 #===================================================================================================
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
-                             taxon_in_lineage = TRUE, database = 'ncbi', use_internet = TRUE, 
+                             taxon_in_lineage = TRUE, database = 'ncbi', use_database = TRUE, 
                              allow_arb_ids = FALSE) {
   browser()
   unique_mapping <- function(input) {
@@ -349,19 +351,19 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     class(item_data$taxon_id) <- id_class
   } else {
     if ("class_id" %in% names(item_data) && taxon_in_lineage) {
-      item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+      item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                            rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                            rev_rank = class_rank_rev, taxon_col_name = "id")
       item_data$taxon_id <- extract_last(item_classification, "id")
       class(item_data$taxon_id) <- id_class
-    } else if ("item_id" %in% names(item_data) && use_internet) {
+    } else if ("item_id" %in% names(item_data) && use_database) {
       if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
       item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
-    } else if ("taxon_name" %in% names(item_data) && use_internet) {
+    } else if ("taxon_name" %in% names(item_data) && use_database) {
       item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
       report_found(item_data$taxon_id)
-#     } else if ("class_name" %in% names(item_data) && taxon_in_lineage && use_internet) {
-#       item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+#     } else if ("class_name" %in% names(item_data) && taxon_in_lineage && use_database) {
+#       item_classification <- parse_lineage(item_data$class_name, taxon_sep = class_tax_sep,
 #                                            rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
 #                                            rev_rank = class_rank_rev, taxon_col_name = "name")
 #       item_data$taxon_id <- map_unique(extract_last(item_classification, "name"), id_from_name)
@@ -373,25 +375,25 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Get taxon id lineage ---------------------------------------------------------------------------
   if ("class_id" %in% names(item_data) && taxon_in_lineage) {
-    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+    item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                          rev_rank = class_rank_rev, taxon_col_name = "id")
   } else if ("class_id" %in% names(item_data) && !taxon_in_lineage && "taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
-    item_classification <- parse_lineage(item_data$lineage_id, taxon_sep = class_tax_sep,
+    item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                          rev_rank = class_rank_rev, taxon_col_name = "id")
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_id", "taxon_rank")])
-  } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids && use_internet) {
+  } else if ("taxon_id" %in% names(item_data) && !arbitrary_taxon_ids && use_database) {
     item_classification <- map_unique(item_data$taxon_id, taxize::classification,
                                       db = database, return_id = TRUE)
   } else if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && taxon_in_lineage) {
-    item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+    item_classification <- parse_lineage(item_data$class_name, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                          rev_rank = class_rank_rev, taxon_col_name = "name")
     item_classification <- add_taxon_ids(item_classification)
   } else if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && !taxon_in_lineage && "taxon_name" %in% names(item_data)) {
-    item_classification <- parse_lineage(item_data$lineage, taxon_sep = class_tax_sep,
+    item_classification <- parse_lineage(item_data$class_name, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                          rev_rank = class_rank_rev, taxon_col_name = "name")
     item_classification <- append_to_each(item_classification, 
@@ -408,16 +410,21 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxon_data <- do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
   class(taxon_data$id) <- id_class
   # Get taxon id of classifications if necessary ---------------------------------------------------
-  if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && use_internet) {
+  if (arbitrary_taxon_ids && "class_name" %in% names(item_data) && use_database) {
     taxon_ids <- id_from_name(taxon_data$name)
     ids_found <- !is.na(taxon_ids)
     taxon_data$id[ids_found] <- taxon_ids[ids_found]
     taxon_data$id[!ids_found] <- make_new_ids(sum(!ids_found), existing = taxon_data$id[ids_found])
     taxon_data$id_type <- "arbitrary"
     taxon_data$id_type[ids_found] <- database
+    names(taxon_id_key) <- taxon_data$id
+    item_classification <- add_taxon_ids(item_classification, id_key = taxon_id_key)
+    taxon_id_key <- add_taxon_ids(taxon_id_key, id_key = taxon_id_key)
+    names(item_classification) <- extract_last(item_classification, "id")
+    item_data$taxon_id <- names(item_classification)
   }
   # Get taxon name and rank if necessary -----------------------------------------------------------
-  if (!arbitrary_taxon_ids && use_internet) {
+  if (!arbitrary_taxon_ids && use_database) {
     if (!("name" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
       result <- taxize::classification(taxon_data$id)
     }
@@ -434,15 +441,18 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Add taxon info ---------------------------------------------------------------------------------
   map_item_to_taxon <- function(col_index) {
-    data <- lapply(taxon_data$taxon_id,
+    data <- lapply(taxon_data$id,
                    function(x) unique(item_data[x == item_data$taxon_id, col_index]))
+    data[lapply(data, length) == 0] <- NA
     if (max(vapply(data, length, numeric(1))) > 1)
-      stop(paste0("taxon_info field ", col_index - 1," content does not correspond to taxa ids.", 
+      stop(paste0("taxon_info field ", col_index - 1, " content does not correspond to taxa ids.", 
                   " Perhaps an item_info field would be more appropriate."))
     return(unlist(data))
   }
   taxon_info_cols <- 1 + which(key == "taxon_info")
-  taxon_data <- cbind(taxon_data, data.frame(lapply(taxon_info_cols, map_item_to_taxon)))
+  if (length(taxon_info_cols) > 0) {
+    taxon_data <- cbind(taxon_data, data.frame(lapply(taxon_info_cols, map_item_to_taxon)))    
+  }
   # Add arbitrary item ids to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) {
     item_data$item_id <- 1:nrow(item_data)

@@ -3,9 +3,10 @@
 \alias{extract_taxonomy}
 \title{Extract taxonomy information from sequence headers}
 \usage{
-extract_taxonomy(input, regex, key, lineage_tax_sep = ";",
-  lineage_rank_sep = "__", lineage_tax_rev = FALSE,
-  lineage_rank_rev = FALSE, taxon_in_lineage = TRUE, database = "ncbi")
+extract_taxonomy(input, regex, key, class_tax_sep = ";",
+  class_rank_sep = "__", class_tax_rev = FALSE, class_rank_rev = FALSE,
+  taxon_in_lineage = TRUE, database = "ncbi", use_database = TRUE,
+  allow_arb_ids = FALSE)
 }
 \arguments{
 \item{input}{(\code{character}) A vector from which to extract taxonomy information.}
@@ -19,33 +20,35 @@ The length of \code{key} must be equal to the number of capturing groups specifi
 Any names added to the terms will be used as column names in the output.
 Each term must be one of those decribed below:
 \describe{
-  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique.}
-  \item{\code{taxon_id}}{A unique numeric id for a taxon.}
-  \item{\code{taxon_rank}}{A taxonomic rank name (e.g. "genus").}
+  \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database}}
+  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
+  to a particular \code{database}.}
   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-  \item{\code{lineage}}{A list of taxa names that consitute the full taxonomic classification
-from broad to specific (see \code{lineage_tax_rev}). Individual names are not necessarily unique.
-Individual taxa are separated by the \code{lineage_tax_sep} argument and the taxon-rank group is separated
-by the \code{lineage_rank_sep} argument.}
-  \item{\code{lineage_id}}{A list of taxa unique ids that consitute the full taxonomic
-classification from broad to specific. Same usage as \code{lineage}}.
-  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
+  \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic classification
+from broad to specific (see \code{class_tax_rev}) for a particular \code{database}. Individual taxa
+are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
+\code{class_rank_sep} argument.}
+  \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic
+classification from broad to specific. Same usage as \code{class_id}}.
+Individual names are not necessarily unique, but are specific (i.e. interperable)
+to a particular \code{database}.
   \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
+  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
 looked up if available. Requires an internet connection.}
   \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 }}
 
-\item{lineage_tax_sep}{(\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+\item{class_tax_sep}{(\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
 argument. The characters used to separate individual taxa within a lineage.}
 
-\item{lineage_rank_sep}{(\code{character; length == 1}) Used with the \code{lineage} term in the \code{key}
+\item{class_rank_sep}{(\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
 argument when a lineage contiains both taxon and rank information. This is the characters used to separate
 th rank and the taxon name within an individual taxa in a lineage.}
 
-\item{lineage_tax_rev}{Used with the \code{lineage} term in the \code{key} argument.
+\item{class_tax_rev}{Used with the \code{class_name} term in the \code{key} argument.
 If TRUE, the rank order of taxa read in a lineage is reversed to be specific to broad.}
 
-\item{lineage_rank_rev}{Used with the \code{lineage} term in the \code{key} argument  when a lineage
+\item{class_rank_rev}{Used with the \code{class_name} term in the \code{key} argument  when a lineage
 contiains both taxon and rank information. If TRUE, the rank information come after the taxon information.}
 
 \item{taxon_in_lineage}{If \code{TRUE}, the lineage string included the taxon itself as its most specific
@@ -54,6 +57,8 @@ classification.}
 \item{database}{(\code{character; length == 1}): The name of the database that patterns given in
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 and "nbn".}
+
+\item{use_database}{If \code{FALSE}, no online databases will be used to look up taxonomy information.}
 }
 \value{
 Returns a list of two elements:
