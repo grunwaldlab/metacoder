@@ -106,11 +106,19 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' representing each classification. 
 #' 
 #' @export
-parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon, rev_rank,
+parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_rank = FALSE,
                           taxon_col_name = "taxon", rank_col_name = "rank") {
   taxa <- strsplit(lineage, split = taxon_sep)
-  if (rev_taxon) taxa <- rev(taxa)
-  lineage <- lapply(taxa, strsplit, split = rank_sep, fixed = TRUE)
+  if (taxon_sep == rank_sep) {
+    group_by_2 <- function(x) lapply(seq(1, length(x), 2), function(i) c(x[[i]], x[[i + 1]]))
+    lineage <- lapply(taxa, group_by_2)
+  } else {
+    lineage <- lapply(taxa, strsplit, split = rank_sep, fixed = TRUE)
+  }
+  if (rev_taxon) lineage <- rev(lineage)
+#   if (taxon_sep == rank_sep) {
+#     lapply(lineage, function(x) lapply(seq(2, length(x), 2), function(i) unlist(x[i:(i+1)])))
+#   }
   if (rev_rank) lineage <- lapply(lineage, function(x) lapply(x, rev))
   lineage <- lapply(lineage, function(x) plyr::ldply(x))
   if (length(unique(vapply(lineage, ncol, numeric(1)))) > 1) stop("Inconsistent lineage.")
@@ -335,10 +343,12 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   id_class <- database_id_classes[database]
   id_from_name <- id_from_name_funcs[[database]]
   taxid_from_seqid <- taxid_from_seqid_funcs[[database]]
+  if (is.null(names(key))) names(key) <- key
   # Parse input using regex ------------------------------------------------------------------------
   item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
   names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key) + 1) stop("The number of capture groups and keys do not match.")
+  if (any(is.na(item_data))) stop("Could not parse one or more entries. Check that `regex` matches all of `input`.")
   # Save location of '_info' columns, since they all have the same name ----------------------------
   class_info_cols <- 1 + which(key == "class_info")
   # Get taxon id -----------------------------------------------------------------------------------
