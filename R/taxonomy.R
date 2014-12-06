@@ -299,6 +299,15 @@ make_new_ids <- function(count, existing) {
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  and "nbn".
 #' @param use_database If \code{FALSE}, no online databases will be used to look up taxonomy information.
+#' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary ids is
+#'  handled. Possible options are:
+#'  \describe{
+#'    \item{\code{"allow"}}{Arbitrary ids are automatically generated if needed. These can occur intermixed
+#'    with offical database ids in the case of failed database lookups.}
+#'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary ids are used.}
+#'    \item{\code{"error"}}{Cause an error if arbitrary ids are needed.}
+#'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
+#'  } 
 #' @return Returns a list of two elements:
 #'  \describe{
 #'    \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
