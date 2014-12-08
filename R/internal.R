@@ -294,3 +294,21 @@ get_tips <- function(nodes, sep = "__") {
   split_nodes <- strsplit(nodes, "__", fixed=TRUE)
   sapply(split_nodes, function(x) x[length(x)])
 }
+
+#===================================================================================================
+#' get indexes of a unique set of the input
+unique_mapping <- function(input) {
+  unique_input <- unique(input)
+  vapply(input, function(x) which(x == unique_input), numeric(1))
+}
+
+
+#===================================================================================================
+#' run a function on unique values of a iterable 
+map_unique <- function(input, func, ...) {
+  input_class <- class(input)
+  unique_input = unique(input)
+  class(unique_input) <- input_class
+  func(unique_input, ...)[unique_mapping(input)]
+}
+
