@@ -5,8 +5,7 @@
 \usage{
 extract_taxonomy(input, regex, key, class_tax_sep = ";",
   class_rank_sep = "__", class_tax_rev = FALSE, class_rank_rev = FALSE,
-  taxon_in_lineage = TRUE, database = "ncbi", use_database = TRUE,
-  arbitrary_ids = "warn")
+  taxon_in_lineage = TRUE, database = "ncbi", arbitrary_ids = "warn")
 }
 \arguments{
 \item{input}{(\code{character}) A vector from which to extract taxonomy information.}
@@ -58,8 +57,6 @@ classification.}
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 and "nbn".}
 
-\item{use_database}{If \code{FALSE}, no online databases will be used to look up taxonomy information.}
-
 \item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary ids is
 handled. Possible options are:
 \describe{
@@ -68,6 +65,7 @@ handled. Possible options are:
   \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary ids are used.}
   \item{\code{"error"}}{Cause an error if arbitrary ids are needed.}
   \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
+  \item{\code{"none"}}{Do not use a database to look up information.}
 }}
 }
 \value{

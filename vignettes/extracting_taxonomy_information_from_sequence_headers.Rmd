@@ -118,7 +118,7 @@ The unique taxon id for each taxon encountered will be looked up and taxa not fo
 
 It is also possible to build a custom taxonomy encoding using the taxonomy in the sequence headers without looking up the unique taxon ids of each taxon.
 Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
-To do this, set the `use_database` option to `FALSE` to prevent `extract_taxonomy` from trying to look up the taxon id, causing all taxa to be assigned arbitrary unique ids.
+To do this, set the `database` option to `"none"` to prevent `extract_taxonomy` from trying to look up the taxon id, causing all taxa to be assigned arbitrary unique ids.
 
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
@@ -127,17 +127,20 @@ unite_3 <- extract_taxonomy(names(sequences)[1:3],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "item_info", seq_id = "item_info",
                                     other_id = "item_info", "class_name"),
-                            use_database = FALSE)
+                            database = "none")
 ```
 
 
 ### ITS1 DB FASTA headers
 
+The ITS1 database fasta header includes the genbank taxon id.
+In the example below, both the `"item_id"` and `"taxon_id"` keys are provided, but only the `"taxon_id"` is used to look up taxonomy information since it has precedence. 
+
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
 cat(names(sequences)[1])
 its1 <- extract_taxonomy(names(sequences)[1:3],
-                         regex = "^(.*)_.*_.*\\|(.*)\\|(.*)\\|(.*)$",
+                         regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)$",
                          key = c("item_id", name = "taxon_info",
                                  "taxon_id", description = "item_info"))
 ```
@@ -145,13 +148,17 @@ its1 <- extract_taxonomy(names(sequences)[1:3],
 
 ### PR2 FASTA headers
 
+This PR2 FASTA file does not contain any referneces to taxon or sequence ids that could be used to look up more information. 
+Therefore, the only option is to use the included taxonomy information.
+
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/pr2_stramenopiles_gb203.fasta")
 cat(names(sequences)[1])
 pr2 <- extract_taxonomy(names(sequences)[5:6],
                         regex = "^(.*\\..*)\\..*\\|(.*)$",
                         key = c("item_id", "class_name"),
-                        class_tax_sep = "|")
+                        class_tax_sep = "|",
+                        database = "none")
 ```
 
 

@@ -298,7 +298,6 @@ make_new_ids <- function(count, existing) {
 #' @param database (\code{character; length == 1}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  and "nbn".
-#' @param use_database If \code{FALSE}, no online databases will be used to look up taxonomy information.
 #' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary ids is
 #'  handled. Possible options are:
 #'  \describe{
@@ -307,6 +306,7 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary ids are used.}
 #'    \item{\code{"error"}}{Cause an error if arbitrary ids are needed.}
 #'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
+#'    \item{\code{"none"}}{Do not use a database to look up information.}
 #'  } 
 #' @return Returns a list of two elements:
 #'  \describe{
@@ -323,19 +323,19 @@ make_new_ids <- function(count, existing) {
 #===================================================================================================
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
-                             taxon_in_lineage = TRUE, database = 'ncbi', use_database = TRUE, 
-                             arbitrary_ids = "warn") {
+                             taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn") {
   browser()
   # Constants --------------------------------------------------------------------------------------
-  valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn")
+  valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
                   "item_id", "item_name", "item_info")
   valid_arb_id_opts <- c("allow", "warn", "error", "na")
   database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
   id_from_name_funcs <- list(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
-                             col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid)
-  taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid)
+                             col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid, 
+                             none = NA)
+  taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid, none = NA)
   taxon_in_lineage = TRUE
   # Argument validation ----------------------------------------------------------------------------
   if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
@@ -366,10 +366,10 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
                                          rev_rank = class_rank_rev, taxon_col_name = "taxon_id")
     item_data$taxon_id <- extract_last(item_classification, "taxon_id")
     class(item_data$taxon_id) <- id_class
-  } else if ("item_id" %in% names(item_data) && use_database) {
+  } else if ("item_id" %in% names(item_data) && database != "none") {
     if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
     item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
-  } else if ("taxon_name" %in% names(item_data) && use_database) {
+  } else if ("taxon_name" %in% names(item_data) && database != "none") {
     item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
     report_found(item_data$taxon_id)
   } else {
@@ -378,7 +378,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Get taxon id lineage ---------------------------------------------------------------------------
   get_id_from_name <- FALSE 
-  if ("taxon_id" %in% names(item_data) && use_database) {
+  if ("taxon_id" %in% names(item_data) && database != "none") {
     item_classification <- map_unique(item_data$taxon_id, taxize::classification,
                                       db = database, return_id = TRUE)
     item_classification <- lapply(item_classification, setNames, nm = c("name", "rank", "taxon_id"))
@@ -417,7 +417,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxon_data <- do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
   class(taxon_data$taxon_id) <- id_class
   # Get taxon id of classifications if necessary ---------------------------------------------------
-  if (get_id_from_name && use_database) {
+  if (get_id_from_name && database != "none") {
     taxon_ids <- id_from_name(taxon_data$name)
     ids_found <- !is.na(taxon_ids)
     if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Coud not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
@@ -437,7 +437,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_data$taxon_id <- names(item_classification)
   }
   # Get taxon name and rank if necessary -----------------------------------------------------------
-  if (!arbitrary_taxon_ids && use_database) {
+  if (!arbitrary_taxon_ids && database != "none") {
     if (!("name" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
       result <- taxize::classification(taxon_data$taxon_id)
       result <- lapply(result, setNames, nm = c("name", "rank", "taxon_id"))
