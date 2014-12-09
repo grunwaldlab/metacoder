@@ -108,7 +108,7 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' @export
 parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_rank = FALSE,
                           taxon_col_name = "taxon", rank_col_name = "rank") {
-  taxa <- strsplit(lineage, split = taxon_sep)
+  taxa <- strsplit(lineage, split = taxon_sep, fixed = TRUE)
   if (taxon_sep == rank_sep) {
     group_by_2 <- function(x) lapply(seq(1, length(x), 2), function(i) c(x[[i]], x[[i + 1]]))
     lineage <- lapply(taxa, group_by_2)
