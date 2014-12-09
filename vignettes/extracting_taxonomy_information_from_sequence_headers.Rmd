@@ -58,13 +58,17 @@ The output is a list of three items:
 
 ### Genbank FASTA headers
 
+FASTA files downloaded from GenBank custom queries contain the genbank id and the accession number/version to identify sequences.
+Taxonomic information can be reterived using either of these identifiers. 
+The following shows how to extract the genbank id, accession id, and description from the headers. 
+The genbank id is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the accession id and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
+
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
 cat(names(sequences)[1])
 genbank_tax <- extract_taxonomy(names(sequences)[1:3],
                                 regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-                                key = c("item_id", other_id = "item_info",
-                                        description = "item_info"))
+                                key = c("item_id", acc_no = "item_info", desc = "item_info"))
 ```
 
 
