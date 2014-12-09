@@ -219,7 +219,7 @@ append_to_each <- function(my_list, data) {
 #' @seealso unique_taxa
 #' 
 #' @export
-add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "id") {
+add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "taxon_id") {
   if (is.null(id_key)) id_key <- unique_taxa(classifications)
   add_ids_to_one <- function(a_classification) {
     taxa_in_class <- lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
@@ -363,8 +363,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   } else if ("class_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
-                                         rev_rank = class_rank_rev, taxon_col_name = "id")
-    item_data$taxon_id <- extract_last(item_classification, "id")
+                                         rev_rank = class_rank_rev, taxon_col_name = "taxon_id")
+    item_data$taxon_id <- extract_last(item_classification, "taxon_id")
     class(item_data$taxon_id) <- id_class
   } else if ("item_id" %in% names(item_data) && use_database) {
     if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
@@ -381,14 +381,15 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   if ("taxon_id" %in% names(item_data) && use_database) {
     item_classification <- map_unique(item_data$taxon_id, taxize::classification,
                                       db = database, return_id = TRUE)
+    item_classification <- lapply(item_classification, setNames, nm = c("name", "rank", "taxon_id"))
   } else if ("class_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
-                                         rev_rank = class_rank_rev, taxon_col_name = "id")
+                                         rev_rank = class_rank_rev, taxon_col_name = "taxon_id")
   } else if ("class_id" %in% names(item_data) && !taxon_in_lineage && "taxon_id" %in% names(item_data) && !arbitrary_taxon_ids) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
-                                         rev_rank = class_rank_rev, taxon_col_name = "id")
+                                         rev_rank = class_rank_rev, taxon_col_name = "taxon_id")
     item_classification <- append_to_each(item_classification, 
                                           item_data[ , c("taxon_id", "taxon_rank")])
   } else if ("class_name" %in% names(item_data) && taxon_in_lineage) {
@@ -410,35 +411,36 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_classification <- NULL
   } 
   # Add arbitrary taxon ids to item data if necessary ----------------------------------------------
-  if (arbitrary_taxon_ids) item_data$taxon_id <- extract_last(item_classification, "id")
+  if (arbitrary_taxon_ids) item_data$taxon_id <- extract_last(item_classification, "taxon_id")
   # Get taxon data ---------------------------------------------------------------------------------
-  taxon_id_key <- unique_taxa(item_classification, id_column = "id")
+  taxon_id_key <- unique_taxa(item_classification, id_column = "taxon_id")
   taxon_data <- do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
-  class(taxon_data$id) <- id_class
+  class(taxon_data$taxon_id) <- id_class
   # Get taxon id of classifications if necessary ---------------------------------------------------
   if (get_id_from_name && use_database) {
     taxon_ids <- id_from_name(taxon_data$name)
     ids_found <- !is.na(taxon_ids)
     if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Coud not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
     if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Coud not look up all taxon names. Arbitrary ids will be applied.")
-    taxon_data$id[ids_found] <- taxon_ids[ids_found]
+    taxon_data$taxon_id[ids_found] <- taxon_ids[ids_found]
     if (arbitrary_ids == "na") {
-      taxon_data$id[!ids_found] <- NA
+      taxon_data$taxon_id[!ids_found] <- NA
     } else {
-      taxon_data$id[!ids_found] <- make_new_ids(sum(!ids_found), existing = taxon_data$id[ids_found]) 
+      taxon_data$taxon_id[!ids_found] <- make_new_ids(sum(!ids_found), existing = taxon_data$taxon_id[ids_found]) 
     }
     taxon_data$id_type <- "arbitrary"
     taxon_data$id_type[ids_found] <- database
-    names(taxon_id_key) <- taxon_data$id
+    names(taxon_id_key) <- taxon_data$taxon_id
     item_classification <- add_taxon_ids(item_classification, id_key = taxon_id_key)
     taxon_id_key <- add_taxon_ids(taxon_id_key, id_key = taxon_id_key)
-    names(item_classification) <- extract_last(item_classification, "id")
+    names(item_classification) <- extract_last(item_classification, "taxon_id")
     item_data$taxon_id <- names(item_classification)
   }
   # Get taxon name and rank if necessary -----------------------------------------------------------
   if (!arbitrary_taxon_ids && use_database) {
     if (!("name" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
-      result <- taxize::classification(taxon_data$id)
+      result <- taxize::classification(taxon_data$taxon_id)
+      result <- lapply(result, setNames, nm = c("name", "rank", "taxon_id"))
     }
     if (!("name" %in% names(taxon_data))) {
       taxon_data$name <- extract_last(result, column = "name")
@@ -453,7 +455,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Add taxon info ---------------------------------------------------------------------------------
   map_item_to_taxon <- function(col_index) {
-    data <- lapply(taxon_data$id,
+    data <- lapply(taxon_data$taxon_id,
                    function(x) unique(item_data[x == item_data$taxon_id, col_index]))
     data[lapply(data, length) == 0] <- NA
     if (max(vapply(data, length, numeric(1))) > 1)
@@ -468,7 +470,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Add arbitrary item ids to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) item_data$item_id <- 1:nrow(item_data)
   # Add counts to taxon_data -----------------------------------------------------------------------
-  taxon_data$item_count <- table(unlist(lapply(item_classification, `[[`, "id")))[taxon_data$id]
+  taxon_data$item_count <- table(unlist(lapply(item_classification, `[[`, "taxon_id")))[taxon_data$taxon_id]
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)
