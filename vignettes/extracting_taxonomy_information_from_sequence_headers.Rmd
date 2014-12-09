@@ -66,9 +66,9 @@ The genbank id is being used to look up the taxonomy information (hence `"item_i
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
 cat(names(sequences)[1])
-genbank_tax <- extract_taxonomy(names(sequences)[1:3],
-                                regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-                                key = c("item_id", acc_no = "item_info", desc = "item_info"))
+genbank <- extract_taxonomy(names(sequences)[1:3],
+                            regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
+                            key = c("item_id", acc_no = "item_info", desc = "item_info"))
 ```
 
 
@@ -88,11 +88,11 @@ Therefore, the taxonomy returned by GenBank could be different than the one in t
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[1:3],
-                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "taxon_name", seq_id = "item_id",
-                                     other_id = "item_info", tax_string = "taxon_info"),
-                             database = "ncbi")
+unite_1 <- extract_taxonomy(names(sequences)[1:3],
+                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                            key = c(name = "taxon_name", seq_id = "item_id",
+                                    other_id = "item_info", tax_string = "taxon_info"),
+                            database = "ncbi")
 ```
 
 #### Using included classification names to look up the taxon id
@@ -104,10 +104,10 @@ However, you can still capture the sequence id or taxon id (assuming its present
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[1:3],
-                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "item_info", seq_id = "item_info",
-                                     other_id = "item_info", "class_name"))
+unite_2 <- extract_taxonomy(names(sequences)[1:3],
+                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                            key = c(name = "item_info", seq_id = "item_info",
+                                    other_id = "item_info", "class_name"))
 ```
 
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
@@ -123,11 +123,11 @@ To do this, set the `use_database` option to `FALSE` to prevent `extract_taxonom
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[1:3],
-                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "item_info", seq_id = "item_info",
-                                     other_id = "item_info", "class_name"),
-                             use_database = FALSE)
+unite_3 <- extract_taxonomy(names(sequences)[1:3],
+                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                            key = c(name = "item_info", seq_id = "item_info",
+                                    other_id = "item_info", "class_name"),
+                            use_database = FALSE)
 ```
 
 
@@ -136,10 +136,10 @@ tax_info <- extract_taxonomy(names(sequences)[1:3],
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[1:3],
-                             regex = "^(.*)_.*_.*\\|(.*)\\|(.*)\\|(.*)$",
-                             key = c("item_id", name = "taxon_info",
-                                     "taxon_id", description = "item_info"))
+its1 <- extract_taxonomy(names(sequences)[1:3],
+                         regex = "^(.*)_.*_.*\\|(.*)\\|(.*)\\|(.*)$",
+                         key = c("item_id", name = "taxon_info",
+                                 "taxon_id", description = "item_info"))
 ```
 
 
@@ -148,10 +148,10 @@ tax_info <- extract_taxonomy(names(sequences)[1:3],
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/pr2_stramenopiles_gb203.fasta")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[5:6],
-                             regex = "^(.*\\..*)\\..*\\|(.*)$",
-                             key = c("item_id", "class_name"),
-                             class_tax_sep = "|")
+pr2 <- extract_taxonomy(names(sequences)[5:6],
+                        regex = "^(.*\\..*)\\..*\\|(.*)$",
+                        key = c("item_id", "class_name"),
+                        class_tax_sep = "|")
 ```
 
 
@@ -160,11 +160,11 @@ tax_info <- extract_taxonomy(names(sequences)[5:6],
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/rdp_release11_3_Archaea_unaligned.fa")
 cat(names(sequences)[1])
-tax_info <- extract_taxonomy(names(sequences)[212:214],
-                             regex = "^(.*?) (.*) (.*)\\tLineage=(.*)",
-                             key = c(id = "item_info", description = "item_info",
-                                     other_id = "item_info", "class_name"),
-                             class_tax_sep = ";",
-                             class_rank_sep = ";", 
-                             class_rank_rev = TRUE)
+rdp <- extract_taxonomy(names(sequences)[212:214],
+                        regex = "^(.*?) (.*) (.*)\\tLineage=(.*)",
+                        key = c(id = "item_info", description = "item_info",
+                                other_id = "item_info", "class_name"),
+                        class_tax_sep = ";",
+                        class_rank_sep = ";", 
+                        class_rank_rev = TRUE)
 ```
