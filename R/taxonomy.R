@@ -349,9 +349,9 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxid_from_seqid <- taxid_from_seqid_funcs[[database]]
   # Parse input using regex ------------------------------------------------------------------------
   item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
-  names(item_data) <- c("input", key)
   if (ncol(item_data) != length(key) + 1) stop("The number of capture groups and keys do not match.")
   if (any(is.na(item_data))) stop("Could not parse one or more entries. Check that `regex` matches all of `input`.")
+  names(item_data) <- c("input", key)
   # Get taxon id -----------------------------------------------------------------------------------
   report_found <- function(get_id_result) {
     not_found <- sum(attr(get_id_result, "match") ==  "not found")

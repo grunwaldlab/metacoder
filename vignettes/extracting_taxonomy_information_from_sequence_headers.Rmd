@@ -148,7 +148,6 @@ its1 <- extract_taxonomy(names(sequences)[1:3],
 
 ### PR2 FASTA headers
 
-This PR2 FASTA file does not contain any referneces to taxon or sequence ids that could be used to look up more information. 
 The first item in the header is sometimes a GenBank accesssion number, but not always.
 Therefore, the best option is to use the included taxonomy information.
 Note that there is no rank information available. 
@@ -166,13 +165,18 @@ pr2 <- extract_taxonomy(names(sequences)[3:6],
 
 ### RDP FASTA headers
 
+This RDP FASTA file does not contain any referneces to taxon or sequence ids that could be used to look up more information.
+Instead, we will parse the taxonomy information included in the sequence headers.
+In this case both the rank and taxon name are supplied. 
+Note that the rank comes after the taxon name in each pair, which is not what `extract_taxonomy` expects. 
+Therefore, option `class_rank_rev` is set to `TRUE`. 
+
 ```{r}
 sequences <- ape::read.FASTA("inst/extdata/rdp_release11_3_Archaea_unaligned.fa")
-cat(names(sequences)[1])
+cat(names(sequences)[212])
 rdp <- extract_taxonomy(names(sequences)[212:214],
-                        regex = "^(.*?) (.*) (.*)\\tLineage=(.*)",
-                        key = c(id = "item_info", description = "item_info",
-                                other_id = "item_info", "class_name"),
+                        regex = "^(.*?) (.*)\\tLineage=(.*)",
+                        key = c(id = "item_info", description = "item_info", "class_name"),
                         class_tax_sep = ";",
                         class_rank_sep = ";", 
                         class_rank_rev = TRUE)
