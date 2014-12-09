@@ -324,7 +324,7 @@ make_new_ids <- function(count, existing) {
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi', use_database = TRUE, 
-                             arbitrary_ids = FALSE) {
+                             arbitrary_ids = "warn") {
   browser()
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn")

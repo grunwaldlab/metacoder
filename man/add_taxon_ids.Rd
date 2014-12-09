@@ -3,7 +3,7 @@
 \alias{add_taxon_ids}
 \title{Add ids for classifications}
 \usage{
-add_taxon_ids(classifications, id_key = NULL, id_col_name = "id")
+add_taxon_ids(classifications, id_key = NULL, id_col_name = "taxon_id")
 }
 \arguments{
 \item{classifications}{(\code{list} of \code{data.frame}) Taxnomic classifications.}
