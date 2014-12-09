@@ -474,5 +474,6 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)
+  row.names(item_data) <- item_data$item_id
   return(list(taxonomy = taxon_id_key, taxa = taxon_data, items = item_data))
 }
