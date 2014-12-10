@@ -471,6 +471,14 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   if (!("item_id" %in% names(item_data))) item_data$item_id <- 1:nrow(item_data)
   # Add counts to taxon_data -----------------------------------------------------------------------
   taxon_data$item_count <- table(unlist(lapply(item_classification, `[[`, "taxon_id")))[taxon_data$taxon_id]
+  # Add taxon parent column ------------------------------------------------------------------------
+  get_parent <- function(taxa, classifications) {
+    taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
+    parents <- lapply(taxon_classifications, function(x) x$taxon_id[nrow(x) - 1])
+    parents[vapply(parents, length, numeric(1))] <- NA
+    unlist(parents)
+  }
+  taxon_data$parent <- get_parent(taxon_data$taxon_id, taxon_id_key)
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)
