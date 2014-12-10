@@ -478,7 +478,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     parents[vapply(parents, length, numeric(1))] <- NA
     unlist(parents)
   }
-  taxon_data$parent <- get_parent(taxon_data$taxon_id, taxon_id_key)
+  taxon_data$parent_id <- get_parent(taxon_data$taxon_id, taxon_id_key)
   # Add taxon level column -------------------------------------------------------------------------
   get_taxon_level <- function(taxa, classifications) {
     taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
