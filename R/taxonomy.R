@@ -448,7 +448,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
                              function(i) cbind(taxon_id_key[[i]], result[[i]][ , "name", drop = FALSE]))
     }    
     if (!("rank" %in% names(taxon_data))) {
-      taxon_data$name <- extract_last(result, column = "rank")
+      taxon_data$rank <- extract_last(result, column = "rank")
       taxon_id_key <- lapply(seq_along(taxon_id_key),
                              function(i) cbind(taxon_id_key[[i]], result[[i]][ , "rank", drop = FALSE]))
     }

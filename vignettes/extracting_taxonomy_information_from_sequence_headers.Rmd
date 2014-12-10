@@ -141,7 +141,7 @@ sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
 cat(names(sequences)[1])
 its1 <- extract_taxonomy(names(sequences)[1:3],
                          regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)$",
-                         key = c("item_id", name = "taxon_info",
+                         key = c("item_id", taxon_name = "taxon_info",
                                  "taxon_id", description = "item_info"))
 ```
 
