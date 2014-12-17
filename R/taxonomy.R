@@ -496,11 +496,13 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 
 
 #===================================================================================================
-#` Recursivly sample a set of taxonomic assignments
+#' Recursivly sample a set of taxonomic assignments
 #' 
 #' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
 #' This function takes other functions as arguments that define how the taxonomy is iterpreted.
 #' 
+#' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
+#' taxonomy used.
 #' @param get_items (\code{function(character)}) A function that returns the items assigned to the
 #' a given taxon. The function's first argument should be the taxon id and it should return a data
 #' structure possibly representing multiple items.
@@ -513,8 +515,6 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' @param cat_items (\code{function(list)}) A function that takes a list of whatever is returned by
 #' \code{get_items} and concatenates them into a single data structure of the type returned by
 #' \code{get_items}.
-#' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
-#' taxonomy used.
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
 #' items in for each level specified. The names of the vector specifies that level each number
 #' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
@@ -522,10 +522,6 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' @param min_counts (\code{numeric}) A named vector that defines that minimum number of
 #' items in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
-#' @param interpolate_max (\code{logical}) If \code{TRUE} the maximum counts of undefined levels
-#' in \code{max_counts} will be iterpolated from defined levels. 
-#' @param interpolate_min (\code{logical}) If \code{TRUE} the minimum counts of undefined levels
-#' in \code{max_counts} will be iterpolated from defined levels. 
 #' @param max_children (\code{numeric}) A named vector that defines that maximum number of
 #' subtaxa per taxon for each level specified. The names of the vector specifies that level each
 #' number applies to. If more than the maximum number of subtaxa exist for a given taxon, they
@@ -533,140 +529,94 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' @param min_children (\code{numeric}) A named vector that defines that minimum number of
 #' subtaxa in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
-#' @param item_filter  (\code{function}) A function that takes a data structure containing the 
-#' information of multiple items and returns a object of the same type with some of the items
-#' potentially removed.  
-#' @param verbose (\code{logical}) If \code{TRUE} print status messages.
+#' @param item_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' structure containing the information of multiple items and a taxon id.
+#' Returns a object of the same type with some of the items potentially removed.  
+#' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' structure containing the information of multiple subtaxa ids and the current taxon id.
+#' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
+#' \code{NULL}, then no items for the current taxon are returned.
+#' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
+#' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
+#' returned rather than looking for items of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
-taxonomic_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
-                             interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
-                             verbose = TRUE, max_length = 10000, min_length = 1,
-                             max_children = NULL, min_children = NULL, ...) {
-  
-  default_target_max <- 20
-  default_target_min <- 5
-  taxonomy_levels <- get_taxonomy_levels()
-  
-  # Argument validation ----------------------------------------------------------------------------
-  if (sum(c(is.null(name), is.null(id))) != 1) {
-    stop("Either name or id must be speficied, but not both")
-  }
-  if (!(target_level %in% levels(taxonomy_levels))) {
-    stop("'target_level' is not a valid taxonomic level.")
-  }
-  
-  # Argument parsing -------------------------------------------------------------------------------
-  if (!is.null(name)) {
-    result <- taxize::get_uid(name, verbose = verbose)
-    if (is.na(result)) stop(cat("Could not find taxon ", name))
-    id <- result
-  }  else {
-    id <- as.character(id)
-    attr(id, "class") <- "uid"
-  }
-  taxon_classification <- taxize::classification(id, db = 'ncbi')[[1]]
-  name <- taxon_classification[nrow(taxon_classification), "name"]
-  taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
-                        levels = levels(taxonomy_levels),
-                        ordered = TRUE)
-  target_level <- factor(target_level,
-                         levels = levels(taxonomy_levels),
-                         ordered = TRUE)
-  length_range <- paste(min_length, max_length, sep = ":")
-  
-  # Generate taxonomic level filtering limits ------------------------------------------------------
-  get_level_limit <- function(user_limits, default_value, default_level, interpolate, 
-                              extend_max = FALSE, extend_min = FALSE) {
-    # Provide defaults if NULL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (is.null(user_limits)) {
-      user_limits <- c(default_value)
-      names(user_limits) <- default_level
-    } else if (length(user_limits) == 1 && is.null(names(user_limits))) {
-      names(user_limits) <- default_level
+taxonomic_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
+                             max_counts = c(), min_counts = c(), max_children = c(),
+                             min_children = c(), item_filters = list(), subtaxa_filters = list(),
+                             stop_conditions = list(), ...) {
+  # Parse options ----------------------------------------------------------------------------------
+  validate_filter_options <- function(filter) {
+    if (length(get(filter)) > 0 && is.null(names(get(filter)))) {
+      if (!is.null(get_rank)) stop(paste0("`", filter, "` must be named if `get_rank` is defined."))
+      return(setNames(get(filter), as.character(seq_along(get(filter)))))
     }
-    # Order by taxonomic level - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    limit_levels <- factor(names(user_limits),
-                           levels = levels(taxonomy_levels),
-                           ordered = TRUE)
-    user_limits <- user_limits[order(limit_levels)]
-    # place input values in vector with all levels - - - - - - - - - - - - - - - - - - - - - - - - -
-    all_user_limits <- rep(as.integer(NA), length(taxonomy_levels))
-    names(all_user_limits) <- levels(taxonomy_levels)
-    all_user_limits[names(user_limits)] <- user_limits
-    # Interpolate limits for undefined intermediate levels - - - - - - - - - - - - - - - - - - - - -
-    if (interpolate && length(user_limits) >= 2) {
-      set_default_counts <- function(range) {
-        between <- which(taxonomy_levels >= range[1] & taxonomy_levels <= range[2])
-        all_user_limits[between] <<- as.integer(seq(user_limits[range[1]],
-                                                    user_limits[range[2]],
-                                                    along.with = between))
-        return(NULL)
+    return(get(filter))
+  }
+  max_counts <- validate_filter_options("max_counts")
+  min_counts <- validate_filter_options("min_counts")
+  max_children <- validate_filter_options("max_children")
+  min_children <- validate_filter_options("min_children")
+  # Set default get_rank function ------------------------------------------------------------------
+  if (is.null(get_rank)) {
+    get_rank <- function(id, ...) {
+      return(depth)
+    }
+  }
+  # Make max filter function factory ---------------------------------------------------------------
+  max_filter_factory <- function(filter_key) {
+    function(items, id, ...) {
+      rank <- as.character(get_rank(id))
+      if (rank %in% names(filter_key) && length(items) > filter_key[rank]) {
+        items <- sample(items, filter_key[rank])
       }
-      zoo::rollapply(names(user_limits), width = 2, set_default_counts)    
+      return(items)
     }
-    
-    # Extend boundry values to adjacent undefined values - - - - - - - - - - - - - - - - - - - - - -
-    defined <- which(!is.na(all_user_limits))
-    if (length(defined) > 0) {
-      if (extend_max) {
-        highest_defined <- max(defined)
-        all_user_limits[highest_defined:length(all_user_limits)] = all_user_limits[highest_defined]      
-      }
-      if (extend_min) {
-        lowest_defined <- min(defined)
-        all_user_limits[1:lowest_defined] = all_user_limits[lowest_defined]      
-      }      
-    }
-    return(all_user_limits)
   }
-  
-  level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max,
-                                     extend_max = TRUE)
-  level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min,
-                                     extend_min = TRUE)
-  level_max_children <- get_level_limit(max_children, NA, target_level,
-                                        interpolate_max, extend_max = TRUE)
-  level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min,
-                                        extend_min = TRUE)
-  
+  # Make min filter function factory ---------------------------------------------------------------
+  min_filter_factory <- function(filter_key) {
+    function(items, id, ...) {
+      rank <- as.character(get_rank(id))
+      if (rank %in% names(filter_key) && length(items) < filter_key[rank]) {
+        items <- NULL
+      }
+      return(items)
+    }
+  }
+  # Add standard filter functions ------------------------------------------------------------------
+  subtaxa_filters <- c(subtaxa_filters, max_filter_factory(max_children), 
+                       min_filter_factory(min_children))
+  item_filters <- c(item_filters, max_filter_factory(max_counts), min_filter_factory(min_counts))
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_sample <- function(id, level, name) {
-    cat("Processing '", name, "' (uid: ", id, ", level: ", as.character(level), ")", "\n",
-        sep = "")
-    # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (!(level %in% taxonomy_levels) || level < target_level) {
-      sub_taxa <- taxize::ncbi_children(id = id)[[1]]
-      print(sub_taxa)
-    }
-    # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% taxonomy_levels && level < target_level) {
-      if (!is.na(level_max_children[level]) && nrow(sub_taxa) > level_max_children[level]) {
-        sub_taxa <- sub_taxa[sample(1:nrow(sub_taxa), level_max_children[level]), ]
-      } else if (!is.na(level_min_children[level]) && nrow(sub_taxa) < level_min_children[level]) {
-        return(NULL)
+  recursive_sample <- function(id, ...) {
+    # Determine if to stop search  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    stop_recursion = any(vapply(stop_conditions, function(func) func(id, ...), logical(1)))
+    # Get and filter subtaxa of current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (!stop_recursion) {
+      sub_taxa <- get_subtaxa(id)
+      for (func in subtaxa_filters) {
+        sub_taxa <- func(sub_taxa, id, ...)
+        if (is.null(sub_taxa)) return(NULL)
+        if (length(sub_taxa) == 0) {
+          stop_recursion = TRUE
+          break
+        }
       }
     }
-    # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
-    if ((level %in% taxonomy_levels && level >= target_level) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
-      cat("Getting sequences for", name, "\n")
-      result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
-                                    hypothetical = TRUE, ...)
+    # Get items for current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (stop_recursion) {
+      items <- get_items(id, ...)
     } else {
-      child_ranks <- factor(sub_taxa$childtaxa_rank,
-                            levels = levels(taxonomy_levels), ordered = TRUE) 
-      result <- Map(recursive_sample, sub_taxa$childtaxa_id, child_ranks, sub_taxa$childtaxa_name)
-      result <- do.call(rbind, result)
+      items <- cat_items(lapply(sub_taxa, recursive_sample, depth = depth + 1))
     }
-    # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% taxonomy_levels && !is.null(result)) {
-      if (!is.na(level_max_count[level]) && nrow(result) > level_max_count[level]) {
-        result <- result[sample(1:nrow(result), level_max_count[level]), ]
-      } else if (!is.na(level_min_count[level]) && nrow(result) < level_min_count[level]) {
-        return(NULL)
+    # Filter items - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (rank %in% taxonomy_ranks && !is.null(result)) {
+      for (func in item_filters) {
+        items <- func(items, ...)
+        if (is.null(items) || length(items) == 0) break
       }
     }
     return(result)
   }
   
-  recursive_sample(id, taxon_level, name)
+  recursive_sample(root_id, depth = 1, ...)
 }
