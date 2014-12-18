@@ -9,6 +9,9 @@ vignette: >
   %\usepackage[utf8]{inputenc}
 ---
 
+
+## Introduction
+
 There are three primary taxonomy-specific criteria that should be met when creating an ideal set of reference sequences for evaluating metabarcoding primers.
 I say "taxonomy-specific" because there are obviously other considerations that deal with sequence characteristics, such as quality and the presence of primer binding sites, but these will be dealt with separately.
 
@@ -16,13 +19,30 @@ The three taxonomy-specific criteria are:
 
 1. taxonomic coverage: All taxa of interest should be represented by enough sequences to capture their diversity.
 2. balance: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. 
-3. size: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analyses. 
-
-Online sequence databases typically do have these characteristics, even those designed for metabarcoding. 
-Sequences are not available for many taxa and the numbers of sequences vary dramatically for different taxa. 
-For these reasons, a simple random sample of sequences for a given taxon from an online database will often not constitute an ideal reference sequence set. 
-Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
+3. size: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analysis. 
 
 When evaluating potential primers for metabarcoding experiments it is important to have reference sequences representative of every taxon of interest.
 The number of sequences of each taxon at each taxonomic level should be approximately equal, or perhaps more accurately, proportional to the diversity within that taxon.
 If the sequence of a given locus correlates with characters used to determine taxonomy, as is the case for an ideal barcoding locus, the number of sub-taxa should be proportional to diversity of a given taxon. 
+
+Random samples of online sequence databases typically do have these characteristics, even those designed for metabarcoding. 
+Sequences are not available for many taxa and the numbers of sequences vary dramatically for different taxa. 
+For these reasons, a simple random sample of sequences for a given taxon from an online database will often not constitute an ideal reference sequence set. 
+Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
+There are two main ways to accomplish this using `metacoder`. 
+
+* **Taxonomically-balanced subsample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balenced.
+* **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to idenitfy and download a set of sequences for a given taxon and custom Genbank query. 
+
+## Usage examples
+
+`taxonomic_sample` and `ncbi_taxon_sample` have similar arguments and behaviors. 
+Both use recursion to search through a taxonomic tree while subsampling taxa and items (e.g. sequences) that have a taxonomic classification. 
+Both can return a samples of a given size by controlling how many items (e.g. sequences) are allowed/required at each taxonomic rank (e.g. genus)
+They differ in what they are best used for. 
+`taxonomic_sample` is good for use on dowloaded copies of curated databases, such as [UNITE](https://unite.ut.ee/) or [RDP](http://rdp.cme.msu.edu/seqmatch/seqmatch_intro.jsp), especially ones that have embedded classifications for each sequence (i.e. something like `k__Fungi;p__Ascomycota;c__Leotiomycetes` in the headers). 
+`ncbi_taxon_sample` is good for downloading sparse informal surveys of large taxonmic groups (e.g. all fungi) without having to download every sequence. 
+
+### Using `taxonomic_sample`
+
+### Using `ncbi_taxon_sample`
