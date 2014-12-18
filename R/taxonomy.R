@@ -540,7 +540,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
 #' returned rather than looking for items of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
-taxonomic_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
+recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
@@ -587,7 +587,7 @@ taxonomic_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
                        min_filter_factory(min_children))
   item_filters <- c(item_filters, max_filter_factory(max_counts), min_filter_factory(min_counts))
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_sample <- function(id, ...) {
+  recursive_part <- function(id, ...) {
     # Determine if to stop search  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     stop_recursion = any(vapply(stop_conditions, function(func) func(id, ...), logical(1)))
     # Get and filter subtaxa of current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -618,5 +618,56 @@ taxonomic_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
     return(result)
   }
   
-  recursive_sample(root_id, depth = 1, ...)
+  recursive_part(root_id, depth = 1, ...)
 }
+
+#===================================================================================================
+#' Recursivly sample a set of taxonomic assignments
+#' 
+#' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
+#' This function takes other functions as arguments that define how the taxonomy is iterpreted.
+#' 
+#' @param item_ids (\code{character}) Unique taxon ids of a set of items. 
+#' @param taxon_ids (\code{character}) All possible unique taxon ids. Must have same order and
+#' length as \code{parent_id}.
+#' @param parent_ids (\code{character}) Unique taxon ids of supertaxa of \code{taxon_ids}. Must have
+#' same order and length as \code{taxon_ids}.
+#' @param ranks (\code{character}) Ranks of \code{taxon_ids}. Must have
+#' same order and length as \code{taxon_ids}.
+#' Together these two arguments form an adjacency list, defining the taxonomy used to sample.
+#' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
+#' taxonomy used.
+#' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
+#' items in for each level specified. The names of the vector specifies that level each number
+#' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
+#' subsampled to this number. 
+#' @param min_counts (\code{numeric}) A named vector that defines that minimum number of
+#' items in for each level specified. The names of the vector specifies that level each number
+#' applies to. 
+#' @param max_children (\code{numeric}) A named vector that defines that maximum number of
+#' subtaxa per taxon for each level specified. The names of the vector specifies that level each
+#' number applies to. If more than the maximum number of subtaxa exist for a given taxon, they
+#' are randomly subsampled to this number of subtaxa. 
+#' @param min_children (\code{numeric}) A named vector that defines that minimum number of
+#' subtaxa in for each level specified. The names of the vector specifies that level each number
+#' applies to. 
+#' @param item_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' structure containing the information of multiple items and a taxon id.
+#' Returns a object of the same type with some of the items potentially removed.  
+#' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' structure containing the information of multiple subtaxa ids and the current taxon id.
+#' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
+#' \code{NULL}, then no items for the current taxon are returned.
+#' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
+#' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
+#' returned rather than looking for items of subtaxa, stopping the recursion.
+#' @param ... Additional parameters are passed to all of the function options.
+#' 
+#' @export
+taxonomic_sample <- function(item_ids, taxon_ids, parent_ids, ranks = NULL, root_id = NULL,
+                             max_counts = c(), min_counts = c(), max_children = c(),
+                             min_children = c(), item_filters = list(), subtaxa_filters = list(),
+                             stop_conditions = list(), ...) {
+  
+}
+  
