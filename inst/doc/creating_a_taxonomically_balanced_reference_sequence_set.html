@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Introduction</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h2>Introduction</h2>
+
+<p>There are three primary taxonomy-specific criteria that should be met when creating an ideal set of reference sequences for evaluating metabarcoding primers.
+I say &ldquo;taxonomy-specific&rdquo; because there are obviously other considerations that deal with sequence characteristics, such as quality and the presence of primer binding sites, but these will be dealt with separately.</p>
+
+<p>The three taxonomy-specific criteria are: </p>
+
+<ol>
+<li>taxonomic coverage: All taxa of interest should be represented by enough sequences to capture their diversity.</li>
+<li>balance: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. </li>
+<li>size: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analysis. </li>
+</ol>
+
+<p>When evaluating potential primers for metabarcoding experiments it is important to have reference sequences representative of every taxon of interest.
+The number of sequences of each taxon at each taxonomic level should be approximately equal, or perhaps more accurately, proportional to the diversity within that taxon.
+If the sequence of a given locus correlates with characters used to determine taxonomy, as is the case for an ideal barcoding locus, the number of sub-taxa should be proportional to diversity of a given taxon. </p>
+
+<p>Random samples of online sequence databases typically do have these characteristics, even those designed for metabarcoding. 
+Sequences are not available for many taxa and the numbers of sequences vary dramatically for different taxa. 
+For these reasons, a simple random sample of sequences for a given taxon from an online database will often not constitute an ideal reference sequence set. 
+Therefore, <code>metacoder</code> includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
+There are two main ways to accomplish this using <code>metacoder</code>. </p>
+
+<ul>
+<li><strong>Taxonomically-balanced subsample:</strong> Functions <code>extract_taxonomy</code> and <code>taxonomic_sample</code> can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balenced.</li>
+<li><strong>Taxonomically-balanced Genbank download:</strong> A function called <code>ncbi_taxon_sample</code> can be used to idenitfy and download a set of sequences for a given taxon and custom Genbank query. </li>
+</ul>
+
+<h2>Usage examples</h2>
+
+<p><code>taxonomic_sample</code> and <code>ncbi_taxon_sample</code> have similar arguments and behaviors. 
+Both use recursion to search through a taxonomic tree while subsampling taxa and items (e.g. sequences) that have a taxonomic classification. 
+Both can return a samples of a given size by controlling how many items (e.g. sequences) are allowed/required at each taxonomic rank (e.g. genus)
+They differ in what they are best used for. 
+<code>taxonomic_sample</code> is good for use on dowloaded copies of curated databases, such as <a href="https://unite.ut.ee/">UNITE</a> or <a href="http://rdp.cme.msu.edu/seqmatch/seqmatch_intro.jsp">RDP</a>, especially ones that have embedded classifications for each sequence (i.e. something like <code>k__Fungi;p__Ascomycota;c__Leotiomycetes</code> in the headers). 
+<code>ncbi_taxon_sample</code> is good for downloading sparse informal surveys of large taxonmic groups (e.g. all fungi) without having to download every sequence. </p>
+
+<h3>Using <code>taxonomic_sample</code></h3>
+
+<p><code>taxonomic_sample</code> is used to sample items according to their taxonomic classifications. 
+These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
+The example below uses <code>extract_taxonomy</code> to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence headers.</p>
+
+<h3>Using <code>ncbi_taxon_sample</code></h3>
+
+</body>
+
+</html>
