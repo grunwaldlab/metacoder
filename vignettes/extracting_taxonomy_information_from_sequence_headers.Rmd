@@ -91,8 +91,7 @@ cat(names(sequences)[1])
 unite_1 <- extract_taxonomy(names(sequences)[1:3],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "taxon_name", seq_id = "item_id",
-                                    other_id = "item_info", tax_string = "taxon_info"),
-                            database = "ncbi")
+                                    other_id = "item_info", tax_string = "taxon_info"))
 ```
 
 #### Using included classification names to look up the taxon id

@@ -324,7 +324,6 @@ make_new_ids <- function(count, existing) {
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn") {
-  browser()
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
@@ -475,7 +474,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   get_parent <- function(taxa, classifications) {
     taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
     parents <- lapply(taxon_classifications, function(x) x$taxon_id[nrow(x) - 1])
-    parents[vapply(parents, length, numeric(1))] <- NA
+    parents[vapply(parents, length, numeric(1)) == 0] <- NA
     unlist(parents)
   }
   taxon_data$parent_id <- get_parent(taxon_data$taxon_id, taxon_id_key)
@@ -496,10 +495,11 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 
 
 #===================================================================================================
-#' Recursivly sample a set of taxonomic assignments
+#' Recursivly sample items with a heirarchical classification
 #' 
-#' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
-#' This function takes other functions as arguments that define how the taxonomy is iterpreted.
+#' Recursivly sample a set of items with a heirarchical classification.
+#' This function takes other functions as arguments and is intended to be used to make other more 
+#' user-friendly functions.
 #' 
 #' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
 #' taxonomy used.
@@ -587,7 +587,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
                        min_filter_factory(min_children))
   item_filters <- c(item_filters, max_filter_factory(max_counts), min_filter_factory(min_counts))
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_part <- function(id, ...) {
+  recursive_part <- function(id, depth = 1, ...) {
     # Determine if to stop search  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     stop_recursion = any(vapply(stop_conditions, function(func) func(id, ...), logical(1)))
     # Get and filter subtaxa of current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -606,19 +606,17 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
     if (stop_recursion) {
       items <- get_items(id, ...)
     } else {
-      items <- cat_items(lapply(sub_taxa, recursive_sample, depth = depth + 1))
+      items <- cat_items(lapply(sub_taxa, recursive_part, depth = depth + 1))
     }
     # Filter items - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (rank %in% taxonomy_ranks && !is.null(result)) {
-      for (func in item_filters) {
-        items <- func(items, ...)
-        if (is.null(items) || length(items) == 0) break
-      }
+    for (func in item_filters) {
+      items <- func(items, id, ...)
+      if (is.null(items) || length(items) == 0) break
     }
-    return(result)
+    return(items)
   }
   
-  recursive_part(root_id, depth = 1, ...)
+  recursive_part(root_id, ...)
 }
 
 #===================================================================================================
@@ -664,10 +662,19 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @export
-taxonomic_sample <- function(item_ids, taxon_ids, parent_ids, ranks = NULL, root_id = NULL,
+taxonomic_sample <- function(root_id, item_ids, taxon_ids, parent_ids, ranks = NULL,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
-  
+  # Define functions to interact with the taxonomic information ------------------------------------
+  get_items_func <- function(id, ...) which(item_ids == id)
+  get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(parent_ids) & parent_ids == id]
+  if (is.null(ranks)) get_rank_func <- NULL else get_rank_func <- function(id, ...) ranks[taxon_ids == id]
+  # recursive sampling -----------------------------------------------------------------------------
+  recursive_sample(root_id = root_id, get_items = get_items_func, get_subtaxa = get_subtaxa_func,
+                   get_rank = get_rank_func, cat_items = unlist, max_counts = max_counts, 
+                   min_counts = min_counts, max_children = max_children, min_children = min_children, 
+                   item_filters = item_filters, subtaxa_filters = subtaxa_filters, 
+                   stop_conditions = stop_conditions)
 }
-  
+

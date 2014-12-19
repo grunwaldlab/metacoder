@@ -4,9 +4,9 @@ author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Creating a balanced reference sequence set}
-  %\VignetteEngine{knitr::knitr}
-  %\usepackage[utf8]{inputenc}
+%\VignetteIndexEntry{Creating a balanced reference sequence set}
+%\VignetteEngine{knitr::knitr}
+%\usepackage[utf8]{inputenc}
 ---
 
 
@@ -50,7 +50,16 @@ These items must have a unique taxon id and an associated taxonomy defining how 
 The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence headers.
 
 ```{r}
-
+sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
+cat(names(sequences)[1])
+data <- extract_taxonomy(names(sequences),
+                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                             key = c(name = "item_info", seq_id = "item_info",
+                                     other_id = "item_info", "class_name"),
+                             database = "none")
+index <- taxonomic_sample(root_id = "1", item_ids = data$items$taxon_id, taxon_ids = data$taxa$taxon_id,
+                          parent_ids = data$taxa$parent_id, ranks = data$taxa$rank, max_counts = c("c" = 10))
+sampled_items <- data$items[index, ]
 ```
 
 
