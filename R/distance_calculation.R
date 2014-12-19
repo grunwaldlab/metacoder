@@ -11,8 +11,6 @@
 #' @param y A character vector of DNA sequence. 
 #' @param ... Additional arguments are passed to Biostrings::pairwiseAlignment
 #' @return A Kimura2 distance metric as a numeric vector of length 1.
-#' @importFrom Biostrings pairwiseAlignment
-#' @importClassesFrom Biostrings PairwiseAlignments
 #' @export
 model_kimura2 <- function(x, y, ...) {
   is_transition <- function(x, y) {
@@ -24,10 +22,10 @@ model_kimura2 <- function(x, y, ...) {
   x <- unlist(lapply(x, paste, collapse=""))
   y <- unlist(lapply(y, paste, collapse=""))
   # Align sequences --------------------------------------------------------------------------------
-  alignment <- pairwiseAlignment(x, y, ...)
+  alignment <- Biostrings::pairwiseAlignment(x, y, ...)
   # Calculate distance -----------------------------------------------------------------------------
-  x <- s2c(tolower(as.character(pattern(alignment))))
-  y <- s2c(tolower(as.character(subject(alignment))))
+  x <- seqinr::s2c(tolower(as.character(pattern(alignment))))
+  y <- seqinr::s2c(tolower(as.character(subject(alignment))))
   transitions <- sum(unlist(Map(is_transition, x, y))) / length(x)
   equal <- sum(x == y) / length(x)
   tranversions <- 1 - equal - transitions

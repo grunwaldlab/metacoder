@@ -37,8 +37,6 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = 
 #' @param file_path The path to a primersearch output file.
 #' @return A data frame with each row corresponding to amplicon data
 #' @seealso \code{\link{run_primersearch}}
-#' @importFrom stringr str_match_all
-#' @importFrom plyr name_rows
 #' @export
 parse_primersearch <- function(file_path) {
   # Split output into chunks for each primer--------------------------------------------------------
@@ -55,9 +53,9 @@ parse_primersearch <- function(file_path) {
                    "\t([^\n]+) hits forward strand at ([0-9]+) with ([0-9]+) mismatches",
                    "\t([^\n]+) hits reverse strand at \\[([0-9]+)\\] with ([0-9]+) mismatches",
                    "\tAmplimer length: ([0-9]+) bp", sep = '\n')
-  primer_data <- do.call(rbind, str_match_all(primer_chunks, pattern))[,-1]
+  primer_data <- do.call(rbind, stringr::str_match_all(primer_chunks, pattern))[,-1]
   # Reformat amplicon data -------------------------------------------------------------------------
-  primer_data <- name_rows(as.data.frame(primer_data))
+  primer_data <- plyr::name_rows(as.data.frame(primer_data))
   colnames(primer_data) <- c("amplimer", "sequence", "name", "forward_primer", "forward_index",
                              "forward_mismatch",  "reverse_primer", "reverse_index",
                              "reverse_mismatch", "length", "primer_pair")
@@ -85,18 +83,16 @@ parse_primersearch <- function(file_path) {
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
 #' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
 #' @return Output from \code{\link{parse_primersearch}} (A dataframe)
-#' @importFrom ape write.dna
-#' @importFrom seqinr s2c
 #' @export
 primersearch <- function(sequence, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
-  if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), s2c)
+  if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), seqinr::s2c)
   if (!is.null(seq_name)) names(sequence) <- seq_name
   names(sequence) <- paste(seq_along(sequence), names(sequence))
   # Write fasta file for primersearch input---------------------------------------------------------
   sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
   on.exit(file.remove(sequence_path))
-  write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")
+  ape::write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")
   # Write primer file for primersearch input--------------------------------------------------------
   if (is.null(names(forward))) names(forward) <- seq_along(forward)
   if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)

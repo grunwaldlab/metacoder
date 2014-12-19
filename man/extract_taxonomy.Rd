@@ -32,8 +32,8 @@ classification from broad to specific. Same usage as \code{class_id}}.
 Individual names are not necessarily unique, but are specific (i.e. interperable)
 to a particular \code{database}.
   \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
-  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
 looked up if available. Requires an internet connection.}
+  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
   \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 }}
 

@@ -209,8 +209,6 @@ as.data.frame.qaw <- function(x, ...) {
 #' x <- download_gb_taxon(c("phytophthora", "pythium"),
 #'                        c("@@18S@@", "@@28S@@"),
 #'                        "RRNA")}
-#' @importFrom seqinr choosebank closebank 
-#' @importFrom taxize ncbi_getbyid gnr_resolve
 #' @export
 download_gb_taxon <- function(taxon, key, type,
                               seq_length = c(1,10000),
@@ -222,8 +220,8 @@ download_gb_taxon <- function(taxon, key, type,
   subsample <- match.arg(subsample)
   stopifnot(length(seq_length) == 2, seq_length[1] <= seq_length[2])
   # Prepare connection -----------------------------------------------------------------------------
-  choosebank("genbank")
-  on.exit(closebank())
+  seqinr::choosebank("genbank")
+  on.exit(seqinr::closebank())
   
   run_once <- function(taxon) {
     cat("Searching: ", taxon)
@@ -244,12 +242,12 @@ download_gb_taxon <- function(taxon, key, type,
     if (use_acnuc) {
       sequences <- download_gb_query(taxon_query$req[results$index]) #seqinr used
     } else {
-      sequences <- ncbi_getbyid(rownames(results), verbose=FALSE) #taxize used
+      sequences <- taxize::ncbi_getbyid(rownames(results), verbose=FALSE) #taxize used
     }
     if (nrow(sequences) == 0) return(NULL)
     # Standardize binomial names -------------------------------------------------------------------
     if (standardize) {
-      gnr_result <- gnr_resolve(sequences$taxon,
+      gnr_result <- taxize::gnr_resolve(sequences$taxon,
                                 data_source_ids = 4, #4 is the code for NCBI
                                 stripauthority = TRUE,
                                 best_match_only = TRUE)
