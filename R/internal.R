@@ -152,7 +152,7 @@ taxon_edge_list <- function(taxonomy, separator) {
 #' get_edge_parents
 #' 
 #' @export
-#' @importFrom igraph get.edges ecount
+#' @import igraph
 get_edge_parents <-function(graph) {
   get.edges(graph, 1:ecount(graph))[,1]
 }
@@ -162,7 +162,7 @@ get_edge_parents <-function(graph) {
 #' get_edge_children
 #' 
 #' @export
-#' @importFrom igraph get.edges ecount
+#' @import igraph
 get_edge_children <- function(graph) {
   get.edges(graph, 1:ecount(graph))[,2]
 }
@@ -172,7 +172,7 @@ get_edge_children <- function(graph) {
 #' get_vertex_children
 #' 
 #' @export
-#' @importFrom igraph shortest.paths V
+#' @import igraph
 get_vertex_children <- function(graph, vertex) {
   which(shortest.paths(graph, V(graph)[vertex], mode="out") != Inf)
 }
@@ -181,7 +181,7 @@ get_vertex_children <- function(graph, vertex) {
 #' delete_vetices_and_children
 #'
 #' @export
-#' @importFrom igraph delete.vertices
+#' @import igraph 
 delete_vetices_and_children <- function(graph, vertices) {
   #delete children
   vertices <- unlist(sapply(vertices, function(x) get_vertex_children(graph, x)))

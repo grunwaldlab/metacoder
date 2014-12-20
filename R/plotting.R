@@ -139,7 +139,7 @@ plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display
 #===================================================================================================
 #' Makes igraph from images
 #' 
-#' @importFrom igraph graph.edgelist V get.shortest.paths E
+#' @import igraph 
 plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclude=c(), root_index=1, label_color = "black") {
   #store the distance of all verticies and edges from the root
   root <- V(graph)[root_index]
@@ -197,14 +197,14 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
 #' something that can be coerced to a two column \code{data.frame} where the first column is 
 #' every unique taxon id and the second is its parent/super taxon id. 
 #' 
-#' @importFrom igraph graph.edgelist V get.shortest.paths E
+#' @import igraph
 #' @importFrom plotrix color.scale
 #' @export
 plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1,
                             label_color = "black", display=FALSE, fade=FALSE, legend_text="",
                             value_range=c(0,1), highlight_outliers=TRUE, background="#00000000",
                             save=NULL) {
-  init_igraph()
+#   init_igraph()
   #make graph if nessesary
   if (class(graph) != "igraph") {
     graph <- graph[complete.cases(graph), ]
@@ -266,7 +266,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   graph_layout <- layout.reingold.tilford(graph, root = root_index, circular = TRUE)
   
   #Load vertex images 
-#   V(graph)$raster <- lapply(as.character(V(graph)$raster_file), readPNG)
+  #   V(graph)$raster <- lapply(as.character(V(graph)$raster_file), readPNG)
   
   if (!is.null(save)) {
     png(file = save, bg = background, width=5000, height=5000)
@@ -288,8 +288,8 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                                     high=V(graph)$color[which.max(color_values)],
                                     name=legend_text,
                                     background=background)  
-  pushViewport(viewport(x=0.9, y=0.15))
-  grid.draw(legend)
+  grid::pushViewport(viewport(x=0.9, y=0.15))
+  grid::grid.draw(legend)
   
   if (!is.null(save)) {
     dev.off()
