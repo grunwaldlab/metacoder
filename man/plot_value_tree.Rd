@@ -8,6 +8,11 @@ plot_value_tree(graph, values, labels = NA, scaling = 1, exclude = c(),
   legend_text = "", value_range = c(0, 1), highlight_outliers = TRUE,
   background = "#00000000", save = NULL)
 }
+\arguments{
+\item{graph}{An igraph graph object or an adjacency list (i.e. edge list) represented by
+something that can be coerced to a two column \code{data.frame} where the first column is
+every unique taxon id and the second is its parent/super taxon id.}
+}
 \description{
 Makes igraph from values
 }

@@ -193,18 +193,23 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
 #===================================================================================================
 #' Makes igraph from values
 #' 
+#' @param graph An igraph graph object or an adjacency list (i.e. edge list) represented by
+#' something that can be coerced to a two column \code{data.frame} where the first column is 
+#' every unique taxon id and the second is its parent/super taxon id. 
+#' 
 #' @importFrom igraph graph.edgelist V get.shortest.paths E
 #' @importFrom plotrix color.scale
 #' @export
-plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1, label_color = "black", display=FALSE, fade=FALSE, legend_text="", value_range=c(0,1), highlight_outliers=TRUE, background="#00000000", save=NULL) {
+plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1,
+                            label_color = "black", display=FALSE, fade=FALSE, legend_text="",
+                            value_range=c(0,1), highlight_outliers=TRUE, background="#00000000",
+                            save=NULL) {
   init_igraph()
   #make graph if nessesary
-  if (class(graph) == "character") {
-    graph <- graph.edgelist(taxon_edge_list(graph, ";"))
-  } else if (class(graph) != "igraph") {
-    stop("Incorrect input. 'graph' must be an igraph object or a list of taxonomy strings.")
-  } 
-  
+  if (class(graph) != "igraph") {
+    graph <- graph[complete.cases(graph), ]
+    graph <- graph.edgelist(as.matrix(as.data.frame(graph)))
+  }   
   #store the distance of all verticies and edges from the root
   root <- V(graph)[root_index]
   vertex_depth <- sapply(get.shortest.paths(graph, from=root)$vpath, length)
