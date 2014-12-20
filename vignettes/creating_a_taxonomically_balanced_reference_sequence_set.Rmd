@@ -53,13 +53,21 @@ The example below uses `extract_taxonomy` to get this information; the use of th
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
 data <- extract_taxonomy(names(sequences),
-                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "item_info", seq_id = "item_info",
-                                     other_id = "item_info", "class_name"),
-                             database = "none")
-index <- taxonomic_sample(root_id = "1", item_ids = data$items$taxon_id, taxon_ids = data$taxa$taxon_id,
-                          parent_ids = data$taxa$parent_id, ranks = data$taxa$rank, max_counts = c("c" = 10))
-sampled_items <- data$items[index, ]
+                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                         key = c(name = "item_info", seq_id = "item_info",
+                                 other_id = "item_info", "class_name"),
+                         database = "none")
+items <- data$items
+taxa <- data$taxa
+index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("c" = 20))
+sampled_items <- items[index, ]
+sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
+                                         parents = taxa$parent_id,
+                                         subset = sampled_items$taxon_id)
+sampled_taxa <- taxa[sampled_taxa_index, ]
+sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, sampled_taxa$parent_id, sampled_items$taxon_id)
+plot_value_tree(graph = sampled_taxa[, c("parent_id", "taxon_id")], values = sampled_taxa$item_count)
 ```
 
 
