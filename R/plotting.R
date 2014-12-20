@@ -257,9 +257,10 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   V(graph)$frame.width <- ifelse(outliers, 25, .05)
   color_values[color_values < value_range_quantile[1]] <- value_range_quantile[1]
   color_values[color_values > value_range_quantile[2]] <- value_range_quantile[2]
-  V(graph)$color=mapply(add_alpha, 
-                        color.scale(color_values, c(1,0,0), c(0,1,0), c(0,0,1), xrange=c(min(color_values), max(color_values))), 
-                        alpha=V(graph)$alpha)
+  no_color_in_palette <- 10000
+  palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+  displayed_colors <- palette[as.integer((no_color_in_palette - 1) * color_values/max(color_values)) + 1]
+  V(graph)$color=mapply(add_alpha, displayed_colors, alpha=V(graph)$alpha)
   
   #Calculate vertex layout
   graph_layout <- layout.reingold.tilford(graph, root = root_index, circular = TRUE)

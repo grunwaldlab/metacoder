@@ -60,7 +60,7 @@ data <- extract_taxonomy(names(sequences),
 items <- data$items
 taxa <- data$taxa
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("c" = 20))
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 150))
 sampled_items <- items[index, ]
 sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
                                          parents = taxa$parent_id,
