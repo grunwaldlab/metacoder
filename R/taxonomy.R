@@ -678,3 +678,69 @@ taxonomic_sample <- function(root_id, item_ids, taxon_ids, parent_ids, ranks = N
                    stop_conditions = stop_conditions)
 }
 
+
+#===================================================================================================
+#' Get classification for taxa in edge list
+#' 
+#' Extracts the classification of every taxon in a list of unique taxa and their supertaxa.
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' 
+#' @return A list of vectors of taxa ids. Each list entry corresponds to the \code{taxa} supplied.
+#' 
+#' @export
+get_class_from_el <- function(taxa, parents) {
+  process_one <- function(x) {
+    output <- character(0)
+    my_next <- x
+    while (length(my_next) != 0 && !is.null(my_next) && !is.na(my_next)) {
+      output <- c(my_next, output)
+      my_next <- parents[taxa == my_next]
+    }
+    return(output)
+  }
+  setNames(lapply(taxa, process_one), taxa)
+}
+
+#===================================================================================================
+#' Make minimum taxonomy for a subset of taxa
+#' 
+#' Subsets a table representing every unique taxon based on a subset of taxa. 
+#' This preserves supertaxa, not specified in the subset, but needed to define the internal tree 
+#' structure of the taxonomy. 
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' @param subset (\code{character}) Taxon ids to restrict the new taxonomy to.
+#' 
+#' @return A vector of unique taxon ids.
+#' 
+#' @export
+restrict_taxonomny <- function(taxa, parents, subset) {
+  subset <- unique(subset)
+  tax_class <- get_class_from_el(taxa, parents)
+  unique(unlist(tax_class[subset]))
+}
+
+
+#===================================================================================================
+#' Count occurrences throughout a taxonomy
+#' 
+#' Get counts of items at each unique taxon in a taxonomy, including internal taxa.
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param items (\code{character}) Taxon ids for a set of items to count.
+#' 
+#' @return A named vector of counts corresponding to the taxa in \code{taxa}
+#' @export
+get_taxon_count <- function(taxa, parents, items) {
+  tax_class <- get_class_from_el(taxa, parents)
+  counts <- table(unlist(tax_class[items]))
+  counts <- counts[taxa]
+  counts[is.na(counts)] <- 0
+  setNames(as.numeric(counts), taxa)
+}
