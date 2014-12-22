@@ -249,12 +249,12 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   #set vertex color
   color_values <- V(graph)$values
   value_range_quantile <- quantile(color_values, value_range, na.rm=TRUE)
-  if (highlight_outliers) {
-    outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-    V(graph)$frame.width <- ifelse(outliers, 25, .05)    
-  }
+#   if (highlight_outliers) {
+#     outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
+#     V(graph)$frame.width <- ifelse(outliers, 25, .05)    
+#   }
   outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-  V(graph)$frame.width <- ifelse(outliers, 25, .05)
+#   V(graph)$frame.width <- ifelse(outliers, 25, .05)
   color_values[color_values < value_range_quantile[1]] <- value_range_quantile[1]
   color_values[color_values > value_range_quantile[2]] <- value_range_quantile[2]
   no_color_in_palette <- 10000
@@ -278,7 +278,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                   vertex.label.dist=0,
                   vertex.label.degree=0,
                   edge.arrow.size =0,
-                  vertex.shape="fcircle", 
+                  vertex.shape="circle", 
                   vertex.frame.color='black')
   
   #Make legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
@@ -288,7 +288,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                                     high=V(graph)$color[which.max(color_values)],
                                     name=legend_text,
                                     background=background)  
-  grid::pushViewport(viewport(x=0.9, y=0.15))
+  grid::pushViewport(grid::viewport(x=0.9, y=0.15))
   grid::grid.draw(legend)
   
   if (!is.null(save)) {
