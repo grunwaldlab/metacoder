@@ -6,7 +6,7 @@
 \usage{
 plot_taxonomy(data, taxon_id = "taxon_id", parent_id = "parent_id",
   size = NULL, color = NULL, alpha = NULL, line_size = NULL,
-  line_color = NULL, line_alpha = NULL)
+  line_color = NULL, line_alpha = NULL, label = taxon_id)
 }
 \arguments{
 \item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}

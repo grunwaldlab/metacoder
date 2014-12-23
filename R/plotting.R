@@ -349,18 +349,26 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @param line_alpha (\code{character} of length 1) The name of the column of \code{data} that
 #' contains the value to base vertex size on.
 #' 
+#' @import grid
 #' @export
 plot_taxonomy <- function(data, taxon_id = "taxon_id", parent_id = "parent_id", size = NULL,
                           color = NULL, alpha = NULL, line_size = NULL, line_color = NULL, 
-                          line_alpha = NULL) {
-  browser()
+                          line_alpha = NULL, label = taxon_id) {
   # Parse options ----------------------------------------------------------------------------------
-  if (is.null(size)) data$size = 1
-  if (is.null(color)) data$color = "#999999"
-  if (is.null(alpha)) data$alpha = 1
-  if (is.null(line_size)) data$line_size = 1
-  if (is.null(line_color)) data$line_color = "#999999"
-  if (is.null(line_alpha)) data$line_alpha = 1
+  if (is.null(size)) {
+    data$size <- unit(3, "npc")
+    size <- "size"
+  }
+  if (is.null(color)) data$color <- "#999999"
+  if (is.null(alpha)) data$alpha <- 1
+  if (is.null(line_size)) data$line_size <- 1
+  if (is.null(line_color)) data$line_color <- "#999999"
+  if (is.null(line_alpha)) data$line_alpha <- 1
+  if (is.null(label)) {
+    data$label <- ""
+  } else {
+    data$label <- data[[label]]
+  }
   # Get vertex coordinants  ------------------------------------------------------------------------
   graph <- graph.edgelist(as.matrix(data[complete.cases(data), c(parent_id, taxon_id)]))
   layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
@@ -375,9 +383,10 @@ plot_taxonomy <- function(data, taxon_id = "taxon_id", parent_id = "parent_id", 
   data[[parent_id]][is.na(data[[parent_id]])] <- ""
   ggplot(data = data) +
     geom_segment(aes_string(x = "from_x", xend = "to_x", y = "from_y", yend = "to_y",
-                            size = line_size, color = line_color, alpha = line_alpha)) +
-    geom_point(aes_string(x = "x", y = "y", size = size, color = color, alpha = alpha)) +
-    geom_text(aes_string(x = "x", y = "y"), label = data[[taxon_id]]) + # add the node labels
+                            size = line_size, color = line_color, alpha = line_alpha),
+                 show_guide = FALSE) +
+    geom_point(aes_string(x = "x", y = "y", color = color, alpha = alpha), size = unit(3, "npc")) +
+    geom_text(aes_string(x = "x", y = "y"), label = data$label) + # add the node labels
     scale_x_continuous(expand = c(0, 1)) +  # expand the x limits 
     scale_y_continuous(expand = c(0, 1)) + # expand the y limits
     theme(
