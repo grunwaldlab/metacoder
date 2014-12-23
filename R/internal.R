@@ -228,10 +228,7 @@ continuous_color_legend <- function(values, background="#00000000", ...) {
   labels <- as.character(signif(label_points, 2))
   full_plot <- qplot(x,y, colour=value, data=data.frame(x=1, y=1, value=values)) + 
     scale_colour_gradient2(breaks = label_points, labels = labels, midpoint=mid_point, ...) + 
-    theme(legend.key.size = unit(5, "cm"), 
-          legend.text = element_text(size=85),
-          legend.title = element_text(size=85),
-          legend.background = element_rect(fill = background))
+    theme(legend.background = element_rect(fill = background))
   g_legend(full_plot)
 }
 

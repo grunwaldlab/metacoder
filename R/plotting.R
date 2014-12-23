@@ -197,14 +197,14 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
 #' something that can be coerced to a two column \code{data.frame} where the first column is 
 #' every unique taxon id and the second is its parent/super taxon id. 
 #' 
-#' @import igraph
+#' @import igraph grid
 #' @importFrom plotrix color.scale
 #' @export
 plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1,
                             label_color = "black", display=FALSE, fade=FALSE, legend_text="",
                             value_range=c(0,1), highlight_outliers=TRUE, background="#00000000",
                             save=NULL) {
-#   init_igraph()
+  #   init_igraph()
   #make graph if nessesary
   if (class(graph) != "igraph") {
     graph <- graph[complete.cases(graph), ]
@@ -249,12 +249,12 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   #set vertex color
   color_values <- V(graph)$values
   value_range_quantile <- quantile(color_values, value_range, na.rm=TRUE)
-#   if (highlight_outliers) {
-#     outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-#     V(graph)$frame.width <- ifelse(outliers, 25, .05)    
-#   }
+  #   if (highlight_outliers) {
+  #     outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
+  #     V(graph)$frame.width <- ifelse(outliers, 25, .05)    
+  #   }
   outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-#   V(graph)$frame.width <- ifelse(outliers, 25, .05)
+  #   V(graph)$frame.width <- ifelse(outliers, 25, .05)
   color_values[color_values < value_range_quantile[1]] <- value_range_quantile[1]
   color_values[color_values > value_range_quantile[2]] <- value_range_quantile[2]
   no_color_in_palette <- 10000
@@ -271,15 +271,6 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
   if (!is.null(save)) {
     png(file = save, bg = background, width=5000, height=5000)
   }
-  #plot graph
-  my_plot <- plot(graph,
-                  layout=graph_layout,
-                  margin=0, 
-                  vertex.label.dist=0,
-                  vertex.label.degree=0,
-                  edge.arrow.size =0,
-                  vertex.shape="circle", 
-                  vertex.frame.color='black')
   
   #Make legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
   legend <- continuous_color_legend(color_values,
@@ -287,14 +278,27 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
                                     mid=V(graph)$color[which_middle(color_values)], 
                                     high=V(graph)$color[which.max(color_values)],
                                     name=legend_text,
-                                    background=background)  
-  grid::pushViewport(grid::viewport(x=0.9, y=0.15))
-  grid::grid.draw(legend)
+                                    background=background)
   
+  main_vp <- viewport(x = .5, y = .5, width = 1, height = 1)
+  legend_vp <- viewport(x = 1, y = 0, width = 0.1, height = 1, just = c("right", "bottom"))
+  grid.newpage()
+  pushViewport(main_vp)
+  plot(graph, 
+       layout=graph_layout,
+       margin=0, 
+       vertex.label.dist=0,
+       vertex.label.degree=0,
+       edge.arrow.size =0,
+       vertex.shape="circle", 
+       vertex.frame.color=NA)
+  upViewport()
+  pushViewport(legend_vp)
+  grid.draw(legend[[1]][[1]])
+  popViewport(1)
   if (!is.null(save)) {
     dev.off()
   }
-  return(my_plot)
 }
 
 #===================================================================================================
