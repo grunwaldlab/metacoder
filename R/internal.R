@@ -291,6 +291,9 @@ map_unique <- function(input, func, ...) {
 #' @param radius (\code{numeric} of length 1) The diameter of the circle.
 #' @param angle (\code{numeric} of length 1) Angle to rotate points around the center of the circle.
 #' 
+#' @examples
+#' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
 #' @export
 polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   # Define function to make points for a single polygon --------------------------------------------
@@ -312,5 +315,5 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   # Compile of the points for multiple polygons ----------------------------------------------------
   output <- mapply(process_one, n, x, y, radius, angle, SIMPLIFY = FALSE)
   group <- rep(seq_along(output), vapply(output, nrow, numeric(1)))
-  cbind(group = group, do.call(rbind, output))
+  cbind(group = as.factor(group), do.call(rbind, output))
 } 
