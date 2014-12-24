@@ -336,11 +336,11 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' contains the unique id of the taxon for that row.
 #' @param parent_id (\code{character} of length 1) The name of the column of \code{data} that 
 #' contains the unique id of supertaxon \code{taxon_id} is a part of.
-#' @param size (\code{character} of length 1) The name of the column of \code{data} that
+#' @param vertex_size (\code{character} of length 1) The name of the column of \code{data} that
 #' contains the value to base vertex size on.
-#' @param color (\code{character} of length 1) The name of the column of \code{data} that
+#' @param vertex_color (\code{character} of length 1) The name of the column of \code{data} that
 #' contains the value to base vertex size on.
-#' @param alpha (\code{character} of length 1) The name of the column of \code{data} that
+#' @param vertex_alpha (\code{character} of length 1) The name of the column of \code{data} that
 #' contains the value to base vertex size on.
 #' @param line_size (\code{character} of length 1) The name of the column of \code{data} that
 #' contains the value to base vertex size on.
@@ -351,9 +351,38 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' 
 #' @import grid
 #' @export
-plot_taxonomy <- function(data, taxon_id = "taxon_id", parent_id = "parent_id", size = NULL,
-                          color = NULL, alpha = NULL, line_size = NULL, line_color = NULL, 
-                          line_alpha = NULL, label = taxon_id) {
+plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
+                          vertex_alpha = NULL, line_size = NULL, line_color = NULL, 
+                          line_alpha = NULL, label = NULL) {
+  # Get vertex coordinants  ------------------------------------------------------------------------
+  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
+  graph <- graph.edgelist(as.matrix(data[complete.cases(data), ]))
+  layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
+  names(layout) <- c('x', 'y')
+  data <- cbind(data, layout)
+  # Get vertex size --------------------------------------------------------------------------------
+  if (is.null(vertex_size)) {
+    data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
+    data$vertex_size <- max(data$depth) - data$depth + 1
+  } 
+  # Get edge coordinants ---------------------------------------------------------------------------
+  data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
+  data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
+  slope <- (data$parent_y - data$y) / (data$parent_x - data$x)
+  inv_slope <- -1 / slope
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # Parse options ----------------------------------------------------------------------------------
   if (is.null(size)) {
     data$size <- unit(3, "npc")

@@ -4,27 +4,24 @@
 \alias{plot_taxonomy}
 \title{Plot items on taxonomy}
 \usage{
-plot_taxonomy(data, taxon_id = "taxon_id", parent_id = "parent_id",
-  size = NULL, color = NULL, alpha = NULL, line_size = NULL,
-  line_color = NULL, line_alpha = NULL, label = taxon_id)
+plot_taxonomy(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
+  vertex_alpha = NULL, line_size = NULL, line_color = NULL,
+  line_alpha = NULL, label = NULL)
 }
 \arguments{
-\item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
-and \code{parent_id}.}
-
 \item{taxon_id}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the unique id of the taxon for that row.}
 
 \item{parent_id}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the unique id of supertaxon \code{taxon_id} is a part of.}
 
-\item{size}{(\code{character} of length 1) The name of the column of \code{data} that
+\item{vertex_size}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the value to base vertex size on.}
 
-\item{color}{(\code{character} of length 1) The name of the column of \code{data} that
+\item{vertex_color}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the value to base vertex size on.}
 
-\item{alpha}{(\code{character} of length 1) The name of the column of \code{data} that
+\item{vertex_alpha}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the value to base vertex size on.}
 
 \item{line_size}{(\code{character} of length 1) The name of the column of \code{data} that
@@ -35,6 +32,9 @@ contains the value to base vertex size on.}
 
 \item{line_alpha}{(\code{character} of length 1) The name of the column of \code{data} that
 contains the value to base vertex size on.}
+
+\item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
+and \code{parent_id}.}
 }
 \description{
 Plots the distribution of values associated with item with an associated taxonomic classification.
