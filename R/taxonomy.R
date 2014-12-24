@@ -704,6 +704,20 @@ get_class_from_el <- function(taxa, parents) {
   setNames(lapply(taxa, process_one), taxa)
 }
 
+
+#===================================================================================================
+#' Ge distance from root of edgelist items
+#' 
+#' Gets the number of ancestors/supergroups for items of an edge/adjacency list
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' @export
+edge_list_depth <-  function(taxa, parents) {
+  vapply(get_class_from_el(taxa, parents), length, numeric(1))
+}
+
 #===================================================================================================
 #' Make minimum taxonomy for a subset of taxa
 #' 
