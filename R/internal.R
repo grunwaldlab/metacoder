@@ -341,3 +341,54 @@ rescale <- function(input, new_min, new_max) {
   offset <- new_min - min(rescaled)
   rescaled + offset
 }
+
+#===================================================================================================
+#' Get all distances beween points
+#' 
+#' Returns the distances bewteen every possible combination of two points.
+#' 
+#' @param x (\code{numeric} of length 1) x coordinate
+#' @param y (\code{numeric} of length 1) y coordinate
+#' 
+#' @return A \code{data.frame}
+#' 
+#' @examples
+#' molten_dist(x = 1:5, y = 1:5)
+#' 
+#' @export
+#' @import reshape2
+molten_dist <- function(x, y) {
+  data <- as.matrix(dist(cbind(x, y)))
+  data[!lower.tri(data)] <- NA
+  data <- melt(data)
+  names(data) <- c("index_1", "index_2", "distance")
+  data[!is.na(data$distance), ]    
+}
+
+#===================================================================================================
+#' Finds the gap/overlap of circle coordinates
+#' 
+#' Given a set of x, y coordinates and corresponding radii return the gap between every possible 
+#' combination.
+#' 
+#' @param x (\code{numeric} of length 1) x coordinate of center
+#' @param y (\code{numeric} of length 1) y coordinate of center
+#' @param r (\code{numeric} of length 1) The diameter of the circle.
+#' 
+#' @examples
+#' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
+#' 
+#' @export
+inter_circle_gap <- function(x, y, r) {
+  n <- max(vapply(list(x, y, r), length, numeric(1)))
+  # Force x, y, and r to same length ---------------------------------------------------------------
+  temp <- as.data.frame(cbind(x, y, r))
+  x <- temp$x
+  y <- temp$y
+  r <- temp$r
+  # Get distance between all points ----------------------------------------------------------------
+  data <- molten_dist(x, y)
+  # Get distance between circles -------------------------------------------------------------------
+  data$gap <- data$distance - r[data$index_1] - r[data$index_2]
+  return(data)
+}
