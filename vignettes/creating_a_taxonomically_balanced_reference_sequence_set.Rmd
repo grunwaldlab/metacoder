@@ -60,14 +60,15 @@ data <- extract_taxonomy(names(sequences),
 items <- data$items
 taxa <- data$taxa
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 150))
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 15))
 sampled_items <- items[index, ]
 sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
                                          parents = taxa$parent_id,
                                          subset = sampled_items$taxon_id)
 sampled_taxa <- taxa[sampled_taxa_index, ]
 sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, sampled_taxa$parent_id, sampled_items$taxon_id)
-plot_value_tree(graph = sampled_taxa[, c("parent_id", "taxon_id")], values = sampled_taxa$item_count)
+plot_taxonomy(taxa$taxon_id, taxa$parent_id, vertex_size = taxa$item_count)
+plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id, vertex_size = sampled_taxa$item_count)
 ```
 
 

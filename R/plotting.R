@@ -357,7 +357,7 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
-  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
+  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
   graph <- graph.edgelist(as.matrix(data[complete.cases(data), c("parent_id", "taxon_id")]))
   layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
   names(layout) <- c('x', 'y')
@@ -367,20 +367,21 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
     data$vertex_size <- max(data$depth) - data$depth + 1
   } else {
-    data$vertex_size <- sqrt(vertex_size / pi)
+    data$vertex_size <- vertex_size
+    data$vertex_size <- sqrt(data$vertex_size / pi)
   }
   pairwise <- molten_dist(x = data$x, y = data$y)
   vertex_size_opt_func <- function(a_max, a_min) {
     size <- rescale(data$vertex_size, new_min = a_max, new_max = a_min)
     data <- inter_circle_gap(x = data$x, y = data$y, r = size)
-    overlap <- abs(data$gap[data$gap < 0]) * 1000
-    space <- data$gap[data$gap >= 0]
-    print(paste(sum(overlap), sum(space)))
-    sum(overlap) + sum(space)
+    overlap <- sum(abs(data$gap[data$gap < 0])) / length(size) * 2
+    space <- sum(data$gap[data$gap >= 0]) / length(size)^2
+    print(paste(overlap, space))
+    overlap + space
   }
   opt_size_range <- get_optimal_range(max_range = c(min(pairwise$distance), max(pairwise$distance) / 3),
-                                      min_range = c(min(pairwise$distance) / 2, min(pairwise$distance) * 2),
-                                      resolution = c(5, 10),
+                                      min_range = c(min(pairwise$distance) / 5, min(pairwise$distance) * 2),
+                                      resolution = c(10, 10),
                                       opt_crit = vertex_size_opt_func)
   data$vertex_size <- rescale(data$vertex_size,
                               new_min = opt_size_range[1],
