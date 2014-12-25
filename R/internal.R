@@ -392,3 +392,44 @@ inter_circle_gap <- function(x, y, r) {
   data$gap <- data$distance - r[data$index_1] - r[data$index_2]
   return(data)
 }
+
+
+
+#===================================================================================================
+#' Find optimal range
+#' 
+#' Finds optimal max and min value useing an optimality criterion.
+#' 
+#' @param max_range (\code{numeric} of length 2) The min and max boundries to the search space for
+#' the optimal maximum value.
+#' @param min_range (\code{numeric} of length 2) The min and max boundries to the search space for
+#' the optimal minimum value.
+#' @param resolution (\code{numeric} of length 1) The smallest increment bewteen tests
+#' @param opt_crit (\code{function}) A function that takes two arguments, the max and min, and
+#' returns the optimality statistic.
+#' @param minimize (\code{logical} of length 1) If \code{TRUE}, the smallest optimality statistic
+#' is considered the best. By default, larger is considered better. 
+#' 
+#' @return A \code{numeric} vector of length 2. The optimal max and min values.
+#' 
+#' @export
+get_optimal_range <- function(max_range, min_range, resolution, opt_crit, minimize = TRUE) {
+  # Validate arguments -----------------------------------------------------------------------------
+  if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
+  if (length(min_range) != 2 || min_range[1] > min_range[2]) stop('Invalid `min_range`')
+  # List of ranges to test -------------------------------------------------------------------------
+  max_increments <- seq(from = max_range[1], to = max_range[2], by = resolution)
+  min_increments <- seq(from = min_range[1], to = min_range[2], by = resolution)
+  search_space <- lapply(min_increments, function(x) lapply(max_increments, function(y) c(x, y)))
+  search_space <- unlist(search_space, recursive = F)
+  valid_range <- vapply(search_space, function(x) x[1] < x[2], logical(1))
+  search_space <- search_space[valid_range]
+  # Find optimal range -----------------------------------------------------------------------------
+  scores <- vapply(search_space, opt_crit, numeric(1))
+  if (minimize) {
+    best <- search_space[[which.max(scores)]]
+  } else {
+    best <- search_space[[which.min(scores)]]
+  }
+  return(best)
+}
