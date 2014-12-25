@@ -13,7 +13,7 @@ the optimal maximum value.}
 \item{min_range}{(\code{numeric} of length 2) The min and max boundries to the search space for
 the optimal minimum value.}
 
-\item{resolution}{(\code{numeric} of length 1) The smallest increment bewteen tests}
+\item{resolution}{(\code{numeric} of length 2) The number of increments in each dimension.}
 
 \item{opt_crit}{(\code{function}) A function that takes two arguments, the max and min, and
 returns the optimality statistic.}

@@ -358,13 +358,13 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   arbitrary_taxon_ids <- FALSE
   if ("taxon_id" %in% names(item_data)) {
-    class(item_data$taxon_id) <- id_class
+    if (database != "none") class(item_data$taxon_id) <- id_class
   } else if ("class_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
                                          rev_rank = class_rank_rev, taxon_col_name = "taxon_id")
     item_data$taxon_id <- extract_last(item_classification, "taxon_id")
-    class(item_data$taxon_id) <- id_class
+    if (database != "none") class(item_data$taxon_id) <- id_class
   } else if ("item_id" %in% names(item_data) && database != "none") {
     if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
     item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
@@ -414,7 +414,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Get taxon data ---------------------------------------------------------------------------------
   taxon_id_key <- unique_taxa(item_classification, id_column = "taxon_id")
   taxon_data <- do.call(rbind, lapply(taxon_id_key, function(x) x[nrow(x), ]))
-  class(taxon_data$taxon_id) <- id_class
+  if (database != "none") class(taxon_data$taxon_id) <- id_class
   # Get taxon id of classifications if necessary ---------------------------------------------------
   if (get_id_from_name && database != "none") {
     taxon_ids <- id_from_name(taxon_data$name)

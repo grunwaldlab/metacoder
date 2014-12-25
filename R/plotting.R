@@ -354,9 +354,11 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, line_size = NULL, line_color = NULL, 
                           line_alpha = NULL, label = NULL) {
+  # Validate arguments -----------------------------------------------------------------------------
+  if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
   data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
-  graph <- graph.edgelist(as.matrix(data[complete.cases(data), ]))
+  graph <- graph.edgelist(as.matrix(data[complete.cases(data), c("parent_id", "taxon_id")]))
   layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
   names(layout) <- c('x', 'y')
   data <- cbind(data, layout)
@@ -364,69 +366,32 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
   if (is.null(vertex_size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
     data$vertex_size <- max(data$depth) - data$depth + 1
-  } 
+  } else {
+    data$vertex_size <- sqrt(vertex_size / pi)
+  }
+  pairwise <- molten_dist(x = data$x, y = data$y)
+  vertex_size_opt_func <- function(a_max, a_min) {
+    size <- rescale(data$vertex_size, new_min = a_max, new_max = a_min)
+    data <- inter_circle_gap(x = data$x, y = data$y, r = size)
+    overlap <- abs(data$gap[data$gap < 0]) * 1000
+    space <- data$gap[data$gap >= 0]
+    print(paste(sum(overlap), sum(space)))
+    sum(overlap) + sum(space)
+  }
+  opt_size_range <- get_optimal_range(max_range = c(min(pairwise$distance), max(pairwise$distance) / 3),
+                                      min_range = c(min(pairwise$distance) / 2, min(pairwise$distance) * 2),
+                                      resolution = c(5, 10),
+                                      opt_crit = vertex_size_opt_func)
+  data$vertex_size <- rescale(data$vertex_size,
+                              new_min = opt_size_range[1],
+                              new_max = opt_size_range[2])
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
   slope <- (data$parent_y - data$y) / (data$parent_x - data$x)
   inv_slope <- -1 / slope
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  # Parse options ----------------------------------------------------------------------------------
-  if (is.null(size)) {
-    data$size <- unit(3, "npc")
-    size <- "size"
-  }
-  if (is.null(color)) data$color <- "#999999"
-  if (is.null(alpha)) data$alpha <- 1
-  if (is.null(line_size)) data$line_size <- 1
-  if (is.null(line_color)) data$line_color <- "#999999"
-  if (is.null(line_alpha)) data$line_alpha <- 1
-  if (is.null(label)) {
-    data$label <- ""
-  } else {
-    data$label <- data[[label]]
-  }
-  # Get vertex coordinants  ------------------------------------------------------------------------
-  graph <- graph.edgelist(as.matrix(data[complete.cases(data), c(parent_id, taxon_id)]))
-  layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
-  names(layout) <- c('x', 'y')
-  data <- cbind(data, layout)
-  # Get edge coordinants ---------------------------------------------------------------------------
-  data$from_x <- data$x
-  data$from_y <- data$y
-  data$to_x <- data$x[match(data[[parent_id]], data[[taxon_id]])]  
-  data$to_y <- data$y[match(data[[parent_id]], data[[taxon_id]])]
-  # Make plot --------------------------------------------------------------------------------------
-  data[[parent_id]][is.na(data[[parent_id]])] <- ""
+  # Plot it! ---------------------------------------------------------------------------------------
+  vertex_data <- polygon_coords(n = 30, x = data$x, y = data$y, radius = data$vertex_size)
   ggplot(data = data) +
-    geom_segment(aes_string(x = "from_x", xend = "to_x", y = "from_y", yend = "to_y",
-                            size = line_size, color = line_color, alpha = line_alpha),
-                 show_guide = FALSE) +
-    geom_point(aes_string(x = "x", y = "y", color = color, alpha = alpha), size = unit(3, "npc")) +
-    geom_text(aes_string(x = "x", y = "y"), label = data$label) + # add the node labels
-    scale_x_continuous(expand = c(0, 1)) +  # expand the x limits 
-    scale_y_continuous(expand = c(0, 1)) + # expand the y limits
-    theme(
-      axis.text.x = element_blank(),  # remove x-axis text
-      axis.text.y = element_blank(), # remove y-axis text
-      axis.ticks = element_blank(),  # remove axis ticks
-      axis.title.x = element_blank(), # remove x-axis labels
-      axis.title.y = element_blank(), # remove y-axis labels
-      panel.background = element_blank(), 
-      panel.border =element_blank(), 
-      panel.grid.major = element_blank(),  #remove major-grid labels
-      panel.grid.minor = element_blank(),  #remove minor-grid labels
-      plot.background = element_blank())
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group))
 }
