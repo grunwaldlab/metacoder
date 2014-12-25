@@ -325,18 +325,19 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 #' Scales a set of numbers to a differnt range based on their range
 #' 
 #' @param input (\code{numeric}) Numbers to rescale.
-#' @param minimum (\code{numeric} of length 2) The minimum of the rescaled numbers.
-#' @param maximum (\code{numeric} of length 2) The maximum of the rescaled numbers.
+#' @param new_min (\code{numeric} of length 1) The minimum of the rescaled numbers.
+#' @param new_max (\code{numeric} of length 1) The maximum of the rescaled numbers.
 #' 
 #' @examples
-#' rescale(1:10, c(-2.2, -7.5))
-#' hist(rescale(rnorm(1000), c(5, 10)))
+#' rescale(1:10, -2.2, 7.5)
+#' hist(rescale(rnorm(1000), 5, 10))
 #' 
 #' @export
-rescale <- function(input, minimum, maximum) {
+rescale <- function(input, new_min, new_max) {
+  if (new_min > new_max) stop("new_min cannot be larger than new_max")
   old_diff <- max(input) - min(input)
-  new_diff <- new_range[2] - new_range[1]
+  new_diff <- new_max - new_min
   rescaled <- input * new_diff / old_diff
-  offset <- new_range[1] - min(rescaled)
+  offset <- new_min - min(rescaled)
   rescaled + offset
 }

@@ -4,20 +4,20 @@
 \alias{rescale}
 \title{Scale numbers to a range of values}
 \usage{
-rescale(input, minimum, maximum)
+rescale(input, new_min, new_max)
 }
 \arguments{
 \item{input}{(\code{numeric}) Numbers to rescale.}
 
-\item{minimum}{(\code{numeric} of length 2) The minimum of the rescaled numbers.}
+\item{new_min}{(\code{numeric} of length 1) The minimum of the rescaled numbers.}
 
-\item{maximum}{(\code{numeric} of length 2) The maximum of the rescaled numbers.}
+\item{new_max}{(\code{numeric} of length 1) The maximum of the rescaled numbers.}
 }
 \description{
 Scales a set of numbers to a differnt range based on their range
 }
 \examples{
-rescale(1:10, c(-2.2, -7.5))
-hist(rescale(rnorm(1000), c(5, 10)))
+rescale(1:10, -2.2, 7.5)
+hist(rescale(rnorm(1000), 5, 10))
 }
 
