@@ -317,3 +317,26 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   group <- rep(seq_along(output), vapply(output, nrow, numeric(1)))
   cbind(group = as.factor(group), do.call(rbind, output))
 } 
+
+
+#===================================================================================================
+#' Scale numbers to a range of values
+#' 
+#' Scales a set of numbers to a differnt range based on their range
+#' 
+#' @param input (\code{numeric}) Numbers to rescale.
+#' @param minimum (\code{numeric} of length 2) The minimum of the rescaled numbers.
+#' @param maximum (\code{numeric} of length 2) The maximum of the rescaled numbers.
+#' 
+#' @examples
+#' rescale(1:10, c(-2.2, -7.5))
+#' hist(rescale(rnorm(1000), c(5, 10)))
+#' 
+#' @export
+rescale <- function(input, minimum, maximum) {
+  old_diff <- max(input) - min(input)
+  new_diff <- new_range[2] - new_range[1]
+  rescaled <- input * new_diff / old_diff
+  offset <- new_range[1] - min(rescaled)
+  rescaled + offset
+}
