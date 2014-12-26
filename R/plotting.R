@@ -2,7 +2,7 @@
 #' plot_threshold_optimization
 #' 
 #' @import reshape2
-#' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank
+#' @import ggplot2 
 plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent") {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -56,7 +56,7 @@ plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, displa
 #' 
 #' @importFrom zoo rollmean
 #' @import reshape2
-#' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank geom_bar
+#' @import ggplot2 
 plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent", smoothness=3, bin_width=NULL) {
   if (class(input) == "character" || class(input) == "factor" ) {
     if (file.exists(as.character(input))) {
@@ -304,7 +304,7 @@ plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), ro
 #===================================================================================================
 #' plot_value_distribution_by_level
 #' 
-#' @importFrom ggplot2 aes_string geom_boxplot geom_violin geom_point facet_grid position_jitter labs theme element_text element_blank
+#' @import ggplot2 
 plot_value_distribution_by_level <- function(taxon_data, value_column, level_column = "level", ...) {
   ggplot(taxon_data, aes_string(x=level_column, y=value_column)) + 
     geom_boxplot(width=.5, outlier.colour="transparent") +
@@ -344,6 +344,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' spaces when optimizing vertex size range.
 #' 
 #' @import grid
+#' @import ggplot2 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, line_color = NULL, 
@@ -399,13 +400,41 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
-  edge_data <- line_coords(x1 = data$x, y1 = data$y, x2 = data$parent_x, y2 = data$parent_y,
+  line_data <- line_coords(x1 = data$x, y1 = data$y, x2 = data$parent_x, y2 = data$parent_y,
                            width = data$size)
-  edge_data <- cbind(edge_data, data[as.numeric(edge_data$group), c("size"), drop = F])
+  line_data <- cbind(line_data, data[as.numeric(line_data$group), c("size"), drop = F])
+  # Get vertex color -------------------------------------------------------------------------------
+  if (is.null(vertex_color)) {
+    if (!is.null(size)) {
+      data$vertex_color <- data$size
+    }
+  } else {
+    data$vertex_color <- vertex_color
+  }
+  if (is.numeric(data$vertex_color)) { ## Not factors or hex codes
+    no_color_in_palette <- 10000
+    palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+    color_index <- (no_color_in_palette - 1) * data$vertex_color/max(data$vertex_color) + 1
+    data$vertex_color <- palette[as.integer(color_index)]    
+  }
+  vertex_data$vertex_color <- data$vertex_color[as.numeric(vertex_data$group)]
+  # Get edge color ---------------------------------------------------------------------------------
+  if (is.null(line_color)) {
+    data$line_color <- data$vertex_color
+  } else {
+    data$line_color <- line_color
+  }
+  if (is.numeric(data$line_color)) { ## Not factors or hex codes
+    no_color_in_palette <- 10000
+    palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+    color_index <- (no_color_in_palette - 1) * data$line_color/max(data$line_color) + 1
+    data$line_color <- palette[as.integer(color_index)]    
+  }
+  line_data$line_color <- data$line_color[as.numeric(line_data$group)]
   # Plot it! ---------------------------------------------------------------------------------------
   ggplot(data = data) +
-    geom_polygon(data = edge_data, aes(x = x, y = y, group = group, fill = size)) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group, fill = size)) +
+    geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
     guides(fill = "none") +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank())

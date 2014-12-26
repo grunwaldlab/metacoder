@@ -213,7 +213,7 @@ add_alpha <- function(col, alpha=1){
 #'
 #' make a color legend
 #' 
-#' @importFrom ggplot2 ggplot_gtable ggplot_build qplot scale_colour_gradient2 theme element_text element_rect
+#' @import ggplot2
 #' @export
 continuous_color_legend <- function(values, background="#00000000", ...) {
   #Extract Legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)

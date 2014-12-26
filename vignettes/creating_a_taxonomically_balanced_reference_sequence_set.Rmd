@@ -50,6 +50,7 @@ These items must have a unique taxon id and an associated taxonomy defining how 
 The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence headers.
 
 ```{r}
+library(metacoder)
 sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
 cat(names(sequences)[1])
 data <- extract_taxonomy(names(sequences),
@@ -60,7 +61,7 @@ data <- extract_taxonomy(names(sequences),
 items <- data$items
 taxa <- data$taxa
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 15))
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 20, "s" = 2))
 sampled_items <- items[index, ]
 sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
                                          parents = taxa$parent_id,
