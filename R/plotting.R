@@ -334,10 +334,9 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' and \code{parent_id}.
 #' @param taxon_id  The unique ids of the taxon for each row.
 #' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
-#' @param vertex_size The value to base vertex size on.
+#' @param size The value to base vertex size on.
 #' @param vertex_color The value to base vertex color on.
 #' @param vertex_alpha The value to base vertex transparency on.
-#' @param line_size The value to base line width on.
 #' @param line_color The value to base line color on.
 #' @param line_alpha The value to base line transparency on.
 #' @param label The values of labels. 
@@ -346,8 +345,8 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' 
 #' @import grid
 #' @export
-plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
-                          vertex_alpha = NULL, line_size = NULL, line_color = NULL, 
+plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
+                          vertex_alpha = NULL, line_color = NULL, 
                           line_alpha = NULL, label = NULL, overlap_bias = 5) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
@@ -358,26 +357,25 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
   names(layout) <- c('x', 'y')
   data <- cbind(data, layout)
   # Get vertex size --------------------------------------------------------------------------------
-  if (is.null(vertex_size)) {
+  if (is.null(size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
-    data$vertex_size <- max(data$depth) - data$depth + 1
+    data$size <- max(data$depth) - data$depth + 1
   } else {
-    data$vertex_size <- vertex_size
-    data$vertex_size <- sqrt(data$vertex_size / pi)
+    data$size <- size
+    data$size <- sqrt(data$size / pi)
   }
   pairwise <- molten_dist(x = data$x, y = data$y)
   max_range <- c(min(pairwise$distance), max(pairwise$distance) / 5)
   min_range <- c(min(pairwise$distance) / 5, min(pairwise$distance))
   pairwise <- pairwise[pairwise$distance <= max_range[2], ]
-  vertex_size_opt_func <- function(a_max, a_min) {
+  size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
-    size <- rescale(data$vertex_size, new_min = a_max, new_max = a_min)
+    size <- rescale(data$size, new_min = a_max, new_max = a_min)
     pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
     # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
     space <- sum(pairs$gap[pairs$gap >= 0])
-    print(paste(overlap, space))
     return(c(overlap, space))
   }
   choose_best <- function(options) {
@@ -391,21 +389,24 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
   opt_size_range <- get_optimal_range(max_range = max_range,
                                       min_range = min_range,
                                       resolution = c(10, 15),
-                                      opt_crit = vertex_size_opt_func, 
+                                      opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$vertex_size <- rescale(data$vertex_size,
+  data$size <- rescale(data$size,
                               new_min = opt_size_range[1],
                               new_max = opt_size_range[2])
-  vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$vertex_size)
-  vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("vertex_size"), drop = F])
+  vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
+  vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
   edge_data <- line_coords(x1 = data$x, y1 = data$y, x2 = data$parent_x, y2 = data$parent_y,
-                           width = data$vertex_size)
-  edge_data <- cbind(edge_data, data[as.numeric(edge_data$group), c("vertex_size"), drop = F])
+                           width = data$size)
+  edge_data <- cbind(edge_data, data[as.numeric(edge_data$group), c("size"), drop = F])
   # Plot it! ---------------------------------------------------------------------------------------
   ggplot(data = data) +
-    geom_polygon(data = edge_data, aes(x = x, y = y, group = group, fill = vertex_size)) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group, fill = vertex_size))
+    geom_polygon(data = edge_data, aes(x = x, y = y, group = group, fill = size)) +
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group, fill = size)) +
+    guides(fill = "none") +
+    theme(panel.grid = element_blank(), 
+          panel.background = element_blank())
 }
