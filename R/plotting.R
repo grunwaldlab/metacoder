@@ -1,7 +1,7 @@
 #===================================================================================================
 #' plot_threshold_optimization
 #' 
-#' @importFrom reshape2 melt
+#' @import reshape2
 #' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank
 plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent") {
   if (class(input) == "character" || class(input) == "factor" ) {
@@ -55,7 +55,7 @@ plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, displa
 #' plot_distance_distribution
 #' 
 #' @importFrom zoo rollmean
-#' @importFrom reshape2 melt
+#' @import reshape2
 #' @importFrom ggplot2 aes geom_area geom_line labs theme element_text element_blank geom_bar
 plot_distance_distribution <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent", smoothness=3, bin_width=NULL) {
   if (class(input) == "character" || class(input) == "factor" ) {
