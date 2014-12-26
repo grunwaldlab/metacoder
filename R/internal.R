@@ -444,13 +444,11 @@ inter_circle_gap <- function(x, y, r) {
 #' @param resolution (\code{numeric} of length 2) The number of increments in each dimension.
 #' @param opt_crit (\code{function}) A function that takes two arguments, the max and min, and
 #' returns the optimality statistic.
-#' @param minimize (\code{logical} of length 1) If \code{TRUE}, the smallest optimality statistic
-#' is considered the best. By default, larger is considered better. 
-#' 
-#' @return A \code{numeric} vector of length 2. The optimal max and min values.
+#' @param choose_best (\code{function}) A function that takes a list of \code{opt_crit} outputs
+#' and returns the index of the best one.
 #' 
 #' @export
-get_optimal_range <- function(max_range, min_range, resolution, opt_crit, minimize = TRUE) {
+get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose_best, minimize = TRUE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
   if (length(min_range) != 2 || min_range[1] > min_range[2]) stop('Invalid `min_range`')
@@ -462,11 +460,6 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, minimi
   valid_range <- vapply(search_space, function(x) x[1] < x[2], logical(1))
   search_space <- search_space[valid_range]
   # Find optimal range -----------------------------------------------------------------------------
-  scores <- vapply(search_space, function(x) opt_crit(x[1], x[2]), numeric(1))
-  if (minimize) {
-    best <- search_space[[which.min(scores)]]
-  } else {
-    best <- search_space[[which.max(scores)]]
-  }
-  return(best)
+  scores <- lapply(search_space, function(x) opt_crit(x[1], x[2]))
+  search_space[[choose_best(scores)]]
 }

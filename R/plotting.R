@@ -332,28 +332,23 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' 
 #' @param data (\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
 #' and \code{parent_id}.
-#' @param taxon_id (\code{character} of length 1) The name of the column of \code{data} that 
-#' contains the unique id of the taxon for that row.
-#' @param parent_id (\code{character} of length 1) The name of the column of \code{data} that 
-#' contains the unique id of supertaxon \code{taxon_id} is a part of.
-#' @param vertex_size (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
-#' @param vertex_color (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
-#' @param vertex_alpha (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
-#' @param line_size (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
-#' @param line_color (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
-#' @param line_alpha (\code{character} of length 1) The name of the column of \code{data} that
-#' contains the value to base vertex size on.
+#' @param taxon_id  The unique ids of the taxon for each row.
+#' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
+#' @param vertex_size The value to base vertex size on.
+#' @param vertex_color The value to base vertex color on.
+#' @param vertex_alpha The value to base vertex transparency on.
+#' @param line_size The value to base line width on.
+#' @param line_color The value to base line color on.
+#' @param line_alpha The value to base line transparency on.
+#' @param label The values of labels. 
+#' @param overlap_bias (\code{numeric} > 0) The factor by which overlaps are punished relative to
+#' spaces when optimizing vertex size range.
 #' 
 #' @import grid
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, line_size = NULL, line_color = NULL, 
-                          line_alpha = NULL, label = NULL) {
+                          line_alpha = NULL, label = NULL, overlap_bias = 5) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -371,28 +366,46 @@ plot_taxonomy <- function(taxon_id, parent_id, vertex_size = NULL, vertex_color 
     data$vertex_size <- sqrt(data$vertex_size / pi)
   }
   pairwise <- molten_dist(x = data$x, y = data$y)
+  max_range <- c(min(pairwise$distance), max(pairwise$distance) / 5)
+  min_range <- c(min(pairwise$distance) / 5, min(pairwise$distance))
+  pairwise <- pairwise[pairwise$distance <= max_range[2], ]
   vertex_size_opt_func <- function(a_max, a_min) {
+    # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    pairs <- pairwise
     size <- rescale(data$vertex_size, new_min = a_max, new_max = a_min)
-    data <- inter_circle_gap(x = data$x, y = data$y, r = size)
-    overlap <- sum(abs(data$gap[data$gap < 0])) / length(size) * 2
-    space <- sum(data$gap[data$gap >= 0]) / length(size)^2
+    pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
+    # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
+    space <- sum(pairs$gap[pairs$gap >= 0])
     print(paste(overlap, space))
-    overlap + space
+    return(c(overlap, space))
   }
-  opt_size_range <- get_optimal_range(max_range = c(min(pairwise$distance), max(pairwise$distance) / 3),
-                                      min_range = c(min(pairwise$distance) / 5, min(pairwise$distance) * 2),
-                                      resolution = c(10, 10),
-                                      opt_crit = vertex_size_opt_func)
+  choose_best <- function(options) {
+    data <- as.data.frame(do.call(rbind, options))
+    names(data) <- c("overlap", "space")
+    data$overlap <- rescale(data$overlap, 0, overlap_bias)
+    data$space <- rescale(data$space, 0, 1)
+    data$score <- data$overlap  + data$space
+    which.min(data$score)
+  }
+  opt_size_range <- get_optimal_range(max_range = max_range,
+                                      min_range = min_range,
+                                      resolution = c(10, 15),
+                                      opt_crit = vertex_size_opt_func, 
+                                      choose_best = choose_best)
   data$vertex_size <- rescale(data$vertex_size,
                               new_min = opt_size_range[1],
                               new_max = opt_size_range[2])
+  vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$vertex_size)
+  vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("vertex_size"), drop = F])
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
-  slope <- (data$parent_y - data$y) / (data$parent_x - data$x)
-  inv_slope <- -1 / slope
+  edge_data <- line_coords(x1 = data$x, y1 = data$y, x2 = data$parent_x, y2 = data$parent_y,
+                           width = data$vertex_size)
+  edge_data <- cbind(edge_data, data[as.numeric(edge_data$group), c("vertex_size"), drop = F])
   # Plot it! ---------------------------------------------------------------------------------------
-  vertex_data <- polygon_coords(n = 30, x = data$x, y = data$y, radius = data$vertex_size)
   ggplot(data = data) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group))
+    geom_polygon(data = edge_data, aes(x = x, y = y, group = group, fill = vertex_size)) +
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group, fill = vertex_size))
 }

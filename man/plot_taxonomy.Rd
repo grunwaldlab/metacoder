@@ -6,32 +6,29 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, vertex_size = NULL, vertex_color = NULL,
   vertex_alpha = NULL, line_size = NULL, line_color = NULL,
-  line_alpha = NULL, label = NULL)
+  line_alpha = NULL, label = NULL, overlap_bias = 5)
 }
 \arguments{
-\item{taxon_id}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the unique id of the taxon for that row.}
+\item{taxon_id}{The unique ids of the taxon for each row.}
 
-\item{parent_id}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the unique id of supertaxon \code{taxon_id} is a part of.}
+\item{parent_id}{The unique id of supertaxon \code{taxon_id} is a part of.}
 
-\item{vertex_size}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{vertex_size}{The value to base vertex size on.}
 
-\item{vertex_color}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{vertex_color}{The value to base vertex color on.}
 
-\item{vertex_alpha}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{vertex_alpha}{The value to base vertex transparency on.}
 
-\item{line_size}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{line_size}{The value to base line width on.}
 
-\item{line_color}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{line_color}{The value to base line color on.}
 
-\item{line_alpha}{(\code{character} of length 1) The name of the column of \code{data} that
-contains the value to base vertex size on.}
+\item{line_alpha}{The value to base line transparency on.}
+
+\item{label}{The values of labels.}
+
+\item{overlap_bias}{(\code{numeric} > 0) The factor by which overlaps are punished relative to
+spaces when optimizing vertex size range.}
 
 \item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
 and \code{parent_id}.}

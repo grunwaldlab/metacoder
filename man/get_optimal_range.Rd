@@ -4,7 +4,8 @@
 \alias{get_optimal_range}
 \title{Find optimal range}
 \usage{
-get_optimal_range(max_range, min_range, resolution, opt_crit, minimize = TRUE)
+get_optimal_range(max_range, min_range, resolution, opt_crit, choose_best,
+  minimize = TRUE)
 }
 \arguments{
 \item{max_range}{(\code{numeric} of length 2) The min and max boundries to the search space for
@@ -18,11 +19,8 @@ the optimal minimum value.}
 \item{opt_crit}{(\code{function}) A function that takes two arguments, the max and min, and
 returns the optimality statistic.}
 
-\item{minimize}{(\code{logical} of length 1) If \code{TRUE}, the smallest optimality statistic
-is considered the best. By default, larger is considered better.}
-}
-\value{
-A \code{numeric} vector of length 2. The optimal max and min values.
+\item{choose_best}{(\code{function}) A function that takes a list of \code{opt_crit} outputs
+and returns the index of the best one.}
 }
 \description{
 Finds optimal max and min value useing an optimality criterion.
