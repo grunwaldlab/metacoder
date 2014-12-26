@@ -319,6 +319,44 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 } 
 
 
+
+#===================================================================================================
+#' Makes coordinates for a line
+#' 
+#' Generates an n x 2 matrix containing x and y coordinates between 1 and 0 for the points of a 
+#' line with a specified width in cartesian coordinates. 
+#' 
+#' @param x1 (\code{numeric} of length 1) x coordinate of the center of one end
+#' @param y1 (\code{numeric} of length 1) y coordinate of the center of one end
+#' @param x2 (\code{numeric} of length 1) x coordinate of the center of the other end
+#' @param y2 (\code{numeric} of length 1) y coordinate of the center of the other end
+#' @param width (\code{numeric} of length 1) The width of the line.
+#' 
+#' @examples
+#' ggplot(data = line_coords(x1 = 1, y1 = 1, x2 = 2, y2 = 2, width = .1)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
+#' ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
+#'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
+#'   
+#' @export
+line_coords <- function(x1, y1, x2, y2, width) {
+  # Define function to make points for a single line rect ------------------------------------------
+  process_one <- function(x1, y1, x2, y2, w) {
+    slope <- (y2 - y1) / (x2 - x1)
+    inv_slope <- -1/slope
+    angle <- atan(inv_slope)
+    off_x <- w / 2 * cos(angle)
+    off_y <- w / 2 * sin(angle)
+    data.frame(x = c(x1 + off_x, x1 - off_x, x2 - off_x, x2 + off_x),
+               y = c(y1 + off_y, y1 - off_y, y2 - off_y, y2 + off_y))
+  }
+  # Compile of the points for multiple polygons ----------------------------------------------------
+  output <- mapply(process_one, x1, y1, x2, y2, width, SIMPLIFY = FALSE)
+  group <- rep(seq_along(output), vapply(output, nrow, numeric(1)))
+  cbind(group = as.factor(group), do.call(rbind, output))
+}
+
 #===================================================================================================
 #' Scale numbers to a range of values
 #' 
