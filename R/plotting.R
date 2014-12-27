@@ -464,7 +464,11 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
     guides(fill = "none") +
     theme(panel.grid = element_blank(), 
-          panel.background = element_blank())
+          panel.background = element_blank(),
+          axis.title = element_blank(),
+          axis.text  =  element_blank(),
+          axis.ticks = element_blank(), 
+          axis.line  = element_blank())
   for (a_grob in vertex_label_grobs) {
     the_plot <- the_plot + annotation_custom(grob = a_grob)
   }
