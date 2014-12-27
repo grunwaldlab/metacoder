@@ -353,7 +353,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
                           line_alpha = NULL, line_label = NULL, overlap_bias = 5,
-                          min_label_size = .01) {
+                          min_label_size = .015) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -365,7 +365,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
-    data$size <- max(data$depth) - data$depth + 1
+    data$size <- (max(data$depth) - data$depth + 1)^5
   } else {
     data$size <- size
     data$size <- sqrt(data$size / pi)
@@ -410,9 +410,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   line_data <- cbind(line_data, data[as.numeric(line_data$group), c("size"), drop = F])
   # Get vertex color -------------------------------------------------------------------------------
   if (is.null(vertex_color)) {
-    if (!is.null(size)) {
-      data$vertex_color <- data$size
-    }
+    data$vertex_color <- "grey"
   } else {
     data$vertex_color <- vertex_color
   }
@@ -422,7 +420,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     color_index <- (no_color_in_palette - 1) * data$vertex_color/max(data$vertex_color) + 1
     data$vertex_color <- palette[as.integer(color_index)]    
   }
-  vertex_data$vertex_color <- data$vertex_color[as.numeric(vertex_data$group)]
+  vertex_data$vertex_color <- data$vertex_color[as.numeric(vertex_data$group)]    
   # Get edge color ---------------------------------------------------------------------------------
   if (is.null(line_color)) {
     data$line_color <- data$vertex_color
@@ -437,22 +435,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   line_data$line_color <- data$line_color[as.numeric(line_data$group)]
   # Get vertex labels ------------------------------------------------------------------------------
-  if (is.null(vertex_label)) {
-    if (!is.null(size)) {
-      data$vertex_label <- as.character(size)
-    } else if (!is.null(vertex_color)) {
-      data$vertex_label <- as.character(vertex_color)
-    } else if (!is.null(vertex_alpha)) {
-      data$vertex_label <- as.character(vertex_alpha)
-    } else {
-      data$vertex_label <- NULL
-    }
-  } else if (vertex_label == "none") {
-    data$vertex_label <- NULL
-  } else {
+  if (!is.null(vertex_label)) {
     data$vertex_label <- as.character(vertex_label)
-  }
-  if (!is.null(data$vertex_label)) {
     data$vertex_label_x <- rescale_limits(data$x, 0.05, 0.95)
     data$vertex_label_y <- rescale_limits(data$y, 0.05, 0.95)
     data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
@@ -485,7 +469,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                             just = justification[[i]],
                                                             gp = gpar(text_prop = data$line_label_size[i])))
   }
-    
+  
   # Plot it! ---------------------------------------------------------------------------------------
   the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +

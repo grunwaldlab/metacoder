@@ -7,7 +7,7 @@
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
   line_alpha = NULL, line_label = NULL, overlap_bias = 5,
-  min_label_size = 0.01)
+  min_label_size = 0.015)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}

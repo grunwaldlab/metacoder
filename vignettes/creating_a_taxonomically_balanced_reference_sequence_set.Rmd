@@ -67,8 +67,14 @@ sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
                                          subset = sampled_items$taxon_id)
 sampled_taxa <- taxa[sampled_taxa_index, ]
 sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, sampled_taxa$parent_id, sampled_items$taxon_id)
-plot_taxonomy(taxa$taxon_id, taxa$parent_id, size = taxa$item_count)
-plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id, size = sampled_taxa$item_count)
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$item_count)
+plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
+              size = sampled_taxa$item_count,
+              vertex_color = sampled_taxa$item_count,
+              vertex_label = sampled_taxa$item_count)
 ```
 
 
