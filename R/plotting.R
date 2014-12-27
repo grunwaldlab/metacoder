@@ -334,12 +334,13 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' and \code{parent_id}.
 #' @param taxon_id  The unique ids of the taxon for each row.
 #' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
-#' @param size The value to base vertex size on.
+#' @param size The value to base vertex and line size on.
 #' @param vertex_color The value to base vertex color on.
 #' @param vertex_alpha The value to base vertex transparency on.
+#' @param vertex_label The values of labels over vertcies. 
 #' @param line_color The value to base line color on.
 #' @param line_alpha The value to base line transparency on.
-#' @param label The values of labels. 
+#' @param line_label The values of labels over lines. 
 #' @param overlap_bias (\code{numeric} > 0) The factor by which overlaps are punished relative to
 #' spaces when optimizing vertex size range.
 #' 
@@ -347,8 +348,8 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @import ggplot2 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
-                          vertex_alpha = NULL, line_color = NULL, 
-                          line_alpha = NULL, label = NULL, overlap_bias = 5) {
+                          vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
+                          line_alpha = NULL, line_label = NULL, overlap_bias = 5) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -372,7 +373,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
-    size <- rescale(data$size, new_min = a_max, new_max = a_min)
+    size <- rescale_limits(data$size, new_min = a_max, new_max = a_min)
     pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
     # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
@@ -382,8 +383,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   choose_best <- function(options) {
     data <- as.data.frame(do.call(rbind, options))
     names(data) <- c("overlap", "space")
-    data$overlap <- rescale(data$overlap, 0, overlap_bias)
-    data$space <- rescale(data$space, 0, 1)
+    data$overlap <- rescale_limits(data$overlap, 0, overlap_bias)
+    data$space <- rescale_limits(data$space, 0, 1)
     data$score <- data$overlap  + data$space
     which.min(data$score)
   }
@@ -392,7 +393,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                       resolution = c(10, 15),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$size <- rescale(data$size,
+  data$size <- rescale_limits(data$size,
                               new_min = opt_size_range[1],
                               new_max = opt_size_range[2])
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
@@ -431,11 +432,38 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$line_color <- palette[as.integer(color_index)]    
   }
   line_data$line_color <- data$line_color[as.numeric(line_data$group)]
+  # Get vertex labels ------------------------------------------------------------------------------
+  if (is.null(vertex_label)) {
+    if (!is.null(size)) {
+      data$vertex_label <- as.character(size)
+    } else if (!is.null(vertex_color)) {
+      data$vertex_label <- as.character(vertex_color)
+    } else if (!is.null(vertex_alpha)) {
+      data$vertex_label <- as.character(vertex_alpha)
+    } else {
+      data$vertex_label <- ""
+    }
+  } else {
+    data$vertex_label <- as.character(vertex_label)
+  }
+  data$label_x <- rescale_limits(data$x, 0.05, 0.95)
+  data$label_y <- rescale_limits(data$y, 0.05, 0.95)
+  data$vertex_label_size <-  rescale_limits(data$size, 0, 1)
+  vertex_label_grobs <- lapply(1:nrow(data), 
+                      function(i) resizingTextGrob(label = data$vertex_label[i],
+                                                   y = data$label_y[i],
+                                                   x = data$label_x[i],
+                                                   gp = gpar(size = data$vertex_label_size[i])))
   # Plot it! ---------------------------------------------------------------------------------------
-  ggplot(data = data) +
+  the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color)
+  for (a_grob in vertex_label_grobs) {
+    the_plot <- the_plot + annotation_custom(grob = a_grob)
+  }
+  the_plot <- the_plot +
     guides(fill = "none") +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank())
+  return(the_plot)
 }

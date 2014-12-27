@@ -5,25 +5,27 @@
 \title{Plot items on taxonomy}
 \usage{
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
-  vertex_alpha = NULL, line_color = NULL, line_alpha = NULL,
-  label = NULL, overlap_bias = 5)
+  vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
+  line_alpha = NULL, line_label = NULL, overlap_bias = 5)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
 
 \item{parent_id}{The unique id of supertaxon \code{taxon_id} is a part of.}
 
-\item{size}{The value to base vertex size on.}
+\item{size}{The value to base vertex and line size on.}
 
 \item{vertex_color}{The value to base vertex color on.}
 
 \item{vertex_alpha}{The value to base vertex transparency on.}
 
+\item{vertex_label}{The values of labels over vertcies.}
+
 \item{line_color}{The value to base line color on.}
 
 \item{line_alpha}{The value to base line transparency on.}
 
-\item{label}{The values of labels.}
+\item{line_label}{The values of labels over lines.}
 
 \item{overlap_bias}{(\code{numeric} > 0) The factor by which overlaps are punished relative to
 spaces when optimizing vertex size range.}
