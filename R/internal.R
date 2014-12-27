@@ -367,11 +367,11 @@ line_coords <- function(x1, y1, x2, y2, width) {
 #' @param new_max (\code{numeric} of length 1) The maximum of the rescaled numbers.
 #' 
 #' @examples
-#' rescale(1:10, -2.2, 7.5)
-#' hist(rescale(rnorm(1000), 5, 10))
+#' rescale_limits(1:10, -2.2, 7.5)
+#' hist(rescale_limits(rnorm(1000), 5, 10))
 #' 
 #' @export
-rescale <- function(input, new_min, new_max) {
+rescale_limits <- function(input, new_min, new_max) {
   if (new_min > new_max) stop("new_min cannot be larger than new_max")
   old_diff <- max(input) - min(input)
   new_diff <- new_max - new_min
