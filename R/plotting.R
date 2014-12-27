@@ -370,10 +370,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$size <- size
     data$size <- sqrt(data$size / pi)
   }
-  pairwise <- molten_dist(x = data$x, y = data$y)
-  max_range <- c(min(pairwise$distance), max(pairwise$distance) / 5)
-  min_range <- c(min(pairwise$distance) / 5, min(pairwise$distance))
-  pairwise <- pairwise[pairwise$distance <= max_range[2], ]
+  all_pairwise <- molten_dist(x = data$x, y = data$y)
+  max_range <- c(min(all_pairwise$distance), max(all_pairwise$distance) / 5)
+  min_range <- c(min(all_pairwise$distance) / 5, min(all_pairwise$distance))
+  pairwise <- all_pairwise[all_pairwise$distance <= max_range[2], ]
   size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
@@ -445,19 +445,47 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     } else if (!is.null(vertex_alpha)) {
       data$vertex_label <- as.character(vertex_alpha)
     } else {
-      data$vertex_label <- ""
+      data$vertex_label <- NULL
     }
+  } else if (vertex_label == "none") {
+    data$vertex_label <- NULL
   } else {
     data$vertex_label <- as.character(vertex_label)
   }
-  data$label_x <- rescale_limits(data$x, 0.05, 0.95)
-  data$label_y <- rescale_limits(data$y, 0.05, 0.95)
-  data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
-  vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
-                      function(i) resizingTextGrob(label = data$vertex_label[i],
-                                                   y = data$label_y[i],
-                                                   x = data$label_x[i],
-                                                   gp = gpar(text_prop = data$vertex_label_size[i])))
+  if (!is.null(data$vertex_label)) {
+    data$vertex_label_x <- rescale_limits(data$x, 0.05, 0.95)
+    data$vertex_label_y <- rescale_limits(data$y, 0.05, 0.95)
+    data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
+    vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
+                                 function(i) resizingTextGrob(label = data$vertex_label[i],
+                                                              y = data$vertex_label_y[i],
+                                                              x = data$vertex_label_x[i],
+                                                              gp = gpar(text_prop = data$vertex_label_size[i])))    
+  }
+  # Get line labels --------------------------------------------------------------------------------
+  if (!is.null(line_label)) {
+    mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
+    data$line_label <- as.character(line_label)
+    data$line_label_x <- rescale_limits(data$x, 0.05, 0.95)
+    data$line_label_y <- rescale_limits(data$y, 0.05, 0.95)
+    data$line_label_rot <- atan((data$y - data$parent_y) / (data$x - data$parent_x)) * 180 / pi
+    data$line_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0)) / 2
+    mean_inter_pair <- rescale(mean_inter_pair, to = c(1, 0), from = c(max(data$x) - min(data$x), 0)) / 2
+    data$line_label_size[data$line_label_size > mean_inter_pair / 7] <-  mean_inter_pair / 7
+    data$line_label_rot[is.na(data$line_label_rot)] <- 0
+    data$line_label[1] <- ""
+    justify <- data$parent_x > data$x
+    justify[is.na(justify)] <- TRUE
+    justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+    line_label_grobs <- lapply(which(data$line_label_size > min_label_size / 3), 
+                               function(i) resizingTextGrob(label = data$line_label[i],
+                                                            y = data$line_label_y[i],
+                                                            x = data$line_label_x[i],
+                                                            rot = data$line_label_rot[i],
+                                                            just = justification[[i]],
+                                                            gp = gpar(text_prop = data$line_label_size[i])))
+  }
+    
   # Plot it! ---------------------------------------------------------------------------------------
   the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
@@ -469,8 +497,15 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
           axis.text  =  element_blank(),
           axis.ticks = element_blank(), 
           axis.line  = element_blank())
-  for (a_grob in vertex_label_grobs) {
-    the_plot <- the_plot + annotation_custom(grob = a_grob)
+  if (!is.null(data$vertex_label)) {
+    for (a_grob in vertex_label_grobs) {
+      the_plot <- the_plot + annotation_custom(grob = a_grob)
+    }    
+  }
+  if (!is.null(data$line_label)) {
+    for (a_grob in line_label_grobs) {
+      the_plot <- the_plot + annotation_custom(grob = a_grob)
+    }    
   }
   return(the_plot)
 }

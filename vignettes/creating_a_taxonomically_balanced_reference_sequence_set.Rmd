@@ -4,9 +4,9 @@ author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Creating a balanced reference sequence set}
-%\VignetteEngine{knitr::knitr}
-%\usepackage[utf8]{inputenc}
+ %\VignetteIndexEntry{Creating a balanced reference sequence set}
+ %\VignetteEngine{knitr::knitr}
+ %\usepackage[utf8]{inputenc}
 ---
 
 
