@@ -343,6 +343,8 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @param line_label The values of labels over lines. 
 #' @param overlap_bias (\code{numeric} > 0) The factor by which overlaps are punished relative to
 #' spaces when optimizing vertex size range.
+#' @param min_label_size (\code{numeric} of length 1) The minimum label size that will be shown. A
+#' proportion of viewport size. Labels that would be smaller are not added to save time.
 #' 
 #' @import grid
 #' @import ggplot2 
@@ -350,7 +352,8 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
-                          line_alpha = NULL, line_label = NULL, overlap_bias = 5) {
+                          line_alpha = NULL, line_label = NULL, overlap_bias = 5,
+                          min_label_size = .01) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -450,7 +453,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   data$label_x <- rescale_limits(data$x, 0.05, 0.95)
   data$label_y <- rescale_limits(data$y, 0.05, 0.95)
   data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
-  vertex_label_grobs <- lapply(1:nrow(data), 
+  vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
                       function(i) resizingTextGrob(label = data$vertex_label[i],
                                                    y = data$label_y[i],
                                                    x = data$label_x[i],
@@ -458,13 +461,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Plot it! ---------------------------------------------------------------------------------------
   the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color)
-  for (a_grob in vertex_label_grobs) {
-    the_plot <- the_plot + annotation_custom(grob = a_grob)
-  }
-  the_plot <- the_plot +
+    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
     guides(fill = "none") +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank())
+  for (a_grob in vertex_label_grobs) {
+    the_plot <- the_plot + annotation_custom(grob = a_grob)
+  }
   return(the_plot)
 }

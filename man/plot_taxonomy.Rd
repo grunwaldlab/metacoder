@@ -6,7 +6,8 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
-  line_alpha = NULL, line_label = NULL, overlap_bias = 5)
+  line_alpha = NULL, line_label = NULL, overlap_bias = 5,
+  min_label_size = 0.01)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
@@ -29,6 +30,9 @@ plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
 
 \item{overlap_bias}{(\code{numeric} > 0) The factor by which overlaps are punished relative to
 spaces when optimizing vertex size range.}
+
+\item{min_label_size}{(\code{numeric} of length 1) The minimum label size that will be shown. A
+proportion of viewport size. Labels that would be smaller are not added to save time.}
 
 \item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
 and \code{parent_id}.}
