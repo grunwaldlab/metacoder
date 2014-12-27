@@ -346,6 +346,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' 
 #' @import grid
 #' @import ggplot2 
+#' @import scales 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
@@ -448,12 +449,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   data$label_x <- rescale_limits(data$x, 0.05, 0.95)
   data$label_y <- rescale_limits(data$y, 0.05, 0.95)
-  data$vertex_label_size <-  rescale_limits(data$size, 0, 1)
+  data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
   vertex_label_grobs <- lapply(1:nrow(data), 
                       function(i) resizingTextGrob(label = data$vertex_label[i],
                                                    y = data$label_y[i],
                                                    x = data$label_x[i],
-                                                   gp = gpar(size = data$vertex_label_size[i])))
+                                                   gp = gpar(text_prop = data$vertex_label_size[i])))
   # Plot it! ---------------------------------------------------------------------------------------
   the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
