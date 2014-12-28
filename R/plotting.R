@@ -389,8 +389,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   choose_best <- function(options) {
     data <- as.data.frame(do.call(rbind, options))
     names(data) <- c("overlap", "space")
-    data$overlap <- rescale(data$overlap, to = c(overlap_bias, 0))
-    data$space <- rescale(data$space, to = c(1, 0))
+    data$overlap <- rescale(data$overlap, to = c(0, overlap_bias))
+    data$space <- rescale(data$space, to = c(0, 1))
     data$score <- data$overlap  + data$space
     which.min(data$score)
   }
@@ -399,7 +399,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                       resolution = c(10, 15),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$size <- rescale(data$size, to = c(opt_size_range[2], opt_size_range[1]))
+  data$size <- rescale(data$size, to = opt_size_range)
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
   vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
   # Get graph range data ---------------------------------------------------------------------------
@@ -445,9 +445,9 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Get vertex labels ------------------------------------------------------------------------------
   if (!is.null(vertex_label)) {
     data$vertex_label <- as.character(vertex_label)
-    data$vertex_label_x <- rescale(data$x, to = c(1, 0), from = c(x_max, x_min))
-    data$vertex_label_y <- rescale(data$y, to = c(1, 0), from = c(y_max, y_min))
-    data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(total_diameter, 0))
+    data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
+    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, total_diameter))
     vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
@@ -469,12 +469,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
     data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
     data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
-    data$line_label_x <- rescale(data$line_label_x, to = c(1, 0), from = c(x_max, x_min))
-    data$line_label_y <- rescale(data$line_label_y, to = c(1, 0), from = c(y_max, y_min))
+    data$line_label_x <- rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
+    data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
     #
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
-    mean_inter_pair <- rescale(mean_inter_pair, to = c(1, 0), from = c(total_diameter, 0)) 
-    data$line_label_size <-  rescale(data$size / 2, to = c(1, 0), from = c(total_diameter, 0))
+    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, total_diameter)) 
+    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, total_diameter)) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     #
@@ -496,9 +496,9 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     coord_cartesian(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank(),
-#           axis.title = element_blank(),
-#           axis.text  =  element_blank(),
-#           axis.ticks = element_blank(), 
+          axis.title = element_blank(),
+          axis.text  =  element_blank(),
+          axis.ticks = element_blank(), 
           axis.line  = element_blank())
   if (!is.null(data$vertex_label)) {
     for (a_grob in vertex_label_grobs) {
