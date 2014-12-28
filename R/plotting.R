@@ -470,27 +470,27 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   if (!is.null(line_label)) {
     data$line_label <- as.character(line_label)
     data$line_label[is.na(data$parent_id)] <- ""
-    #
+    # line label rotation  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     data$slope <- (data$y - data$parent_y) / (data$x - data$parent_x)
     data$slope[is.na(data$slope)] <- 0
     data$line_label_rot <- atan(data$slope)
-    #
+    # line label coordinate  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     justify <- data$parent_x > data$x
     justify[is.na(justify)] <- TRUE
+    justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
     line_label_x_offset <- line_label_offset * data$size * cos(data$line_label_rot)
     line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
     data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
     data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
     data$line_label_x <- rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
     data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
-    #
+    # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
     mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, total_diameter)) 
     data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, total_diameter)) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
-    #
-    justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     line_label_grobs <- lapply(which(data$line_label_size > min_label_size / 3), 
                                function(i) resizingTextGrob(label = data$line_label[i],
                                                             y = data$line_label_y[i],
