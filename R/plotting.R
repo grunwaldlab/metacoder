@@ -354,6 +354,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
                           line_alpha = NULL, line_label = NULL, overlap_bias = 5,
                           min_label_size = .015) {
+  line_label_offset <- 1
+  margin_size <- .05
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -377,7 +379,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
-    size <- rescale_limits(data$size, new_min = a_max, new_max = a_min)
+    size <- rescale(data$size, to = c(a_min, a_max))
     pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
     # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
@@ -387,8 +389,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   choose_best <- function(options) {
     data <- as.data.frame(do.call(rbind, options))
     names(data) <- c("overlap", "space")
-    data$overlap <- rescale_limits(data$overlap, 0, overlap_bias)
-    data$space <- rescale_limits(data$space, 0, 1)
+    data$overlap <- rescale(data$overlap, to = c(overlap_bias, 0))
+    data$space <- rescale(data$space, to = c(1, 0))
     data$score <- data$overlap  + data$space
     which.min(data$score)
   }
@@ -397,11 +399,17 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                       resolution = c(10, 15),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$size <- rescale_limits(data$size,
-                              new_min = opt_size_range[1],
-                              new_max = opt_size_range[2])
+  data$size <- rescale(data$size, to = c(opt_size_range[2], opt_size_range[1]))
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
   vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
+  # Get graph range data ---------------------------------------------------------------------------
+  plot_diameter <- mean(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
+  margin_width <- plot_diameter * margin_size
+  total_diameter <- plot_diameter + 2 * margin_width
+  x_min <-  min(data$x) - margin_width
+  x_max <- max(data$x) + margin_width
+  y_min <- min(data$y) - margin_width
+  y_max <- max(data$y) + margin_width
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
@@ -437,9 +445,9 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Get vertex labels ------------------------------------------------------------------------------
   if (!is.null(vertex_label)) {
     data$vertex_label <- as.character(vertex_label)
-    data$vertex_label_x <- rescale_limits(data$x, 0.05, 0.95)
-    data$vertex_label_y <- rescale_limits(data$y, 0.05, 0.95)
-    data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0))
+    data$vertex_label_x <- rescale(data$x, to = c(1, 0), from = c(x_max, x_min))
+    data$vertex_label_y <- rescale(data$y, to = c(1, 0), from = c(y_max, y_min))
+    data$vertex_label_size <-  rescale(data$size, to = c(1, 0), from = c(total_diameter, 0))
     vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
@@ -448,24 +456,34 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   # Get line labels --------------------------------------------------------------------------------
   if (!is.null(line_label)) {
-    mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
     data$line_label <- as.character(line_label)
-    data$line_label_x <- rescale_limits(data$x, 0.05, 0.95)
-    data$line_label_y <- rescale_limits(data$y, 0.05, 0.95)
-    data$line_label_rot <- atan((data$y - data$parent_y) / (data$x - data$parent_x)) * 180 / pi
-    data$line_label_size <-  rescale(data$size, to = c(1, 0), from = c(max(data$x) - min(data$x), 0)) / 2
-    mean_inter_pair <- rescale(mean_inter_pair, to = c(1, 0), from = c(max(data$x) - min(data$x), 0)) / 2
-    data$line_label_size[data$line_label_size > mean_inter_pair / 7] <-  mean_inter_pair / 7
-    data$line_label_rot[is.na(data$line_label_rot)] <- 0
-    data$line_label[1] <- ""
+    data$line_label[is.na(data$parent_id)] <- ""
+    #
+    data$slope <- (data$y - data$parent_y) / (data$x - data$parent_x)
+    data$slope[is.na(data$slope)] <- 0
+    data$line_label_rot <- atan(data$slope)
+    #
     justify <- data$parent_x > data$x
     justify[is.na(justify)] <- TRUE
+    line_label_x_offset <- line_label_offset * data$size * cos(data$line_label_rot)
+    line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
+    data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
+    data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
+    data$line_label_x <- rescale(data$line_label_x, to = c(1, 0), from = c(x_max, x_min))
+    data$line_label_y <- rescale(data$line_label_y, to = c(1, 0), from = c(y_max, y_min))
+    #
+    mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
+    mean_inter_pair <- rescale(mean_inter_pair, to = c(1, 0), from = c(total_diameter, 0)) 
+    data$line_label_size <-  rescale(data$size / 2, to = c(1, 0), from = c(total_diameter, 0))
+    max_line_label_size <- mean_inter_pair / 10
+    data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
+    #
     justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
     line_label_grobs <- lapply(which(data$line_label_size > min_label_size / 3), 
                                function(i) resizingTextGrob(label = data$line_label[i],
                                                             y = data$line_label_y[i],
                                                             x = data$line_label_x[i],
-                                                            rot = data$line_label_rot[i],
+                                                            rot = data$line_label_rot[i] * 180 / pi,
                                                             just = justification[[i]],
                                                             gp = gpar(text_prop = data$line_label_size[i])))
   }
@@ -475,11 +493,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
     geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
     guides(fill = "none") +
+    coord_cartesian(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank(),
-          axis.title = element_blank(),
-          axis.text  =  element_blank(),
-          axis.ticks = element_blank(), 
+#           axis.title = element_blank(),
+#           axis.text  =  element_blank(),
+#           axis.ticks = element_blank(), 
           axis.line  = element_blank())
   if (!is.null(data$vertex_label)) {
     for (a_grob in vertex_label_grobs) {

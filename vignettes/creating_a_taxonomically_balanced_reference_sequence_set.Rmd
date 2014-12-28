@@ -60,7 +60,7 @@ data <- extract_taxonomy(names(sequences),
 items <- data$items
 taxa <- data$taxa
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("p" = 20, "s" = 2))
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 2))
 sampled_items <- items[index, ]
 sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
                                          parents = taxa$parent_id,
@@ -70,11 +70,13 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, sampled_taxa$p
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
-              vertex_label = taxa$item_count)
+              vertex_label = taxa$item_count,
+              line_label = taxa$name)
 plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
               size = sampled_taxa$item_count,
               vertex_color = sampled_taxa$item_count,
-              vertex_label = sampled_taxa$item_count)
+              vertex_label = sampled_taxa$item_count,
+              line_label = sampled_taxa$name)
 ```
 
 
