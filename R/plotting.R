@@ -334,28 +334,40 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' and \code{parent_id}.
 #' @param taxon_id  The unique ids of the taxon for each row.
 #' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
-#' @param size The value to base vertex and line size on.
-#' @param vertex_color The value to base vertex color on.
-#' @param vertex_alpha The value to base vertex transparency on.
+#' @param size The value to base vertex and line size on. If a numeric vector is given, it is rescaled
+#' to an optimum size for display based on minimizing overlaps and spaces beteween adjacent verticies.
+#' See option \code{overlap_bias} for how this optimization is done.
+#' @param vertex_color The value to base vertex color on. If a numeric vector is given, it is used to 
+#' construct a color scale. Hex values or color names can be used (e.g. \code{#000000} or
+#' \code{"black"}). 
 #' @param vertex_label The values of labels over vertcies. 
-#' @param line_color The value to base line color on.
-#' @param line_alpha The value to base line transparency on.
+#' @param line_color The value to base line color on. If a numeric vector is given, it is used to 
+#' construct a color scale. Hex values or color names can be used (e.g. \code{#000000} or
+#' \code{"black"}). 
 #' @param line_label The values of labels over lines. 
 #' @param overlap_bias (\code{numeric} > 0) The factor by which overlaps are punished relative to
-#' spaces when optimizing vertex size range.
+#' spaces when optimizing displayed vertex size range. Only nearby pairs of verticies are considered. 
+#' For example, a value of \code{10} would mean that overlaps are considered 10 time more important than
+#' gaps to avoid amoung nearby verticies when choosing an optimum vertex size range. 
 #' @param min_label_size (\code{numeric} of length 1) The minimum label size that will be shown. A
-#' proportion of viewport size. Labels that would be smaller are not added to save time.
+#' proportion of viewport size. Labels that would be smaller are not added to save time. The type
+#' of text grob used to display the labels that scale with output dimensions is time consuming to
+#' draw, so printing all labels can take a long time. Giving a value of \code{0} will cause all labels
+#' to be printed.
+#' @param line_label_offset (\code{numeric}) The length the line label is offset from its associated
+#' vertex centerin multiples of vertex radius. For example, a value of \code{1} will place the label on the
+#' edge of the vertex circle and \code{0} would place it in the center.
+#' @param margin_size (\code{numeric} < 0.5) The amount of space around the plot in terms of the proportion to
+#' the range of space occupied by verticies. For example, a value of \code{.5} would make margins as wide
+#' as the plotted data.
 #' 
 #' @import grid
 #' @import ggplot2 
 #' @import scales 
 #' @export
-plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
-                          vertex_alpha = NULL, vertex_label = NULL, line_color = NULL,
-                          line_alpha = NULL, line_label = NULL, overlap_bias = 5,
-                          min_label_size = .015) {
-  line_label_offset <- 1
-  margin_size <- .05
+plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
+                          line_color = NULL, line_label = NULL, overlap_bias = 5, min_label_size = .015,
+                          line_label_offset = 1, margin_size = 0) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
