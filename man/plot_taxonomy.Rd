@@ -7,7 +7,7 @@
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_label = NULL, line_color = NULL, line_label = NULL,
   overlap_bias = 5, min_label_size = 0.015, line_label_offset = 1,
-  margin_size = 0)
+  margin_size = 0, aspect_raito = 1)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
@@ -51,6 +51,8 @@ as the plotted data.}
 
 \item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
 and \code{parent_id}.}
+
+\item{aspect_ratio}{(\code{numeric}) The height / width of the plot.}
 }
 \description{
 Plots the distribution of values associated with item with an associated taxonomic classification.

@@ -360,6 +360,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @param margin_size (\code{numeric} < 0.5) The amount of space around the plot in terms of the proportion to
 #' the range of space occupied by verticies. For example, a value of \code{.5} would make margins as wide
 #' as the plotted data.
+#' @param aspect_ratio (\code{numeric}) The height / width of the plot.
 #' 
 #' @import grid
 #' @import ggplot2 
@@ -367,7 +368,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 5, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0) {
+                          line_label_offset = 1, margin_size = 0, aspect_raito = 1) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   # Get vertex coordinants  ------------------------------------------------------------------------
@@ -376,6 +377,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
   names(layout) <- c('x', 'y')
   data <- cbind(data, layout)
+  #
+  data$y <- data$y * aspect_raito
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
@@ -415,13 +418,17 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
   vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
   # Get graph range data ---------------------------------------------------------------------------
-  plot_diameter <- mean(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
-  margin_width <- plot_diameter * margin_size
-  total_diameter <- plot_diameter + 2 * margin_width
-  x_min <-  min(data$x) - margin_width
-  x_max <- max(data$x) + margin_width
-  y_min <- min(data$y) - margin_width
-  y_max <- max(data$y) + margin_width
+  x_range <- max(vertex_data$x) - min(vertex_data$x)
+  y_range <- max(vertex_data$y) - min(vertex_data$y)
+  x_margin <- x_range * margin_size
+  y_margin <- y_range * margin_size
+  x_display <- x_range + 2 * x_margin
+  y_display <- y_range + 2 * y_margin
+  x_min <-  min(vertex_data$x) - x_margin
+  x_max <- max(vertex_data$x) + x_margin
+  y_min <- min(vertex_data$y) - y_margin
+  y_max <- max(vertex_data$y) + y_margin
+  ideal_diameter <- sqrt(x_display * y_display)
   # Get edge coordinants ---------------------------------------------------------------------------
   data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
   data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
@@ -459,7 +466,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$vertex_label <- as.character(vertex_label)
     data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
     data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
-    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, total_diameter))
+    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
     vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
@@ -486,8 +493,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
     # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
-    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, total_diameter)) 
-    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, total_diameter)) 
+    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, ideal_diameter)) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -499,13 +506,28 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                             just = justification[[i]],
                                                             gp = gpar(text_prop = data$line_label_size[i])))
   }
-  
+ 
+# Get graph range data ---------------------------------------------------------------------------
+#
+line_data$y <- line_data$y / aspect_raito
+vertex_data$y <- vertex_data$y / aspect_raito
+data$y <- data$y / aspect_raito
+#
+x_range <- max(vertex_data$x) - min(vertex_data$x)
+y_range <- max(vertex_data$y) - min(vertex_data$y)
+x_margin <- x_range * margin_size
+y_margin <- y_range * margin_size
+x_min <-  min(vertex_data$x) - x_margin
+x_max <- max(vertex_data$x) + x_margin
+y_min <- min(vertex_data$y) - y_margin
+y_max <- max(vertex_data$y) + y_margin
+
   # Plot it! ---------------------------------------------------------------------------------------
   the_plot <- ggplot(data = data) +
     geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
     geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
     guides(fill = "none") +
-    coord_cartesian(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+    coord_fixed(ratio = aspect_raito, xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
     theme(panel.grid = element_blank(), 
           panel.background = element_blank(),
           axis.title = element_blank(),
