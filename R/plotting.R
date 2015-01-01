@@ -368,9 +368,10 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 5, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0, aspect_raito = 1) {
+                          line_label_offset = 1, margin_size = 0, aspect_raito = 1, data_only = FALSE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
+  parent_id[!(parent_id %in% taxon_id)] <- NA
   # Get vertex coordinants  ------------------------------------------------------------------------
   data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
   graph <- graph.edgelist(as.matrix(data[complete.cases(data), c("parent_id", "taxon_id")]))
@@ -506,43 +507,47 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                             just = justification[[i]],
                                                             gp = gpar(text_prop = data$line_label_size[i])))
   }
- 
-# Get graph range data ---------------------------------------------------------------------------
-#
-line_data$y <- line_data$y / aspect_raito
-vertex_data$y <- vertex_data$y / aspect_raito
-data$y <- data$y / aspect_raito
-#
-x_range <- max(vertex_data$x) - min(vertex_data$x)
-y_range <- max(vertex_data$y) - min(vertex_data$y)
-x_margin <- x_range * margin_size
-y_margin <- y_range * margin_size
-x_min <-  min(vertex_data$x) - x_margin
-x_max <- max(vertex_data$x) + x_margin
-y_min <- min(vertex_data$y) - y_margin
-y_max <- max(vertex_data$y) + y_margin
-
+  
+  # Get graph range data ---------------------------------------------------------------------------
+  #
+  line_data$y <- line_data$y / aspect_raito
+  vertex_data$y <- vertex_data$y / aspect_raito
+  data$y <- data$y / aspect_raito
+  #
+  x_range <- max(vertex_data$x) - min(vertex_data$x)
+  y_range <- max(vertex_data$y) - min(vertex_data$y)
+  x_margin <- x_range * margin_size
+  y_margin <- y_range * margin_size
+  x_min <-  min(vertex_data$x) - x_margin
+  x_max <- max(vertex_data$x) + x_margin
+  y_min <- min(vertex_data$y) - y_margin
+  y_max <- max(vertex_data$y) + y_margin
+  
   # Plot it! ---------------------------------------------------------------------------------------
-  the_plot <- ggplot(data = data) +
-    geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
-    geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
-    guides(fill = "none") +
-    coord_fixed(ratio = aspect_raito, xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
-    theme(panel.grid = element_blank(), 
-          panel.background = element_blank(),
-          axis.title = element_blank(),
-          axis.text  =  element_blank(),
-          axis.ticks = element_blank(), 
-          axis.line  = element_blank())
-  if (!is.null(data$vertex_label)) {
-    for (a_grob in vertex_label_grobs) {
-      the_plot <- the_plot + annotation_custom(grob = a_grob)
-    }    
+  if (data_only) {
+    return(list(taxon_data = data, vertex_data = vertex_data, line_data = line_data))
+  } else {
+    the_plot <- ggplot(data = data) +
+      geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
+      geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
+      guides(fill = "none") +
+      coord_fixed(ratio = aspect_raito, xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+      theme(panel.grid = element_blank(), 
+            panel.background = element_blank(),
+            axis.title = element_blank(),
+            axis.text  =  element_blank(),
+            axis.ticks = element_blank(), 
+            axis.line  = element_blank())
+    if (!is.null(data$vertex_label)) {
+      for (a_grob in vertex_label_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    if (!is.null(data$line_label)) {
+      for (a_grob in line_label_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    return(the_plot)    
   }
-  if (!is.null(data$line_label)) {
-    for (a_grob in line_label_grobs) {
-      the_plot <- the_plot + annotation_custom(grob = a_grob)
-    }    
-  }
-  return(the_plot)
-}
+ }
