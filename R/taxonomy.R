@@ -718,6 +718,67 @@ edge_list_depth <-  function(taxa, parents) {
   vapply(get_class_from_el(taxa, parents), length, numeric(1))
 }
 
+
+#===================================================================================================
+#' Get ordered ranks from taxonomy
+#' 
+#' Returns an ordered factor of the ranks of a given taxonomy.
+#' It also checks if rank correspond consistently with level.
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' \code{taxa}.
+#' @param strict If \code{FALSE}, ranks with inconsistent levels will be allowed. Otherwise ranks 
+#' with overlapping level ranges will cause an error. 
+taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
+  # Get rank data ----------------------------------------------------------------------------------
+  level_by_rank <- split(edge_list_depth(taxa, parents), rank)
+  rank_data <- data.frame(rank = names(level_by_rank),
+                          max = vapply(level_by_rank, max, numeric(1)),
+                          min = vapply(level_by_rank, min, numeric(1)),
+                          count = vapply(level_by_rank, length, numeric(1)),
+                          mean = vapply(level_by_rank, mean, numeric(1)))
+  # Identify overlapping levels bewteen ranks ------------------------------------------------------
+  overlapping <- vapply(1:nrow(rank_data),
+                         function(i) any(rank_data$min[i] <= rank_data$max[-i] & rank_data$min[-i] <= rank_data$max[i]),
+                         logical(1))
+  if (strict && any(overlapping)) stop("Inconsistent rank levels. Use strict == FALSE or check input data.")
+  if (length(unique(rank_data$mean)) != length(rank_data$mean)) warning("Order of ranks might be partially arbitrary")
+  # construct ordered factor for ranks -------------------------------------------------------------
+  rank_data <- rank_data[order(rank_data$mean), ]
+  factor(rank_data$rank, levels = rank_data$rank, ordered = TRUE)
+}
+
+
+#===================================================================================================
+#' Splits a taxonomy at a specific level
+#' 
+#' Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param level (\code{character} or \code{numeric} of length 1)
+#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' \code{taxa}.
+split_by_level <- function(taxa, parents, level, rank = NULL) {
+  class_data <- get_class_from_el(taxa, parents)
+  data <- data.frame(taxa = taxa, parents = parents, 
+                     level = vapply(class_data, length, numeric(1)))
+  if (is.null(rank)) {
+    new_roots <- data$taxa[data$level == level]
+  } else {
+    new_roots <- data$taxa[rank == level]
+  }
+  get_children <- function(id) {
+    index <- vapply(class_data, function(x) id %in% x, logical(1))
+    names(class_data[index])
+  }
+  lapply(new_roots, get_children)
+}
+
+
 #===================================================================================================
 #' Make minimum taxonomy for a subset of taxa
 #' 
