@@ -374,12 +374,26 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   parent_id[!(parent_id %in% taxon_id)] <- NA
   # Get vertex coordinants  ------------------------------------------------------------------------
   data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
+  rownames(data) <- taxon_id
+#   get_vetex_coords <- function(index) {
+#     part <- data[index, ]
+#     graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
+#     coords <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
+#     return(graph)
+#   }
+#   groups <- split_by_level(taxon_id, parent_id, 1)
+#   graphs <- lapply(groups, get_vetex_coords)
+#   layouts <- lapply(graphs, layout.reingold.tilford, circular = TRUE)
+# layout <- as.data.frame(layout.merge(graphs, layouts))
   graph <- graph.edgelist(as.matrix(data[complete.cases(data), c("parent_id", "taxon_id")]))
-  layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
+  layout <- as.data.frame(piecewise.layout(graph, layout = layout.reingold.tilford, circular = TRUE))
   names(layout) <- c('x', 'y')
   data <- cbind(data, layout)
+#   data$group <- rep(names(groups), lapply(groups, length))
   #
   data$y <- data$y * aspect_raito
+  # Separate groups --------------------------------------------------------------------------------
+  
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)

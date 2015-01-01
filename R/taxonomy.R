@@ -775,7 +775,7 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
     index <- vapply(class_data, function(x) id %in% x, logical(1))
     names(class_data[index])
   }
-  lapply(new_roots, get_children)
+  setNames(lapply(new_roots, get_children), new_roots)
 }
 
 
