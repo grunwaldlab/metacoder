@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxonomy.R
 \name{edge_list_depth}
 \alias{edge_list_depth}
-\title{Ge distance from root of edgelist items}
+\title{Get distance from root of edgelist items}
 \usage{
 edge_list_depth(taxa, parents)
 }
