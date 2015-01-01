@@ -706,7 +706,7 @@ get_class_from_el <- function(taxa, parents) {
 
 
 #===================================================================================================
-#' Ge distance from root of edgelist items
+#' Get distance from root of edgelist items
 #' 
 #' Gets the number of ancestors/supergroups for items of an edge/adjacency list
 #' 
