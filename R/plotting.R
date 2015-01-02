@@ -367,17 +367,31 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @import scales 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
-                          line_color = NULL, line_label = NULL, overlap_bias = 5, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0, aspect_raito = 1, data_only = FALSE) {
+                          line_color = NULL, line_label = NULL, overlap_bias = 10, min_label_size = .015,
+                          line_label_offset = 1, margin_size = 0, aspect_raito = 1, data_only = FALSE,
+                          layout_func = layout.reingold.tilford, layout_args = list(circular = TRUE)) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   parent_id[!(parent_id %in% taxon_id)] <- NA
   # Get vertex coordinants  ------------------------------------------------------------------------
-  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
-  graph <- graph.edgelist(as.matrix(data[complete.cases(data), c("parent_id", "taxon_id")]))
-  layout <- as.data.frame(layout.reingold.tilford(graph, circular = TRUE))
-  names(layout) <- c('x', 'y')
-  data <- cbind(data, layout)
+  get_vertex_coords <- function(index) {
+    if (length(index) == 1) return(data.frame(x = 0, y = 0))
+    part <- data[index, ]
+    graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
+    layout <- do.call(layout_func, c(list(graph), layout_args))
+    if (any(is.na(layout) | is.nan(unlist(layout)))) {
+      layout <- layout.fruchterman.reingold(graph)
+      warning(paste('Could not apply layout_func to subgraph with root', part$taxon_id[1]))
+    }
+#     names(layout) <- c('x', 'y')
+    return(list(graph, layout))
+  }
+  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
+  rownames(data) <- taxon_id
+  layouts <- lapply(split_by_level(taxon_id, parent_id, level =  1), get_vertex_coords)
+  layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
+  coords <- setNames(as.data.frame(layout), c('x', 'y'))
+  data <- cbind(data, coords)
   #
   data$y <- data$y * aspect_raito
   # Get vertex size --------------------------------------------------------------------------------

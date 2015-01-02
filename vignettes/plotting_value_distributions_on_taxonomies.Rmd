@@ -1,0 +1,47 @@
+---
+title: "Plotting value distributions on taxonomies"
+author: "Zachary Foster"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+
+
+
+### Plotting subtrees on same graph
+
+```{r}
+sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
+cat(names(sequences)[1])
+data <- extract_taxonomy(names(sequences),
+                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                         key = c(name = "item_info", seq_id = "item_info",
+                                 other_id = "item_info", "class_name"),
+                         database = "none")
+items <- data$items
+taxa <- data$taxa
+
+
+data_to_plot <- taxa
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count)
+
+
+parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  2), function(i) taxa[i, ])
+
+data_to_plot <- parts[[1]]
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count)
+
+data_to_plot <- do.call(rbind, parts)
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count)
+```
+

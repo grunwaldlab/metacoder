@@ -753,7 +753,7 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 
 
 #===================================================================================================
-#' Splits a taxonomy at a specific level
+#' Splits a taxonomy at a specific level or rank
 #' 
 #' Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
 #' 
@@ -761,7 +761,11 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 #' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
 #' @param level (\code{character} or \code{numeric} of length 1)
 #' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' 
+#' @return a \code{list} of taxon id \code{character} vectors. 
 #' \code{taxa}.
+#' 
+#' @export
 split_by_level <- function(taxa, parents, level, rank = NULL) {
   class_data <- get_class_from_el(taxa, parents)
   data <- data.frame(taxa = taxa, parents = parents, 

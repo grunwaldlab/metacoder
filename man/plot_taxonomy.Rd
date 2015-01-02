@@ -6,8 +6,10 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_label = NULL, line_color = NULL, line_label = NULL,
-  overlap_bias = 5, min_label_size = 0.015, line_label_offset = 1,
-  margin_size = 0, aspect_raito = 1, data_only = FALSE)
+  overlap_bias = 10, min_label_size = 0.015, line_label_offset = 1,
+  margin_size = 0, aspect_raito = 1, data_only = FALSE,
+  layout_func = layout.reingold.tilford, layout_args = list(circular =
+  TRUE))
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
