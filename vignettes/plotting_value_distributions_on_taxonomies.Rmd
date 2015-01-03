@@ -42,6 +42,7 @@ plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
 data_to_plot <- do.call(rbind, parts)
 plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
               size = data_to_plot$item_count,
-              vertex_color = data_to_plot$item_count)
+              vertex_color = data_to_plot$item_count,
+              titles = data_to_plot$name)
 ```
 

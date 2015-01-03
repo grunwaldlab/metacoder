@@ -368,8 +368,8 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 10, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0, aspect_ratio = NULL, data_only = FALSE,
-                          layout_func = NULL, layout_args = NULL) {
+                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
+                          layout_func = NULL, layout_args = NULL, titles = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   parent_id[!(parent_id %in% taxon_id)] <- NA
@@ -393,10 +393,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
   rownames(data) <- taxon_id
-  layouts <- lapply(split_by_level(taxon_id, parent_id, level =  1), get_vertex_coords)
+  subgraphs <- split_by_level(taxon_id, parent_id, level =  1)
+  layouts <- lapply(subgraphs, get_vertex_coords)
   layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
   coords <- setNames(as.data.frame(layout), c('x', 'y'))
   data <- cbind(data, coords)
+  data$group <- rep(seq_along(subgraphs), vapply(subgraphs, length, numeric(1)))
   if (!is.null(aspect_ratio)) {
     data$x <- data$x / aspect_ratio
     data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
@@ -529,6 +531,27 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                             just = justification[[i]],
                                                             gp = gpar(text_prop = data$line_label_size[i])))
   }
+  # Subgraph titles --------------------------------------------------------------------------------
+  if (!is.null(titles)) {
+    data$title <- titles
+    root_index <- vapply(unique(data$group), function(x) which(data$group == x)[1], numeric(1))
+    title_data <- data.frame(label = data$title[root_index])
+    title_data$x <- vapply(unique(data$group), function(x) mean(range(data$x[data$group == x])), numeric(1))
+    title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.06, numeric(1))
+    title_data$y <- vapply(unique(data$group), function(x) max(data$y[data$group == x]), numeric(1)) + title_data$size * 1.1
+    title_data$x <- rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
+    title_data$y <- rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
+    title_data$size <- rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
+    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    title_grobs <- lapply(which(title_data$size > min_label_size / 3), 
+                          function(i) resizingTextGrob(label = title_data$label[i],
+                                                       y = title_data$y[i],
+                                                       x = title_data$x[i],
+                                                       rot = 0,
+                                                       just = "center",
+                                                       gp = gpar(text_prop = title_data$size[i])))
+    
+  }
   
   # Get graph range data ---------------------------------------------------------------------------
   if (!is.null(aspect_ratio)) {
@@ -567,6 +590,11 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     }
     if (!is.null(data$line_label)) {
       for (a_grob in line_label_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    if (!is.null(titles)) {
+      for (a_grob in title_grobs) {
         the_plot <- the_plot + annotation_custom(grob = a_grob)
       }    
     }
