@@ -368,22 +368,27 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 10, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0, aspect_raito = 1, data_only = FALSE,
-                          layout_func = layout.reingold.tilford, layout_args = list(circular = TRUE)) {
+                          line_label_offset = 1, margin_size = 0, aspect_ratio = NULL, data_only = FALSE,
+                          layout_func = NULL, layout_args = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   parent_id[!(parent_id %in% taxon_id)] <- NA
+  if (is.null(layout_func)) {
+    layout_func <- layout.reingold.tilford
+    if (is.null(layout_args)) layout_args <- list(circular = TRUE)
+  }
+  if (is.null(layout_args)) layout_args <- list()
   # Get vertex coordinants  ------------------------------------------------------------------------
   get_vertex_coords <- function(index) {
     if (length(index) == 1) return(data.frame(x = 0, y = 0))
     part <- data[index, ]
     graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
     layout <- do.call(layout_func, c(list(graph), layout_args))
+    if (!is.null(aspect_ratio)) layout[, 1] <- layout[, 1] * aspect_ratio
     if (any(is.na(layout) | is.nan(unlist(layout)))) {
       layout <- layout.fruchterman.reingold(graph)
       warning(paste('Could not apply layout_func to subgraph with root', part$taxon_id[1]))
     }
-#     names(layout) <- c('x', 'y')
     return(list(graph, layout))
   }
   data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
@@ -392,8 +397,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
   coords <- setNames(as.data.frame(layout), c('x', 'y'))
   data <- cbind(data, coords)
-  #
-  data$y <- data$y * aspect_raito
+  if (!is.null(aspect_ratio)) {
+    data$x <- data$x / aspect_ratio
+    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
+  }
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
     data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
@@ -403,7 +410,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$size <- sqrt(data$size / pi)
   }
   all_pairwise <- molten_dist(x = data$x, y = data$y)
-  max_range <- c(min(all_pairwise$distance), max(all_pairwise$distance) / 5)
+  smallest_side <- min(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
+  max_range <- c(min(all_pairwise$distance), smallest_side / 5)
   min_range <- c(min(all_pairwise$distance) / 5, min(all_pairwise$distance))
   pairwise <- all_pairwise[all_pairwise$distance <= max_range[2], ]
   size_opt_func <- function(a_max, a_min) {
@@ -426,7 +434,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   opt_size_range <- get_optimal_range(max_range = max_range,
                                       min_range = min_range,
-                                      resolution = c(10, 15),
+                                      resolution = c(15, 20),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
   data$size <- rescale(data$size, to = opt_size_range)
@@ -509,7 +517,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
     mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
-    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, ideal_diameter)) 
+    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -523,11 +531,11 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   
   # Get graph range data ---------------------------------------------------------------------------
-  #
-  line_data$y <- line_data$y / aspect_raito
-  vertex_data$y <- vertex_data$y / aspect_raito
-  data$y <- data$y / aspect_raito
-  #
+  if (!is.null(aspect_ratio)) {
+    line_data$y <- rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
+    vertex_data$y <- rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
+  }
   x_range <- max(vertex_data$x) - min(vertex_data$x)
   y_range <- max(vertex_data$y) - min(vertex_data$y)
   x_margin <- x_range * margin_size
@@ -545,7 +553,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
       geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
       geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
       guides(fill = "none") +
-      coord_fixed(ratio = aspect_raito, xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+      coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
       theme(panel.grid = element_blank(), 
             panel.background = element_blank(),
             axis.title = element_blank(),

@@ -32,7 +32,7 @@ plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
               vertex_color = data_to_plot$item_count)
 
 
-parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  2), function(i) taxa[i, ])
+parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  4), function(i) taxa[i, ])
 
 data_to_plot <- parts[[1]]
 plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
