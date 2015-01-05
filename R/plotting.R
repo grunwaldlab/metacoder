@@ -367,7 +367,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @import scales 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
-                          line_color = NULL, line_label = NULL, overlap_bias = 10, min_label_size = .015,
+                          line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
                           line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
                           layout_func = NULL, layout_args = NULL, titles = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
@@ -537,13 +537,13 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     root_index <- vapply(unique(data$group), function(x) which(data$group == x)[1], numeric(1))
     title_data <- data.frame(label = data$title[root_index])
     title_data$x <- vapply(unique(data$group), function(x) mean(range(data$x[data$group == x])), numeric(1))
-    title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.06, numeric(1))
+    title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.075, numeric(1))
     title_data$y <- vapply(unique(data$group), function(x) max(data$y[data$group == x]), numeric(1)) + title_data$size * 1.1
     title_data$x <- rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
     title_data$y <- rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
     title_data$size <- rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    title_grobs <- lapply(which(title_data$size > min_label_size / 3), 
+    title_grobs <- lapply(which(title_data$size > min_label_size / 4), 
                           function(i) resizingTextGrob(label = title_data$label[i],
                                                        y = title_data$y[i],
                                                        x = title_data$x[i],

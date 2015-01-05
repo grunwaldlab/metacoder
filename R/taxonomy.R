@@ -701,6 +701,8 @@ get_class_from_el <- function(taxa, parents) {
     }
     return(output)
   }
+  if (!is.character(taxa)) taxa <- as.character(taxa)
+  if (!is.character(parents)) parents <- as.character(parents)  
   setNames(lapply(taxa, process_one), taxa)
 }
 

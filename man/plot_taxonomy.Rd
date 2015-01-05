@@ -6,7 +6,7 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_label = NULL, line_color = NULL, line_label = NULL,
-  overlap_bias = 10, min_label_size = 0.015, line_label_offset = 1,
+  overlap_bias = 15, min_label_size = 0.015, line_label_offset = 1,
   margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
   layout_func = NULL, layout_args = NULL, titles = NULL)
 }
