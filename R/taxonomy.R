@@ -319,6 +319,7 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{items}}{A data.frame with one row per input item (typically sequences)
 #'    containing their taxon ids and other informtion, depending on input.}
 #'    }
+#'    
 #' @export
 #===================================================================================================
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 

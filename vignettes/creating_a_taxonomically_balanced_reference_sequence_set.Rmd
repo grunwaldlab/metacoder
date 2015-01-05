@@ -2,12 +2,22 @@
 title: "Creating a taxonomically balanced reference sequence set"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+ rmarkdown::html_vignette:
+  self_contained: no
 vignette: >
  %\VignetteIndexEntry{Creating a balanced reference sequence set}
  %\VignetteEngine{knitr::knitr}
  %\usepackage[utf8]{inputenc}
 ---
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+opts_chunk$set(dpi = 250)
+```
 
 
 ## Introduction
@@ -49,8 +59,9 @@ They differ in what they are best used for.
 These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
 The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence metadata.
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta") # Reads an example FASTA file
+```{r parse_data, cache=TRUE}
+library(metacoder)
+sequences <- ape::read.FASTA("../inst/extdata/unite_general_release.fasta") # Reads an example FASTA file
 names(sequences)[1] # Print an example of the sequence header format
 data <- extract_taxonomy(names(sequences), # Parse the sequence headers
                          regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
@@ -71,7 +82,7 @@ If we look at how sequences are distributed throughout the taxonomy, we can see 
 Depending on the goal, this might or might not be a problem.
 The overepresentation of Agaricales is likly a bigger problem. 
 
-```{r}
+```{r all_data}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
@@ -106,11 +117,12 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
 
 We can now view the differnece between the original and subsampled data sets using `plot_taxonomy` again.
 
-```{r}
+```{r subset_1}
 plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
               size = sampled_taxa$item_count,
               vertex_color = sampled_taxa$item_count,
-              vertex_label = sampled_taxa$item_count)
+              vertex_label = ifelse(sampled_taxa$rank %in% c("s", "o"), sampled_taxa$item_count, NA),
+              line_label = ifelse(sampled_taxa$rank == "o", sampled_taxa$name, NA))
 ```
 
 

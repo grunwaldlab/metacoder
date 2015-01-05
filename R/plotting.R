@@ -368,7 +368,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
+                          line_label_offset = 1, margin_size = 0, aspect_ratio = NULL, data_only = FALSE,
                           layout_func = NULL, layout_args = NULL, titles = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
@@ -492,7 +492,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
     data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
     data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
-    vertex_label_grobs <- lapply(which(data$vertex_label_size > min_label_size), 
+    valid_grobs <- which(data$vertex_label_size > min_label_size & !is.na(data$vertex_label))
+    vertex_label_grobs <- lapply(valid_grobs, 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
                                                               x = data$vertex_label_x[i],
@@ -523,7 +524,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    line_label_grobs <- lapply(which(data$line_label_size > min_label_size / 3), 
+    valid_grobs <- which(data$line_label_size > min_label_size / 3 & !is.na(data$line_label))
+    line_label_grobs <- lapply(valid_grobs, 
                                function(i) resizingTextGrob(label = data$line_label[i],
                                                             y = data$line_label_y[i],
                                                             x = data$line_label_x[i],
