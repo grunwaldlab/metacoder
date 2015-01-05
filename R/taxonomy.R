@@ -800,7 +800,7 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
 #' @return A vector of unique taxon ids.
 #' 
 #' @export
-restrict_taxonomny <- function(taxa, parents, subset) {
+restrict_taxonomy <- function(taxa, parents, subset) {
   subset <- unique(subset)
   tax_class <- get_class_from_el(taxa, parents)
   unique(unlist(tax_class[subset]))

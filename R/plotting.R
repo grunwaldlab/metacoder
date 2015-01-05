@@ -583,6 +583,11 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
             axis.text  =  element_blank(),
             axis.ticks = element_blank(), 
             axis.line  = element_blank())
+    # Plot rescaling text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    text_count <- 0
+    if (!is.null(data$vertex_label)) text_count <- text_count + length(vertex_label_grobs)
+    if (!is.null(data$line_label)) text_count <- text_count + length(line_label_grobs)
+    if (!is.null(titles)) text_count <- text_count + length(title_grobs)
     if (!is.null(data$vertex_label)) {
       for (a_grob in vertex_label_grobs) {
         the_plot <- the_plot + annotation_custom(grob = a_grob)
