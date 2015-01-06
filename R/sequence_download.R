@@ -280,10 +280,10 @@ download_gb_taxon <- function(taxon, key, type,
 #'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
 #'   levels. 
 #' @examples
-#' get_taxon_sample(name = "oomycetes", target_level = "genus")
-#' fungi <- get_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
+#' ncbi_taxon_sample(name = "oomycetes", target_level = "genus")
+#' fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
 #' @export
-get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
+ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
                              interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
                              verbose = TRUE, max_length = 10000, min_length = 1,
                              max_children = NULL, min_children = NULL, ...) {
@@ -376,7 +376,7 @@ get_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = 
   
   # Recursivly sample taxon ------------------------------------------------------------------------
   recursive_sample <- function(id, level, name) {
-    cat("Processing '", name, "' (uid: ", id, ", level: ", as.character(level), ")", "\n",
+    cat("Processing '", name, "' (uid: ", id, ", rank: ", as.character(level), ")", "\n",
         sep = "")
     # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (!(level %in% taxonomy_levels) || level < target_level) {
