@@ -319,6 +319,7 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{items}}{A data.frame with one row per input item (typically sequences)
 #'    containing their taxon ids and other informtion, depending on input.}
 #'    }
+#'    
 #' @export
 #===================================================================================================
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
@@ -701,6 +702,8 @@ get_class_from_el <- function(taxa, parents) {
     }
     return(output)
   }
+  if (!is.character(taxa)) taxa <- as.character(taxa)
+  if (!is.character(parents)) parents <- as.character(parents)  
   setNames(lapply(taxa, process_one), taxa)
 }
 
@@ -753,7 +756,7 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 
 
 #===================================================================================================
-#' Splits a taxonomy at a specific level
+#' Splits a taxonomy at a specific level or rank
 #' 
 #' Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
 #' 
@@ -761,7 +764,11 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 #' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
 #' @param level (\code{character} or \code{numeric} of length 1)
 #' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' 
+#' @return a \code{list} of taxon id \code{character} vectors. 
 #' \code{taxa}.
+#' 
+#' @export
 split_by_level <- function(taxa, parents, level, rank = NULL) {
   class_data <- get_class_from_el(taxa, parents)
   data <- data.frame(taxa = taxa, parents = parents, 
@@ -794,7 +801,7 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
 #' @return A vector of unique taxon ids.
 #' 
 #' @export
-restrict_taxonomny <- function(taxa, parents, subset) {
+restrict_taxonomy <- function(taxa, parents, subset) {
   subset <- unique(subset)
   tax_class <- get_class_from_el(taxa, parents)
   unique(unlist(tax_class[subset]))

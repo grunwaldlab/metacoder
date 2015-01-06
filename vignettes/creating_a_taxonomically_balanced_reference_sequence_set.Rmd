@@ -2,12 +2,22 @@
 title: "Creating a taxonomically balanced reference sequence set"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+ rmarkdown::html_vignette:
+  self_contained: no
 vignette: >
  %\VignetteIndexEntry{Creating a balanced reference sequence set}
  %\VignetteEngine{knitr::knitr}
  %\usepackage[utf8]{inputenc}
 ---
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+opts_chunk$set(dpi = 250)
+```
 
 
 ## Introduction
@@ -47,36 +57,72 @@ They differ in what they are best used for.
 
 `taxonomic_sample` is used to sample items according to their taxonomic classifications. 
 These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
-The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence headers.
+The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence metadata.
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-cat(names(sequences)[1])
-data <- extract_taxonomy(names(sequences),
+```{r parse_data, cache=TRUE}
+library(metacoder)
+sequences <- ape::read.FASTA("../inst/extdata/unite_general_release.fasta") # Reads an example FASTA file
+names(sequences)[1] # Print an example of the sequence header format
+data <- extract_taxonomy(names(sequences), # Parse the sequence headers
                          regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                          key = c(name = "item_info", seq_id = "item_info",
                                  other_id = "item_info", "class_name"),
                          database = "none")
-items <- data$items
-taxa <- data$taxa
-index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 2))
-sampled_items <- items[index, ]
-sampled_taxa_index <- restrict_taxonomny(taxa = taxa$taxon_id,
-                                         parents = taxa$parent_id,
-                                         subset = sampled_items$taxon_id)
-sampled_taxa <- taxa[sampled_taxa_index, ]
-sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, sampled_taxa$parent_id, sampled_items$taxon_id)
+items <- data$items # Rename parts of the result for later convenience
+taxa <- data$taxa # Rename parts of the result for later convenience
+```
+
+At this point, the taxonomy information has been extracted from the sequences headers. 
+`items` is a`data.frame` with rows corresponding to sequences. 
+One column in `items` is the taxon id; this is the only column we will use from this `data.frame`.
+The other item returned from `extract_taxonomy` is `taxa`.
+`taxa` is a `data.frame` with rows for each unique taxon use in the item classifications. 
+
+If we look at how sequences are distributed throughout the taxonomy, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
+Depending on the goal, this might or might not be a problem.
+The overepresentation of Agaricales is likly a bigger problem. 
+
+```{r all_data}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
-              vertex_label = taxa$item_count,
-              line_label = taxa$name)
+              vertex_label = taxa$name)
+```
+
+Information from both these tables is needed to make a taxonomically balanced subset of `items`.
+The first step is to use the taxonomy tree structure stored in `taxa` to subsample `items`.
+Then, `taxa` is subsampled using `restrict_taxonomy` to remove any taxa not associated with
+any items in the subset.
+
+To try to reduce the Agaricales overepresentation, we will subsample any order with greater than 20 sequences to 20 sequences.
+Similarily, species will be subsampled to 5 sequences each to avoid highly researched species from introducing bias.
+The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the subsampling limits for each taxonomic rank (encoded by single letters for this specific dataset). 
+In addition to too many sequences for a specific taxon, it might also be desireable to not included sequences from underrepresented taxa.
+Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classifiaction to compare to.
+For this reason, we will use the option `min_counts = c("s" = 3)` so items from species with less than 3 items will not be included. 
+
+```{r}
+index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 5),
+                          min_counts = c("s" = 3))
+sampled_items <- items[index, ] # Subsample sequence metadata
+sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
+                                         parents = taxa$parent_id,
+                                         subset = sampled_items$taxon_id)
+sampled_taxa <- taxa[sampled_taxa_index, ] # Subsample the taxa to only those in the subset of items 
+sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how many items are in each taxon
+                                           sampled_taxa$parent_id,
+                                           sampled_items$taxon_id)
+```
+
+We can now view the differnece between the original and subsampled data sets using `plot_taxonomy` again.
+
+```{r subset_1}
 plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
               size = sampled_taxa$item_count,
               vertex_color = sampled_taxa$item_count,
-              vertex_label = sampled_taxa$item_count,
-              line_label = sampled_taxa$name)
+              vertex_label = ifelse(sampled_taxa$rank %in% c("s", "o"), sampled_taxa$item_count, NA),
+              line_label = ifelse(sampled_taxa$rank == "o", sampled_taxa$name, NA))
 ```
 
 

@@ -6,8 +6,9 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_label = NULL, line_color = NULL, line_label = NULL,
-  overlap_bias = 5, min_label_size = 0.015, line_label_offset = 1,
-  margin_size = 0, aspect_raito = 1, data_only = FALSE)
+  overlap_bias = 15, min_label_size = 0.015, line_label_offset = 1,
+  margin_size = 0, aspect_ratio = NULL, data_only = FALSE,
+  layout_func = NULL, layout_args = NULL, titles = NULL)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
@@ -49,10 +50,10 @@ edge of the vertex circle and \code{0} would place it in the center.}
 the range of space occupied by verticies. For example, a value of \code{.5} would make margins as wide
 as the plotted data.}
 
+\item{aspect_ratio}{(\code{numeric}) The height / width of the plot.}
+
 \item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
 and \code{parent_id}.}
-
-\item{aspect_ratio}{(\code{numeric}) The height / width of the plot.}
 }
 \description{
 Plots the distribution of values associated with item with an associated taxonomic classification.
