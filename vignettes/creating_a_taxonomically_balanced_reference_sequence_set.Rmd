@@ -2,9 +2,7 @@
 title: "Creating a taxonomically balanced reference sequence set"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
-output:
- rmarkdown::html_vignette:
-  self_contained: no
+output: rmarkdown::html_vignette
 vignette: >
  %\VignetteIndexEntry{Creating a balanced reference sequence set}
  %\VignetteEngine{knitr::knitr}
@@ -16,7 +14,7 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dpi = 250)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache=TRUE)
 ```
 
 
@@ -27,9 +25,9 @@ I say "taxonomy-specific" because there are obviously other considerations that 
 
 The three taxonomy-specific criteria are: 
 
-1. taxonomic coverage: All taxa of interest should be represented by enough sequences to capture their diversity.
-2. balance: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. 
-3. size: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analysis. 
+1. **taxonomic coverage**: All taxa of interest should be represented by enough sequences to capture their diversity.
+2. **balance**: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. 
+3. **size**: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analysis. 
 
 When evaluating potential primers for metabarcoding experiments it is important to have reference sequences representative of every taxon of interest.
 The number of sequences of each taxon at each taxonomic level should be approximately equal, or perhaps more accurately, proportional to the diversity within that taxon.
@@ -59,7 +57,7 @@ They differ in what they are best used for.
 These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
 The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence metadata.
 
-```{r parse_data, cache=TRUE}
+```{r parse_data}
 library(metacoder)
 sequences <- ape::read.FASTA("../inst/extdata/unite_general_release.fasta") # Reads an example FASTA file
 names(sequences)[1] # Print an example of the sequence header format
@@ -115,7 +113,7 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
                                            sampled_items$taxon_id)
 ```
 
-We can now view the differnece between the original and subsampled data sets using `plot_taxonomy` again.
+We can now view the difference between the original and subsampled data sets using `plot_taxonomy` again.
 
 ```{r subset_1}
 plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
@@ -127,3 +125,11 @@ plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
 
 
 ### Using `ncbi_taxon_sample`
+
+```{r}
+fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family",
+                           max_counts = c(family = 5, order = 30),
+                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
+                           min_length = 600, max_length = 10000)
+```
+
