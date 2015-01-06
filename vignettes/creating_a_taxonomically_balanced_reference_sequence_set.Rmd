@@ -41,7 +41,7 @@ For these reasons, a simple random sample of sequences for a given taxon from an
 Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
 There are two main ways to accomplish this using `metacoder`. 
 
-* **Taxonomically-balanced subsample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balenced.
+* **Taxonomically-balanced subsample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balanced.
 * **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to idenitfy and download a set of sequences for a given taxon and custom Genbank query. 
 
 ## Usage examples
@@ -73,8 +73,8 @@ taxa <- data$taxa # Rename parts of the result for later convenience
 ```
 
 At this point, the taxonomy information has been extracted from the sequences headers. 
-`items` is a`data.frame` with rows corresponding to sequences. 
-One column in `items` is the taxon id; this is the only column we will use from this `data.frame`.
+`items` is a `data.frame` with rows corresponding to sequences. 
+One column in `items` is the taxon id; this is the only column we will use from `items`.
 The other item returned from `extract_taxonomy` is `taxa`.
 `taxa` is a `data.frame` with rows for each unique taxon use in the item classifications. 
 
@@ -90,16 +90,16 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 ```
 
 Information from both these tables is needed to make a taxonomically balanced subset of `items`.
-The first step is to use the taxonomy tree structure stored in `taxa` to subsample `items`.
-Then, `taxa` is subsampled using `restrict_taxonomy` to remove any taxa not associated with
-any items in the subset.
+The first step is to use the taxonomy tree structure stored in `taxa` (in the form of an adjacency/edge list) to subsample `items`.
+Then, `taxa` is subsampled using `restrict_taxonomy` to remove any taxa not associated with items in the subset.
 
 To try to reduce the Agaricales overepresentation, we will subsample any order with greater than 20 sequences to 20 sequences.
-Similarily, species will be subsampled to 5 sequences each to avoid highly researched species from introducing bias.
+Similarily, species will be subsampled to 5 sequences each to avoid any one species introducing bias.
 The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the subsampling limits for each taxonomic rank (encoded by single letters for this specific dataset). 
-In addition to too many sequences for a specific taxon, it might also be desireable to not included sequences from underrepresented taxa.
-Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classifiaction to compare to.
-For this reason, we will use the option `min_counts = c("s" = 3)` so items from species with less than 3 items will not be included. 
+
+It might also be desireable to not included sequences from underrepresented taxa.
+Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classifiaction to compare them to.
+For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included. 
 
 ```{r}
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
