@@ -14,7 +14,7 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache=TRUE)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning=FALSE, message=FALSE)
 ```
 
 
@@ -59,7 +59,8 @@ The example below uses `extract_taxonomy` to get this information; the use of th
 
 ```{r parse_data}
 library(metacoder)
-sequences <- ape::read.FASTA("../inst/extdata/unite_general_release.fasta") # Reads an example FASTA file
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path) # Reads an example FASTA file
 names(sequences)[1] # Print an example of the sequence header format
 data <- extract_taxonomy(names(sequences), # Parse the sequence headers
                          regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
@@ -126,8 +127,15 @@ plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
 
 ### Using `ncbi_taxon_sample`
 
-```{r}
-fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family",
+Although, downloading a data set, parseing it with `extract_taxonomy`, and subsamping with `taxonomic_sample` is the best method for most analyses, it is also possible to download a taxonomically balanced random set of sequences from Genbank without downloading all of the sequences for the group of interest.
+This is done using the function `ncbi_taxon_sample`. 
+Internally, `ncbi_taxon_sample` is very similar to `taxonomic_sample`, except that it queries Genbank for taxonomy and sequence information instead of getting it from parsed data. 
+This function is best used for getting a small number of sequences over diverse taxonomic groups for informal analyses. 
+If it is pheasable to download all of the group of interest, it is likly best to use `extract_taxonomy` + `taxonomic_sample` instead of `ncbi_taxon_sample`.
+
+
+```{r, eval=FALSE}
+fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family", 
                            max_counts = c(family = 5, order = 30),
                            entrez_query = "18S[All Fields] AND 28S[All Fields]",
                            min_length = 600, max_length = 10000)
