@@ -368,7 +368,7 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0, aspect_ratio = NULL, data_only = FALSE,
+                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
                           layout_func = NULL, layout_args = NULL, titles = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
@@ -378,6 +378,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     if (is.null(layout_args)) layout_args <- list(circular = TRUE)
   }
   if (is.null(layout_args)) layout_args <- list()
+  taxon_id <- as.character(taxon_id)
+  parent_id <- as.character(parent_id)
   # Get vertex coordinants  ------------------------------------------------------------------------
   get_vertex_coords <- function(index) {
     if (length(index) == 1) return(data.frame(x = 0, y = 0))
@@ -391,14 +393,17 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     }
     return(list(graph, layout))
   }
-  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id)
+  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
   rownames(data) <- taxon_id
   subgraphs <- split_by_level(taxon_id, parent_id, level =  1)
   layouts <- lapply(subgraphs, get_vertex_coords)
   layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
   coords <- setNames(as.data.frame(layout), c('x', 'y'))
+  coords$group <- rep(seq_along(subgraphs), vapply(subgraphs, length, numeric(1)))
+  rownames(coords) <- unlist(subgraphs)
+  coords <- coords[data$taxon_id, ]
   data <- cbind(data, coords)
-  data$group <- rep(seq_along(subgraphs), vapply(subgraphs, length, numeric(1)))
+  
   if (!is.null(aspect_ratio)) {
     data$x <- data$x / aspect_ratio
     data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
