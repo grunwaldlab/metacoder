@@ -14,7 +14,7 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(eval = FALSE)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning = FALSE, message = FALSE)
 ```
 
 
@@ -63,12 +63,28 @@ Taxonomic information can be reterived using either of these identifiers.
 The following shows how to extract the genbank id, accession id, and description from the headers. 
 The genbank id is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the accession id and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/ncbi_basidiomycetes.fasta")
-cat(names(sequences)[1])
-genbank <- extract_taxonomy(names(sequences)[1:3],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+genbank_ex_data <- extract_taxonomy(names(sequences),
                             regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
                             key = c("item_id", acc_no = "item_info", desc = "item_info"))
+```
+
+The sequence headers have the format:
+
+```{r, echo=FALSE, comment=NA}
+cat(genbank_ex_data$items$input[1])
+```
+
+We can plot the result using `plot_taxonomy`:
+
+```{r}
+taxa <- genbank_ex_data$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
 ```
 
 
@@ -85,13 +101,27 @@ This is better than using the classification from the sequence header since the 
 Also, looking up the taxon assignment using the sequence accession number means changes in sequence taxonomy since the UNITE FASTA file was downloaded will be included. 
 Therefore, the taxonomy returned by GenBank could be different than the one in the header.
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-cat(names(sequences)[1])
-unite_1 <- extract_taxonomy(names(sequences)[1:3],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data <- extract_taxonomy(names(sequences),
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "taxon_name", seq_id = "item_id",
                                     other_id = "item_info", tax_string = "taxon_info"))
+```
+
+The sequence headers have the format:
+
+```{r, echo=FALSE, comment=NA}
+cat(unite_ex_data$items$input[1])
+```
+
+```{r}
+taxa <- unite_ex_data$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
 ```
 
 #### Using included classification names to look up the taxon id
@@ -100,13 +130,21 @@ If you want to use the structure and names of the classification provided in the
 This is typically not as efficient or accurate and using "`item_id`" or "`taxon_id`", so `"class_name"` has no effect if these more reliable fields (or others) are present. 
 However, you can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use "`item_id`" or "`taxon_id`".
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-cat(names(sequences)[1])
-unite_2 <- extract_taxonomy(names(sequences)[1:3],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data_2 <- extract_taxonomy(names(sequences),
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "item_info", seq_id = "item_info",
                                     other_id = "item_info", "class_name"))
+```
+
+```{r}
+taxa <- unite_ex_data_2$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
 ```
 
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
@@ -119,31 +157,51 @@ It is also possible to build a custom taxonomy encoding using the taxonomy in th
 Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
 To do this, set the `database` option to `"none"` to prevent `extract_taxonomy` from trying to look up the taxon id, causing all taxa to be assigned arbitrary unique ids.
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/unite_general_release.fasta")
-cat(names(sequences)[1])
-unite_3 <- extract_taxonomy(names(sequences)[1:3],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data_3 <- extract_taxonomy(names(sequences),
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "item_info", seq_id = "item_info",
                                     other_id = "item_info", "class_name"),
                             database = "none")
 ```
 
+```{r}
+taxa <- unite_ex_data_3$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
+```
 
 ### ITS1 DB FASTA headers
 
 The ITS1 database fasta header includes the genbank taxon id.
 In the example below, both the `"item_id"` and `"taxon_id"` keys are provided, but only the `"taxon_id"` is used to look up taxonomy information since it has precedence. 
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/ITSoneDB_ITS1_GBandHMM.fasta")
-cat(names(sequences)[1])
-its1 <- extract_taxonomy(names(sequences)[1:3],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "ITSoneDB_ITS1_GBandHMM.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+its1_ex_data <- extract_taxonomy(names(sequences),
                          regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)$",
                          key = c("item_id", taxon_name = "taxon_info",
                                  "taxon_id", description = "item_info"))
 ```
 
+The sequence headers have the format:
+
+```{r, echo=FALSE, comment=NA}
+cat(its1_ex_data$items$input[1])
+```
+
+```{r}
+taxa <- its1_ex_data$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
+```
 
 ### PR2 FASTA headers
 
@@ -151,16 +209,29 @@ The first item in the header is sometimes a GenBank accesssion number, but not a
 Therefore, the best option is to use the included taxonomy information.
 Note that there is no rank information available. 
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/pr2_stramenopiles_gb203.fasta")
-cat(names(sequences)[1])
-pr2 <- extract_taxonomy(names(sequences)[3:6],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+pr2_ex_data <- extract_taxonomy(names(sequences),
                         regex = "^(.*\\..*?)\\|(.*)$",
                         key = c("item_id", "class_name"),
                         class_tax_sep = "|",
                         database = "none")
 ```
 
+The sequence headers have the format:
+
+```{r, echo=FALSE, comment=NA}
+cat(pr2_ex_data$items$input[1])
+```
+
+```{r}
+taxa <- pr2_ex_data$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
+```
 
 ### RDP FASTA headers
 
@@ -170,13 +241,25 @@ In this case both the rank and taxon name are supplied.
 Note that the rank comes after the taxon name in each pair, which is not what `extract_taxonomy` expects. 
 Therefore, option `class_rank_rev` is set to `TRUE`. 
 
-```{r}
-sequences <- ape::read.FASTA("inst/extdata/rdp_release11_3_Archaea_unaligned.fa")
-cat(names(sequences)[212])
-rdp <- extract_taxonomy(names(sequences)[212:214],
+```{r eval=FALSE}
+file_path <- system.file("extdata", "rdp_release11_3_Archaea_unaligned.fa", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+rdp_ex_data <- extract_taxonomy(names(sequences),
                         regex = "^(.*?) (.*)\\tLineage=(.*)",
                         key = c(id = "item_info", description = "item_info", "class_name"),
                         class_tax_sep = ";",
                         class_rank_sep = ";", 
                         class_rank_rev = TRUE)
+```
+
+```{r, echo=FALSE, comment=NA}
+cat(rdp_ex_data$items$input[212])
+```
+
+```{r}
+taxa <- rdp_ex_data$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
 ```
