@@ -261,7 +261,7 @@ get_tips <- function(nodes, sep = "__") {
 #' get indexes of a unique set of the input
 unique_mapping <- function(input) {
   unique_input <- unique(input)
-  vapply(input, function(x) which(x == unique_input), numeric(1))
+  vapply(input, function(x) {if (is.na(x)) which(is.na(unique_input)) else which(x == unique_input)}, numeric(1))
 }
 
 

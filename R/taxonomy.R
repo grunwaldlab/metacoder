@@ -151,9 +151,10 @@ extract_last <- function(classifications, column) {
 #' @export
 unique_taxa <- function(classifications, id_column = NULL) {
   split_classification <- function(a_classification) {
+    if (!is.data.frame(a_classification) && is.na(a_classification)) return(NA)
     lapply(1:nrow(a_classification), function(i) a_classification[1:i, ])
   }
-  output <- unlist(lapply(classifications, split_classification), recursive = FALSE)
+  output <- unlist(lapply(classifications[!is.na(classifications)], split_classification), recursive = FALSE)
   output <- unique(output)
   if (is.null(id_column)) {
     names(output) <- seq_along(output)
@@ -381,7 +382,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   if ("taxon_id" %in% names(item_data) && database != "none") {
     item_classification <- map_unique(item_data$taxon_id, taxize::classification,
                                       db = database, return_id = TRUE)
-    item_classification <- lapply(item_classification, setNames, nm = c("name", "rank", "taxon_id"))
+    item_classification[!is.na(item_classification)] <- lapply(item_classification[!is.na(item_classification)],
+                                                               setNames, nm = c("name", "rank", "taxon_id"))
   } else if ("class_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
@@ -420,8 +422,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   if (get_id_from_name && database != "none") {
     taxon_ids <- id_from_name(taxon_data$name)
     ids_found <- !is.na(taxon_ids)
-    if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Coud not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
-    if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Coud not look up all taxon names. Arbitrary ids will be applied.")
+    if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Could not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
+    if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Could not look up all taxon names. Arbitrary ids will be applied.")
     taxon_data$taxon_id[ids_found] <- taxon_ids[ids_found]
     if (arbitrary_ids == "na") {
       taxon_data$taxon_id[!ids_found] <- NA
@@ -456,7 +458,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Add taxon info ---------------------------------------------------------------------------------
   map_item_to_taxon <- function(col_index) {
     data <- lapply(taxon_data$taxon_id,
-                   function(x) unique(item_data[x == item_data$taxon_id, col_index]))
+                   function(x) unique(item_data[x == item_data$taxon_id & !is.na(item_data$taxon_id), col_index]))
     data[lapply(data, length) == 0] <- NA
     if (max(vapply(data, length, numeric(1))) > 1)
       stop(paste0("taxon_info field ", col_index - 1, " content does not correspond to taxa ids.", 
@@ -470,7 +472,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Add arbitrary item ids to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) item_data$item_id <- 1:nrow(item_data)
   # Add counts to taxon_data -----------------------------------------------------------------------
-  taxon_data$item_count <- table(unlist(lapply(item_classification, `[[`, "taxon_id")))[taxon_data$taxon_id]
+  get_taxon_item_count <- function(a_classification)
+  taxon_data$item_count <- table(unlist(lapply(item_classification, function(x) if (is.data.frame(x)) x$taxon_id)))[taxon_data$taxon_id]
   # Add taxon parent column ------------------------------------------------------------------------
   get_parent <- function(taxa, classifications) {
     taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
