@@ -107,7 +107,7 @@ sequences <- ape::read.FASTA(file_path)
 unite_ex_data <- extract_taxonomy(names(sequences),
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "taxon_name", seq_id = "item_id",
-                                    other_id = "item_info", tax_string = "taxon_info"))
+                                    other_id = "item_info", tax_string = "item_info"))
 ```
 
 The sequence headers have the format:
