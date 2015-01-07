@@ -471,9 +471,6 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Add arbitrary item ids to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) item_data$item_id <- 1:nrow(item_data)
-  # Add counts to taxon_data -----------------------------------------------------------------------
-  get_taxon_item_count <- function(a_classification)
-  taxon_data$item_count <- table(unlist(lapply(item_classification, function(x) if (is.data.frame(x)) x$taxon_id)))[taxon_data$taxon_id]
   # Add taxon parent column ------------------------------------------------------------------------
   get_parent <- function(taxa, classifications) {
     taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
@@ -482,6 +479,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     unlist(parents)
   }
   taxon_data$parent_id <- get_parent(taxon_data$taxon_id, taxon_id_key)
+  # Add counts to taxon_data -----------------------------------------------------------------------
+  taxon_data$item_count <- get_taxon_count(taxon_data$taxon_id, taxon_data$parent_id, item_data$taxon_id)
   # Add taxon level column -------------------------------------------------------------------------
   get_taxon_level <- function(taxa, classifications) {
     taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
