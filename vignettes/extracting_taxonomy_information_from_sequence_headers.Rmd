@@ -127,8 +127,8 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 #### Using included classification names to look up the taxon id
 
 If you want to use the structure and names of the classification provided in the header, but still look up the official taxon id, you can provide `"class_name"` as the only key with taxonomic information.
-This is typically not as efficient or accurate and using "`item_id`" or "`taxon_id`", so `"class_name"` has no effect if these more reliable fields (or others) are present. 
-However, you can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use "`item_id`" or "`taxon_id`".
+This is typically not as efficient or accurate and using `"item_id"` or `"taxon_id"`, so `"class_name"` has no effect if these more reliable fields (or others) are present. 
+However, you can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use `"item_id"` or `"taxon_id"`.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
