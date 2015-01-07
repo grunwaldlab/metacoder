@@ -110,6 +110,8 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_r
                           taxon_col_name = "taxon", rank_col_name = "rank") {
   taxa <- strsplit(lineage, split = taxon_sep, fixed = TRUE)
   if (taxon_sep == rank_sep) {
+    odd_taxa <- which(vapply(taxa, function(x) length(x) %% 2 == 1, logical(1)))
+    taxa[odd_taxa] <- lapply(taxa[odd_taxa], function(x) c(x, NA))
     group_by_2 <- function(x) lapply(seq(1, length(x), 2), function(i) c(x[[i]], x[[i + 1]]))
     lineage <- lapply(taxa, group_by_2)
   } else {
