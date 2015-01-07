@@ -421,6 +421,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Get taxon id of classifications if necessary ---------------------------------------------------
   if (get_id_from_name && database != "none") {
     taxon_ids <- map_unique(taxon_data$name, id_from_name, rows = 1)
+    not_unique <- names(which(table(taxon_ids) != 1))
+    taxon_ids[taxon_ids %in% not_unique] <- NA
     ids_found <- !is.na(taxon_ids)
     if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Could not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
     if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Could not look up all taxon names. Arbitrary ids will be applied.")
