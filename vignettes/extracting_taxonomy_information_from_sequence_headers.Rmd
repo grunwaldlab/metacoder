@@ -235,14 +235,14 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 
 ### RDP FASTA headers
 
-This RDP FASTA file does not contain any referneces to taxon or sequence ids that could be used to look up more information.
+This RDP FASTA file does not contain any references to taxon or sequence ids that could be used to look up more information.
 Instead, we will parse the taxonomy information included in the sequence headers.
 In this case both the rank and taxon name are supplied. 
 Note that the rank comes after the taxon name in each pair, which is not what `extract_taxonomy` expects. 
 Therefore, option `class_rank_rev` is set to `TRUE`. 
 
 ```{r eval=FALSE}
-file_path <- system.file("extdata", "rdp_release11_3_Archaea_unaligned.fa", package = "metacoder")
+file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(names(sequences),
                         regex = "^(.*?) (.*)\\tLineage=(.*)",
@@ -261,5 +261,6 @@ taxa <- rdp_ex_data$taxa
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+              vertex_label = taxa$name,
+              min_label_size = .0215)
 ```
