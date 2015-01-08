@@ -1,0 +1,51 @@
+## ----, echo=FALSE, warning=FALSE, message=FALSE--------------------------
+library(ape)
+library(metacoder)
+library(knitr)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning = FALSE, message = FALSE)
+
+## ----, eval=FALSE--------------------------------------------------------
+#  raw <- "JQ086376.1 AM946981.2 JQ182735.1 CP001396.1 J02459.1 AC150248.3 X64334.1 CP001509.3 CP006698.1 AC198536.1 JF340119.2 KF771025.1 CP007136.1 CP007133.1 U39286.1 CP006584.1 EU421722.1 U03462.1 U03459.1 AC198467.1 V00638.1 CP007394.1 CP007392.1 HG941718.1 HG813083.1 HG813082.1 CP007391.1 HG813084.1 CP002516.1 KF561236.1 JX509734.1 AP010953.1 U39285.1 M15423.1 X98613.1 CP006784.1 CP007393.1 CU928163.2 AP009240.1 CP007025.1 CP006027.1 CP003301.1 CP003289.1 CP000946.1 CP002167.1 HG428755.1 JQ086370.1 CP001846.1 CP001925.1 X99439.1 AP010958.1 CP001368.1 AE014075.1 CP002212.1 CP003034.1 CP000243.1 AY940193.1 CP004009.1 JQ182732.1 U02453.1 AY927771.1 BA000007.2 CP003109.1 CP007390.1 U02426.1 U02425.1 CP006262.1 HG738867.1 U00096.3 FN554766.1 CP001855.1 L19898.1 AE005174.2 FJ188381.1 AK157373.1 JQ182733.1 U39284.1 U37692.1 AF129072.1 FM180568.1 CP001969.1 HE616528.1 CP002729.1 JF974339.1 AB248924.1 AB248923.1 CP002291.1 X98409.1 CU928161.2 CP003297.1 FJ797950.1 CP000038.1 U82598.1 CP002211.1 JQ806764.1 U03463.1 CP001665.1"
+#  ids <- strsplit(raw, " ")[[1]]
+#  contaminants <- extract_taxonomy(ids, regex = "(.*)", key = c(name = "item_id"))
+
+## ------------------------------------------------------------------------
+taxa <- contaminants$taxa
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              titles = taxa$name)
+
+## ------------------------------------------------------------------------
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+cat(names(sequences)[1])
+original_data <- extract_taxonomy(names(sequences),
+                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                         key = c(name = "item_info", seq_id = "item_info",
+                                 other_id = "item_info", "class_name"),
+                         database = "none")
+items <- original_data$items
+taxa <- original_data$taxa
+
+## ------------------------------------------------------------------------
+data_to_plot <- taxa
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count)
+
+## ------------------------------------------------------------------------
+parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  2), function(i) taxa[i, ])
+
+data_to_plot <- parts[[2]]
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count,
+              titles = data_to_plot$name)
+
+data_to_plot <- do.call(rbind, parts)
+plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+              size = data_to_plot$item_count,
+              vertex_color = data_to_plot$item_count,
+              titles = data_to_plot$name)
+
