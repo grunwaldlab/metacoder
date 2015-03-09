@@ -3,6 +3,7 @@ title: "Creating a taxonomically balanced reference sequence set"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+toc: true
 vignette: >
  %\VignetteIndexEntry{Creating a balanced reference sequence set}
  %\VignetteEngine{knitr::knitr}
@@ -16,6 +17,8 @@ library(metacoder)
 library(knitr)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning=FALSE, message=FALSE)
 ```
+
+# Creating a taxonomically balanced reference sequence set
 
 
 ## Introduction
