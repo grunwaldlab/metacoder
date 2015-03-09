@@ -1,9 +1,14 @@
 ---
-output: rmarkdown::html_vignette
+title: "Creating a taxonomically balanced sequence set"
+author: "Zachary Foster"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
- %\VignetteIndexEntry{Creating a taxonomically balanced sequence set}
- %\VignetteEngine{knitr::knitr}
- %\usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{Creating a taxonomically balanced sequence set}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
 ---
 
 

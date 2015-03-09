@@ -7,7 +7,7 @@ output:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Plotting value distributions on taxonomies}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
 
@@ -16,19 +16,16 @@ library(ape)
 library(metacoder)
 library(knitr)
 library(ggplot2)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning = FALSE, message = FALSE)
+opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE, fig.show='hold')
 ```
 
-# Plotting value distributions on taxonomies
-
-------------
 
 ## Introduction
 
-Visualizing statistics associated with taxa can be difficult due to the heirarchical nature of the information.
-Traditional graph types used to visualize the relationship between catagories (e.g. taxa) and quantities (e.g. abundance) such as bar charts, pie charts, and box plots, are fundamentally two-dimensional. 
+Visualizing statistics associated with taxa can be difficult due to the hierarchical nature of the information.
+Traditional graph types used to visualize the relationship between categories (e.g. taxa) and quantities (e.g. abundance) such as bar charts, pie charts, and box plots, are fundamentally two-dimensional. 
 This means the it is usually necessary to only view a 'slice' of the data, such as the abundance of taxa of a particular rank, rather than all ranks. 
-To demonstrate this idea, lets display the same data using various graphing techniques and compare their effectivness.
+To demonstrate this idea, lets display the same data using various graphing techniques and compare their effectiveness.
 For this example we will be using a sample of 500 sequences from the UNITE fungal ITS database.
 First, we will use a bar chart to display abundance of taxa at each rank:
 
@@ -50,7 +47,7 @@ taxa$rank <- factor(taxa$rank, levels = unique(taxa$rank),
 
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width = 6.5, fig.height = 6.5}
 ggplot(taxa[!taxa$rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
   geom_bar(aes(x = name, y = item_count), stat = "identity") +
   facet_wrap(~ rank, scales = "free") +
@@ -58,18 +55,15 @@ ggplot(taxa[!taxa$rank  %in% c("Kingdom", "Species", "Genus"), ]) +
   theme_minimal() +  
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), 
         panel.grid = element_blank())
-
-
 ```
 
-For ranks with relativly few taxa, this is a satisfactory graphing technique, but it is ineffective once there is more than 20 or so taxa. 
-It also is difficult to decern how subtaxa are distributed within each taxon. 
-For example, if we only looked at the phylum or class level, we can easily see that Basidiomycota/Agaricomyctes are the most plentiful, but dont know if that is due to a single highly abundant species, or many moderatly abundant species.
+For ranks with relatively few taxa, this is a satisfactory graphing technique, but it is ineffective once there is more than 20 or so taxa. 
+It also is difficult to discern how sub-taxa are distributed within each taxon. 
+For example, if we only looked at the phylum or class level, we can easily see that Basidiomycota/Agaricomyctes are the most plentiful, but don't know if that is due to a single highly abundant species, or many moderately abundant species.
 These details are typically important for the interpretation of results.  
+Pie charts are also commonly used for this purpose, but they are just a less effective version of a bar chart.
 
-Pie charts are also commonly used for this purpose, but they are just a less effective version of a bar chart:
-
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width = 6.5, fig.height = 6.5}
 ggplot(taxa[taxa$rank == "Phylum", ]) + 
   geom_bar(aes(x = factor(1), y = item_count, fill = name), stat = "identity") +
   coord_polar(theta = "y") +
@@ -82,9 +76,10 @@ ggplot(taxa[taxa$rank == "Phylum", ]) +
         axis.ticks = element_blank())
 ```
 
+
 `Metacoder` approches this problem by using size and color to represent numeric data distributed along a phylogenetic tree:
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width=6.5, fig.height=6.5}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id, min_label_size = 0.005,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
@@ -95,123 +90,114 @@ In this example, both size and color are being used to represent the abundance o
 Using this method, it is clear how child taxa are distributed within their parents and what taxa are unusual (note the unidentified agaricales). 
 
 
-### Basic usage
+## Basic usage
 
 Although there are many options that can be used to make highly customized graphs, `plot_taxonomy` only needs two arguments to function. 
 These are a list of unique taxon IDs and a corresponding list of IDs of parent taxa (i.e. one rank lower).
-These two lists effectivly consitute an adjacency/edge list, describing how taxa are connected in a phylogenetic tree. 
-We can see the defualt appearance of the data used in the introduction using the code below.
+These two lists effectively constitute an adjacency/edge list, describing how taxa are connected in a phylogenetic tree. 
+We can see the default appearance of the data used in the introduction using the code below.
 The `taxa` object is one of the two `data.frame`s returned by the function `extract_taxonomy`, which is covered in [another vignette](extracting_taxonomy_information_from_sequence_headers.html).
 
-```{r}
+```{r, fig.width=6.5, fig.height=6.5}
 head(taxa)
 plot_taxonomy(taxa$taxon_id, taxa$parent_id)
 ```
 
 Each vertex (i.e. circle) in the graph represents a taxon and each line represents its membership in a lower taxon. 
 
-#### Vertex/Line size
+### Vertex/Line size
 
-By defualt, the size of each vertex is inversely proportional to its rank. 
+By default, the size of each vertex is inversely proportional to its rank. 
 This makes higher ranked taxa smaller, making them easier to see. 
-The size of verticies and lines can be scaled to a number associated with each taxon using the `size` parameter. 
+The size of vertices and lines can be scaled to a number associated with each taxon using the `size` parameter. 
 Below, the number of sequences for each taxon is used to determine vertex size.
 
-```{r}
+```{r, fig.width=6.5, fig.height=6.5}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count)
 ```
 
-Note that it was not necessary to specify the absolute vertex size; the range of absolute vertex sizes is optimized for each graph so as to minimize overlap of verticies and maximize the ranges of sizes.
-The argumnet `overlap_bias` is used to determin how much overlaps are avoided. 
-Higher values mean more importance is given to avoiding overlaping verticies than to maximizing the ranges of sizes.
-A high `overlap_bias` makes the connections between taxa more clear, but deminishes the visual effect of vertex size.
+Note that it was not necessary to specify the absolute vertex size; the range of absolute vertex sizes is optimized for each graph so as to minimize overlap of vertices and maximize the ranges of sizes.
+The argument `overlap_bias` is used to determine how much overlaps are avoided. 
+Higher values mean more importance is given to avoiding overlapping vertices than to maximizing the ranges of sizes.
+A high `overlap_bias` makes the connections between taxa more clear, but diminishes the visual effect of vertex size.
+Too low of an `overlap_bias` can make the graph hard to read.
 
 ```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               overlap_bias = 50)
-```
-
-To low of an `overlap_bias` can make the graph hard to read:
-
-```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               overlap_bias = 1)
 ```
 
-#### Vertex color
+
+### Vertex color
 
 The `vertex_color` argument works in a similar way to `size`.
 Numeric values are translated to a range of colors.
 Below the abundance of samples for each taxon is used to determine color instead of size.
+The range of color used can be set using the `vertex_color_series` argument. 
+This argument take a list of colors in the form of names, hex color codes, or integers. 
 
 ```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_color = taxa$item_count)
-```
 
-The range of color used can be set using the `vertex_color_series` argument. 
-This argument take a list of colors in the form of names, hex color codes, or intergers. 
-
-```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_color = taxa$item_count,
               vertex_color_series = c("turquoise", "darkorange3", "#4e567d", "gold", 23))
 ```
 
-#### Line color
+### Line color
 
-Unlike `size`, the color of lines can be set independently of verticies, although the defualt behavior is for the lines to have the same color as the verticies. 
-To only color vertices, you can set the lines to be a constant color:
+Unlike `size`, the color of lines can be set independently of vertices, although the default behavior is for the lines to have the same color as the vertices. 
+To only color vertices, you can set the lines to be a constant color or vise-versa.
 
 ```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_color = taxa$item_count,
               line_color = "grey")
-```
 
-Or vise-versa:
-
-```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_color = "grey",
               line_color = taxa$item_count)
 ```
 
-You can also set the color pallette used for the lines in the same way as you set it for the vertex using the argument `line_color_series`. 
+You can also set the color palette used for the lines in the same way as you set it for the vertex using the argument `line_color_series`. 
 
-#### Vertex labels 
+### Vertex labels 
 
-Labels can be added to verticies using the `vertex_label` option:
+Labels can be added to vertices using the `vertex_label` option:
 
-```{r}
+```{r, fig.width=6.5, fig.height=6.5}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id, 
               vertex_label = taxa$name)
 ```
 
 Label sizes are proportional to vertex size. 
 By default, only labels that are larger than some proportion of the total graph size are printed to avoid excessive crowding. 
-The minimum size of labels that will be printed is controled by the `min_label_size` option:
+The minimum size of labels that will be printed is controlled by the `min_label_size` option:
 
 ```{r}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,  
               vertex_label = taxa$item_count,
               min_label_size = 0.01)
+
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,  
               vertex_label = taxa$item_count,
               min_label_size = 0.005)
 ```
 
 Note that the labels are a special kind that scales with the size of the graph. 
-This means that the text size will always be proportional to the graph size regardless of ow big the grpah is rendered; however, these special labels take more time to render, so causing too many to be printed drastically slow the rendering of the graph. 
+This means that the text size will always be proportional to the graph size regardless of ow big the graph is rendered; however, these special labels take more time to render, so causing too many to be printed drastically slow the rendering of the graph. 
 
-#### Line labels 
+### Line labels 
 
-Lines can be labeled as well using the `line_label` option, which works similarlly to the `vertex_label` option:
+Lines can be labeled as well using the `line_label` option, which works similarly to the `vertex_label` option:
 
-```{r}
+```{r, fig.width=6.5, fig.height=6.5}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               line_label = taxa$name,
               min_label_size = 0.005)
@@ -224,7 +210,7 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 ### Plotting with multiple taxonomy roots
 
 Sometimes a taxonomy has multiple roots.
-This occurs when there is not a common taxon all items are assigned to, like "eukaryota" if all your items are associated with eukayotes.
+This occurs when there is not a common taxon all items are assigned to, like "Eukaryota" if all your items are associated with eukayotes.
 When plotting these type of data some might want all the data to share a common "life" root and be on the same tree, whereas others might think it more appropriate to plot each in different trees. 
 `metacoder` allows for both of these, but defaults to plotting taxonomies with multiple roots as multiple trees.
 
@@ -239,10 +225,10 @@ ids <- strsplit(raw, " ")[[1]]
 contaminants <- extract_taxonomy(ids, regex = "(.*)", key = c(name = "item_id"))
 ```
 
-In order to avoid using the NCBI servers more than necessary (and to avoid waiting), I saved the result of above code in an included example dataset called `contaminants`.
-The code below will use the included data set if the code above is not run (you dont need to run it to do the plotting). 
+In order to avoid using the NCBI servers more than necessary (and to avoid waiting), I saved the result of above code in an included example data set called `contaminants`.
+The code below will use the included data set if the code above is not run (you don't need to run it to do the plotting). 
 
-```{r}
+```{r, fig.width = 7.1, fig.height = 7.1}
 taxa <- contaminants$taxa
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
@@ -268,7 +254,7 @@ taxa <- original_data$taxa
 ```
 
 
-```{r}
+```{r, fig.width = 6.5, fig.height = 6.5}
 data_to_plot <- taxa
 plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
               size = data_to_plot$item_count,
@@ -277,7 +263,7 @@ plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
 
 
 ```{r}
-parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  2), function(i) taxa[i, ])
+parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  4), function(i) taxa[i, ])
 
 data_to_plot <- parts[[2]]
 plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id, no_stem = FALSE, 
