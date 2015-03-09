@@ -441,3 +441,15 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
   scores <- lapply(search_space, function(x) opt_crit(x[1], x[2]))
   search_space[[choose_best(scores)]]
 }
+
+
+#===================================================================================================
+#' Converts DNAbin to a named character vector
+#' 
+#' Converts an object of class DNAbin (as produced by ape) to a named character vector.
+#' 
+#' @param dna_bin (\code{DNAbin} of length 1) the input.
+#' @export
+DNAbin_to_char <- function(dna_bin) {
+  vapply(as.character(dna_bin), paste, character(1), collapse="")
+}
