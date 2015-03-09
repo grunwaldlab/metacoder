@@ -1,10 +1,7 @@
 ---
-title: "Creating a taxonomically balanced reference sequence set"
-author: "Zachary Foster"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
- %\VignetteIndexEntry{Creating a balanced reference sequence set}
+ %\VignetteIndexEntry{Creating a taxonomically balanced sequence set}
  %\VignetteEngine{knitr::knitr}
  %\usepackage[utf8]{inputenc}
 ---
@@ -17,6 +14,9 @@ library(knitr)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning=FALSE, message=FALSE)
 ```
 
+# Creating a taxonomically balanced sequence set
+
+*Zachary Foster*
 
 ## Introduction
 
@@ -40,16 +40,16 @@ Therefore, `metacoder` includes functions to extract a sample of reference seque
 There are two main ways to accomplish this using `metacoder`. 
 
 * **Taxonomically-balanced subsample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balanced.
-* **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to idenitfy and download a set of sequences for a given taxon and custom Genbank query. 
+* **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to identify and download a set of sequences for a given taxon and custom Genbank query. 
 
 ## Usage examples
 
 `taxonomic_sample` and `ncbi_taxon_sample` have similar arguments and behaviors. 
-Both use recursion to search through a taxonomic tree while subsampling taxa and items (e.g. sequences) that have a taxonomic classification. 
+Both use recursion to search through a taxonomic tree while sub-sampling taxa and items (e.g. sequences) that have a taxonomic classification. 
 Both can return a samples of a given size by controlling how many items (e.g. sequences) are allowed/required at each taxonomic rank (e.g. genus)
 They differ in what they are best used for. 
-`taxonomic_sample` is good for use on dowloaded copies of curated databases, such as [UNITE](https://unite.ut.ee/) or [RDP](http://rdp.cme.msu.edu/seqmatch/seqmatch_intro.jsp), especially ones that have embedded classifications for each sequence (i.e. something like `k__Fungi;p__Ascomycota;c__Leotiomycetes` in the headers). 
-`ncbi_taxon_sample` is good for downloading sparse informal surveys of large taxonmic groups (e.g. all fungi) without having to download every sequence. 
+`taxonomic_sample` is good for use on downloaded copies of curated databases, such as [UNITE](https://unite.ut.ee/) or [RDP](http://rdp.cme.msu.edu/seqmatch/seqmatch_intro.jsp), especially ones that have embedded classifications for each sequence (i.e. something like `k__Fungi;p__Ascomycota;c__Leotiomycetes` in the headers). 
+`ncbi_taxon_sample` is good for downloading sparse informal surveys of large taxonomic groups (e.g. all fungi) without having to download every sequence. 
 
 ### Using `taxonomic_sample`
 
@@ -79,7 +79,7 @@ The other item returned from `extract_taxonomy` is `taxa`.
 
 If we look at how sequences are distributed throughout the taxonomy, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
 Depending on the goal, this might or might not be a problem.
-The overepresentation of Agaricales is likly a bigger problem. 
+The overepresentation of Agaricales is likely a bigger problem. 
 
 ```{r all_data}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
@@ -90,14 +90,14 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 
 Information from both these tables is needed to make a taxonomically balanced subset of `items`.
 The first step is to use the taxonomy tree structure stored in `taxa` (in the form of an adjacency/edge list) to subsample `items`.
-Then, `taxa` is subsampled using `restrict_taxonomy` to remove any taxa not associated with items in the subset.
+Then, `taxa` is sub-sampled using `restrict_taxonomy` to remove any taxa not associated with items in the subset.
 
 To try to reduce the Agaricales overepresentation, we will subsample any order with greater than 20 sequences to 20 sequences.
-Similarily, species will be subsampled to 5 sequences each to avoid any one species introducing bias.
-The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the subsampling limits for each taxonomic rank (encoded by single letters for this specific dataset). 
+Similarly, species will be sub-sampled to 5 sequences each to avoid any one species introducing bias.
+The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the sub-sampling limits for each taxonomic rank (encoded by single letters for this specific dataset). 
 
-It might also be desireable to not included sequences from underrepresented taxa.
-Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classifiaction to compare them to.
+It might also be desirable to not included sequences from underrepresented taxa.
+Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classification to compare them to.
 For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included. 
 
 ```{r}
@@ -114,7 +114,7 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
                                            sampled_items$taxon_id)
 ```
 
-We can now view the difference between the original and subsampled data sets using `plot_taxonomy` again.
+We can now view the difference between the original and sub-sampled data sets using `plot_taxonomy` again.
 
 ```{r subset_1}
 plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
@@ -127,11 +127,11 @@ plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
 
 ### Using `ncbi_taxon_sample`
 
-Although, downloading a data set, parseing it with `extract_taxonomy`, and subsamping with `taxonomic_sample` is the best method for most analyses, it is also possible to download a taxonomically balanced random set of sequences from Genbank without downloading all of the sequences for the group of interest.
+Although, downloading a data set, parsing it with `extract_taxonomy`, and sub-sampling with `taxonomic_sample` is the best method for most analyses, it is also possible to download a taxonomically balanced random set of sequences from Genbank without downloading all of the sequences for the group of interest.
 This is done using the function `ncbi_taxon_sample`. 
 Internally, `ncbi_taxon_sample` is very similar to `taxonomic_sample`, except that it queries Genbank for taxonomy and sequence information instead of getting it from parsed data. 
 This function is best used for getting a small number of sequences over diverse taxonomic groups for informal analyses. 
-If it is pheasable to download all of the group of interest, it is likly best to use `extract_taxonomy` + `taxonomic_sample` instead of `ncbi_taxon_sample`.
+If it is feasible to download all of the group of interest, it is likely best to use `extract_taxonomy` + `taxonomic_sample` instead of `ncbi_taxon_sample`.
 
 
 ```{r, eval=FALSE}

@@ -838,11 +838,11 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
     coords$graph_index <- seq_along(vertex_image)
     data$width <- rescale(data$size, from = c(0, max(data$x) - min(data$x)), to = c(0, 1))
     data$height <- rescale(data$size, from = c(0, max(data$y) - min(data$y)), to = c(0, 1))
-    data$x <- rescale(data$x, from = range(data$x), to = c(0, 1))
-    data$y <- rescale(data$y, from = range(data$y), to = c(0, 1))
+    data$x <- rescale(data$x, from = range(data$x), to = c(1, 0))
+    data$y <- rescale(data$y, from = range(data$y), to = c(1, 0))
     for (index in 1:5) {
-      a_viewport <- viewport(x = coords$x[index], 
-                             y = coords$y[index],
+      a_viewport <- viewport(x = data$x[index], 
+                             y = data$y[index],
                              width = data$width[index],
                              height = data$height[index], 
                              just = "centre")
