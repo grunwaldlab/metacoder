@@ -290,6 +290,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
   
   default_target_max <- 20
   default_target_min <- 5
+  
   taxonomy_levels <- get_taxonomy_levels()
   
   # Argument validation ----------------------------------------------------------------------------
