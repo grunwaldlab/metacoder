@@ -612,4 +612,262 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     }
     return(the_plot)    
   }
- }
+}
+
+
+
+
+
+
+
+
+new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image = NULL, vertex_label = NULL, 
+                          line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
+                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
+                          layout_func = NULL, layout_args = NULL, titles = NULL) {
+  # Validate arguments -----------------------------------------------------------------------------
+  if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
+  parent_id[!(parent_id %in% taxon_id)] <- NA
+  if (is.null(layout_func)) {
+    layout_func <- layout.reingold.tilford
+    if (is.null(layout_args)) layout_args <- list(circular = TRUE)
+  }
+  if (is.null(layout_args)) layout_args <- list()
+  taxon_id <- as.character(taxon_id)
+  parent_id <- as.character(parent_id)
+  # Get vertex coordinants  ------------------------------------------------------------------------
+  get_vertex_coords <- function(index) {
+    if (length(index) == 1) return(data.frame(x = 0, y = 0))
+    part <- data[index, ]
+    graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
+    layout <- do.call(layout_func, c(list(graph), layout_args))
+    if (!is.null(aspect_ratio)) layout[, 1] <- layout[, 1] * aspect_ratio
+    if (any(is.na(layout) | is.nan(unlist(layout)))) {
+      layout <- layout.fruchterman.reingold(graph)
+      warning(paste('Could not apply layout_func to subgraph with root', part$taxon_id[1]))
+    }
+    return(list(graph, layout))
+  }
+  data <- data.frame(taxon_id = taxon_id, parent_id = parent_id, stringsAsFactors = FALSE)
+  rownames(data) <- taxon_id
+  subgraphs <- split_by_level(taxon_id, parent_id, level =  1)
+  layouts <- lapply(subgraphs, get_vertex_coords)
+  layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
+  coords <- setNames(as.data.frame(layout), c('x', 'y'))
+  coords$group <- rep(seq_along(subgraphs), vapply(subgraphs, length, numeric(1)))
+  rownames(coords) <- unlist(subgraphs)
+  coords <- coords[data$taxon_id, ]
+  data <- cbind(data, coords)
+  
+  if (!is.null(aspect_ratio)) {
+    data$x <- data$x / aspect_ratio
+    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
+  }
+  # Get vertex size --------------------------------------------------------------------------------
+  if (is.null(size)) {
+    data$depth <- edge_list_depth(data$taxon_id, data$parent_id)
+    data$size <- (max(data$depth) - data$depth + 1)^5
+  } else {
+    data$size <- size
+    data$size <- sqrt(data$size / pi)
+  }
+  all_pairwise <- molten_dist(x = data$x, y = data$y)
+  smallest_side <- min(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
+  max_range <- c(min(all_pairwise$distance), smallest_side / 5)
+  min_range <- c(min(all_pairwise$distance) / 5, min(all_pairwise$distance))
+  pairwise <- all_pairwise[all_pairwise$distance <= max_range[2], ]
+  size_opt_func <- function(a_max, a_min) {
+    # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    pairs <- pairwise
+    size <- rescale(data$size, to = c(a_min, a_max))
+    pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
+    # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
+    space <- sum(pairs$gap[pairs$gap >= 0])
+    return(c(overlap, space))
+  }
+  choose_best <- function(options) {
+    data <- as.data.frame(do.call(rbind, options))
+    names(data) <- c("overlap", "space")
+    data$overlap <- rescale(data$overlap, to = c(0, overlap_bias))
+    data$space <- rescale(data$space, to = c(0, 1))
+    data$score <- data$overlap  + data$space
+    which.min(data$score)
+  }
+  opt_size_range <- get_optimal_range(max_range = max_range,
+                                      min_range = min_range,
+                                      resolution = c(15, 20),
+                                      opt_crit = size_opt_func, 
+                                      choose_best = choose_best)
+  data$size <- rescale(data$size, to = opt_size_range)
+  vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
+  vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
+  # Get graph range data ---------------------------------------------------------------------------
+  x_range <- max(vertex_data$x) - min(vertex_data$x)
+  y_range <- max(vertex_data$y) - min(vertex_data$y)
+  x_margin <- x_range * margin_size
+  y_margin <- y_range * margin_size
+  x_display <- x_range + 2 * x_margin
+  y_display <- y_range + 2 * y_margin
+  x_min <-  min(vertex_data$x) - x_margin
+  x_max <- max(vertex_data$x) + x_margin
+  y_min <- min(vertex_data$y) - y_margin
+  y_max <- max(vertex_data$y) + y_margin
+  ideal_diameter <- sqrt(x_display * y_display)
+  # Get edge coordinants ---------------------------------------------------------------------------
+  data$parent_x <- data$x[match(data$parent_id, data$taxon_id)]  
+  data$parent_y <- data$y[match(data$parent_id, data$taxon_id)]
+  line_data <- line_coords(x1 = data$x, y1 = data$y, x2 = data$parent_x, y2 = data$parent_y,
+                           width = data$size)
+  line_data <- cbind(line_data, data[as.numeric(line_data$group), c("size"), drop = F])
+  # Get edge color ---------------------------------------------------------------------------------
+  if (is.null(line_color)) {
+    data$line_color <- "grey"
+  } else {
+    data$line_color <- line_color
+  }
+  if (is.numeric(data$line_color)) { ## Not factors or hex codes
+    no_color_in_palette <- 10000
+    palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+    color_index <- (no_color_in_palette - 1) * data$line_color/max(data$line_color) + 1
+    data$line_color <- palette[as.integer(color_index)]    
+  }
+  line_data$line_color <- data$line_color[as.numeric(line_data$group)]
+  # Get vertex labels ------------------------------------------------------------------------------
+  if (!is.null(vertex_label)) {
+    data$vertex_label <- as.character(vertex_label)
+    data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
+    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
+    valid_grobs <- which(data$vertex_label_size > min_label_size & !is.na(data$vertex_label))
+    vertex_label_grobs <- lapply(valid_grobs, 
+                                 function(i) resizingTextGrob(label = data$vertex_label[i],
+                                                              y = data$vertex_label_y[i],
+                                                              x = data$vertex_label_x[i],
+                                                              gp = gpar(text_prop = data$vertex_label_size[i])))    
+  }
+  # Get line labels --------------------------------------------------------------------------------
+  if (!is.null(line_label)) {
+    data$line_label <- as.character(line_label)
+    data$line_label[is.na(data$parent_id)] <- ""
+    # line label rotation  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    data$slope <- (data$y - data$parent_y) / (data$x - data$parent_x)
+    data$slope[is.na(data$slope)] <- 0
+    data$line_label_rot <- atan(data$slope)
+    # line label coordinate  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    justify <- data$parent_x > data$x
+    justify[is.na(justify)] <- TRUE
+    justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+    line_label_x_offset <- line_label_offset * data$size * cos(data$line_label_rot)
+    line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
+    data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
+    data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
+    data$line_label_x <- rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
+    data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
+    # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
+    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    max_line_label_size <- mean_inter_pair / 10
+    data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
+    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    valid_grobs <- which(data$line_label_size > min_label_size / 3 & !is.na(data$line_label))
+    line_label_grobs <- lapply(valid_grobs, 
+                               function(i) resizingTextGrob(label = data$line_label[i],
+                                                            y = data$line_label_y[i],
+                                                            x = data$line_label_x[i],
+                                                            rot = data$line_label_rot[i] * 180 / pi,
+                                                            just = justification[[i]],
+                                                            gp = gpar(text_prop = data$line_label_size[i])))
+  }
+  # Subgraph titles --------------------------------------------------------------------------------
+  if (!is.null(titles)) {
+    data$title <- titles
+    root_index <- vapply(unique(data$group), function(x) which(data$group == x)[1], numeric(1))
+    title_data <- data.frame(label = data$title[root_index])
+    title_data$x <- vapply(unique(data$group), function(x) mean(range(data$x[data$group == x])), numeric(1))
+    title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.075, numeric(1))
+    title_data$y <- vapply(unique(data$group), function(x) max(data$y[data$group == x]), numeric(1)) + title_data$size * 1.1
+    title_data$x <- rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
+    title_data$y <- rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
+    title_data$size <- rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
+    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    title_grobs <- lapply(which(title_data$size > min_label_size / 4), 
+                          function(i) resizingTextGrob(label = title_data$label[i],
+                                                       y = title_data$y[i],
+                                                       x = title_data$x[i],
+                                                       rot = 0,
+                                                       just = "center",
+                                                       gp = gpar(text_prop = title_data$size[i])))
+    
+  }
+  
+  # Get graph range data ---------------------------------------------------------------------------
+  if (!is.null(aspect_ratio)) {
+    line_data$y <- rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
+    vertex_data$y <- rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
+  }
+  x_range <- max(vertex_data$x) - min(vertex_data$x)
+  y_range <- max(vertex_data$y) - min(vertex_data$y)
+  x_margin <- x_range * margin_size
+  y_margin <- y_range * margin_size
+  x_min <-  min(vertex_data$x) - x_margin
+  x_max <- max(vertex_data$x) + x_margin
+  y_min <- min(vertex_data$y) - y_margin
+  y_max <- max(vertex_data$y) + y_margin
+  
+  # Plot it! ---------------------------------------------------------------------------------------
+  
+  if (data_only) {
+    return(list(taxon_data = data, vertex_data = vertex_data, line_data = line_data))
+  } else {
+    browser()
+    the_plot <- ggplot(data = data) +
+      geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
+      guides(fill = "none") +
+      coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+      theme(panel.grid = element_blank(), 
+            panel.background = element_blank(),
+            axis.title = element_blank(),
+            axis.text  =  element_blank(),
+            axis.ticks = element_blank(), 
+            axis.line  = element_blank())
+    # Plot images at verticies - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    if (! "list" %in% class(vertex_image)) vertex_image = list(vertex_image)
+    coords$graph_index <- seq_along(vertex_image)
+    data$width <- rescale(data$size, from = c(0, max(data$x) - min(data$x)), to = c(0, 1))
+    data$height <- rescale(data$size, from = c(0, max(data$y) - min(data$y)), to = c(0, 1))
+    data$x <- rescale(data$x, from = range(data$x), to = c(0, 1))
+    data$y <- rescale(data$y, from = range(data$y), to = c(0, 1))
+    for (index in 1:5) {
+      a_viewport <- viewport(x = coords$x[index], 
+                             y = coords$y[index],
+                             width = data$width[index],
+                             height = data$height[index], 
+                             just = "centre")
+      print(vertex_image[[coords$graph_index[index]]], vp = a_viewport)
+    }
+    # Plot rescaling text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    text_count <- 0
+    if (!is.null(data$vertex_label)) text_count <- text_count + length(vertex_label_grobs)
+    if (!is.null(data$line_label)) text_count <- text_count + length(line_label_grobs)
+    if (!is.null(titles)) text_count <- text_count + length(title_grobs)
+    if (!is.null(data$vertex_label)) {
+      for (a_grob in vertex_label_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    if (!is.null(data$line_label)) {
+      for (a_grob in line_label_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    if (!is.null(titles)) {
+      for (a_grob in title_grobs) {
+        the_plot <- the_plot + annotation_custom(grob = a_grob)
+      }    
+    }
+    return(the_plot)    
+  }
+}
