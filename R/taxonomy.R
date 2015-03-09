@@ -832,3 +832,31 @@ get_taxon_count <- function(taxa, parents, items) {
   counts[is.na(counts)] <- 0
   setNames(as.numeric(counts), taxa)
 }
+
+
+#===================================================================================================
+#' Identify shared taxonomy root
+#' 
+#' Given an adjacency/edge list, return the indexes of taxa shared by all subtaxa.
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. A
+#'   lack of a parent should be coded as \code{NA}.
+#' @param include_root (\code{logical}) If \code{TRUE}, the index of the new root (taxon with the 
+#'   rank that still contains all other taxa). 
+#' 
+#' @return A interger vector of indexes corresponding to taxa shared by all subtaxa.
+#' @export
+get_stem_taxa <- function(taxa, parents, include_root = FALSE) {
+  parents[!(parents %in% taxa)] <- NA
+  stem_indexes <- c()
+  current_index <- which(is.na(parents))
+  for (index in current_index) {
+    while (length(index) == 1) {
+      stem_indexes <- c(stem_indexes, index)
+      index <- which(parents == taxa[index])
+    } 
+    if (!include_root && length(stem_indexes) != 0) stem_indexes <- stem_indexes[-length(stem_indexes)]
+  }
+  return(stem_indexes)
+}
