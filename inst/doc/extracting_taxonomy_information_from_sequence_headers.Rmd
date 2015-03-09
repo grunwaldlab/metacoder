@@ -1,5 +1,5 @@
 ---
-title: "Extracting taxonomy information from sequence metadata"
+title: "Extracting taxonomy information from metadata"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -17,6 +17,9 @@ library(knitr)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning = FALSE, message = FALSE)
 ```
 
+# Extracting taxonomy information from metadata
+
+--------
 
 ## Introduction to `extract_taxonomy`
 
@@ -27,25 +30,25 @@ Although the motivation for creating `extract_taxonomy` is to parse FASTA sequen
 Any list of strings that contain identity and taxonomy information of a set of "samples" is valid.
 
 The function communicates with online databases (principally implemented using `taxize`) to infer missing information from information supplied.
-For example, if a GenBank accession number was the only information available, the taxon id and classification would be retreived from the NCBI databases.
-The output of `extract_taxonomy` consists of at least unique sample identifiers, unique taxon identifers, and the tree structure of the taxonomy shared by all sequences.
-This is all the information needed to fully characteize the taxonomic classification of a set of sequences.
+For example, if a GenBank accession number was the only information available, the taxon id and classification would be retrieved from the NCBI databases.
+The output of `extract_taxonomy` consists of at least unique sample identifiers, unique taxon identifiers, and the tree structure of the taxonomy shared by all sequences.
+This is all the information needed to fully characterize the taxonomic classification of a set of sequences.
 
 
-### Input intuition
+### Input
 
 There are three important arguments that will usually be relevant: `regex`, `key`, and `database`.
 
 * The `regex` argument defines the structure of the strings and the location of relevant information (e.g. GenBank accession numbers) via regex capture groups (i.e. pairs of unescaped parentheses).
 * The `key` argument defines what kind of information is in each capture group, determining how it will be parsed.
 The elements of `key` has a defined set of possible values; see the `extract_taxonomy` help page for options. 
-* The `database` argument determins the online taxonomy database that will be queried when necessary.
+* The `database` argument determines the online taxonomy database that will be queried when necessary.
 Usually, this is ncbi, but others databases are possible, but less tested; see the `extract_taxonomy` help page for options.
 
 Other arguments are important in special cases.
 Some will be explained in the examples below.
 
-### Output intuition
+### Output
 
 The output is a list of three items:
 
@@ -58,10 +61,10 @@ The output is a list of three items:
 
 ### Genbank FASTA headers
 
-FASTA files downloaded from GenBank custom queries contain the genbank id and the accession number/version to identify sequences.
-Taxonomic information can be reterived using either of these identifiers. 
-The following shows how to extract the genbank id, accession id, and description from the headers. 
-The genbank id is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the accession id and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
+FASTA files downloaded from GenBank custom queries contain the GenBank id and the accession number/version to identify sequences.
+Taxonomic information can be retrieved using either of these identifiers. 
+The following shows how to extract the GenBank id, accession id, and description from the headers. 
+The GenBank id is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the accession id and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
@@ -90,7 +93,7 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 
 ### UNITE FASTA headers
 
-The format of the UNITE fasta release has two pieces of information from which taxonomy can be determined.
+The format of the UNITE FASTA release has two pieces of information from which taxonomy can be determined.
 The GenBank sequence identifier can be used to look up the taxon id from GenBank.
 Alternatively, the classifications specified in the header can be used to make an arbitrarily coded taxonomy.
 
@@ -177,7 +180,7 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 
 ### ITS1 DB FASTA headers
 
-The ITS1 database fasta header includes the genbank taxon id.
+The ITS1 database FASTA header includes the GenBank taxon id.
 In the example below, both the `"item_id"` and `"taxon_id"` keys are provided, but only the `"taxon_id"` is used to look up taxonomy information since it has precedence. 
 
 ```{r eval=FALSE}
@@ -205,7 +208,7 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 
 ### PR2 FASTA headers
 
-The first item in the header is sometimes a GenBank accesssion number, but not always.
+The first item in the header is sometimes a GenBank accession number, but not always.
 Therefore, the best option is to use the included taxonomy information.
 Note that there is no rank information available. 
 

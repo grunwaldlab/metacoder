@@ -16,7 +16,7 @@ opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warni
 
 # Creating a taxonomically balanced sequence set
 
-*Zachary Foster*
+-------------
 
 ## Introduction
 
@@ -39,7 +39,7 @@ For these reasons, a simple random sample of sequences for a given taxon from an
 Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
 There are two main ways to accomplish this using `metacoder`. 
 
-* **Taxonomically-balanced subsample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the subsample/resample the data to make it taxonomically balanced.
+* **Taxonomically-balanced sub-sample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the sub-sample/re-sample the data to make it taxonomically balanced.
 * **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to identify and download a set of sequences for a given taxon and custom Genbank query. 
 
 ## Usage examples
@@ -89,12 +89,12 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 ```
 
 Information from both these tables is needed to make a taxonomically balanced subset of `items`.
-The first step is to use the taxonomy tree structure stored in `taxa` (in the form of an adjacency/edge list) to subsample `items`.
+The first step is to use the taxonomy tree structure stored in `taxa` (in the form of an adjacency/edge list) to sub-sample `items`.
 Then, `taxa` is sub-sampled using `restrict_taxonomy` to remove any taxa not associated with items in the subset.
 
-To try to reduce the Agaricales overepresentation, we will subsample any order with greater than 20 sequences to 20 sequences.
+To try to reduce the Agaricales overepresentation, we will sub-sample any order with greater than 20 sequences to 20 sequences.
 Similarly, species will be sub-sampled to 5 sequences each to avoid any one species introducing bias.
-The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the sub-sampling limits for each taxonomic rank (encoded by single letters for this specific dataset). 
+The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the sub-sampling limits for each taxonomic rank (encoded by single letters for this specific data set). 
 
 It might also be desirable to not included sequences from underrepresented taxa.
 Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classification to compare them to.
@@ -134,10 +134,17 @@ This function is best used for getting a small number of sequences over diverse 
 If it is feasible to download all of the group of interest, it is likely best to use `extract_taxonomy` + `taxonomic_sample` instead of `ncbi_taxon_sample`.
 
 
+```{r, results='hide', eval=FALSE}
+sequence_data <- ncbi_taxon_sample(name = "fungi", target_level = "phylum", 
+                           max_counts = c(phylum = 30), 
+                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
+                           min_length = 600, max_length = 10000)
+ncbi_fungi_sample <- extract_taxonomy(sequence_data$gi_no, regex = "(.*)", key = "item_id")
+```
+
+
 ```{r}
-fungi <- ncbi_taxon_sample(name = "fungi", target_level = "phylum", max_counts = c(phylum = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
-taxonomy <- extract_taxonomy(fungi$gi_no, regex = "(.*)", key = "item_id")
-taxa <- taxonomy$taxa # Rename parts of the result for later convenience
+taxa <- ncbi_fungi_sample$taxa # Rename parts of the result for later convenience
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
