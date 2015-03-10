@@ -2,13 +2,14 @@
 title: "Extracting taxonomy information from metadata"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Extracting taxonomy information from sequence metadata}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Extracting taxonomy information from metadata}
+  %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
-
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ape)
@@ -17,11 +18,8 @@ library(knitr)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning = FALSE, message = FALSE)
 ```
 
-# Extracting taxonomy information from metadata
 
---------
-
-## Introduction to `extract_taxonomy`
+## Parsing taxonomy data with `extract_taxonomy`
 
 There are an unnecessarily large number of sequence header/metadata formats and most of them are specific to a particular database.
 This makes it difficult to compare and combine data from diverse sources. 

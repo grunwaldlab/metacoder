@@ -228,7 +228,7 @@ contaminants <- extract_taxonomy(ids, regex = "(.*)", key = c(name = "item_id"))
 In order to avoid using the NCBI servers more than necessary (and to avoid waiting), I saved the result of above code in an included example data set called `contaminants`.
 The code below will use the included data set if the code above is not run (you don't need to run it to do the plotting). 
 
-```{r, fig.width = 7.1, fig.height = 7.1}
+```{r, fig.width = 6.5, fig.height = 6.5}
 taxa <- contaminants$taxa
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,

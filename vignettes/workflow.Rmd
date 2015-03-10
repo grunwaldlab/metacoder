@@ -3,8 +3,8 @@ title: "Introduction and workflow example"
 author: "Zachary Foster"
 date: "`r Sys.Date()`"
 output:
-rmarkdown::html_vignette:
-  toc: true
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Introduction and workflow example}
   %\VignetteEngine{knitr::rmarkdown}
