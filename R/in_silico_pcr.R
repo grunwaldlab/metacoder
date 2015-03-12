@@ -133,6 +133,6 @@ primersearch <- function(sequence, forward, reverse,
   output$amp_end <- vapply(sequence[output$sequence], length, numeric(1)) -
     (output$reverse_index + nchar(output$reverse_primer)) + 1
   output$amplicon <- Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
-                         sequence[output$sequence], output$amp_start, output$amp_end)
+                         as.character(sequence[output$sequence]), output$amp_start, output$amp_end)
   return(output)
 }

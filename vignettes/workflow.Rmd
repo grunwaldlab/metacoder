@@ -14,7 +14,7 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE, fig.show='hold')
+opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE, fig.show='hold', eval = FALSE)
 ```
 
 
@@ -69,9 +69,9 @@ There is another [vignette](extracting_taxonomy_information_from_sequence_header
 Lets parse the embedded taxonomic hierarchy from an included sample of the PR2 database. 
 We can use the `read.FASTA` function from ape to read the file and get the sequence headers. 
 
-```{r eval=FALSE}
+```{r}
 file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
-sequences <- ape::read.FASTA(file_path)
+sequences <- ape::read.dna(file_path, format = "fasta")
 ```
 
 The sequence headers are the `names` of the sequence `DNAbin` object that results and have the format:
@@ -80,15 +80,27 @@ The sequence headers are the `names` of the sequence `DNAbin` object that result
 cat(names(sequences)[1])
 ```
 
+We can now use `extract_taxonomy` to get a standardized `data.frame` representation of the taxonomic information.
 
-```{r eval=FALSE}
+```{r}
 data <- extract_taxonomy(names(sequences),
                          regex = "^(.*\\..*?)\\|(.*)$",
                          key = c("item_id", "class_name"),
                          class_tax_sep = "|",
                          database = "none")
+taxa <- data$taxa
+items <- data$items
+
 ```
 
+To easily see the results, use `plot_taxonomy` to see how the abundance of differnt taxa are distributed. 
+
+```{r}
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = taxa$name)
+```
 
 ### Subsampling
 
@@ -99,7 +111,7 @@ Also, many reference database are very big, so sometimes it is only feasible to 
 A simple random subset will not be optimal however, because it will leave out rare sequences in favor of common ones. 
 T tackle this problem `metacoder` has a function called `taxonomic_sample` that recursively travels down the taxonomy hierarchy and progressively sub-samples the database on the way back up. more information on this function can be [here](creating_a_taxonomically_balanced_reference_sequence_set.html).
 
-```{r  eval=FALSE}
+```{r}
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
                           parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 5),
                           min_counts = c("s" = 3))
@@ -116,27 +128,39 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
 
 ### Evaluating primers with *in silico* PCR
 
+`metacoder` includes a wrapper for the *in silico* PCR program `primersearch` from the EMBOSS tool kit.
+This can be used to estimate the success of different primer combinations.
+The EMBOSS tool kit must be installed and in the shell's search path for the `primersearch` function to work as shown below. 
 
-```{r eval=FALSE}
+First we will do the *in silico* PCR:
+
+
+```{r}
 # Simulate PCR to evaluate primers -------------------------
 pcr <- primersearch(sequence = sequences,
-                    seq_name = data$items$item_id,
+                    seq_name = items$item_id,
                     forward = "GCGGTAATTCCAGC",
                     reverse = "CCCGTGTTGAGTCAAAT",
                     pair_name = "F-574__and__R-1200",
                     mismatch = 10)
+```
 
+
+
+```{r}
 # Calculate taxon-specific PCR success ---------------------
-nodes <- get_nodes_from_leafs(taxonomy)
-seq_counts <- count_nodes_in_leafs(taxonomy, nodes)
-pcr_counts <- count_nodes_in_leafs(pcr$name, nodes)
-pcr_proportions <- pcr_counts / seq_counts
+amplified_taxa <- items$taxon_id[pcr$sequence]
+amplified_counts <- get_taxon_count(taxa$taxon_id, taxa$parent_id, amplified_taxa)
+proportion_amplified <- amplified_counts / taxa$item_count
+proportion_amplified[proportion_amplified > 1] = 1
+```
 
-# Plot results ---------------------------------------------
-plot_value_tree(nodes, pcr_proportions,
-                labels = get_tips(nodes),
-                save = "~/test.png", 
-                scaling = seq_counts * 3)
+```{r}
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = proportion_amplified,
+              vertex_label = taxa$name, 
+              vertex_color_series = c("red", "green", "blue"))
 
 ```
 
@@ -144,7 +168,7 @@ plot_value_tree(nodes, pcr_proportions,
 ### Evaluating primers with barcode gap analysis
 
 
-```{r eval=FALSE}
+```{r}
 dist_matrix <- pairwise_distance(sequences = pcr$amplicon,
                                  seq_name = pcr$name)
 
