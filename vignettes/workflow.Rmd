@@ -14,7 +14,7 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE, fig.show='hold', eval = FALSE)
+opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE)
 ```
 
 
@@ -28,12 +28,12 @@ The goal of the `metacoder` package is to provide a set of tools for:
 * Visualization of statistics distributed over taxonomic classifications.
 
 To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R.
-Using R means that `metacoder` is entirely open-source,  works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated into the best free tools for statistical analysis. 
+Using R means that `metacoder` is entirely open-source,  works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated with the best free tools for statistical analysis. 
 
 ## Workflow example
 
 The quickest way to get idea of what the package can do is through an example of a possible workflow. 
-This will briefly show the primary function of the package, but additional details can be found in the other more focused vignettes. 
+This will briefly show the primary functions of the package, but additional details can be found in the other more focused vignettes. 
 
 ### Get sequences with assigned taxa
 
@@ -67,16 +67,16 @@ The function `extract_taxonomy` is used to parse any format containing one or mo
 There is another [vignette](extracting_taxonomy_information_from_sequence_headers.html) that covers `extract_taxonomy` in more detail. 
 
 Lets parse the embedded taxonomic hierarchy from an included sample of the PR2 database. 
-We can use the `read.FASTA` function from ape to read the file and get the sequence headers. 
+We can use the `read.FASTA` function from the `ape` package to read a FASTA file and get the sequence headers. 
 
 ```{r}
 file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 sequences <- ape::read.dna(file_path, format = "fasta")
 ```
 
-The sequence headers are the `names` of the sequence `DNAbin` object that results and have the format:
+The sequence headers are the `names` of the sequence object and have the format:
 
-```{r, echo=FALSE, comment=NA}
+```{r, comment=NA}
 cat(names(sequences)[1])
 ```
 
@@ -90,12 +90,22 @@ data <- extract_taxonomy(names(sequences),
                          database = "none")
 taxa <- data$taxa
 items <- data$items
-
 ```
 
-To easily see the results, use `plot_taxonomy` to see how the abundance of differnt taxa are distributed. 
+`extract_taxonomy` returns two `data.frame`s:
 
-```{r}
+* `taxa`: containes information for every unique taxon
+* `items`: containes information for evey item (e.g. sequence), including the taxon id defined in `taxa`
+
+Lets take a look at the first few rows of `taxa` to get and idea of its structure.
+
+```{r, results='asis', echo=FALSE}
+kable(head(taxa))
+```
+
+To easily see the results, we can use `plot_taxonomy` to see how the abundance of different taxa are distributed. 
+
+```{r, fig.height=7, fig.width=7}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = taxa$item_count,
@@ -108,13 +118,16 @@ Before starting to calculate statistics for taxa within a sequence set, it is im
 In other words, the diversity of the sequences for a given taxa should reflect the diversity of members of that taxa. 
 However, there usually is not equal representation for most taxa, even in curated reference databases, since they are often disproportionately populated with culturable, model, and economically important organisms. 
 Also, many reference database are very big, so sometimes it is only feasible to run computationally-intensive analyses on a subset. 
+
 A simple random subset will not be optimal however, because it will leave out rare sequences in favor of common ones. 
-T tackle this problem `metacoder` has a function called `taxonomic_sample` that recursively travels down the taxonomy hierarchy and progressively sub-samples the database on the way back up. more information on this function can be [here](creating_a_taxonomically_balanced_reference_sequence_set.html).
+To tackle this problem, `metacoder` has a function called `taxonomic_sample` that recursively travels down the taxonomy hierarchy and progressively sub-samples the database on the way back up. more information on this function can be [here](creating_a_taxonomically_balanced_reference_sequence_set.html).
+
+The data set used for this example is small enough to use whole, but to demonstrate how `taxonomic_sample` works we will sub-sample it anyway.
 
 ```{r}
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 5),
-                          min_counts = c("s" = 3))
+                          parent_ids = taxa$parent_id, ranks = taxa$level, max_counts = c("7" = 3, "8" = 1),
+                          min_counts = c("5" = 3))
 sampled_items <- items[index, ] # Subsample sequence metadata
 sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
                                          parents = taxa$parent_id,
@@ -123,6 +136,15 @@ sampled_taxa <- taxa[sampled_taxa_index, ] # Subsample the taxa to only those in
 sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how many items are in each taxon
                                            sampled_taxa$parent_id,
                                            sampled_items$taxon_id)
+```
+
+We can then plot the results as we did before.
+
+```{r, fig.height=7, fig.width=7}
+plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
+              size = sampled_taxa$item_count,
+              vertex_color = sampled_taxa$item_count,
+              vertex_label = sampled_taxa$name)
 ```
 
 
@@ -136,7 +158,6 @@ First we will do the *in silico* PCR:
 
 
 ```{r}
-# Simulate PCR to evaluate primers -------------------------
 pcr <- primersearch(sequence = sequences,
                     seq_name = items$item_id,
                     forward = "GCGGTAATTCCAGC",
@@ -145,17 +166,35 @@ pcr <- primersearch(sequence = sequences,
                     mismatch = 10)
 ```
 
-
+Then, we will calculate the proportion of each taxon's sequences that were able to be amplified. 
+The `primersearch` function returns the item ids that amplified and we can use those ids to look up their taxon ids from the output of `extract_taxonomy`:
 
 ```{r}
-# Calculate taxon-specific PCR success ---------------------
-amplified_taxa <- items$taxon_id[pcr$sequence]
-amplified_counts <- get_taxon_count(taxa$taxon_id, taxa$parent_id, amplified_taxa)
-proportion_amplified <- amplified_counts / taxa$item_count
-proportion_amplified[proportion_amplified > 1] = 1
+amplified_taxa <- items$taxon_id[pcr$sequence] 
 ```
 
+`get_taxon_count` can be used to count how many sequences were amplified at every rank. 
+
 ```{r}
+amplified_counts <- get_taxon_count(taxa$taxon_id, taxa$parent_id, amplified_taxa) 
+```
+
+We can then calculate the proportion of sequences for each taxon that was amplified. 
+
+```{r}
+proportion_amplified <- amplified_counts / taxa$item_count 
+```
+
+If there were multiple amplifications from a single sequence, the proportion could be above 1. 
+We will cap the proportion at 1 to make the graphing easier to read. 
+
+```{r}
+proportion_amplified[proportion_amplified > 1] = 1 
+```
+
+Finally, lets see the results by making the vertex color correspond to the proportion of sequences amplified:
+
+```{r, fig.height=7, fig.width=7}
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               size = taxa$item_count,
               vertex_color = proportion_amplified,
@@ -163,39 +202,4 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_color_series = c("red", "green", "blue"))
 
 ```
-
-
-### Evaluating primers with barcode gap analysis
-
-
-```{r}
-dist_matrix <- pairwise_distance(sequences = pcr$amplicon,
-                                 seq_name = pcr$name)
-
-
-stats <- calculate_barcode_statistics(dist_matrix,
-                                      level_to_analyze="Species",
-                                      saved_output_path = "~/test",
-                                      save_statistics = TRUE,
-                                      save_raw_data = TRUE,
-                                      save_plots = TRUE,
-                                      distance_bin_width = 0.001,
-                                      threshold_resolution = 0.001)
-
-
-#Plot distance distribution tree graph
-png(file = distance_tree_plot_path, bg = "transparent", width = 10000, height = 10000)
-plot_image_tree(stats$taxon, stats$distance_graph,
-                scaling= stats$count, 
-                exclude=taxa_to_exclude)
-dev.off()
-
-#Plot optimal threshold tree graph
-png(file = threshold_tree_plot_path, bg = "transparent", width = 10000, height = 10000)
-plot_image_tree(stats$taxon, stats$threshold_graph,
-                scaling= stats$count, 
-                exclude=taxa_to_exclude)
-dev.off()
-```
-
 

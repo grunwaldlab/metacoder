@@ -24,8 +24,8 @@ model_kimura2 <- function(x, y, ...) {
   # Align sequences --------------------------------------------------------------------------------
   alignment <- Biostrings::pairwiseAlignment(x, y, ...)
   # Calculate distance -----------------------------------------------------------------------------
-  x <- seqinr::s2c(tolower(as.character(pattern(alignment))))
-  y <- seqinr::s2c(tolower(as.character(subject(alignment))))
+  x <- seqinr::s2c(tolower(as.character(alignment@pattern)))
+  y <- seqinr::s2c(tolower(as.character(alignment@subject)))
   transitions <- sum(unlist(Map(is_transition, x, y))) / length(x)
   equal <- sum(x == y) / length(x)
   tranversions <- 1 - equal - transitions
