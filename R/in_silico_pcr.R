@@ -18,13 +18,21 @@
 run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),
                              program_path = 'primersearch', dont_run = FALSE, ...) {
   extra_args <- as.list(match.call(expand.dots=F))$...
-  extra_args_string <- paste(names(extra_args), extra_args, collapse = " ", sep = " ")
-  command <- gettextf('%s -seqall %s -infile %s -mismatchpercent %s -outfile %s',
-                      program_path, seq_path, primer_path, mismatch, output_path)
-  if (nchar(extra_args_string) > 0) {
-    command <- paste(command, extra_args_string)
+  if (Sys.info()['sysname'] == "Windows") {
+    arguments <- c("-seqall", seq_path,
+                 "-infile", primer_path,
+                 "-mismatchpercent", mismatch,
+                 "-outfile", output_path,
+                 as.character(extra_args))
+    system2(program_path, arguments, stdout = TRUE, stderr = TRUE)
+  } else {
+    extra_args_string <- paste(names(extra_args), extra_args, collapse = " ", sep = " ")
+    command <- gettextf('%s -seqall %s -infile %s -mismatchpercent %s -outfile %s',
+                        program_path, seq_path, primer_path, mismatch, output_path)
+    if (nchar(extra_args_string) > 0) command <- paste(command, extra_args_string)
+    system(command)
+    
   }
-  system(command)
   return(output_path)
 }
 
@@ -88,9 +96,11 @@ parse_primersearch <- function(file_path) {
 primersearch <- function(sequence, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
   # Read input file if supplied --------------------------------------------------------------------
-  if (all(file.exists(sequence))) {
+  if (class(sequence) == "DNAbin") {
+    if (is.null(seq_name)) seq_name <- names(sequence)
+  } else if (all(file.exists(sequence))) {
     if (length(sequence) == 1) {
-      sequence = as.character(ape::read.dna(sequence, format = "fasta"))
+      sequence <- as.character(ape::read.dna(sequence, format = "fasta"))
     } else {
       stop("Only one input file can be used currently.")
     }

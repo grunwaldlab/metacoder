@@ -66,16 +66,27 @@ From any one of these, a hierarchy of unique taxon ids must be assigned to each 
 The function `extract_taxonomy` is used to parse any format containing one or more of these pieces of information.
 There is another [vignette](extracting_taxonomy_information_from_sequence_headers.html) that covers `extract_taxonomy` in more detail. 
 
+Lets parse the embedded taxonomic hierarchy from an included sample of the PR2 database. 
+We can use the `read.FASTA` function from ape to read the file and get the sequence headers. 
+
+```{r eval=FALSE}
+file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+```
+
+The sequence headers are the `names` of the sequence `DNAbin` object that results and have the format:
+
+```{r, echo=FALSE, comment=NA}
+cat(names(sequences)[1])
+```
 
 
 ```{r eval=FALSE}
-file_path <- "/home/local/USDA-ARS/fosterz/Downloads/gb203_pr2.fasta"
-sequences <- ape::read.FASTA(file_path)
-pr2_data <- extract_taxonomy(names(sequences),
-                             regex = "^(.*\\..*?)\\|(.*)$",
-                             key = c("item_id", "class_name"),
-                             class_tax_sep = "|",
-                             database = "none")
+data <- extract_taxonomy(names(sequences),
+                         regex = "^(.*\\..*?)\\|(.*)$",
+                         key = c("item_id", "class_name"),
+                         class_tax_sep = "|",
+                         database = "none")
 ```
 
 
@@ -108,11 +119,11 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
 
 ```{r eval=FALSE}
 # Simulate PCR to evaluate primers -------------------------
-pcr <- primersearch(sequence = seq$sequence,
-                    forward = "TCCGTAGGTGAACCTGCGG",
-                    reverse = "CGCATTACGTATCGCAGTTCGCAG",
-                    seq_name = taxonomy,
-                    pair_name = "ITS1__and__OOM-LO5.8S47B",
+pcr <- primersearch(sequence = sequences,
+                    seq_name = data$items$item_id,
+                    forward = "GCGGTAATTCCAGC",
+                    reverse = "CCCGTGTTGAGTCAAAT",
+                    pair_name = "F-574__and__R-1200",
                     mismatch = 10)
 
 # Calculate taxon-specific PCR success ---------------------
