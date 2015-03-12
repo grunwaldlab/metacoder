@@ -45,7 +45,7 @@ parse_primersearch <- function(file_path) {
   primer_chunk_id <- findInterval(seq_along(raw_output), primer_indexes)
   primer_chunks <- vapply(split(raw_output, primer_chunk_id)[-1],
                           paste, character(1), collapse = "\n")
-  names(primer_chunks) <- str_match(primer_chunks, "Primer name ([^\n]*)")[,2]
+  names(primer_chunks) <- stringr::str_match(primer_chunks, "Primer name ([^\n]*)")[,2]
   # Extract amplicon data from each chunk and combine ----------------------------------------------
   pattern <- paste("Amplimer ([0-9]+)",
                    "\tSequence: ([^\n]*)",
@@ -73,7 +73,8 @@ parse_primersearch <- function(file_path) {
 #===================================================================================================
 #' Use EMBOSS primersearch for in silico PCR 
 #' 
-#' @param sequence A list of character vectors of DNA sequence.
+#' @param sequence A list of character vectors of DNA sequence or a file path to FASTA file 
+#'   containing sequences.
 #' @param forward A character vector or list of primer sequences. If named and pair_name is not set, 
 #'   the names are used to construct the primer pair names.
 #' @param reverse A character vector or list of primer sequences. If named and pair_name is not set, 
@@ -86,14 +87,23 @@ parse_primersearch <- function(file_path) {
 #' @export
 primersearch <- function(sequence, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
-  if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), seqinr::s2c)
+  # Read input file if supplied --------------------------------------------------------------------
+  if (all(file.exists(sequence))) {
+    if (length(sequence) == 1) {
+      sequence = as.character(ape::read.dna(sequence, format = "fasta"))
+    } else {
+      stop("Only one input file can be used currently.")
+    }
+  } else {
+    if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), seqinr::s2c)
+  }
+  # Write temporary fasta file for primersearch input ----------------------------------------------
   if (!is.null(seq_name)) names(sequence) <- seq_name
   names(sequence) <- paste(seq_along(sequence), names(sequence))
-  # Write fasta file for primersearch input---------------------------------------------------------
   sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
   on.exit(file.remove(sequence_path))
-  ape::write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")
-  # Write primer file for primersearch input--------------------------------------------------------
+  ape::write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")    
+  # Write primer file for primersearch input -------------------------------------------------------
   if (is.null(names(forward))) names(forward) <- seq_along(forward)
   if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
   if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep="__and__")

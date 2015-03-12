@@ -324,6 +324,10 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
           strip.text.x = element_text(size = 12))
 }
 
+
+
+
+
 #===================================================================================================
 #' Plot items on taxonomy
 #' 
@@ -361,18 +365,24 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' the range of space occupied by verticies. For example, a value of \code{.5} would make margins as wide
 #' as the plotted data.
 #' @param aspect_ratio (\code{numeric}) The height / width of the plot.
-#' 
+#' @param no_stem (\code{logical}) If \code{TRUE}, then the common "stem" of the tree will be removed if it
+#'   exists. In other words, if part of the taxonomic heirarchy is shared by all taxa, it will be removed.
+#' @param vertex_color_series A series of colors corresponding to low-high statistics supplied to 
+#'   \code{vertex_color}. Must be a valid argument of \code{col2rgb}.
+#' @param line_color_series A series of colors corresponding to low-high statistics supplied to 
+#'   \code{line_color}. Must be a valid argument of \code{col2rgb}.#' 
 #' @import grid
 #' @import ggplot2 
 #' @import scales 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
-                          layout_func = NULL, layout_args = NULL, titles = NULL) {
+                          line_label_offset = 1, margin_size = 0.05, aspect_ratio = NULL, data_only = FALSE,
+                          layout_func = NULL, layout_args = NULL, titles = NULL, no_stem = TRUE,
+                          vertex_color_series = c("grey", "red", "green", "blue"),
+                          line_color_series = c("grey", "red", "green", "blue")) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
-  parent_id[!(parent_id %in% taxon_id)] <- NA
   if (is.null(layout_func)) {
     layout_func <- layout.reingold.tilford
     if (is.null(layout_args)) layout_args <- list(circular = TRUE)
@@ -380,9 +390,27 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   if (is.null(layout_args)) layout_args <- list()
   taxon_id <- as.character(taxon_id)
   parent_id <- as.character(parent_id)
+  # Remove shared stem if necessary ----------------------------------------------------------------
+  if (no_stem) {
+    stem_indexes <- get_stem_taxa(taxon_id, parent_id)
+    if (length(stem_indexes) > 1) {
+      if (length(size) == length(taxon_id)) size <- size[-stem_indexes]
+      if (length(vertex_color) == length(taxon_id)) vertex_color <- vertex_color[-stem_indexes]
+      if (length(vertex_label) == length(taxon_id)) vertex_label <- vertex_label[-stem_indexes]
+      if (length(line_color) == length(taxon_id)) line_color <- line_color[-stem_indexes]
+      if (length(line_label) == length(taxon_id)) line_label <- line_label[-stem_indexes]
+      if (length(titles) == length(taxon_id)) titles <- titles[-stem_indexes]
+      taxon_id <- taxon_id[-stem_indexes]
+      parent_id <- parent_id[-stem_indexes]
+    }
+  }
   # Get vertex coordinants  ------------------------------------------------------------------------
+  parent_id[!(parent_id %in% taxon_id)] <- NA
   get_vertex_coords <- function(index) {
-    if (length(index) == 1) return(data.frame(x = 0, y = 0))
+    if (length(index) == 1) {
+      one_vertex_graph <- graph.edgelist(matrix(c(1, 1), ncol = 2))
+      return(list(one_vertex_graph, layout.fruchterman.reingold(one_vertex_graph)))
+    }
     part <- data[index, ]
     graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
     layout <- do.call(layout_func, c(list(graph), layout_args))
@@ -473,7 +501,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   if (is.numeric(data$vertex_color)) { ## Not factors or hex codes
     no_color_in_palette <- 10000
-    palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+    palette <- colorRampPalette(vertex_color_series)(no_color_in_palette)
     color_index <- (no_color_in_palette - 1) * data$vertex_color/max(data$vertex_color) + 1
     data$vertex_color <- palette[as.integer(color_index)]    
   }
@@ -486,7 +514,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   if (is.numeric(data$line_color)) { ## Not factors or hex codes
     no_color_in_palette <- 10000
-    palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
+    palette <- colorRampPalette(line_color_series)(no_color_in_palette)
     color_index <- (no_color_in_palette - 1) * data$line_color/max(data$line_color) + 1
     data$line_color <- palette[as.integer(color_index)]    
   }

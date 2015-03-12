@@ -1,36 +1,112 @@
 ---
-title: "Workflow example"
-author: "Vignette Author"
+title: "Introduction and workflow example"
+author: "Zachary Foster"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Workflow example}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Introduction and workflow example}
+  %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(metacoder)
+library(knitr)
+opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE, fig.show='hold')
+```
+
+
+
+## Introduction
+
+The goal of the `metacoder` package is to provide a set of tools for:
+
+* Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
+* Standardized parsing of taxonomic information.
+* Visualization of statistics distributed over taxonomic classifications.
+
+To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R.
+Using R means that `metacoder` is entirely open-source,  works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated into the best free tools for statistical analysis. 
+
+## Workflow example
+
+The quickest way to get idea of what the package can do is through an example of a possible workflow. 
+This will briefly show the primary function of the package, but additional details can be found in the other more focused vignettes. 
+
+### Get sequences with assigned taxa
+
+One of the most challenging parts of making inferences from publicly available DNA sequences for metabarcoding experiments is obtaining a set of reference sequences with reliable and specific taxonomy information. 
+If the locus being studied is a standard barcoding locus and the taxa of interest well known, then there is likely a curated database to get sequences from. 
+The problem becomes more difficult with non-standard loci or taxa. 
+Some examples of curated databases are shown below:
+
+
+Database                                        | locus         | Taxon
+----------------------------------------------- | ------------- | ------------
+[UNITE](https://unite.ut.ee)                    | ITS           | Fungi  
+[RDP](http://rdp.cme.msu.edu/index.jsp)         | 16S, 28S rRNA | Bacteria, Archea, Fungi
+[ITS1](http://itsonedb.ba.itb.cnr.it:8080/ITS1) | ITS1          | Fungi
+[PR2](http://ssu-rrna.org/pr2)                  | 18S           | Protists
+
+
+
+### Extracting taxonomy information from sequences
+
+Surprisingly, one of the most frustrating parts of dealing with a set of sequences from diverse taxa is the assignment of a consistent taxonomy. 
+Typically, curated reference databases have an included taxonomic assignment with their sequences, but they almost always have unique formats containing differing amounts of information.
+The three most common sources of taxonomy information are:
+
+* Genbank accession number
+* Embedded taxonomic hierarchy
+* Genbank taxon unique id
+
+From any one of these, a hierarchy of unique taxon ids must be assigned to each sequence.
+The function `extract_taxonomy` is used to parse any format containing one or more of these pieces of information.
+There is another [vignette](extracting_taxonomy_information_from_sequence_headers.html) that covers `extract_taxonomy` in more detail. 
+
+
+
 ```{r eval=FALSE}
-# Download example sequences -------------------------------
-search_for <- c("Albuginales", "Lagenidiales",
-                "Leptomitales", "Peronosporales",
-                "Saprolegniales", "Pythiales",
-                "ascomycota", "basidiomycota")
+file_path <- "/home/local/USDA-ARS/fosterz/Downloads/gb203_pr2.fasta"
+sequences <- ape::read.FASTA(file_path)
+pr2_data <- extract_taxonomy(names(sequences),
+                             regex = "^(.*\\..*?)\\|(.*)$",
+                             key = c("item_id", "class_name"),
+                             class_tax_sep = "|",
+                             database = "none")
+```
 
-seq <- download_gb_taxon(taxon = search_for,
-                         key = c("@18S@", "@28S@"),
-                         type = "RRNA",
-                         seq_length=c(2000, 100000),
-                         max_count = 300, 
-                         separate = TRUE)
 
-# Download and format taxonomy information -----------------
-raw_taxonomy <- taxize::classification(seq$taxon,
-                                       db="col")
+### Subsampling
 
-seq <- seq[!is.na(raw_taxonomy), ]
-taxonomy <- raw_taxonomy[!is.na(raw_taxonomy)]
-taxonomy <- format_taxize(taxonomy)
+Before starting to calculate statistics for taxa within a sequence set, it is important to ensure that taxa being tested are adequately and equally represented. 
+In other words, the diversity of the sequences for a given taxa should reflect the diversity of members of that taxa. 
+However, there usually is not equal representation for most taxa, even in curated reference databases, since they are often disproportionately populated with culturable, model, and economically important organisms. 
+Also, many reference database are very big, so sometimes it is only feasible to run computationally-intensive analyses on a subset. 
+A simple random subset will not be optimal however, because it will leave out rare sequences in favor of common ones. 
+T tackle this problem `metacoder` has a function called `taxonomic_sample` that recursively travels down the taxonomy hierarchy and progressively sub-samples the database on the way back up. more information on this function can be [here](creating_a_taxonomically_balanced_reference_sequence_set.html).
 
+```{r  eval=FALSE}
+index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
+                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 5),
+                          min_counts = c("s" = 3))
+sampled_items <- items[index, ] # Subsample sequence metadata
+sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
+                                         parents = taxa$parent_id,
+                                         subset = sampled_items$taxon_id)
+sampled_taxa <- taxa[sampled_taxa_index, ] # Subsample the taxa to only those in the subset of items 
+sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how many items are in each taxon
+                                           sampled_taxa$parent_id,
+                                           sampled_items$taxon_id)
+```
+
+
+### Evaluating primers with *in silico* PCR
+
+
+```{r eval=FALSE}
 # Simulate PCR to evaluate primers -------------------------
 pcr <- primersearch(sequence = seq$sequence,
                     forward = "TCCGTAGGTGAACCTGCGG",
@@ -50,47 +126,14 @@ plot_value_tree(nodes, pcr_proportions,
                 labels = get_tips(nodes),
                 save = "~/test.png", 
                 scaling = seq_counts * 3)
+
 ```
 
 
+### Evaluating primers with barcode gap analysis
+
 
 ```{r eval=FALSE}
-search_for <- c("Albuginales", "Lagenidiales", "Leptomitales", "Peronosporales", "Saprolegniales", "Pythiales", "ascomycota", "basidiomycota", "Bacillariophyta")
-
-seq <- download_gb_taxon(taxon = search_for,
-                         standardize=FALSE,
-                         key = c("@18S@", "@28S@"),
-                         type = "RRNA",
-                         seq_length=c(2000, 100000),
-                         max_count = 300, 
-                         separate = TRUE)
-
-
-raw_taxonomy <- taxize::classification(seq$taxon, db="col", verbose=FALSE, ask=FALSE)
-seq <- seq[!is.na(raw_taxonomy), ]
-taxonomy <- raw_taxonomy[!is.na(raw_taxonomy)]
-taxonomy <- format_taxize(taxonomy)
-
-
-
-pcr <- primersearch(sequence = seq$sequence,
-                    forward = "TCCGTAGGTGAACCTGCGG",
-                    reverse = "CGCATTACGTATCGCAGTTCGCAG",
-                    seq_name = taxonomy,
-                    pair_name = "ITS1__and__OOM-LO5.8S47B",
-                    mismatch = 10)
-
-nodes <- get_nodes_from_leafs(taxonomy)
-seq_counts <- count_nodes_in_leafs(taxonomy, nodes)
-pcr_counts <- count_nodes_in_leafs(pcr$name, nodes)
-pcr_proportions <- pcr_counts / seq_counts
-
-plot_value_tree(nodes, pcr_proportions, background="#FFFFFF",
-                labels = get_tips(nodes),
-                save = "~/test.png", 
-                scaling = seq_counts * 3)
-
-
 dist_matrix <- pairwise_distance(sequences = pcr$amplicon,
                                  seq_name = pcr$name)
 
@@ -118,6 +161,6 @@ plot_image_tree(stats$taxon, stats$threshold_graph,
                 scaling= stats$count, 
                 exclude=taxa_to_exclude)
 dev.off()
-
-
 ```
+
+

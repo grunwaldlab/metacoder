@@ -43,9 +43,18 @@ plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
               vertex_label = ifelse(sampled_taxa$rank %in% c("s", "o"), sampled_taxa$item_count, NA),
               line_label = ifelse(sampled_taxa$rank == "o", sampled_taxa$name, NA))
 
-## ----, eval=FALSE--------------------------------------------------------
-#  fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family",
-#                             max_counts = c(family = 5, order = 30),
+## ----, results='hide', eval=FALSE----------------------------------------
+#  sequence_data <- ncbi_taxon_sample(name = "fungi", target_level = "phylum",
+#                             max_counts = c(phylum = 30),
 #                             entrez_query = "18S[All Fields] AND 28S[All Fields]",
 #                             min_length = 600, max_length = 10000)
+#  ncbi_fungi_sample <- extract_taxonomy(sequence_data$gi_no, regex = "(.*)", key = "item_id")
+
+## ------------------------------------------------------------------------
+taxa <- ncbi_fungi_sample$taxa # Rename parts of the result for later convenience
+plot_taxonomy(taxa$taxon_id, taxa$parent_id,
+              size = taxa$item_count,
+              vertex_color = taxa$item_count,
+              vertex_label = ifelse(taxa$rank == "phylum", taxa$name, taxa$item_count),
+              min_label_size = .01)
 
