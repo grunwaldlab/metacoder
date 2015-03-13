@@ -25,7 +25,6 @@ Imports:
     reshape2,
     Biostrings,
     zoo,
-    R.utils,
     spider
 Suggests: 
     knitr,
