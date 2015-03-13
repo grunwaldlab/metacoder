@@ -4,28 +4,68 @@
 \alias{ncbi_taxon_sample}
 \title{Download representative sequences for a taxon}
 \usage{
-ncbi_taxon_sample(name = NULL, id = NULL, target_level, max_counts = NULL,
-  interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
-  verbose = TRUE, max_length = 10000, min_length = 1,
-  max_children = NULL, min_children = NULL, ...)
+ncbi_taxon_sample(name = NULL, id = NULL, target_rank, min_counts = NULL,
+  max_counts = NULL, interpolate_min = TRUE, interpolate_max = TRUE,
+  min_length = 1, max_length = 10000, min_children = NULL,
+  max_children = NULL, verbose = TRUE, ...)
 }
 \arguments{
-\item{target_level}{A character vector of length 1. The finest taxonomic level at which
-to sample. The finest level at which replication occurs. Must be a finer level than
-\code{taxon}.}
+\item{name}{(\code{character} of length 1) The taxon to download a sample of sequences for.}
 
-\item{max_counts}{A named numeric vector. The maximum number of sequences to download for each
-taxonomic level. The names correspond to taxonomic levels. See
-\code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
-levels.}
+\item{id}{(\code{character} of length 1) The taxon id to download a sample of sequences for.}
 
-\item{taxon}{A character vector of length 1. The taxon to download a sample of sequences for.}
+\item{target_rank}{(\code{character} of length 1) The finest taxonomic rank at which
+to sample. The finest rank at which replication occurs. Must be a finer rank than
+\code{taxon}. Use \code{\link{get_taxonomy_levels}} to see available ranks.}
+
+\item{min_counts}{(named \code{numeric}) The minimum number of sequences to download for each
+taxonomic rank. The names correspond to taxonomic ranks.}
+
+\item{max_counts}{(named \code{numeric}) The maximum number of sequences to download for each
+taxonomic rank. The names correspond to taxonomic ranks.}
+
+\item{interpolate_min}{(\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
+and \code{min_children} will be used to infer the values of intermediate ranks not
+specified. Linear interpolation between values of spcified ranks will be used to determine
+values of unspecified ranks.}
+
+\item{interpolate_max}{(\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
+and \code{max_children} will be used to infer the values of intermediate ranks not
+specified. Linear interpolation between values of spcified ranks will be used to determine
+values of unspecified ranks.}
+
+\item{min_length}{(\code{numeric} of length 1) The minimum length of sequences that will be
+returned.}
+
+\item{max_length}{(\code{numeric} of length 1) The maximum length of sequences that will be
+returned.}
+
+\item{min_children}{(named \code{numeric}) The minimum number sub-taxa of taxa for a given
+rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
+
+\item{max_children}{(named \code{numeric}) The maximum number sub-taxa of taxa for a given
+rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
+
+\item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
+
+\item{...}{Additional arguments are passed to \code{\link[taxize]{ncbi_search}}.}
 }
 \description{
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
+Can be used to get a shallow sampling of a vast groups.
+\strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and can\
+can take a very long time.
+Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
+Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
+}
+\details{
+See \code{\link{get_taxonomy_levels}} for available taxonomic ranks.
 }
 \examples{
-ncbi_taxon_sample(name = "oomycetes", target_level = "genus")
-fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
+ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
+data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum",
+                          max_counts = c(phylum = 30),
+                          entrez_query = "18S[All Fields] AND 28S[All Fields]",
+                          min_length = 600, max_length = 10000)
 }
 

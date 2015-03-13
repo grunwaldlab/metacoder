@@ -7,10 +7,10 @@
 plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   vertex_label = NULL, line_color = NULL, line_label = NULL,
   overlap_bias = 15, min_label_size = 0.015, line_label_offset = 1,
-  margin_size = 0.05, aspect_ratio = NULL, data_only = FALSE,
-  layout_func = NULL, layout_args = NULL, titles = NULL, no_stem = TRUE,
+  margin_size = 0.05, aspect_ratio = NULL, layout_func = NULL,
+  layout_args = NULL, titles = NULL, no_stem = TRUE,
   vertex_color_series = c("grey", "red", "green", "blue"),
-  line_color_series = c("grey", "red", "green", "blue"))
+  line_color_series = c("grey", "red", "green", "blue"), data_only = FALSE)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
@@ -63,8 +63,9 @@ exists. In other words, if part of the taxonomic heirarchy is shared by all taxa
 \item{line_color_series}{A series of colors corresponding to low-high statistics supplied to
 \code{line_color}. Must be a valid argument of \code{col2rgb}.#'}
 
-\item{data}{(\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
-and \code{parent_id}.}
+\item{data_only}{(\code{logical}) If \code{TRUE}, then return the data used to make the plot instead
+of the plot itself. Returns a list of \code{data.frame}s containing coordinants, colors, and other
+plotting parameters.}
 }
 \description{
 Plots the distribution of values associated with item with an associated taxonomic classification.

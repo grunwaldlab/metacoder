@@ -304,11 +304,13 @@ download_gb_taxon <- function(taxon, key, type,
 #' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
 #' @param ... Additional arguments are passed to \code{\link[taxize]{ncbi_search}}.
 #' @examples
+#' \dontrun{
 #' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
 #' data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
 #'                           max_counts = c(phylum = 30), 
 #'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
 #'                           min_length = 600, max_length = 10000)
+#' }
 #' @export
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,

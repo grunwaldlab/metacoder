@@ -4,7 +4,7 @@
 \alias{postDrawDetails.resizingTextGrob}
 \title{Clean up after the drawing.}
 \usage{
-\method{postDrawDetails}{resizingTextGrob}(x)
+postDrawDetails.resizingTextGrob(x)
 }
 \description{
 Clean up after the drawing.

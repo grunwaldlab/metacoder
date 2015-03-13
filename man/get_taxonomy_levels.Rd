@@ -6,11 +6,8 @@
 \usage{
 get_taxonomy_levels()
 }
-\value{
-An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
-  hierarchy.
-}
 \description{
-Get taxonomy levels
+Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+  hierarchy.
 }
 

@@ -67,4 +67,7 @@ Recursivly sample a set of items with a heirarchical classification.
 This function takes other functions as arguments and is intended to be used to make other more
 user-friendly functions.
 }
+\seealso{
+\code{\link{taxonomic_sample}}
+}
 

@@ -4,7 +4,7 @@
 \alias{preDrawDetails.resizingTextGrob}
 \title{Adjusts text size to viewport}
 \usage{
-\method{preDrawDetails}{resizingTextGrob}(x)
+preDrawDetails.resizingTextGrob(x)
 }
 \description{
 Automatically called before any drawing occures.

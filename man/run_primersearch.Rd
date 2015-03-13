@@ -25,6 +25,8 @@ Ideally, it should be in your system's search path.}
 
 \item{dont_run}{If TRUE, the command is generated, but not executed. This could be useful if you
 want to execute the command yourself.}
+
+\item{...}{Additional arguments are passed to \code{primersearch}.}
 }
 \value{
 The command generated as a character vector of length 1.

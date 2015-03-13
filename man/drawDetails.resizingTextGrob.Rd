@@ -4,7 +4,7 @@
 \alias{drawDetails.resizingTextGrob}
 \title{Draws a resizingTextGrob}
 \usage{
-\method{drawDetails}{resizingTextGrob}(x, recording = TRUE)
+drawDetails.resizingTextGrob(x, recording = TRUE)
 }
 \description{
 Called automatically when drawing a grob using grob.draw.
