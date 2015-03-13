@@ -1,24 +1,24 @@
 ---
 title: "Creating a taxonomically balanced sequence set"
-author: "Zachary Foster"
-date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
+    css: custom.css
+    includes:
+      before_body: doc_prefix.html
+      after_body: doc_suffix.html
 vignette: >
   %\VignetteIndexEntry{Creating a taxonomically balanced sequence set}
   %\VignetteEngine{knitr::rmarkdown}
   %\usepackage[utf8]{inputenc}
 ---
 
-
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, cache = TRUE, warning=FALSE, message=FALSE)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE)
 ```
-
 
 ## Introduction
 

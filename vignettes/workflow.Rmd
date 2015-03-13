@@ -1,10 +1,12 @@
 ---
 title: "Introduction and workflow example"
-author: "Zachary Foster"
-date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
+    css: custom.css
+    includes:
+      before_body: doc_prefix.html
+      after_body: doc_suffix.html
 vignette: >
   %\VignetteIndexEntry{Introduction and workflow example}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,10 +16,8 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', cache = TRUE, warning = FALSE, message = FALSE)
+opts_chunk$set(dev='svg', warning = FALSE, message = FALSE)
 ```
-
-
 
 ## Introduction
 
@@ -186,7 +186,7 @@ proportion_amplified <- amplified_counts / taxa$item_count
 ```
 
 If there were multiple amplifications from a single sequence, the proportion could be above 1. 
-We will cap the proportion at 1 to make the graphing easier to read. 
+We will cap the proportion at 1 to make the graph easier to read. 
 
 ```{r}
 proportion_amplified[proportion_amplified > 1] = 1 
