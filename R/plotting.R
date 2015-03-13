@@ -650,9 +650,9 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
 
 
 new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image = NULL, vertex_label = NULL, 
-                          line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
-                          layout_func = NULL, layout_args = NULL, titles = NULL) {
+                                line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
+                                line_label_offset = 1, margin_size = 0.1, aspect_ratio = NULL, data_only = FALSE,
+                                layout_func = NULL, layout_args = NULL, titles = NULL) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   parent_id[!(parent_id %in% taxon_id)] <- NA
@@ -862,19 +862,23 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
             axis.ticks = element_blank(), 
             axis.line  = element_blank())
     # Plot images at verticies - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (! "list" %in% class(vertex_image)) vertex_image = list(vertex_image)
-    coords$graph_index <- seq_along(vertex_image)
-    data$width <- rescale(data$size, from = c(0, max(data$x) - min(data$x)), to = c(0, 1))
-    data$height <- rescale(data$size, from = c(0, max(data$y) - min(data$y)), to = c(0, 1))
-    data$x <- rescale(data$x, from = range(data$x), to = c(1, 0))
-    data$y <- rescale(data$y, from = range(data$y), to = c(1, 0))
+    #     if (! "list" %in% class(vertex_image)) vertex_image = list(vertex_image)
+    #     coords$graph_index <- seq_along(vertex_image)
+    
+    
+    
+    
+    data$width <- rescale(data$size, from = c(0, x_max - x_min), to = c(0, 1))
+    data$height <- rescale(data$size, from = c(0, y_max - y_min), to = c(0, 1))
+    data$x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
     for (index in 1:5) {
       a_viewport <- viewport(x = data$x[index], 
                              y = data$y[index],
                              width = data$width[index],
                              height = data$height[index], 
                              just = "centre")
-      print(vertex_image[[coords$graph_index[index]]], vp = a_viewport)
+      print(vertex_image[[index]], vp = a_viewport)
     }
     # Plot rescaling text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     text_count <- 0
