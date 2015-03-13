@@ -62,10 +62,12 @@ Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
 See \code{\link{get_taxonomy_levels}} for available taxonomic ranks.
 }
 \examples{
+\dontrun{
 ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
 data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum",
                           max_counts = c(phylum = 30),
                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
                           min_length = 600, max_length = 10000)
+}
 }
 
