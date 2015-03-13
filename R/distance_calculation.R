@@ -11,7 +11,6 @@
 #' @param y A character vector of DNA sequence. 
 #' @param ... Additional arguments are passed to Biostrings::pairwiseAlignment
 #' @return A Kimura2 distance metric as a numeric vector of length 1.
-#' @export
 model_kimura2 <- function(x, y, ...) {
   is_transition <- function(x, y) {
     x <- tolower(x)
@@ -32,19 +31,6 @@ model_kimura2 <- function(x, y, ...) {
   -.5 * log(1 - 2 * transitions - tranversions) - .25 * log(1 - 2 * tranversions)
 }
 
-#===================================================================================================
-#' NOTE: dist.dna with a list of only 2 breaks R once in a while. DONT USE
-# model_evo_dist <- function(x, y, ...) {
-#   # Standardize input ------------------------------------------------------------------------------
-#   x <- unlist(lapply(x, paste, collapse=""))
-#   y <- unlist(lapply(y, paste, collapse=""))
-#   # Align sequences --------------------------------------------------------------------------------
-#   alignment <- pairwiseAlignment(x, y, ...)
-#   x <- as.DNAbin(s2c(tolower(as.character(pattern(alignment)))))
-#   y <- as.DNAbin(s2c(tolower(as.character(subject(alignment)))))
-#   # Calculate distance -----------------------------------------------------------------------------
-#   c(dist.dna(list(x, y), ...))
-# }
 
 #===================================================================================================
 #' Calculates a pairwise distance matrix from unaligned sequences
@@ -53,7 +39,6 @@ model_kimura2 <- function(x, y, ...) {
 #' @param sequences A list or vector of sequence data
 #' @return A distance matrix of class \code{dist}
 #' @importFrom proxy dist
-#' @export
 pairwise_distance <- function(sequences, seq_name = NULL) {
   sequences <- as.list(sequences)
   if (!is.null(seq_name)) names(sequences) <- seq_name

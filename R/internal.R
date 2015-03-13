@@ -3,7 +3,6 @@
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 offset_ordered_factor <- function(ordered_factor, offset) { 
   my_levels <-  levels(ordered_factor)
   new_level <- my_levels[which(my_levels == ordered_factor) + offset]
@@ -13,7 +12,6 @@ offset_ordered_factor <- function(ordered_factor, offset) {
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 fapply <- function(iterable, functions, 
                    .preprocessor={function(x) x},
                    .preprocessor_args=list(),
@@ -67,7 +65,6 @@ fapply <- function(iterable, functions,
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 remove_all_na_rows <- function(input) {
   na_rows <- sapply(1:nrow(input), function(x) sum(!is.na(input[x,])) != 0)
   input[na_rows, ]
@@ -77,7 +74,6 @@ remove_all_na_rows <- function(input) {
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 remove_outliers <- function(x, na.rm = TRUE, ...) {
   qnt <- quantile(x, probs=c(.01, .99), na.rm = na.rm, ...)
   H <- 1.5 * IQR(x, na.rm = na.rm)
@@ -91,14 +87,12 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 which_median <- function(x) which.min(abs(x - median(x)))
 
 
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 which_middle <- function(x) {
   middle <- (max(x) + min(x)) / 2
   which.min(abs(x - middle))
@@ -110,7 +104,6 @@ which_middle <- function(x) {
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 rm_ext <- function(file) {
   sub("[.][^.]*$", "", file, perl=TRUE)
 }
@@ -119,7 +112,6 @@ rm_ext <- function(file) {
 #===================================================================================================
 #' under development 
 #' 
-#' @export
 next_incremental_file_number <-function(directory) {
   current_numbers <- as.integer(rm_ext(list.files(directory, no..=TRUE)))
   if (length(current_numbers) == 0) {
@@ -134,7 +126,6 @@ next_incremental_file_number <-function(directory) {
 #===================================================================================================
 #' under development
 #' 
-#' @export
 taxon_edge_list <- function(taxonomy, separator) {
   get_taxon_edge_list <- function(taxon) {
     apply(matrix(c(1:(length(taxon)-1),2:length(taxon)), ncol = 2), 1, function(x) c(taxon[x[1]], taxon[x[2]]))
@@ -151,41 +142,32 @@ taxon_edge_list <- function(taxonomy, separator) {
 #===================================================================================================
 #' get_edge_parents
 #' 
-#' @export
-#' @import igraph
 get_edge_parents <-function(graph) {
-  get.edges(graph, 1:ecount(graph))[,1]
+  igraph::get.edges(graph, 1:igraph::ecount(graph))[,1]
 }
 
 
 #===================================================================================================
 #' get_edge_children
 #' 
-#' @export
-#' @import igraph
 get_edge_children <- function(graph) {
-  get.edges(graph, 1:ecount(graph))[,2]
+  igraph::get.edges(graph, 1:igraph::ecount(graph))[,2]
 }
 
 
 #===================================================================================================
 #' get_vertex_children
 #' 
-#' @export
-#' @import igraph
 get_vertex_children <- function(graph, vertex) {
-  which(shortest.paths(graph, V(graph)[vertex], mode="out") != Inf)
+  which(igraph::shortest.paths(graph, igraph::V(graph)[vertex], mode="out") != Inf)
 }
 
 #===================================================================================================
 #' delete_vetices_and_children
 #'
-#' @export
-#' @import igraph 
 delete_vetices_and_children <- function(graph, vertices) {
-  #delete children
   vertices <- unlist(sapply(vertices, function(x) get_vertex_children(graph, x)))
-  graph <- delete.vertices(graph, vertices)
+  graph <- igraph::delete.vertices(graph, vertices)
   return(graph)
 }
 
@@ -196,7 +178,6 @@ delete_vetices_and_children <- function(graph, vertices) {
 #===================================================================================================
 #' add_alpha
 #' 
-#' @export
 add_alpha <- function(col, alpha=1){
   apply(sapply(col, col2rgb)/255, 2,
         function(x)
@@ -213,21 +194,20 @@ add_alpha <- function(col, alpha=1){
 #'
 #' make a color legend
 #' 
-#' @import ggplot2
-#' @export
 continuous_color_legend <- function(values, background="#00000000", ...) {
   #Extract Legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
-  g_legend<-function(a.gplot){ 
-    tmp <- ggplot_gtable(ggplot_build(a.gplot)) 
+  g_legend<-function(a_ggplot){ 
+    tmp <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(a_ggplot)) 
     leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box") 
     legend <- tmp$grobs[[leg]] 
-    return(legend)} 
+    return(legend)
+  } 
   mid_point = (max(values) + min(values)) / 2
   label_points <- seq(min(values), max(values), length.out=7)
   labels <- as.character(signif(label_points, 2))
-  full_plot <- qplot(x,y, colour=value, data=data.frame(x=1, y=1, value=values)) + 
-    scale_colour_gradient2(breaks = label_points, labels = labels, midpoint=mid_point, ...) + 
-    theme(legend.background = element_rect(fill = background))
+  full_plot <- ggplot2::qplot(x,y, colour=value, data=data.frame(x=1, y=1, value=values)) + 
+    ggplot2::scale_colour_gradient2(breaks = label_points, labels = labels, midpoint=mid_point, ...) + 
+    ggplot2::theme(legend.background = ggplot2::element_rect(fill = background))
   g_legend(full_plot)
 }
 
@@ -235,7 +215,6 @@ continuous_color_legend <- function(values, background="#00000000", ...) {
 #===================================================================================================
 #' get nodes from leafs
 #' 
-#' @export
 get_nodes_from_leafs <- function(leafs, sep = ";") {
   if (is.atomic(leafs)) leafs <- strsplit(leafs, sep, fixed=TRUE)
   taxons <- lapply(leafs, function(x) sapply(seq(1, length(x)), function(y) paste(x[1:y], collapse=sep)))
@@ -246,7 +225,6 @@ get_nodes_from_leafs <- function(leafs, sep = ";") {
 #===================================================================================================
 #' count nodes in leafs
 #' 
-#' @export
 count_nodes_in_leafs <- function(leafs, nodes = NULL, sep = ";") {
   if (is.null(nodes)) nodes <- get_nodes_from_leafs(leafs, sep = sep)
   vapply(nodes, function(x) sum(grepl(x, leafs, fixed = TRUE)), numeric(1))
@@ -259,6 +237,7 @@ get_tips <- function(nodes, sep = "__") {
 
 #===================================================================================================
 #' get indexes of a unique set of the input
+#' 
 unique_mapping <- function(input) {
   unique_input <- unique(input)
   vapply(input, function(x) {if (is.na(x)) which(is.na(unique_input)) else which(x == unique_input)}, numeric(1))
@@ -267,6 +246,7 @@ unique_mapping <- function(input) {
 
 #===================================================================================================
 #' run a function on unique values of a iterable 
+#' 
 map_unique <- function(input, func, ...) {
   input_class <- class(input)
   unique_input = unique(input)
@@ -294,7 +274,6 @@ map_unique <- function(input, func, ...) {
 #' @examples
 #' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
-#' @export
 polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   # Define function to make points for a single polygon --------------------------------------------
   process_one <- function(n, x, y, r, a) {
@@ -339,7 +318,6 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 #'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
 #'   
-#' @export
 line_coords <- function(x1, y1, x2, y2, width) {
   # Define function to make points for a single line rect ------------------------------------------
   process_one <- function(x1, y1, x2, y2, w) {
@@ -371,12 +349,10 @@ line_coords <- function(x1, y1, x2, y2, width) {
 #' @examples
 #' molten_dist(x = 1:5, y = 1:5)
 #' 
-#' @export
-#' @import reshape2
 molten_dist <- function(x, y) {
   data <- as.matrix(dist(cbind(x, y)))
   data[!lower.tri(data)] <- NA
-  data <- melt(data)
+  data <- reshape2::melt(data)
   names(data) <- c("index_1", "index_2", "distance")
   data[!is.na(data$distance), ]    
 }
@@ -394,7 +370,6 @@ molten_dist <- function(x, y) {
 #' @examples
 #' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
 #' 
-#' @export
 inter_circle_gap <- function(x, y, r) {
   # Force x, y, and r to same length ---------------------------------------------------------------
   temp <- as.data.frame(cbind(x, y, r))
@@ -425,7 +400,6 @@ inter_circle_gap <- function(x, y, r) {
 #' @param choose_best (\code{function}) A function that takes a list of \code{opt_crit} outputs
 #' and returns the index of the best one.
 #' 
-#' @export
 get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose_best, minimize = TRUE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
@@ -449,7 +423,7 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
 #' Converts an object of class DNAbin (as produced by ape) to a named character vector.
 #' 
 #' @param dna_bin (\code{DNAbin} of length 1) the input.
-#' @export
+#' 
 DNAbin_to_char <- function(dna_bin) {
   vapply(as.character(dna_bin), paste, character(1), collapse="")
 }

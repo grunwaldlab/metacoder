@@ -1,6 +1,6 @@
 #===================================================================================================
 #' taxon_output_path_preparation
-#' @export
+#' 
 taxon_output_path_preparation <- function(output_directory, sub_directory=NULL, name=NULL, id=NULL, level_name=NULL, ext="", ...) {
   #get directory path
   if (!is.null(sub_directory)) {
@@ -27,7 +27,7 @@ taxon_output_path_preparation <- function(output_directory, sub_directory=NULL, 
 
 #===================================================================================================
 #' overall_statistics
-#' @export
+#' 
 overall_statistics <- function(distance, ...) {
   if (!is.matrix(distance)) {
     return(list(distance_mean=NA, 
@@ -48,7 +48,7 @@ overall_statistics <- function(distance, ...) {
 
 #===================================================================================================
 #' intertaxon_statistics
-#' @export
+#' 
 intertaxon_statistics <- function(distance, identity=NULL, ...) {
   output <- list()
   
@@ -73,7 +73,7 @@ intertaxon_statistics <- function(distance, identity=NULL, ...) {
 
 #===================================================================================================
 #' intrataxon_statistics
-#' @export
+#' 
 intrataxon_statistics <- function(distance, identity=NULL, ...) {
   output <- list()
   
@@ -104,7 +104,7 @@ intrataxon_statistics <- function(distance, identity=NULL, ...) {
 
 #===================================================================================================
 #' distance_distribution
-#' @export
+#'
 distance_distribution <- function(distance, identity=NULL, distance_bin_width=0.001, output_file_path=NULL,  plot_file_path=NULL, name=NULL, ...) {
   output <- list()
   
@@ -181,9 +181,7 @@ distance_distribution <- function(distance, identity=NULL, distance_bin_width=0.
 
 #===================================================================================================
 #' Optimize clustering threshold
-#' @export
-#' @importFrom spider threshOpt
-#' @importFrom plyr ldply
+#'
 threshold_optimization <- function(distance, threshold_resolution=0.001, output_file_path=NULL, plot_file_path=NULL, name=NULL, ...) {
   output <- list()
   
@@ -201,8 +199,8 @@ threshold_optimization <- function(distance, threshold_resolution=0.001, output_
     max_x <- max(distance)
     threshold <- seq(min_x, max_x, by = threshold_resolution)
 #     my_test <<- distance
-    statistics <- lapply(threshold, function(x) threshOpt(distance, row.names(distance), thresh = x))
-    statistics <- ldply(statistics)
+    statistics <- lapply(threshold, function(x) spider::threshOpt(distance, row.names(distance), thresh = x))
+    statistics <- plyr::ldply(statistics)
     colnames(statistics) <- c("threshold", "true_negative", "true_positive", "false_negative", "false_positive", "cumulative_error")
     output$optimal_error <- min(statistics$cumulative_error)
     optimal_index <- which(output$optimal_error == statistics$cumulative_error) 
@@ -263,8 +261,7 @@ threshold_optimization <- function(distance, threshold_resolution=0.001, output_
 }
 #===================================================================================================
 #' Calculate barcode statistics
-#' 
-#' @export
+#'
 calculate_barcode_statistics <- function(distance_matrix,
                                          taxonomy_levels = get_taxonomy_levels(),
                                          saved_output_path = getwd(),

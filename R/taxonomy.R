@@ -1,8 +1,9 @@
 #===================================================================================================
 #' Get taxonomy levels
 #' 
-#' @return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+#' Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
 #'   hierarchy.
+#'   
 #' @export
 get_taxonomy_levels <- function() {
   unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
@@ -16,7 +17,6 @@ get_taxonomy_levels <- function() {
 #' 
 #' @param taxa Output from taxize::classification
 #' @return A character vecotr of taxonomy strings pasted together with delimiters.
-#' @export
 format_taxize <- function(taxa) {
   output <- vapply(taxa, function(x) paste(paste(x$rank, gsub(' ', '_', x$name), sep = "__"), collapse = ";"), character(1))
   paste("Superkingdom__Life;", output, sep="")
@@ -35,7 +35,6 @@ filter_taxonomy_string <- function(taxon, min_level, max_level, taxon_levels) {
 
 #===================================================================================================
 #' subsample_by_taxonomy
-#' @export
 subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_order, triangular=TRUE, level_to_analyze = 'subtaxon', max_subset=NA) {
   base_level <- offset_ordered_factor(taxon_level, 1)
   if (level_to_analyze == 'subtaxon') {
@@ -67,7 +66,6 @@ subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_ord
 
 #===================================================================================================
 #' taxon_info
-#' @export
 taxon_info <- function(identifications, level_order, separator=';') {
   split_taxonomy <- strsplit(identifications, separator, fixed=TRUE)
   taxonomy <- unlist(lapply(split_taxonomy, function(x) sapply(seq(1, length(x)), function(y) paste(x[1:y], collapse=separator))))
@@ -220,8 +218,6 @@ append_to_each <- function(my_list, data) {
 #' to each classification.
 #' 
 #' @seealso unique_taxa
-#' 
-#' @export
 add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "taxon_id") {
   if (is.null(id_key)) id_key <- unique_taxa(classifications)
   add_ids_to_one <- function(a_classification) {
@@ -547,6 +543,10 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
 #' returned rather than looking for items of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
+#' 
+#' @seealso \code{\link{taxonomic_sample}}
+#' 
+#' @export
 recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
@@ -722,6 +722,7 @@ get_class_from_el <- function(taxa, parents) {
 #' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
 #' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
+#' 
 #' @export
 edge_list_depth <-  function(taxa, parents) {
   vapply(get_class_from_el(taxa, parents), length, numeric(1))

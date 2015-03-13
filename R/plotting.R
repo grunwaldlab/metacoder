@@ -1,7 +1,6 @@
 #===================================================================================================
 #' plot_threshold_optimization
 #' 
-#' @import reshape2
 #' @import ggplot2 
 plot_threshold_optimization <- function(input, title=NULL, save_png=NULL, display=FALSE, background="transparent") {
   if (class(input) == "character" || class(input) == "factor" ) {
@@ -190,116 +189,6 @@ plot_image_tree <- function(graph, image_file_paths, labels=NA, scaling=1, exclu
 }
 
 
-#===================================================================================================
-#' Makes igraph from values
-#' 
-#' @param graph An igraph graph object or an adjacency list (i.e. edge list) represented by
-#' something that can be coerced to a two column \code{data.frame} where the first column is 
-#' every unique taxon id and the second is its parent/super taxon id. 
-#' 
-#' @import igraph grid
-#' @importFrom plotrix color.scale
-#' @export
-plot_value_tree <- function(graph, values, labels=NA, scaling=1, exclude=c(), root_index=1,
-                            label_color = "black", display=FALSE, fade=FALSE, legend_text="",
-                            value_range=c(0,1), highlight_outliers=TRUE, background="#00000000",
-                            save=NULL) {
-  #   init_igraph()
-  #make graph if nessesary
-  if (class(graph) != "igraph") {
-    graph <- graph[complete.cases(graph), ]
-    graph <- graph.edgelist(as.matrix(as.data.frame(graph)))
-  }   
-  #store the distance of all verticies and edges from the root
-  root <- V(graph)[root_index]
-  vertex_depth <- sapply(get.shortest.paths(graph, from=root)$vpath, length)
-  edge_depth <- vertex_depth[get_edge_parents(graph)]
-  
-  #set vertex graphing parameters
-  V(graph)$size <- (log(scaling + .5) / max(log(scaling) + .5)) * 10
-  if (is.na(labels)) {
-    V(graph)$label.cex <- 0
-    V(graph)$label <- NA
-  } else if (labels == TRUE) {
-    V(graph)$label <- as.character(signif(values, 2))
-    V(graph)$label.cex <- V(graph)$size * .45 + .15
-    V(graph)$label.color <- label_color
-  } else {
-    V(graph)$label <- labels
-    V(graph)$label.cex <- V(graph)$size * .45 + .15
-    V(graph)$label.color <- label_color
-  }
-  if (fade == TRUE) {
-    V(graph)$alpha <- (max(vertex_depth)*1.5 - vertex_depth) / (max(vertex_depth)*1.5)
-  } else if (fade == FALSE) {
-    V(graph)$alpha <- 1
-  } else {
-    V(graph)$alpha <- fade
-  }
-  V(graph)$values <- values
-  
-  #set edge graphing parameters
-  E(graph)$width <- V(graph)$size[get_edge_children(graph)] * 5
-  E(graph)$color <- sapply(((max(edge_depth)*4 - edge_depth) / (max(edge_depth)*4)) * .3,
-                           function(x) rgb(red=.3,green=.3,blue=.3,alpha=x))
-  
-  #exclude specific verticies and their decendents from display
-  graph <- delete_vetices_and_children(graph, exclude)
-  
-  #set vertex color
-  color_values <- V(graph)$values
-  value_range_quantile <- quantile(color_values, value_range, na.rm=TRUE)
-  #   if (highlight_outliers) {
-  #     outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-  #     V(graph)$frame.width <- ifelse(outliers, 25, .05)    
-  #   }
-  outliers <- color_values < value_range_quantile[1] | color_values > value_range_quantile[2]
-  #   V(graph)$frame.width <- ifelse(outliers, 25, .05)
-  color_values[color_values < value_range_quantile[1]] <- value_range_quantile[1]
-  color_values[color_values > value_range_quantile[2]] <- value_range_quantile[2]
-  no_color_in_palette <- 10000
-  palette <- colorRampPalette(c("red","green", "blue"))(no_color_in_palette)
-  displayed_colors <- palette[as.integer((no_color_in_palette - 1) * color_values/max(color_values)) + 1]
-  V(graph)$color=mapply(add_alpha, displayed_colors, alpha=V(graph)$alpha)
-  
-  #Calculate vertex layout
-  graph_layout <- layout.reingold.tilford(graph, root = root_index, circular = TRUE)
-  
-  #Load vertex images 
-  #   V(graph)$raster <- lapply(as.character(V(graph)$raster_file), readPNG)
-  
-  if (!is.null(save)) {
-    png(file = save, bg = background, width=5000, height=5000)
-  }
-  
-  #Make legend (http://stackoverflow.com/questions/12041042/how-to-plot-just-the-legends-in-ggplot2)
-  legend <- continuous_color_legend(color_values,
-                                    low=V(graph)$color[which.min(color_values)], 
-                                    mid=V(graph)$color[which_middle(color_values)], 
-                                    high=V(graph)$color[which.max(color_values)],
-                                    name=legend_text,
-                                    background=background)
-  
-  main_vp <- viewport(x = .5, y = .5, width = 1, height = 1)
-  legend_vp <- viewport(x = 1, y = 0, width = 0.1, height = 1, just = c("right", "bottom"))
-  grid.newpage()
-  pushViewport(main_vp)
-  plot(graph, 
-       layout=graph_layout,
-       margin=0, 
-       vertex.label.dist=0,
-       vertex.label.degree=0,
-       edge.arrow.size =0,
-       vertex.shape="circle", 
-       vertex.frame.color=NA)
-  upViewport()
-  pushViewport(legend_vp)
-  grid.draw(legend[[1]][[1]])
-  popViewport(1)
-  if (!is.null(save)) {
-    dev.off()
-  }
-}
 
 #===================================================================================================
 #' plot_value_distribution_by_level
@@ -334,8 +223,6 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' Plots the distribution of values associated with item with an associated taxonomic classification.
 #' Uses \code{igraph} to make layout and \code{ggplot2} to make plots.
 #' 
-#' @param data (\code{data.frame}) Must have columns with names specified by options \code{taxon_id}
-#' and \code{parent_id}.
 #' @param taxon_id  The unique ids of the taxon for each row.
 #' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
 #' @param size The value to base vertex and line size on. If a numeric vector is given, it is rescaled
@@ -370,21 +257,22 @@ plot_value_distribution_by_level <- function(taxon_data, value_column, level_col
 #' @param vertex_color_series A series of colors corresponding to low-high statistics supplied to 
 #'   \code{vertex_color}. Must be a valid argument of \code{col2rgb}.
 #' @param line_color_series A series of colors corresponding to low-high statistics supplied to 
-#'   \code{line_color}. Must be a valid argument of \code{col2rgb}.#' 
-#' @import grid
-#' @import ggplot2 
-#' @import scales 
+#'   \code{line_color}. Must be a valid argument of \code{col2rgb}.#'
+#' @param data_only (\code{logical}) If \code{TRUE}, then return the data used to make the plot instead
+#'   of the plot itself. Returns a list of \code{data.frame}s containing coordinants, colors, and other
+#'   plotting parameters. 
 #' @export
 plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL, vertex_label = NULL, 
                           line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
-                          line_label_offset = 1, margin_size = 0.05, aspect_ratio = NULL, data_only = FALSE,
+                          line_label_offset = 1, margin_size = 0.05, aspect_ratio = NULL,
                           layout_func = NULL, layout_args = NULL, titles = NULL, no_stem = TRUE,
                           vertex_color_series = c("grey", "red", "green", "blue"),
-                          line_color_series = c("grey", "red", "green", "blue")) {
+                          line_color_series = c("grey", "red", "green", "blue"),
+                          data_only = FALSE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")
   if (is.null(layout_func)) {
-    layout_func <- layout.reingold.tilford
+    layout_func <- igraph::layout.reingold.tilford
     if (is.null(layout_args)) layout_args <- list(circular = TRUE)
   }
   if (is.null(layout_args)) layout_args <- list()
@@ -408,15 +296,15 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   parent_id[!(parent_id %in% taxon_id)] <- NA
   get_vertex_coords <- function(index) {
     if (length(index) == 1) {
-      one_vertex_graph <- graph.edgelist(matrix(c(1, 1), ncol = 2))
-      return(list(one_vertex_graph, layout.fruchterman.reingold(one_vertex_graph)))
+      one_vertex_graph <- igraph::graph.edgelist(matrix(c(1, 1), ncol = 2))
+      return(list(one_vertex_graph, igraph::layout.fruchterman.reingold(one_vertex_graph)))
     }
     part <- data[index, ]
-    graph <- graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
+    graph <- igraph::graph.edgelist(as.matrix(part[complete.cases(part), c("parent_id", "taxon_id")]))
     layout <- do.call(layout_func, c(list(graph), layout_args))
     if (!is.null(aspect_ratio)) layout[, 1] <- layout[, 1] * aspect_ratio
     if (any(is.na(layout) | is.nan(unlist(layout)))) {
-      layout <- layout.fruchterman.reingold(graph)
+      layout <- igraph::layout.fruchterman.reingold(graph)
       warning(paste('Could not apply layout_func to subgraph with root', part$taxon_id[1]))
     }
     return(list(graph, layout))
@@ -425,7 +313,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   rownames(data) <- taxon_id
   subgraphs <- split_by_level(taxon_id, parent_id, level =  1)
   layouts <- lapply(subgraphs, get_vertex_coords)
-  layout <- layout.merge(graphs = lapply(layouts, `[[`, 1), layouts = lapply(layouts, `[[`, 2))
+  layout <- igraph::layout.merge(graphs = lapply(layouts, `[[`, 1),
+                                 layouts = lapply(layouts, `[[`, 2))
   coords <- setNames(as.data.frame(layout), c('x', 'y'))
   coords$group <- rep(seq_along(subgraphs), vapply(subgraphs, length, numeric(1)))
   rownames(coords) <- unlist(subgraphs)
@@ -434,7 +323,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   
   if (!is.null(aspect_ratio)) {
     data$x <- data$x / aspect_ratio
-    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- scales::rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
   }
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
@@ -452,7 +341,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
-    size <- rescale(data$size, to = c(a_min, a_max))
+    size <- scales::rescale(data$size, to = c(a_min, a_max))
     pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
     # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
@@ -462,8 +351,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   choose_best <- function(options) {
     data <- as.data.frame(do.call(rbind, options))
     names(data) <- c("overlap", "space")
-    data$overlap <- rescale(data$overlap, to = c(0, overlap_bias))
-    data$space <- rescale(data$space, to = c(0, 1))
+    data$overlap <- scales::rescale(data$overlap, to = c(0, overlap_bias))
+    data$space <- scales::rescale(data$space, to = c(0, 1))
     data$score <- data$overlap  + data$space
     which.min(data$score)
   }
@@ -472,7 +361,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                       resolution = c(15, 20),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$size <- rescale(data$size, to = opt_size_range)
+  data$size <- scales::rescale(data$size, to = opt_size_range)
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
   vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
   # Get graph range data ---------------------------------------------------------------------------
@@ -522,15 +411,15 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Get vertex labels ------------------------------------------------------------------------------
   if (!is.null(vertex_label)) {
     data$vertex_label <- as.character(vertex_label)
-    data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
-    data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
-    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
+    data$vertex_label_x <- scales::rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$vertex_label_y <- scales::rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
+    data$vertex_label_size <-  scales::rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
     valid_grobs <- which(data$vertex_label_size > min_label_size & !is.na(data$vertex_label))
     vertex_label_grobs <- lapply(valid_grobs, 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
                                                               x = data$vertex_label_x[i],
-                                                              gp = gpar(text_prop = data$vertex_label_size[i])))    
+                                                              gp = grid::gpar(text_prop = data$vertex_label_size[i])))    
   }
   # Get line labels --------------------------------------------------------------------------------
   if (!is.null(line_label)) {
@@ -548,12 +437,12 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
     data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
     data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
-    data$line_label_x <- rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
-    data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
+    data$line_label_x <- scales::rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
+    data$line_label_y <- scales::rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
     # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
-    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
-    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    mean_inter_pair <- scales::rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    data$line_label_size <-  scales::rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -564,7 +453,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                             x = data$line_label_x[i],
                                                             rot = data$line_label_rot[i] * 180 / pi,
                                                             just = justification[[i]],
-                                                            gp = gpar(text_prop = data$line_label_size[i])))
+                                                            gp = grid::gpar(text_prop = data$line_label_size[i])))
   }
   # Subgraph titles --------------------------------------------------------------------------------
   if (!is.null(titles)) {
@@ -574,9 +463,9 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     title_data$x <- vapply(unique(data$group), function(x) mean(range(data$x[data$group == x])), numeric(1))
     title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.075, numeric(1))
     title_data$y <- vapply(unique(data$group), function(x) max(data$y[data$group == x]), numeric(1)) + title_data$size * 1.1
-    title_data$x <- rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
-    title_data$y <- rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
-    title_data$size <- rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
+    title_data$x <- scales::rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
+    title_data$y <- scales::rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
+    title_data$size <- scales::rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     title_grobs <- lapply(which(title_data$size > min_label_size / 4), 
                           function(i) resizingTextGrob(label = title_data$label[i],
@@ -584,15 +473,15 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                                                        x = title_data$x[i],
                                                        rot = 0,
                                                        just = "center",
-                                                       gp = gpar(text_prop = title_data$size[i])))
+                                                       gp = grid::gpar(text_prop = title_data$size[i])))
     
   }
   
   # Get graph range data ---------------------------------------------------------------------------
   if (!is.null(aspect_ratio)) {
-    line_data$y <- rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
-    vertex_data$y <- rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
-    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
+    line_data$y <- scales::rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
+    vertex_data$y <- scales::rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- scales::rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
   }
   x_range <- max(vertex_data$x) - min(vertex_data$x)
   y_range <- max(vertex_data$y) - min(vertex_data$y)
@@ -607,17 +496,19 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   if (data_only) {
     return(list(taxon_data = data, vertex_data = vertex_data, line_data = line_data))
   } else {
-    the_plot <- ggplot(data = data) +
-      geom_polygon(data = line_data, aes(x = x, y = y, group = group), fill = line_data$line_color) +
-      geom_polygon(data = vertex_data, aes(x = x, y = y, group = group), fill = vertex_data$vertex_color) +
-      guides(fill = "none") +
-      coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
-      theme(panel.grid = element_blank(), 
-            panel.background = element_blank(),
-            axis.title = element_blank(),
-            axis.text  =  element_blank(),
-            axis.ticks = element_blank(), 
-            axis.line  = element_blank())
+    the_plot <- ggplot2::ggplot(data = data) +
+      ggplot2::geom_polygon(data = line_data, ggplot2::aes(x = x, y = y, group = group),
+                            fill = line_data$line_color) +
+      ggplot2::geom_polygon(data = vertex_data, ggplot2::aes(x = x, y = y, group = group),
+                            fill = vertex_data$vertex_color) +
+      ggplot2::guides(fill = "none") +
+      ggplot2::coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+      ggplot2::theme(panel.grid = ggplot2::element_blank(), 
+                     panel.background = ggplot2::element_blank(),
+                     axis.title = ggplot2::element_blank(),
+                     axis.text  = ggplot2::element_blank(),
+                     axis.ticks = ggplot2::element_blank(), 
+                     axis.line  = ggplot2::element_blank())
     # Plot rescaling text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     text_count <- 0
     if (!is.null(data$vertex_label)) text_count <- text_count + length(vertex_label_grobs)
@@ -625,17 +516,17 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     if (!is.null(titles)) text_count <- text_count + length(title_grobs)
     if (!is.null(data$vertex_label)) {
       for (a_grob in vertex_label_grobs) {
-        the_plot <- the_plot + annotation_custom(grob = a_grob)
+        the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
       }    
     }
     if (!is.null(data$line_label)) {
       for (a_grob in line_label_grobs) {
-        the_plot <- the_plot + annotation_custom(grob = a_grob)
+        the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
       }    
     }
     if (!is.null(titles)) {
       for (a_grob in title_grobs) {
-        the_plot <- the_plot + annotation_custom(grob = a_grob)
+        the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
       }    
     }
     return(the_plot)    
@@ -689,7 +580,7 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
   
   if (!is.null(aspect_ratio)) {
     data$x <- data$x / aspect_ratio
-    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- scales::rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)
   }
   # Get vertex size --------------------------------------------------------------------------------
   if (is.null(size)) {
@@ -707,7 +598,7 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
   size_opt_func <- function(a_max, a_min) {
     # Get pairwise distance metrics  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     pairs <- pairwise
-    size <- rescale(data$size, to = c(a_min, a_max))
+    size <- scales::rescale(data$size, to = c(a_min, a_max))
     pairs$gap <- pairs$distance - size[pairs$index_1] - size[pairs$index_2]
     # Calculate optimality metric  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     overlap <- sum(abs(pairs$gap[pairs$gap < 0]))
@@ -717,8 +608,8 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
   choose_best <- function(options) {
     data <- as.data.frame(do.call(rbind, options))
     names(data) <- c("overlap", "space")
-    data$overlap <- rescale(data$overlap, to = c(0, overlap_bias))
-    data$space <- rescale(data$space, to = c(0, 1))
+    data$overlap <- scales::rescale(data$overlap, to = c(0, overlap_bias))
+    data$space <- scales::rescale(data$space, to = c(0, 1))
     data$score <- data$overlap  + data$space
     which.min(data$score)
   }
@@ -727,7 +618,7 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
                                       resolution = c(15, 20),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
-  data$size <- rescale(data$size, to = opt_size_range)
+  data$size <- scales::rescale(data$size, to = opt_size_range)
   vertex_data <- polygon_coords(n = 50, x = data$x, y = data$y, radius = data$size)
   vertex_data <- cbind(vertex_data, data[as.numeric(vertex_data$group), c("size"), drop = F])
   # Get graph range data ---------------------------------------------------------------------------
@@ -764,15 +655,15 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
   # Get vertex labels ------------------------------------------------------------------------------
   if (!is.null(vertex_label)) {
     data$vertex_label <- as.character(vertex_label)
-    data$vertex_label_x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
-    data$vertex_label_y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
-    data$vertex_label_size <-  rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
+    data$vertex_label_x <- scales::rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$vertex_label_y <- scales::rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
+    data$vertex_label_size <-  scales::rescale(data$size, to = c(0, 1), from = c(0, ideal_diameter))
     valid_grobs <- which(data$vertex_label_size > min_label_size & !is.na(data$vertex_label))
     vertex_label_grobs <- lapply(valid_grobs, 
                                  function(i) resizingTextGrob(label = data$vertex_label[i],
                                                               y = data$vertex_label_y[i],
                                                               x = data$vertex_label_x[i],
-                                                              gp = gpar(text_prop = data$vertex_label_size[i])))    
+                                                              gp = grid::gpar(text_prop = data$vertex_label_size[i])))    
   }
   # Get line labels --------------------------------------------------------------------------------
   if (!is.null(line_label)) {
@@ -790,12 +681,12 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
     line_label_y_offset <- line_label_offset * data$size * sin(data$line_label_rot)
     data$line_label_x <-  data$x + ifelse(justify, 1, -1) * line_label_x_offset
     data$line_label_y <- data$y + ifelse(justify, 1, -1) * line_label_y_offset
-    data$line_label_x <- rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
-    data$line_label_y <- rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
+    data$line_label_x <- scales::rescale(data$line_label_x, to = c(0, 1), from = c(x_min, x_max))
+    data$line_label_y <- scales::rescale(data$line_label_y, to = c(0, 1), from = c(y_min, y_max))
     # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     mean_inter_pair <- mean(sqrt((data$x - data$parent_x)^2 + (data$y - data$parent_y)^2), na.rm = TRUE)
-    mean_inter_pair <- rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
-    data$line_label_size <-  rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    mean_inter_pair <- scales::rescale(mean_inter_pair, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
+    data$line_label_size <-  scales::rescale(data$size / 2, to = c(0, 1), from = c(0, mean(c(x_display, y_display)))) 
     max_line_label_size <- mean_inter_pair / 10
     data$line_label_size[data$line_label_size > max_line_label_size] <-  max_line_label_size
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -806,7 +697,7 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
                                                             x = data$line_label_x[i],
                                                             rot = data$line_label_rot[i] * 180 / pi,
                                                             just = justification[[i]],
-                                                            gp = gpar(text_prop = data$line_label_size[i])))
+                                                            gp = grid::gpar(text_prop = data$line_label_size[i])))
   }
   # Subgraph titles --------------------------------------------------------------------------------
   if (!is.null(titles)) {
@@ -816,9 +707,9 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
     title_data$x <- vapply(unique(data$group), function(x) mean(range(data$x[data$group == x])), numeric(1))
     title_data$size <- vapply(unique(data$group), function(x) (mean(c(max(data$x[data$group == x]) -  min(data$x[data$group == x]), max(data$y[data$group == x]) -  min(data$y[data$group == x])))) * 0.075, numeric(1))
     title_data$y <- vapply(unique(data$group), function(x) max(data$y[data$group == x]), numeric(1)) + title_data$size * 1.1
-    title_data$x <- rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
-    title_data$y <- rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
-    title_data$size <- rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
+    title_data$x <- scales::rescale(title_data$x, to = c(0, 1), from = c(x_min, x_max))
+    title_data$y <- scales::rescale(title_data$y, to = c(0, 1), from = c(y_min, y_max))
+    title_data$size <- scales::rescale(title_data$size, to = c(0.001, 1), from = c(0, mean(c(x_display, y_display))))
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     title_grobs <- lapply(which(title_data$size > min_label_size / 4), 
                           function(i) resizingTextGrob(label = title_data$label[i],
@@ -826,15 +717,15 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
                                                        x = title_data$x[i],
                                                        rot = 0,
                                                        just = "center",
-                                                       gp = gpar(text_prop = title_data$size[i])))
+                                                       gp = grid::gpar(text_prop = title_data$size[i])))
     
   }
   
   # Get graph range data ---------------------------------------------------------------------------
   if (!is.null(aspect_ratio)) {
-    line_data$y <- rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
-    vertex_data$y <- rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
-    data$y <- rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
+    line_data$y <- scales::rescale(line_data$y, to = range(line_data$x, na.rm = TRUE) * aspect_ratio)
+    vertex_data$y <- scales::rescale(vertex_data$y, to = range(vertex_data$x, na.rm = TRUE) * aspect_ratio)
+    data$y <- scales::rescale(data$y, to = range(data$x, na.rm = TRUE) * aspect_ratio)    
   }
   x_range <- max(vertex_data$x) - min(vertex_data$x)
   y_range <- max(vertex_data$y) - min(vertex_data$y)
@@ -868,10 +759,10 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
     
     
     
-    data$width <- rescale(data$size, from = c(0, x_max - x_min), to = c(0, 1))
-    data$height <- rescale(data$size, from = c(0, y_max - y_min), to = c(0, 1))
-    data$x <- rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
-    data$y <- rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
+    data$width <- scales::rescale(data$size, from = c(0, x_max - x_min), to = c(0, 1))
+    data$height <- scales::rescale(data$size, from = c(0, y_max - y_min), to = c(0, 1))
+    data$x <- scales::rescale(data$x, to = c(0, 1), from = c(x_min, x_max))
+    data$y <- scales::rescale(data$y, to = c(0, 1), from = c(y_min, y_max))
     for (index in 1:5) {
       a_viewport <- viewport(x = data$x[index], 
                              y = data$y[index],

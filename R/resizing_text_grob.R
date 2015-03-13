@@ -6,11 +6,9 @@
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
-#' @import grid
-#' @export
 resizingTextGrob <- function(...)
 {
-  grob(tg=textGrob(...), cl='resizingTextGrob')
+  grid::grob(tg=grid::textGrob(...), cl='resizingTextGrob')
 }
 
 #===================================================================================================
@@ -19,11 +17,10 @@ resizingTextGrob <- function(...)
 #' Called automatically when drawing a grob using grob.draw.
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
-#' @import grid
-#' @export
+#' 
 drawDetails.resizingTextGrob <- function(x, recording=TRUE)
 {
-  grid.draw(x$tg)
+  grid::grid.draw(x$tg)
 }
 
 #===================================================================================================
@@ -32,14 +29,12 @@ drawDetails.resizingTextGrob <- function(x, recording=TRUE)
 #' Automatically called before any drawing occures.
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
-#' @import grid
-#' @import scales
-#' @export
+#' 
 preDrawDetails.resizingTextGrob <- function(x)
 {
   cex <- x$tg$gp$text_prop * 4
-  h <- convertHeight(unit(1, 'snpc'), 'mm', valueOnly=TRUE)
-  pushViewport(viewport(gp = gpar(fontsize = h * cex)))
+  h <- grid::convertHeight(grid::unit(1, 'snpc'), 'mm', valueOnly=TRUE)
+  grid::pushViewport(grid::viewport(gp = grid::gpar(fontsize = h * cex)))
 }
 
 
@@ -50,10 +45,8 @@ preDrawDetails.resizingTextGrob <- function(x)
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
-#' @import grid
-#' @export
 postDrawDetails.resizingTextGrob <- function(x) {
-  popViewport()
+  grid::popViewport()
 }
 
 

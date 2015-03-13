@@ -120,13 +120,12 @@ extract_gi <- function(annotation) {
 #' @param query_req A list of class  \code{\link[seqinr]{SeqAcnucWeb}} (e.g. what
 #' \code{\link[seqinr]{query}} produces in the \code{x$req} element of the output.
 #' @return A data.frame in the format of the output of \code{\link[taxize]{ncbi_getbyid}}.
-#' @import seqinr
 #' @export
 download_gb_query <- function(query_req) {
-  choosebank("genbank")
-  on.exit(closebank())
-  sequence <- getSequence(query_req)
-  annotation <- getAnnot(query_req)
+  seqinr::choosebank("genbank")
+  on.exit(seqinr::closebank())
+  sequence <- seqinr::getSequence(query_req)
+  annotation <- seqinr::getAnnot(query_req)
   sequence <- vapply(sequence, paste, character(1), collapse="")
   sequence <- toupper(sequence)
   data.frame(taxon = extract_organism(annotation),
@@ -147,7 +146,6 @@ download_gb_query <- function(query_req) {
 #' @param query_req A list of class \code{\link[seqinr]{SeqAcnucWeb}} or a single
 #'   \code{\link[seqinr]{qaw}} object.
 #' @return A data frame with columns corresponding to \code{\link[seqinr]{SeqAcnucWeb}} attributes.
-#' @export 
 query_req_to_dataframe <- function(query_req) {
   if (class(query_req) == "qaw") query_req <- query_req$req
   data.frame(name = as.character(query_req),
@@ -164,7 +162,6 @@ query_req_to_dataframe <- function(query_req) {
 #' 
 #' @param x An object of class \code{\link[seqinr]{qaw}}
 #' @return A data frame with columns corresponding to \code{\link[seqinr]{SeqAcnucWeb}} attributes.
-#' @export
 as.data.frame.qaw <- function(x, ...) {
   query_req_to_dataframe(x)
 }
@@ -215,6 +212,7 @@ download_gb_taxon <- function(taxon, key, type,
                               max_count = 100,
                               subsample = c("random", "head", "tail"),
                               standardize = TRUE,
+                              separate = FALSE,
                               use_acnuc = FALSE) {
   # Verify arguments -------------------------------------------------------------------------------
   subsample <- match.arg(subsample)
@@ -270,23 +268,54 @@ download_gb_taxon <- function(taxon, key, type,
 #' Download representative sequences for a taxon
 #' 
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
+#' Can be used to get a shallow sampling of a vast groups. 
+#' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and can\
+#' can take a very long time. 
+#' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
+#' Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
 #' 
-#' @param taxon A character vector of length 1. The taxon to download a sample of sequences for.
-#' @param target_level A character vector of length 1. The finest taxonomic level at which
-#'   to sample. The finest level at which replication occurs. Must be a finer level than 
-#'   \code{taxon}.
-#' @param max_counts A named numeric vector. The maximum number of sequences to download for each
-#'   taxonomic level. The names correspond to taxonomic levels. See
-#'   \code{\link{get_taxonomy_levels}} or \code{\link[taxize]{rank_ref}} for available taxonomic
-#'   levels. 
+#' See \code{\link{get_taxonomy_levels}} for available taxonomic ranks.
+#' 
+#' @param name (\code{character} of length 1) The taxon to download a sample of sequences for.
+#' @param id (\code{character} of length 1) The taxon id to download a sample of sequences for.
+#' @param target_rank (\code{character} of length 1) The finest taxonomic rank at which
+#'   to sample. The finest rank at which replication occurs. Must be a finer rank than 
+#'   \code{taxon}. Use \code{\link{get_taxonomy_levels}} to see available ranks.
+#' @param min_counts (named \code{numeric}) The minimum number of sequences to download for each
+#'   taxonomic rank. The names correspond to taxonomic ranks. 
+#' @param max_counts (named \code{numeric}) The maximum number of sequences to download for each
+#'   taxonomic rank. The names correspond to taxonomic ranks. 
+#' @param interpolate_min (\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
+#'   and \code{min_children} will be used to infer the values of intermediate ranks not
+#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   values of unspecified ranks.
+#' @param interpolate_max (\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
+#'   and \code{max_children} will be used to infer the values of intermediate ranks not
+#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   values of unspecified ranks.
+#' @param min_length (\code{numeric} of length 1) The minimum length of sequences that will be
+#'   returned.
+#' @param max_length (\code{numeric} of length 1) The maximum length of sequences that will be
+#'   returned.
+#' @param min_children (named \code{numeric}) The minimum number sub-taxa of taxa for a given
+#' rank must have for its sequences to be searched. The names correspond to taxonomic ranks. 
+#' @param max_children (named \code{numeric}) The maximum number sub-taxa of taxa for a given
+#' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
+#' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
+#' @param ... Additional arguments are passed to \code{\link[taxize]{ncbi_search}}.
 #' @examples
-#' ncbi_taxon_sample(name = "oomycetes", target_level = "genus")
-#' fungi <- ncbi_taxon_sample(name = "fungi", target_level = "family", max_counts = c(family = 5, order = 30), entrez_query = "18S[All Fields] AND 28S[All Fields]", min_length = 600, max_length = 10000)
+#' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
+#' data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
+#'                           max_counts = c(phylum = 30), 
+#'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
+#'                           min_length = 600, max_length = 10000)
 #' @export
-ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts = NULL,
-                             interpolate_max = TRUE, min_counts = NULL, interpolate_min = TRUE,
-                             verbose = TRUE, max_length = 10000, min_length = 1,
-                             max_children = NULL, min_children = NULL, ...) {
+ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
+                              min_counts = NULL, max_counts = NULL,
+                              interpolate_min = TRUE, interpolate_max = TRUE,
+                              min_length = 1, max_length = 10000, 
+                              min_children = NULL, max_children = NULL, 
+                              verbose = TRUE, ...) {
   
   default_target_max <- 20
   default_target_min <- 5
@@ -297,8 +326,8 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
   if (sum(c(is.null(name), is.null(id))) != 1) {
     stop("Either name or id must be speficied, but not both")
   }
-  if (!(target_level %in% levels(taxonomy_levels))) {
-    stop("'target_level' is not a valid taxonomic level.")
+  if (!(target_rank %in% levels(taxonomy_levels))) {
+    stop("'target_rank' is not a valid taxonomic rank.")
   }
   
   # Argument parsing -------------------------------------------------------------------------------
@@ -315,12 +344,12 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
   taxon_level <- factor(taxon_classification[nrow(taxon_classification), "rank"],
                         levels = levels(taxonomy_levels),
                         ordered = TRUE)
-  target_level <- factor(target_level,
+  target_rank <- factor(target_rank,
                          levels = levels(taxonomy_levels),
                          ordered = TRUE)
   length_range <- paste(min_length, max_length, sep = ":")
   
-  # Generate taxonomic level filtering limits ------------------------------------------------------
+  # Generate taxonomic rank filtering limits ------------------------------------------------------
   get_level_limit <- function(user_limits, default_value, default_level, interpolate, 
                               extend_max = FALSE, extend_min = FALSE) {
     # Provide defaults if NULL - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -330,7 +359,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
     } else if (length(user_limits) == 1 && is.null(names(user_limits))) {
       names(user_limits) <- default_level
     }
-    # Order by taxonomic level - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Order by taxonomic rank - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     limit_levels <- factor(names(user_limits),
                            levels = levels(taxonomy_levels),
                            ordered = TRUE)
@@ -366,34 +395,34 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
     return(all_user_limits)
   }
   
-  level_max_count <- get_level_limit(max_counts, default_target_max, target_level, interpolate_max,
+  level_max_count <- get_level_limit(max_counts, default_target_max, target_rank, interpolate_max,
                                      extend_max = TRUE)
-  level_min_count <- get_level_limit(min_counts, default_target_min, target_level, interpolate_min,
+  level_min_count <- get_level_limit(min_counts, default_target_min, target_rank, interpolate_min,
                                      extend_min = TRUE)
-  level_max_children <- get_level_limit(max_children, NA, target_level,
+  level_max_children <- get_level_limit(max_children, NA, target_rank,
                                         interpolate_max, extend_max = TRUE)
-  level_min_children <- get_level_limit(min_children, 0, target_level, interpolate_min,
+  level_min_children <- get_level_limit(min_children, 0, target_rank, interpolate_min,
                                         extend_min = TRUE)
   
   # Recursivly sample taxon ------------------------------------------------------------------------
-  recursive_sample <- function(id, level, name) {
-    cat("Processing '", name, "' (uid: ", id, ", rank: ", as.character(level), ")", "\n",
+  recursive_sample <- function(id, rank, name) {
+    cat("Processing '", name, "' (uid: ", id, ", rank: ", as.character(rank), ")", "\n",
         sep = "")
     # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (!(level %in% taxonomy_levels) || level < target_level) {
+    if (!(rank %in% taxonomy_levels) || rank < target_rank) {
       sub_taxa <- taxize::ncbi_children(id = id)[[1]]
       print(sub_taxa)
     }
     # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% taxonomy_levels && level < target_level) {
-      if (!is.na(level_max_children[level]) && nrow(sub_taxa) > level_max_children[level]) {
-        sub_taxa <- sub_taxa[sample(1:nrow(sub_taxa), level_max_children[level]), ]
-      } else if (!is.na(level_min_children[level]) && nrow(sub_taxa) < level_min_children[level]) {
+    if (rank %in% taxonomy_levels && rank < target_rank) {
+      if (!is.na(level_max_children[rank]) && nrow(sub_taxa) > level_max_children[rank]) {
+        sub_taxa <- sub_taxa[sample(1:nrow(sub_taxa), level_max_children[rank]), ]
+      } else if (!is.na(level_min_children[rank]) && nrow(sub_taxa) < level_min_children[rank]) {
         return(NULL)
       }
     }
     # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
-    if ((level %in% taxonomy_levels && level >= target_level) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
+    if ((rank %in% taxonomy_levels && rank >= target_rank) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
       cat("Getting sequences for", name, "\n")
       result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
                                     hypothetical = TRUE, ...)
@@ -404,10 +433,10 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_level, max_counts =
       result <- do.call(rbind, result)
     }
     # Filter by count limits - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    if (level %in% taxonomy_levels && !is.null(result)) {
-      if (!is.na(level_max_count[level]) && nrow(result) > level_max_count[level]) {
-        result <- result[sample(1:nrow(result), level_max_count[level]), ]
-      } else if (!is.na(level_min_count[level]) && nrow(result) < level_min_count[level]) {
+    if (rank %in% taxonomy_levels && !is.null(result)) {
+      if (!is.na(level_max_count[rank]) && nrow(result) > level_max_count[rank]) {
+        result <- result[sample(1:nrow(result), level_max_count[rank]), ]
+      } else if (!is.na(level_min_count[rank]) && nrow(result) < level_min_count[rank]) {
         return(NULL)
       }
     }

@@ -12,7 +12,8 @@
 #'   Ideally, it should be in your system's search path.
 #' @param dont_run If TRUE, the command is generated, but not executed. This could be useful if you
 #'   want to execute the command yourself.
-#' @return The command generated as a character vector of length 1. 
+#' @param ... Additional arguments are passed to \code{primersearch}.
+#' @return The command generated as a character vector of length 1.
 #' @seealso \code{\link{parse_primersearch}}
 #' @export
 run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),

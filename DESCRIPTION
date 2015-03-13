@@ -9,12 +9,25 @@ Description: A set of tools for metabarcoding (i.e. amplicon metagenomics) exper
   (e.g. sequence headers), for taxonomically-balanced subsampling of items with associated
   taxonomy information (e.g. sequences), and for making publication-quality graphics showing
   distributions of taxon statistics over taxonomic/phylogenetic trees.
-Depends:
+Depends: 
     R (>= 3.0.2)
 License: GPL2
 LazyData: true
-Imports:
-    stringr
-Suggests:
-    knitr
+Imports: 
+    stringr,
+    ggplot2,
+    igraph,
+    scales,
+    grid,
+    taxize,
+    plyr,
+    seqinr,
+    reshape2,
+    Biostrings,
+    zoo,
+    R.utils,
+    spider
+Suggests: 
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr
