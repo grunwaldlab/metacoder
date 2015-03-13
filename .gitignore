@@ -4,3 +4,4 @@
 .RData
 *_cache
 vignettes/*_files*/
+inst/doc*/
