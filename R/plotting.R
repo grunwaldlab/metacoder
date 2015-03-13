@@ -393,14 +393,16 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   # Remove shared stem if necessary ----------------------------------------------------------------
   if (no_stem) {
     stem_indexes <- get_stem_taxa(taxon_id, parent_id)
-    if (length(size) == length(taxon_id)) size <- size[-stem_indexes]
-    if (length(vertex_color) == length(taxon_id)) vertex_color <- vertex_color[-stem_indexes]
-    if (length(vertex_label) == length(taxon_id)) vertex_label <- vertex_label[-stem_indexes]
-    if (length(line_color) == length(taxon_id)) line_color <- line_color[-stem_indexes]
-    if (length(line_label) == length(taxon_id)) line_label <- line_label[-stem_indexes]
-    if (length(titles) == length(taxon_id)) titles <- titles[-stem_indexes]
-    taxon_id <- taxon_id[-stem_indexes]
-    parent_id <- parent_id[-stem_indexes]
+    if (length(stem_indexes) > 0) {
+      if (length(size) == length(taxon_id)) size <- size[-stem_indexes]
+      if (length(vertex_color) == length(taxon_id)) vertex_color <- vertex_color[-stem_indexes]
+      if (length(vertex_label) == length(taxon_id)) vertex_label <- vertex_label[-stem_indexes]
+      if (length(line_color) == length(taxon_id)) line_color <- line_color[-stem_indexes]
+      if (length(line_label) == length(taxon_id)) line_label <- line_label[-stem_indexes]
+      if (length(titles) == length(taxon_id)) titles <- titles[-stem_indexes]
+      taxon_id <- taxon_id[-stem_indexes]
+      parent_id <- parent_id[-stem_indexes]      
+    } 
   }
   # Get vertex coordinants  ------------------------------------------------------------------------
   parent_id[!(parent_id %in% taxon_id)] <- NA
