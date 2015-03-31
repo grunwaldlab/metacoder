@@ -6,6 +6,7 @@
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
+#' @export
 resizingTextGrob <- function(...)
 {
   grid::grob(tg=grid::textGrob(...), cl='resizingTextGrob')
@@ -18,6 +19,7 @@ resizingTextGrob <- function(...)
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
+#' @export
 drawDetails.resizingTextGrob <- function(x, recording=TRUE)
 {
   grid::grid.draw(x$tg)
@@ -30,6 +32,7 @@ drawDetails.resizingTextGrob <- function(x, recording=TRUE)
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
+#' @export
 preDrawDetails.resizingTextGrob <- function(x)
 {
   cex <- x$tg$gp$text_prop * 4
@@ -45,6 +48,7 @@ preDrawDetails.resizingTextGrob <- function(x)
 #' 
 #' Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 #' 
+#' @export
 postDrawDetails.resizingTextGrob <- function(x) {
   grid::popViewport()
 }
