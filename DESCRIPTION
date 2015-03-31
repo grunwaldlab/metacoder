@@ -25,7 +25,8 @@ Imports:
     reshape2,
     Biostrings,
     zoo,
-    spider
+    spider,
+    proxy
 Suggests: 
     knitr,
     rmarkdown
