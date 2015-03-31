@@ -38,9 +38,8 @@ model_kimura2 <- function(x, y, ...) {
 #' This is still in the developmental stage and currently only uses the kimura 2-parameter metric.
 #' @param sequences A list or vector of sequence data
 #' @return A distance matrix of class \code{dist}
-#' @importFrom proxy dist
 pairwise_distance <- function(sequences, seq_name = NULL) {
   sequences <- as.list(sequences)
   if (!is.null(seq_name)) names(sequences) <- seq_name
-  dist(sequences, method = model_kimura2)
+  proxy::dist(sequences, method = model_kimura2)
 }
