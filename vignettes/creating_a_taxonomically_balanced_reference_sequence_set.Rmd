@@ -137,7 +137,7 @@ If it is feasible to download all of the group of interest, it is likely best to
 
 
 ```{r, results='hide', eval=FALSE}
-sequence_data <- ncbi_taxon_sample(name = "fungi", target_level = "phylum", 
+sequence_data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
                            max_counts = c(phylum = 30), 
                            entrez_query = "18S[All Fields] AND 28S[All Fields]",
                            min_length = 600, max_length = 10000)
