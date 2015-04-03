@@ -389,10 +389,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$vertex_color <- vertex_color
   }
   if (is.numeric(data$vertex_color)) { ## Not factors or hex codes
-    no_color_in_palette <- 10000
+    no_color_in_palette <- 1000
     palette <- colorRampPalette(vertex_color_series)(no_color_in_palette)
-    color_index <- (no_color_in_palette - 1) * data$vertex_color/max(data$vertex_color) + 1
-    data$vertex_color <- palette[as.integer(color_index)]    
+    color_index <- as.integer(scales::rescale(data$vertex_color, to = c(1, no_color_in_palette)))
+    data$vertex_color <- palette[color_index]    
   }
   vertex_data$vertex_color <- data$vertex_color[as.numeric(vertex_data$group)]    
   # Get edge color ---------------------------------------------------------------------------------
@@ -402,10 +402,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$line_color <- line_color
   }
   if (is.numeric(data$line_color)) { ## Not factors or hex codes
-    no_color_in_palette <- 10000
+    no_color_in_palette <- 1000
     palette <- colorRampPalette(line_color_series)(no_color_in_palette)
-    color_index <- (no_color_in_palette - 1) * data$line_color/max(data$line_color) + 1
-    data$line_color <- palette[as.integer(color_index)]    
+    color_index <- as.integer(scales::rescale(data$line_color, to = c(1, no_color_in_palette)))
+    data$line_color <- palette[color_index]    
   }
   line_data$line_color <- data$line_color[as.numeric(line_data$group)]
   # Get vertex labels ------------------------------------------------------------------------------
