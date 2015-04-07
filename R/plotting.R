@@ -266,8 +266,8 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
                           line_color = NULL, line_label = NULL, overlap_bias = 15, min_label_size = .015,
                           line_label_offset = 1, margin_size = 0.05, aspect_ratio = NULL,
                           layout_func = NULL, layout_args = NULL, titles = NULL, no_stem = TRUE,
-                          vertex_color_series = c("grey", "red", "green", "blue"),
-                          line_color_series = c("grey", "red", "green", "blue"),
+                          vertex_color_series = c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"),
+                          line_color_series = c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"),
                           data_only = FALSE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(taxon_id) != length(parent_id)) stop("unequal argument lengths")

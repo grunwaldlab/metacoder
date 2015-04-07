@@ -9,8 +9,9 @@ plot_taxonomy(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   overlap_bias = 15, min_label_size = 0.015, line_label_offset = 1,
   margin_size = 0.05, aspect_ratio = NULL, layout_func = NULL,
   layout_args = NULL, titles = NULL, no_stem = TRUE,
-  vertex_color_series = c("grey", "red", "green", "blue"),
-  line_color_series = c("grey", "red", "green", "blue"), data_only = FALSE)
+  vertex_color_series = c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"),
+  line_color_series = c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"),
+  data_only = FALSE)
 }
 \arguments{
 \item{taxon_id}{The unique ids of the taxon for each row.}
