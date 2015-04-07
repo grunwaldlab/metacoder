@@ -389,10 +389,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$vertex_color <- vertex_color
   }
   if (is.numeric(data$vertex_color)) { ## Not factors or hex codes
-    no_color_in_palette <- 10000
+    no_color_in_palette <- 1000
     palette <- colorRampPalette(vertex_color_series)(no_color_in_palette)
-    color_index <- (no_color_in_palette - 1) * data$vertex_color/max(data$vertex_color) + 1
-    data$vertex_color <- palette[as.integer(color_index)]    
+    color_index <- as.integer(scales::rescale(data$vertex_color, to = c(1, no_color_in_palette)))
+    data$vertex_color <- palette[color_index]    
   }
   vertex_data$vertex_color <- data$vertex_color[as.numeric(vertex_data$group)]    
   # Get edge color ---------------------------------------------------------------------------------
@@ -402,10 +402,10 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
     data$line_color <- line_color
   }
   if (is.numeric(data$line_color)) { ## Not factors or hex codes
-    no_color_in_palette <- 10000
+    no_color_in_palette <- 1000
     palette <- colorRampPalette(line_color_series)(no_color_in_palette)
-    color_index <- (no_color_in_palette - 1) * data$line_color/max(data$line_color) + 1
-    data$line_color <- palette[as.integer(color_index)]    
+    color_index <- as.integer(scales::rescale(data$line_color, to = c(1, no_color_in_palette)))
+    data$line_color <- palette[color_index]    
   }
   line_data$line_color <- data$line_color[as.numeric(line_data$group)]
   # Get vertex labels ------------------------------------------------------------------------------
@@ -535,7 +535,66 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
 
 
 
+#===================================================================================================
+#' Make legend
+#' 
+#' Make legend coordinants for color gradient
+#' 
+#' @param colors (\code{character}) Colors used in the gradient. Must be interpretable by
+#'   \code{\link{colorRampPalette}}.
+#' @param min_value (\code{numeric}; length = 1) The minimum value on the scale that the colors
+#'   represent
+#' @param max_value (\code{numeric}; length = 1) The maximum value on the scale that the colors
+#'   represent
+#' @param width (\code{numeric}; length = 1) The width of the legend color gradient, not including
+#'   the ticks or labels.
+#' @param width (\code{numeric}; length = 1) The height of the legend color gradient
+#' @param tick_height (\code{numeric}; length = 1) The width of the ticks
+#' @param tick_width (\code{numeric}; length = 1) The height (i.e. thickness) of the ticks
+#' @param label_count (\code{numeric}; length = 1) The number of labels
+#' @param color_count (\code{numeric}; length = 1) The number of distinct colors in the gradient
+#' 
+#' @return A list of 1) a \code{data.frame} of color block coordinants that can be plotted with
+#' ggplot2::geom_polygon, 2) label y, 3) label x. 
+color_legend <- function(colors, min_value, max_value, width, height, 
+                         tick_height = height / 100, tick_width = width / 10, 
+                         label_count = 7, color_count = 20) {
+  label_values <- scales::rescale(1:label_count, to = c(min_value, max_value))
+  label_chars <- as.character(signif(label_values, digits = 2))
+  
+  tick_y <- scales::rescale(1:label_count, to = c(0, height - (height / (color_count - 1))))
+  
+  
+  block_colors <- colorRampPalette(colors)(color_count)
+  block_y <- scales::rescale(1:color_count, to = c(0, height - (height / (color_count - 1))))
+  block_coords <- function(x, y, w, h, group, color) {
+    data.frame(x = c(x, x, x + w, x + w),
+               y = c(y, y + h, y + h, y),
+               group = rep(group, 4),
+               color = rep(color, 4))
+  }
+  blocks <- do.call(rbind, mapply(block_coords,
+                                  x = 0,
+                                  y = block_y,
+                                  w = width,
+                                  h = height / (color_count - 1),
+                                  group = 1:color_count,
+                                  color = block_colors, 
+                                  SIMPLIFY = FALSE))
+  ticks <- do.call(rbind, mapply(block_coords,
+                                 x = width,
+                                 y = tick_y,
+                                 w = tick_width,
+                                 h = tick_height,
+                                 group = (max(blocks$group) + 1):(max(blocks$group) + label_count),
+                                 color = "#000000", 
+                                 SIMPLIFY = FALSE))
+  
 
+  return(list(coords = rbind(blocks, ticks),
+              label_x = rep(width + tick_width, length(tick_y)),
+              label_y = tick_y))
+}
 
 
 
