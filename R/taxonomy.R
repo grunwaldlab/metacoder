@@ -912,3 +912,19 @@ get_subtaxa <- function(target, taxa, parents, recursive = TRUE) {
   } 
   return(subtaxa) 
 }
+
+
+
+#===================================================================================================
+#' Apply a function to items of each taxon
+#' 
+#' Calculates a value for each taxon using a function that accepts a vector of item data/ids for
+#' each taxon. Returns the a vector of results of the same length as order as the taxa used. 
+#' 
+#' @param taxa (\code{character}) Unique taxon ids.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of \code{taxa}. 
+#' @param items (\code{character}) Unique taxon ids of a set of items.
+#' @param stat (\code{vector}) The input value given to the function corresponding to the
+#'   \code{items} argument. If not supplied, the \code{items} taxon ids are given to the function.
+#' @param fun (\code{function}) The function to be applied. 
+#' 
