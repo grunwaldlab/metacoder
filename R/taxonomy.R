@@ -209,12 +209,12 @@ append_to_each <- function(my_list, data) {
 
 
 #===================================================================================================
-#' Add ids for classifications
+#' Add IDs for classifications
 #' 
 #' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications. 
 #' @param id_key (\code{list} of named \code{data.frame}) A list defining what classification every 
-#' unique id is. If not provided, unique ids will be generated from \code{classifications}.
-#' @param id_col_name (\code{character}) The name of the column of unique ids that will be added
+#' unique id is. If not provided, unique IDs will be generated from \code{classifications}.
+#' @param id_col_name (\code{character}) The name of the column of unique IDs that will be added
 #' to each classification.
 #' 
 #' @seealso unique_taxa
@@ -232,11 +232,11 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "taxon_i
 }
 
 #===================================================================================================
-#' Generate new unique ids
+#' Generate new unique IDs
 #' 
-#' Makes a vector of unique ids that differ from a previously defined set of unique ids. 
-#' @param count (\code{numeric} of length 1) The number of new unique ids to generate
-#' @param existing (\code{character}) Existing unique ids. These will not appear in the output.
+#' Makes a vector of unique IDs that differ from a previously defined set of unique IDs. 
+#' @param count (\code{numeric} of length 1) The number of new unique IDs to generate
+#' @param existing (\code{character}) Existing unique IDs. These will not appear in the output.
 make_new_ids <- function(count, existing) {
   output <- rep(NA, count)
   current <- 1
@@ -270,7 +270,7 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
 #'    to a particular \code{database}.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-#'    \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic classification
+#'    \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
 #'  from broad to specific (see \code{class_tax_rev}) for a particular \code{database}. Individual taxa
 #'  are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
 #'  \code{class_rank_sep} argument.}
@@ -297,13 +297,13 @@ make_new_ids <- function(count, existing) {
 #' @param database (\code{character; length == 1}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  and "nbn".
-#' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary ids is
+#' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary IDs is
 #'  handled. Possible options are:
 #'  \describe{
-#'    \item{\code{"allow"}}{Arbitrary ids are automatically generated if needed. These can occur intermixed
-#'    with offical database ids in the case of failed database lookups.}
-#'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary ids are used.}
-#'    \item{\code{"error"}}{Cause an error if arbitrary ids are needed.}
+#'    \item{\code{"allow"}}{Arbitrary IDs are automatically generated if needed. These can occur intermixed
+#'    with offical database IDs in the case of failed database lookups.}
+#'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary IDs are used.}
+#'    \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
 #'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
 #'    \item{\code{"none"}}{Do not use a database to look up information.}
 #'  } 
@@ -316,7 +316,7 @@ make_new_ids <- function(count, existing) {
 #'    on each taxon. The number and nature of columns depend on the input data. Typically, a column
 #'    of taxon names is present.}
 #'    \item{\code{items}}{A data.frame with one row per input item (typically sequences)
-#'    containing their taxon ids and other informtion, depending on input.}
+#'    containing their taxon IDs and other informtion, depending on input.}
 #'    }
 #'    
 #' @export
@@ -354,7 +354,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   # Get taxon id -----------------------------------------------------------------------------------
   report_found <- function(get_id_result) {
     not_found <- sum(attr(get_id_result, "match") ==  "not found")
-    if (not_found > 0) warning(paste0("Could not find taxon ids for ", not_found, " items."))    
+    if (not_found > 0) warning(paste0("Could not find taxon IDs for ", not_found, " items."))    
   }
   arbitrary_taxon_ids <- FALSE
   if ("taxon_id" %in% names(item_data)) {
@@ -372,7 +372,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
     report_found(item_data$taxon_id)
   } else {
-    warning("Insufficient information supplied to infer taxon ids. Assigning arbitrary ids.")
+    warning("Insufficient information supplied to infer taxon IDs. Assigning arbitrary IDs.")
     arbitrary_taxon_ids <- TRUE
   }
   # Get taxon id lineage ---------------------------------------------------------------------------
@@ -407,10 +407,10 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_classification <- add_taxon_ids(item_classification)
     get_id_from_name <- TRUE 
   } else {
-    stop("Insufficient information supplied to infer lineage taxon ids. Taxonomy structure cannot be determined.")
+    stop("Insufficient information supplied to infer lineage taxon IDs. Taxonomy structure cannot be determined.")
     item_classification <- NULL
   } 
-  # Add arbitrary taxon ids to item data if necessary ----------------------------------------------
+  # Add arbitrary taxon IDs to item data if necessary ----------------------------------------------
   if (arbitrary_taxon_ids) item_data$taxon_id <- extract_last(item_classification, "taxon_id")
   # Get taxon data ---------------------------------------------------------------------------------
   taxon_id_key <- unique_taxa(item_classification, id_column = "taxon_id")
@@ -422,8 +422,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     not_unique <- names(which(table(taxon_ids) != 1))
     taxon_ids[taxon_ids %in% not_unique] <- NA
     ids_found <- !is.na(taxon_ids)
-    if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Could not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary ids.")
-    if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Could not look up all taxon names. Arbitrary ids will be applied.")
+    if (arbitrary_ids == "error" && any(is.na(taxon_ids))) stop("Could not look up all taxon names. Use option `arbitrary_ids` to allow arbitrary IDs.")
+    if (arbitrary_ids == "warn" && any(is.na(taxon_ids))) warning("Could not look up all taxon names. Arbitrary IDs will be applied.")
     taxon_data$taxon_id[ids_found] <- taxon_ids[ids_found]
     if (arbitrary_ids == "na") {
       taxon_data$taxon_id[!ids_found] <- NA
@@ -461,7 +461,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
                    function(x) unique(item_data[x == item_data$taxon_id & !is.na(item_data$taxon_id), col_index]))
     data[lapply(data, length) == 0] <- NA
     if (max(vapply(data, length, numeric(1))) > 1)
-      stop(paste0("taxon_info field ", col_index - 1, " content does not correspond to taxa ids.", 
+      stop(paste0("taxon_info field ", col_index - 1, " content does not correspond to taxa IDs.", 
                   " Perhaps an item_info field would be more appropriate."))
     return(unlist(data))
   }
@@ -469,7 +469,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   if (length(taxon_info_cols) > 0) {
     taxon_data <- cbind(taxon_data, data.frame(lapply(taxon_info_cols, map_item_to_taxon)))    
   }
-  # Add arbitrary item ids to item data if necessary -----------------------------------------------
+  # Add arbitrary item IDs to item data if necessary -----------------------------------------------
   if (!("item_id" %in% names(item_data))) item_data$item_id <- 1:nrow(item_data)
   # Add taxon parent column ------------------------------------------------------------------------
   get_parent <- function(taxa, classifications) {
@@ -511,7 +511,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' structure possibly representing multiple items.
 #' @param get_subtaxa (\code{function(character)}) A function that returns the sub taxa for a given
 #' taxon. The function's first argument should be the taxon id and it should return a vector of
-#' taxon ids. 
+#' taxon IDs. 
 #' @param get_rank (\code{function(character)}) A function that returns the rank of a given taxon
 #' id. The function's first argument should be the taxon id and it should return the rank of that
 #' taxon.
@@ -536,7 +536,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
 #' structure containing the information of multiple items and a taxon id.
 #' Returns a object of the same type with some of the items potentially removed.  
 #' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
-#' structure containing the information of multiple subtaxa ids and the current taxon id.
+#' structure containing the information of multiple subtaxa IDs and the current taxon id.
 #' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
 #' \code{NULL}, then no items for the current taxon are returned.
 #' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
@@ -632,10 +632,10 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
 #' This function takes other functions as arguments that define how the taxonomy is iterpreted.
 #' 
-#' @param item_ids (\code{character}) Unique taxon ids of a set of items. 
-#' @param taxon_ids (\code{character}) All possible unique taxon ids. Must have same order and
+#' @param item_ids (\code{character}) Unique taxon IDs of a set of items. 
+#' @param taxon_ids (\code{character}) All possible unique taxon IDs. Must have same order and
 #' length as \code{parent_id}.
-#' @param parent_ids (\code{character}) Unique taxon ids of supertaxa of \code{taxon_ids}. Must have
+#' @param parent_ids (\code{character}) Unique taxon IDs of supertaxa of \code{taxon_ids}. Must have
 #' same order and length as \code{taxon_ids}.
 #' @param ranks (\code{character}) Ranks of \code{taxon_ids}. Must have
 #' same order and length as \code{taxon_ids}.
@@ -660,7 +660,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' structure containing the information of multiple items and a taxon id.
 #' Returns a object of the same type with some of the items potentially removed.  
 #' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
-#' structure containing the information of multiple subtaxa ids and the current taxon id.
+#' structure containing the information of multiple subtaxa IDs and the current taxon id.
 #' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
 #' \code{NULL}, then no items for the current taxon are returned.
 #' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
@@ -691,11 +691,11 @@ taxonomic_sample <- function(root_id, item_ids, taxon_ids, parent_ids, ranks = N
 #' 
 #' Extracts the classification of every taxon in a list of unique taxa and their supertaxa.
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
 #' 
-#' @return A list of vectors of taxa ids. Each list entry corresponds to the \code{taxa} supplied.
+#' @return A list of vectors of taxa IDs. Each list entry corresponds to the \code{taxa} supplied.
 #' 
 #' @export
 get_class_from_el <- function(taxa, parents) {
@@ -719,8 +719,8 @@ get_class_from_el <- function(taxa, parents) {
 #' 
 #' Gets the number of ancestors/supergroups for items of an edge/adjacency list
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
 #' 
 #' @export
@@ -735,8 +735,8 @@ edge_list_depth <-  function(taxa, parents) {
 #' Returns an ordered factor of the ranks of a given taxonomy.
 #' It also checks if rank corresponds consistently with level.
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
 #' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
 #' \code{taxa}.
@@ -767,8 +767,8 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 #' 
 #' Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' @param level (\code{character} or \code{numeric} of length 1)
 #' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
 #' 
@@ -800,12 +800,12 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
 #' This preserves supertaxa, not specified in the subset, but needed to define the internal tree 
 #' structure of the taxonomy. 
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
-#' @param subset (\code{character}) Taxon ids to restrict the new taxonomy to.
+#' @param subset (\code{character}) Taxon IDs to restrict the new taxonomy to.
 #' 
-#' @return A vector of unique taxon ids.
+#' @return A vector of unique taxon IDs.
 #' 
 #' @export
 restrict_taxonomy <- function(taxa, parents, subset) {
@@ -820,9 +820,9 @@ restrict_taxonomy <- function(taxa, parents, subset) {
 #' 
 #' Get counts of items at each unique taxon in a taxonomy, including internal taxa.
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
-#' @param items (\code{character}) Taxon ids for a set of items to count.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
+#' @param items (\code{character}) Taxon IDs for a set of items to count.
 #' 
 #' @return A named vector of counts corresponding to the taxa in \code{taxa}
 #' @export
@@ -840,8 +840,8 @@ get_taxon_count <- function(taxa, parents, items) {
 #' 
 #' Given an adjacency/edge list, return the indexes of taxa shared by all subtaxa.
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. A
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. A
 #'   lack of a parent should be coded as \code{NA}.
 #' @param include_root (\code{logical}) If \code{TRUE}, the index of the new root (taxon with the 
 #'   rank that still contains all other taxa). 
@@ -868,8 +868,8 @@ get_stem_taxa <- function(taxa, parents, include_root = FALSE) {
 #' 
 #' Validate a taxon edge list for use in other functions
 #' 
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. The
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
 #'   lack of a parent should be coded as \code{NA}.
 #' 
 #' @return (\code{logical}) Returns \code{TRUE} if the list is valid.
@@ -880,20 +880,41 @@ validate_edge_list <- function(taxa, parents) {
   if (!all(parents %in% c(taxa, NA))) stop("All 'parent' taxon IDs not found in 'taxa' taxon IDs")
 }
 
+
+
+#===================================================================================================
+#' Get all super taxa of a taxon
+#' 
+#' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
+#' supertaxa (i.e. all taxa the target taxa are a part of).
+#' 
+#' @param target (\code{character}) Taxon IDs for which subtaxa will be returned.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
+#'   lack of a parent should be coded as \code{NA}.
+#' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
+#'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc. 
+#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#'   vector of unique taxon IDs 
+#'  
+#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
+#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
+#'   IDs for all \code{target} taxa are returned in a single vector.
+
 #===================================================================================================
 #' Get all subtaxa of a taxon
 #' 
-#' Given one or more taxa ids and the edge list defining the taxonomy, return the taxon ids of all 
+#' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
 #' subtaxa
 #' 
-#' @param target (\code{character}) Taxon ids for which subtaxa will be returned.
-#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. The
+#' @param target (\code{character}) Taxon IDs for which subtaxa will be returned.
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
 #'   lack of a parent should be coded as \code{NA}.
 #' @param recursive (\code{logical}) If \code{FALSE}, only return the subtaxa one level below the
 #'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc. 
 #'   
-#' @return (\code{integer}) The ids of subtaxa of the target taxa.
+#' @return (\code{integer}) The IDs of subtaxa of the target taxa.
 #' 
 #' @export
 get_subtaxa <- function(target, taxa, parents, recursive = TRUE) {
@@ -918,13 +939,13 @@ get_subtaxa <- function(target, taxa, parents, recursive = TRUE) {
 #===================================================================================================
 #' Apply a function to items of each taxon
 #' 
-#' Calculates a value for each taxon using a function that accepts a vector of item data/ids for
+#' Calculates a value for each taxon using a function that accepts a vector of item data/IDs for
 #' each taxon. Returns the a vector of results of the same length as order as the taxa used. 
 #' 
-#' @param taxa (\code{character}) Unique taxon ids.
-#' @param parents (\code{character}) Unique taxon ids for the supertaxa of \code{taxa}. 
-#' @param items (\code{character}) Unique taxon ids of a set of items.
+#' @param taxa (\code{character}) Unique taxon IDs.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of \code{taxa}. 
+#' @param items (\code{character}) Unique taxon IDs of a set of items.
 #' @param stat (\code{vector}) The input value given to the function corresponding to the
-#'   \code{items} argument. If not supplied, the \code{items} taxon ids are given to the function.
+#'   \code{items} argument. If not supplied, the \code{items} taxon IDs are given to the function.
 #' @param fun (\code{function}) The function to be applied. 
 #' 
