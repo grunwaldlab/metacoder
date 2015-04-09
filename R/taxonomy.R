@@ -733,7 +733,7 @@ edge_list_depth <-  function(taxa, parents) {
 #' Get ordered ranks from taxonomy
 #' 
 #' Returns an ordered factor of the ranks of a given taxonomy.
-#' It also checks if rank correspond consistently with level.
+#' It also checks if rank corresponds consistently with level.
 #' 
 #' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
 #' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
