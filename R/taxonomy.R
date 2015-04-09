@@ -861,3 +861,54 @@ get_stem_taxa <- function(taxa, parents, include_root = FALSE) {
   }
   return(stem_indexes)
 }
+
+
+#===================================================================================================
+#' Validate a taxon edge list
+#' 
+#' Validate a taxon edge list for use in other functions
+#' 
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. The
+#'   lack of a parent should be coded as \code{NA}.
+#' 
+#' @return (\code{logical}) Returns \code{TRUE} if the list is valid.
+validate_edge_list <- function(taxa, parents) {
+  if (length(taxa) == 0) stop("'taxa' has 0 length")
+  if (length(parents) == 0) stop("'parents' has 0 length")
+  if (length(taxa) != length(parents)) stop("'taxa' and 'parents' are of unequal length")
+  if (!all(parents %in% c(taxa, NA))) stop("All 'parent' taxon IDs not found in 'taxa' taxon IDs")
+}
+
+#===================================================================================================
+#' Get all subtaxa of a taxon
+#' 
+#' Given one or more taxa ids and the edge list defining the taxonomy, return the taxon ids of all 
+#' subtaxa
+#' 
+#' @param target (\code{character}) Taxon ids for which subtaxa will be returned.
+#' @param taxa (\code{character}) Unique taxon ids for every possible taxon.
+#' @param parents (\code{character}) Unique taxon ids for the supertaxa of every possible taxon. The
+#'   lack of a parent should be coded as \code{NA}.
+#' @param recursive (\code{logical}) If \code{FALSE}, only return the subtaxa one level below the
+#'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc. 
+#'   
+#' @return (\code{integer}) The ids of subtaxa of the target taxa.
+#' 
+#' @export
+get_subtaxa <- function(target, taxa, parents, recursive = TRUE) {
+  # Argument validataion ---------------------------------------------------------------------------
+  if (length(target) == 0) stop("Argument 'target' has 0 length")
+  if (!all(target %in% taxa)) stop("All 'target' taxon IDs not found in 'taxa' taxon IDs")
+  validate_edge_list(taxa, parents)
+  # Get subtaxa ------------------------------------------------------------------------------------
+  for_one_taxa <- function(target) {
+    which(target == parents)
+  }
+  subtaxa <- unlist(lapply(target, for_one_taxa))
+  if (recursive && length(subtaxa) > 0) {
+    subtaxa <- unlist(c(subtaxa, lapply(subtaxa, get_subtaxa,
+                                        taxa = taxa, parents = parents, recursive = recursive)))
+  } 
+  return(subtaxa) 
+}
