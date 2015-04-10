@@ -889,7 +889,7 @@ validate_edge_list <- function(taxa, parents) {
 #' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
 #' supertaxa (i.e. all taxa the target taxa are a part of).
 #' 
-#' @param targets (\code{character}) Taxon IDs for which subtaxa will be returned.
+#' @param targets (\code{character}) Taxon IDs for which supertaxa will be returned.
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
 #'   lack of a parent should be coded as \code{NA}.
@@ -905,8 +905,8 @@ validate_edge_list <- function(taxa, parents) {
 get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE,
                           include_target = FALSE) {
   # Argument validataion ---------------------------------------------------------------------------
-  if (length(targets) == 0) stop("Argument 'target' has 0 length")
-  if (!all(targets %in% taxa)) stop("All 'target' taxon IDs not found in 'taxa' taxon IDs")
+  if (length(targets) == 0) stop("Argument 'targets' has 0 length")
+  if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
   validate_edge_list(taxa, parents)
   parents[!(parents %in% taxa)] <- NA
   
