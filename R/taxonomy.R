@@ -884,12 +884,12 @@ validate_edge_list <- function(taxa, parents) {
 
 
 #===================================================================================================
-#' Get all super taxa of a taxon
+#' Get all supertaxa of a taxon
 #' 
 #' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
 #' supertaxa (i.e. all taxa the target taxa are a part of).
 #' 
-#' @param target (\code{character}) Taxon IDs for which subtaxa will be returned.
+#' @param targets (\code{character}) Taxon IDs for which subtaxa will be returned.
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
 #'   lack of a parent should be coded as \code{NA}.
@@ -897,10 +897,43 @@ validate_edge_list <- function(taxa, parents) {
 #'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc. 
 #' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
 #'   vector of unique taxon IDs 
+#' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
 #'  
 #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
 #'   IDs for all \code{target} taxa are returned in a single vector.
+get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE,
+                          include_target = FALSE) {
+  # Argument validataion ---------------------------------------------------------------------------
+  if (length(targets) == 0) stop("Argument 'target' has 0 length")
+  if (!all(targets %in% taxa)) stop("All 'target' taxon IDs not found in 'taxa' taxon IDs")
+  validate_edge_list(taxa, parents)
+  parents[!(parents %in% taxa)] <- NA
+  
+  # Recursive function for one target --------------------------------------------------------------
+  get_one <- function(target) {
+    supertaxon <- parents[taxa == target]
+    if (recursive) {
+      if (is.na(supertaxon)) {
+        return(target)
+      } else {
+        return(c(target, get_one(supertaxon)))
+      }
+    } else {
+      return(c(target, supertaxon))
+    }
+  }
+  
+  # Apply function to all targets ------------------------------------------------------------------
+  supertaxa <- lapply(targets, get_one)
+  if (!include_target) supertaxa <- lapply(supertaxa, `[`, -1)
+  if (simplify) supertaxa <- unlist(supertaxa)
+  return(supertaxa)
+}
+
+
+
+
 
 #===================================================================================================
 #' Get all subtaxa of a taxon
