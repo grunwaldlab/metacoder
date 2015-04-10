@@ -752,8 +752,8 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
                           mean = vapply(level_by_rank, mean, numeric(1)))
   # Identify overlapping levels bewteen ranks ------------------------------------------------------
   overlapping <- vapply(1:nrow(rank_data),
-                         function(i) any(rank_data$min[i] <= rank_data$max[-i] & rank_data$min[-i] <= rank_data$max[i]),
-                         logical(1))
+                        function(i) any(rank_data$min[i] <= rank_data$max[-i] & rank_data$min[-i] <= rank_data$max[i]),
+                        logical(1))
   if (strict && any(overlapping)) stop("Inconsistent rank levels. Use strict == FALSE or check input data.")
   if (length(unique(rank_data$mean)) != length(rank_data$mean)) warning("Order of ranks might be partially arbitrary")
   # construct ordered factor for ranks -------------------------------------------------------------
@@ -962,11 +962,12 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
   if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
   validate_edge_list(taxa, parents)
   parents[!(parents %in% taxa)] <- NA
-    
+  
   # Get level of each input to determin processing order -------------------------------------------
   levels <- vapply(get_supertaxa(targets, taxa, parents), length, numeric(1))
+  original_targets <- targets
   targets <- targets[order(levels, decreasing = TRUE)]
-
+  
   # Recursive function for one target --------------------------------------------------------------
   get_one <- function(target, output) {
     if (target %in% names(output)) { #if this taxa has already been processed
@@ -991,13 +992,14 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
   output <- list()
   for (target in targets)  {
     result <- list(get_one(target, output))
-    names(result) <- target
     output <- c(output, result)
   }
+  names(output) <- targets
+  output <- output[original_targets]
   
   # Apply `simplify` option ------------------------------------------------------------------------
   if (simplify) output <- unique(unname(unlist(output)))
-
+  
   return(output)
 }
 
