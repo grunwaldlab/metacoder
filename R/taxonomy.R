@@ -970,16 +970,16 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
   # Recursive function for one target --------------------------------------------------------------
   get_one <- function(target, output) {
     if (target %in% names(output)) { #if this taxa has already been processed
-      return(c(target, output[[target]]))
+      return(output[[target]])
     } else {
       subtaxa <- taxa[parents == target]
       subtaxa <- subtaxa[!is.na(subtaxa)]
       if (recursive) {
         if (length(subtaxa) == 0) {
-          return(target)
+          return(subtaxa)
         } else {
           subsubtaxa <- unlist(lapply(subtaxa, get_one, output = output))
-          return(c(target, subsubtaxa))
+          return(c(subtaxa, subsubtaxa))
         }
       } else {
         return(subtaxa)
@@ -991,7 +991,6 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
   output <- list()
   for (target in targets)  {
     result <- list(get_one(target, output))
-    result[[1]] <- result[[1]][-1] #remove target from start of each list
     names(result) <- target
     output <- c(output, result)
   }
