@@ -19,7 +19,7 @@ structure possibly representing multiple items.}
 
 \item{get_subtaxa}{(\code{function(character)}) A function that returns the sub taxa for a given
 taxon. The function's first argument should be the taxon id and it should return a vector of
-taxon ids.}
+taxon IDs.}
 
 \item{get_rank}{(\code{function(character)}) A function that returns the rank of a given taxon
 id. The function's first argument should be the taxon id and it should return the rank of that
@@ -52,7 +52,7 @@ structure containing the information of multiple items and a taxon id.
 Returns a object of the same type with some of the items potentially removed.}
 
 \item{subtaxa_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
-structure containing the information of multiple subtaxa ids and the current taxon id.
+structure containing the information of multiple subtaxa IDs and the current taxon id.
 Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
 \code{NULL}, then no items for the current taxon are returned.}
 

@@ -7,9 +7,9 @@
 taxonomy_ranks(taxa, parents, rank, strict = TRUE)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 Root taxa should have \code{NA} in this column.}
 
 \item{rank}{(\code{character}) The rank designation (e.g. "genus") corresponding to each item in
@@ -20,6 +20,6 @@ with overlapping level ranges will cause an error.}
 }
 \description{
 Returns an ordered factor of the ranks of a given taxonomy.
-It also checks if rank correspond consistently with level.
+It also checks if rank corresponds consistently with level.
 }
 

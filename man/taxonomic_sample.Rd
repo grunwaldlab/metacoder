@@ -13,12 +13,12 @@ taxonomic_sample(root_id, item_ids, taxon_ids, parent_ids, ranks = NULL,
 \item{root_id}{(\code{character} of length 1) The taxon to sample. By default, the root of the
 taxonomy used.}
 
-\item{item_ids}{(\code{character}) Unique taxon ids of a set of items.}
+\item{item_ids}{(\code{character}) Unique taxon IDs of a set of items.}
 
-\item{taxon_ids}{(\code{character}) All possible unique taxon ids. Must have same order and
+\item{taxon_ids}{(\code{character}) All possible unique taxon IDs. Must have same order and
 length as \code{parent_id}.}
 
-\item{parent_ids}{(\code{character}) Unique taxon ids of supertaxa of \code{taxon_ids}. Must have
+\item{parent_ids}{(\code{character}) Unique taxon IDs of supertaxa of \code{taxon_ids}. Must have
 same order and length as \code{taxon_ids}.}
 
 \item{ranks}{(\code{character}) Ranks of \code{taxon_ids}. Must have
@@ -48,7 +48,7 @@ structure containing the information of multiple items and a taxon id.
 Returns a object of the same type with some of the items potentially removed.}
 
 \item{subtaxa_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
-structure containing the information of multiple subtaxa ids and the current taxon id.
+structure containing the information of multiple subtaxa IDs and the current taxon id.
 Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
 \code{NULL}, then no items for the current taxon are returned.}
 

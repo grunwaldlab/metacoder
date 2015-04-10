@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxonomy.R
 \name{add_taxon_ids}
 \alias{add_taxon_ids}
-\title{Add ids for classifications}
+\title{Add IDs for classifications}
 \usage{
 add_taxon_ids(classifications, id_key = NULL, id_col_name = "taxon_id")
 }
@@ -10,13 +10,13 @@ add_taxon_ids(classifications, id_key = NULL, id_col_name = "taxon_id")
 \item{classifications}{(\code{list} of \code{data.frame}) Taxnomic classifications.}
 
 \item{id_key}{(\code{list} of named \code{data.frame}) A list defining what classification every
-unique id is. If not provided, unique ids will be generated from \code{classifications}.}
+unique id is. If not provided, unique IDs will be generated from \code{classifications}.}
 
-\item{id_col_name}{(\code{character}) The name of the column of unique ids that will be added
+\item{id_col_name}{(\code{character}) The name of the column of unique IDs that will be added
 to each classification.}
 }
 \description{
-Add ids for classifications
+Add IDs for classifications
 }
 \seealso{
 unique_taxa

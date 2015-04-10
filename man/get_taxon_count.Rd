@@ -7,11 +7,11 @@
 get_taxon_count(taxa, parents, items)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon.}
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.}
 
-\item{items}{(\code{character}) Taxon ids for a set of items to count.}
+\item{items}{(\code{character}) Taxon IDs for a set of items to count.}
 }
 \value{
 A named vector of counts corresponding to the taxa in \code{taxa}

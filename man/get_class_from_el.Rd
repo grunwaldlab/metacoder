@@ -7,13 +7,13 @@
 get_class_from_el(taxa, parents)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 Root taxa should have \code{NA} in this column.}
 }
 \value{
-A list of vectors of taxa ids. Each list entry corresponds to the \code{taxa} supplied.
+A list of vectors of taxa IDs. Each list entry corresponds to the \code{taxa} supplied.
 }
 \description{
 Extracts the classification of every taxon in a list of unique taxa and their supertaxa.

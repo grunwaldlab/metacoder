@@ -24,7 +24,7 @@ Each term must be one of those decribed below:
   \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
   to a particular \code{database}.}
   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-  \item{\code{class_id}}{A list of taxa unique ids that consitute the full taxonomic classification
+  \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
 from broad to specific (see \code{class_tax_rev}) for a particular \code{database}. Individual taxa
 are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
 \code{class_rank_sep} argument.}
@@ -58,13 +58,13 @@ classification.}
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 and "nbn".}
 
-\item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary ids is
+\item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary IDs is
 handled. Possible options are:
 \describe{
-  \item{\code{"allow"}}{Arbitrary ids are automatically generated if needed. These can occur intermixed
-  with offical database ids in the case of failed database lookups.}
-  \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary ids are used.}
-  \item{\code{"error"}}{Cause an error if arbitrary ids are needed.}
+  \item{\code{"allow"}}{Arbitrary IDs are automatically generated if needed. These can occur intermixed
+  with offical database IDs in the case of failed database lookups.}
+  \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary IDs are used.}
+  \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
   \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
   \item{\code{"none"}}{Do not use a database to look up information.}
 }}
@@ -79,7 +79,7 @@ Returns a list of two elements:
    on each taxon. The number and nature of columns depend on the input data. Typically, a column
    of taxon names is present.}
    \item{\code{items}}{A data.frame with one row per input item (typically sequences)
-   containing their taxon ids and other informtion, depending on input.}
+   containing their taxon IDs and other informtion, depending on input.}
    }
 }
 \description{

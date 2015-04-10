@@ -7,9 +7,9 @@
 edge_list_depth(taxa, parents)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon.
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 Root taxa should have \code{NA} in this column.}
 }
 \description{

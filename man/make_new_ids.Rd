@@ -2,16 +2,16 @@
 % Please edit documentation in R/taxonomy.R
 \name{make_new_ids}
 \alias{make_new_ids}
-\title{Generate new unique ids}
+\title{Generate new unique IDs}
 \usage{
 make_new_ids(count, existing)
 }
 \arguments{
-\item{count}{(\code{numeric} of length 1) The number of new unique ids to generate}
+\item{count}{(\code{numeric} of length 1) The number of new unique IDs to generate}
 
-\item{existing}{(\code{character}) Existing unique ids. These will not appear in the output.}
+\item{existing}{(\code{character}) Existing unique IDs. These will not appear in the output.}
 }
 \description{
-Makes a vector of unique ids that differ from a previously defined set of unique ids.
+Makes a vector of unique IDs that differ from a previously defined set of unique IDs.
 }
 

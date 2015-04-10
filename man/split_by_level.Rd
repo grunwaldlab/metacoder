@@ -7,9 +7,9 @@
 split_by_level(taxa, parents, level, rank = NULL)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon.}
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.}
 
 \item{level}{(\code{character} or \code{numeric} of length 1)}
 

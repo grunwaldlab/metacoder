@@ -7,9 +7,9 @@
 get_stem_taxa(taxa, parents, include_root = FALSE)
 }
 \arguments{
-\item{taxa}{(\code{character}) Unique taxon ids for every possible taxon.}
+\item{taxa}{(\code{character}) Unique taxon IDs for every possible taxon.}
 
-\item{parents}{(\code{character}) Unique taxon ids for the supertaxa of every possible taxon. A
+\item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. A
 lack of a parent should be coded as \code{NA}.}
 
 \item{include_root}{(\code{logical}) If \code{TRUE}, the index of the new root (taxon with the
