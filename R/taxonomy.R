@@ -878,6 +878,7 @@ validate_edge_list <- function(taxa, parents) {
   if (length(parents) == 0) stop("'parents' has 0 length")
   if (length(taxa) != length(parents)) stop("'taxa' and 'parents' are of unequal length")
   if (!all(parents %in% c(taxa, NA))) stop("All 'parent' taxon IDs not found in 'taxa' taxon IDs")
+  if (length(unique(taxa)) != length(taxa)) stop("All 'taxa' not unique.")
 }
 
 
