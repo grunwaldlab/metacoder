@@ -13,4 +13,7 @@ plot_alignment(alignment)
 Make a plot pf a sequence alignment for an overview of alignment structure.
 NOT FINISHED.
 }
+\references{
+ColorBrewer2 was used for the color palette
+}
 
