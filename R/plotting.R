@@ -335,7 +335,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   all_pairwise <- molten_dist(x = data$x, y = data$y)
   smallest_side <- min(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
-  max_range <- c(min(all_pairwise$distance), smallest_side / 5)
+  max_range <- c(min(all_pairwise$distance), smallest_side / 2)
   min_range <- c(min(all_pairwise$distance) / 5, min(all_pairwise$distance))
   pairwise <- all_pairwise[all_pairwise$distance <= max_range[2], ]
   size_opt_func <- function(a_max, a_min) {
@@ -358,7 +358,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   opt_size_range <- get_optimal_range(max_range = max_range,
                                       min_range = min_range,
-                                      resolution = c(15, 20),
+                                      resolution = c(25, 25),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
   data$size <- scales::rescale(data$size, to = opt_size_range)
