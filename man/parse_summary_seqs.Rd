@@ -4,10 +4,12 @@
 \alias{parse_summary_seqs}
 \title{Parse summary.seqs output}
 \usage{
-parse_summary_seqs(text)
+parse_summary_seqs(text = NULL, file = NULL)
 }
 \arguments{
 \item{text}{The text output of \code{summary.seqs}}
+
+\item{file}{The path to saved output of \code{summary.seqs}}
 }
 \value{
 A \code{data.frame} of statistics

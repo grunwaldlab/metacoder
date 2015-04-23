@@ -5,10 +5,15 @@
 #' return the resutls in a \code{data.frame}
 #' 
 #' @param text The text output of \code{summary.seqs}
+#' @param file The path to saved output of \code{summary.seqs}
 #' 
 #' @return A \code{data.frame} of statistics
 #' 
-parse_summary_seqs <- function(text) {
+parse_summary_seqs <- function(text = NULL, file = NULL) {
+  # Parse arguments
+  if (sum(missing(text), missing(file)) != 1)
+    stop("Either 'text' or 'file' must be specified, but not both")
+  if (!missing(file)) text = readLines(file)
   # Split into lines
   text <- unlist(strsplit(text, split = "\n", fixed = TRUE))
   # Subset the lines with statistics
