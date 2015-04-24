@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxonomy.R
 \name{get_taxon_items}
 \alias{get_taxon_items}
-\title{Get all subtaxa of a taxon}
+\title{Get items associated with taxa}
 \usage{
 get_taxon_items(targets, taxa, parents, items, recursive = TRUE,
   simplify = FALSE)
@@ -29,7 +29,7 @@ If \code{simplify = FALSE}, then a list of vectors of item indexes are returned
   for all \code{target} taxa are returned in a single vector.
 }
 \description{
-Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all
-subtaxa
+Given one or more taxa IDs and the edge list defining the taxonomy, return the items
+(e.g. sequence information) associated with each taxon.
 }
 

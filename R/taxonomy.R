@@ -1006,10 +1006,10 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
 
 
 #===================================================================================================
-#' Get all subtaxa of a taxon
+#' Get items associated with taxa
 #' 
-#' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
-#' subtaxa
+#' Given one or more taxa IDs and the edge list defining the taxonomy, return the items
+#' (e.g. sequence information) associated with each taxon.
 #' 
 #' @param targets (\code{character}) Taxon IDs for which items will be returned.
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
