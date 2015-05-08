@@ -489,7 +489,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxon_data$level <- get_taxon_level(taxon_data$taxon_id, taxon_id_key)
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
-  names(item_data)[seq_along(key) + 1] <- names(key)
+  names(item_data)[seq_along(key) + 1] <- names(key)  
   return(list(taxonomy = taxon_id_key, taxa = taxon_data, items = item_data))
 }
 
