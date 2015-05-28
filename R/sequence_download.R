@@ -410,7 +410,10 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (!(rank %in% taxonomy_levels) || rank < target_rank) {
       sub_taxa <- taxize::ncbi_children(id = id)[[1]]
-      print(sub_taxa)
+      if (is.null(sub_taxa))  sub_taxa <- data.frame(childtaxa_id = numeric(),
+                                                     childtaxa_name = character(),
+                                                     childtaxa_rank = character())
+      message(sub_taxa)
     }
     # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (rank %in% taxonomy_levels && rank < target_rank) {
