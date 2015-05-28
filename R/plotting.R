@@ -335,7 +335,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   all_pairwise <- molten_dist(x = data$x, y = data$y)
   smallest_side <- min(c(max(data$x) - min(data$x), max(data$y) - min(data$y)))
-  max_range <- c(min(all_pairwise$distance), smallest_side / 5)
+  max_range <- c(min(all_pairwise$distance), smallest_side / 2)
   min_range <- c(min(all_pairwise$distance) / 5, min(all_pairwise$distance))
   pairwise <- all_pairwise[all_pairwise$distance <= max_range[2], ]
   size_opt_func <- function(a_max, a_min) {
@@ -358,7 +358,7 @@ plot_taxonomy <- function(taxon_id, parent_id, size = NULL, vertex_color = NULL,
   }
   opt_size_range <- get_optimal_range(max_range = max_range,
                                       min_range = min_range,
-                                      resolution = c(15, 20),
+                                      resolution = c(25, 25),
                                       opt_crit = size_opt_func, 
                                       choose_best = choose_best)
   data$size <- scales::rescale(data$size, to = opt_size_range)
@@ -852,4 +852,33 @@ new_plot_image_tree <- function(taxon_id, parent_id, size = NULL, vertex_image =
     }
     return(the_plot)    
   }
+}
+
+
+
+#===================================================================================================
+#' Display sequence alignment
+#' 
+#' Make a plot pf a sequence alignment for an overview of alignment structure. 
+#' NOT FINISHED.
+#' 
+#' @param alignment (\code{DNAbin}) A matrix representing a sequence alignment. 
+#' 
+#' @references ColorBrewer2 was used for the color palette
+plot_alignment <- function(alignment) {
+  color_key <- c("A" = "#a6cee3", "T" = "#1f78b4", "C" = "#b2df8a", "G" = "#33a02c", "-" = "#DDDDDD")
+  alignment <- as.character(alignment)
+  molten_alignment <- reshape::melt.matrix(alignment)
+  names(molten_alignment) <- c("name", "position", "base")
+  molten_alignment$base <-  toupper(molten_alignment$base)
+  molten_alignment$color <- color_key[molten_alignment$base]
+  molten_alignment$color[is.na(molten_alignment$color)] <- "#FFFFFF"
+  ggplot(molten_alignment, aes(x = position, y = name)) +
+    geom_tile(fill = molten_alignment$color) +
+    theme(panel.grid = element_blank(), 
+          panel.background = element_blank(),
+          axis.title = element_blank(),
+          axis.text  =  element_blank(),
+          axis.ticks = element_blank(), 
+          axis.line  = element_blank())
 }
