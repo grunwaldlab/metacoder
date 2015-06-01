@@ -453,3 +453,44 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
   output <- do.call(rbind, output)
   return(output)
 }
+
+
+
+
+#===================================================================================================
+#' Downloads sequences from ids
+#' 
+#' Downloads the sequences associated with GenBank accession ids.
+#' 
+#' @param ids (\code{character}) One or more accession numbers to get sequences for
+#' @param batch_size (\code{numeric} of length 1) The number of sequences to request in each query.
+#' To large of values might case failures and too small will increase time to completion.
+#' 
+#' @return (\code{list} of \code{character})
+#' 
+#' @export
+ncbi_sequence <- function (ids, batch_size = 100) 
+{
+  base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
+  output <- list()
+  while(length(ids) > 0) {
+    id_subset <- 1:min(length(ids), batch_size)
+    query <- paste(sep = "&",
+                   "db=nucleotide",
+                   "rettype=fasta",
+                   "retmode=text",
+                   paste0("id=", paste(ids[id_subset], collapse = ",")))
+    raw_result <- RCurl::getURL(paste0(base_url, query))
+    temp_path <- tempfile()
+    writeChar(raw_result, temp_path)
+    result <- ape::read.dna(temp_path, format = "fasta", as.character = TRUE)
+    if (length(id_subset) == 1)
+      result <- setNames(list(result[1,]), dimnames(result)[[1]])
+    if (length(id_subset) != length(result))
+      stop("Length of query and result do not match. Somthing went wrong.")
+    output <- c(output, result)
+    ids <- ids[-id_subset]
+    Sys.sleep(time = 0.34)
+  }
+  return(output)
+}
