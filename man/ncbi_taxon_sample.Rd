@@ -48,7 +48,7 @@ rank must have for its sequences to be searched. The names correspond to taxonom
 
 \item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
 
-\item{...}{Additional arguments are passed to \code{\link[taxize]{ncbi_search}}.}
+\item{...}{Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.}
 }
 \description{
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.

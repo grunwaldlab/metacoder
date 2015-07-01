@@ -299,7 +299,7 @@
 #' @param max_children (named \code{numeric}) The maximum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
 #' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
-#' @param ... Additional arguments are passed to \code{\link[taxize]{ncbi_search}}.
+#' @param ... Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.
 #' @examples
 #' \dontrun{
 #' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
@@ -424,7 +424,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
       # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
       if ((rank %in% taxonomy_levels && rank >= target_rank) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
         cat("Getting sequences for", name, "\n")
-        result <- taxize::ncbi_search(id = id, limit = 1000, seqrange = length_range,
+        result <- traits::ncbi_searcher(id = id, limit = 1000, seqrange = length_range,
                                       hypothetical = TRUE, ...)
       } else {
         child_ranks <- factor(sub_taxa$childtaxa_rank,
