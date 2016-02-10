@@ -99,7 +99,7 @@ primersearch <- function(sequence, forward, reverse,
   # Read input file if supplied --------------------------------------------------------------------
   if (class(sequence) == "DNAbin") {
     if (is.null(seq_name)) seq_name <- names(sequence)
-  } else if (all(file.exists(sequence))) {
+  } else if (is.atomic(sequence) && all(file.exists(sequence))) {
     if (length(sequence) == 1) {
       sequence <- as.character(ape::read.dna(sequence, format = "fasta"))
     } else {
@@ -107,6 +107,7 @@ primersearch <- function(sequence, forward, reverse,
     }
   } else {
     if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), seqinr::s2c)
+    sequence <- ape::as.DNAbin(sequence)
   }
   # Write temporary fasta file for primersearch input ----------------------------------------------
   if (!is.null(seq_name)) names(sequence) <- seq_name
