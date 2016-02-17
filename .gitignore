@@ -6,5 +6,4 @@
 vignettes/*_files*/
 inst/doc*/
 **.Rd
-NAMESPACE
 vignettes/.build.timestamp
