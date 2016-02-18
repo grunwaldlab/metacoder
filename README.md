@@ -8,7 +8,7 @@
 
 To accomplish these goals, metacoder leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R. Using R means that metacoder is entirely open-source, works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated with the best free tools for statistical analysis.
 
-## Download
+## Download the latest stable release
 
 While this project is in development it can be installed through github:
 
@@ -19,3 +19,9 @@ You might have to install the following biocinductor package first if the above 
 
     source("http://bioconductor.org/biocLite.R")
     biocLite("Biostrings")
+
+If you've built the vignettes, you can browse them with:
+
+    browseVignettes(package="vcfR")
+    
+    
