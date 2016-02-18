@@ -22,6 +22,6 @@ You might have to install the following biocinductor package first if the above 
 
 If you've built the vignettes, you can browse them with:
 
-    browseVignettes(package="vcfR")
+    browseVignettes(package="metacoder")
     
     
