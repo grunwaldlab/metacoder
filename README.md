@@ -1,6 +1,6 @@
-# metacoder
+# `MetacodeR`
 
-The goal of the `metacoder` package is to provide a set of tools for:
+`MetacodeR` is an R package that provides a set of tools for:
 
 - Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
 - Standardized parsing of taxonomic information.
