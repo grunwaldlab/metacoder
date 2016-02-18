@@ -1,4 +1,4 @@
-# `MetacodeR`
+# MetacodeR
 
 `MetacodeR` is an R package that provides a set of tools for:
 
