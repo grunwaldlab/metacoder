@@ -24,7 +24,6 @@ Imports:
     plyr,
     seqinr,
     reshape2,
-    Biostrings,
     zoo,
     spider,
     proxy,
