@@ -14,11 +14,6 @@ While this project is in development it can be installed through github:
 
     devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
     library(metacoder)
-    
-You might have to install the following biocinductor package first if the above does not install:
-
-    source("http://bioconductor.org/biocLite.R")
-    biocLite("Biostrings")
 
 If you've built the vignettes, you can browse them with:
 
