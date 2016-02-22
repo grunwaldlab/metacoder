@@ -22,8 +22,8 @@
 #' Colors and sizes of vertexes and edges can be mapped to variables.
 #' Uses \code{igraph} to make layout and \code{ggplot2} to make plots.
 #' 
-#' @param taxon_id (\code{numeric)} The unique ids of the taxon for each row.
-#' @param parent_id (\code{numeric)} The unique id of supertaxon \code{taxon_id} is a part of.
+#' @param taxon_id (\code{character}} The unique ids of the taxon for each row.
+#' @param parent_id (\code{character}} The unique id of supertaxon \code{taxon_id} is a part of.
 #' @param vertex_size (\code{numeric)} The value to base vertex size on. Default: inverse of depth 
 #' of taxa in hierarchy. 
 #' @param vertex_size_range (\code{numeric} of length 2) The minimum and maximum size of vertexes.
@@ -113,14 +113,168 @@
 #' 
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
-                          vertex_size = NULL, vertex_size_range = c(NA, NA), vertex_size_trans = "area",
-                          vertex_color = "#999999", vertex_color_range = default_palette(), vertex_color_trans = vertex_size_trans,
-                          edge_size = vertex_size, egde_size_range = c(NA, NA), edge_size_trans = vertex_size_trans,
-                          edge_color = vertex_color, egde_color_range = vertex_color_range, edge_color_trans = vertex_color_trans,
-                          vertex_label_size = vertex_size, vertex_label_size_range = c(NA, NA), vertex_label_size_trans = vertex_size_trans,
-                          vertex_label_color = "#000000", vertex_label_color_range = def_palette(), vertex_label_color_trans = "area",
-                          edge_label_size = edge_size, edge_label_size_range = c(NA, NA), edge_label_size_trans = edge_size_trans,
-                          edge_label_color = "#000000", edge_label_color_range = def_palette(), edge_label_color_trans = "area",
-                          vertex_label_max = 20, edge_label_max = 20, 
-                          overlap_bias = 1, margin_size = c(0, 0), aspect_ratio = NULL, layout = igraph::layout.reingold.tilford) {
+                              vertex_size = 1, vertex_size_range = c(NA, NA), vertex_size_trans = "area",
+                              vertex_color = "#999999", vertex_color_range = default_palette(), vertex_color_trans = vertex_size_trans,
+                              edge_size = vertex_size, egde_size_range = c(NA, NA), edge_size_trans = vertex_size_trans,
+                              edge_color = vertex_color, egde_color_range = vertex_color_range, edge_color_trans = vertex_color_trans,
+                              vertex_label_size = vertex_size, vertex_label_size_range = c(NA, NA), vertex_label_size_trans = vertex_size_trans,
+                              vertex_label_color = "#000000", vertex_label_color_range = default_palette(), vertex_label_color_trans = "area",
+                              edge_label_size = edge_size, edge_label_size_range = c(NA, NA), edge_label_size_trans = edge_size_trans,
+                              edge_label_color = "#000000", edge_label_color_range = default_palette(), edge_label_color_trans = "area",
+                              vertex_label_max = 20, edge_label_max = 20, 
+                              overlap_bias = 1, margin_size = c(0, 0), aspect_ratio = NULL, layout = igraph::layout.reingold.tilford) {
+  #| ### Verify arguments =========================================================================
+  if (length(taxon_id) != length(parent_id)) {
+    stop("'taxon_id' and 'parent_id' must be of equal length.")
+  }
+  if (length(taxon_id) == 0) {
+    stop("'taxon_id' and 'parent_id' are empty.")
+  }
+  verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
+  verify_size_range(c("vertex_size_range", "egde_size_range",
+                      "vertex_label_size_range", "edge_label_size_range"))
+  verify_trans(c("vertex_size_trans", "vertex_color_trans", 
+                 "edge_size_trans", "edge_color_trans",
+                 "vertex_label_size_trans", "vertex_label_color_trans",
+                 "edge_label_size_trans", "edge_label_color_trans"))
+  verify_color(c("vertex_color", "edge_color", "vertex_label_color", "edge_label_color"))
+  verify_color_range(c("vertex_color_range", "egde_color_range",
+                       "vertex_label_color_range", "edge_label_color_range"))
+  
+  #| ### Standardize source data ==================================================================
+  #   data <- data.frame(taxon_id = as.character(taxon_id),
+  #                      parent_id = as.character(parent_id),
+  #                      vs = vertex_size,
+  #                      vsr = )
+  #   
+  
+  #| ### Core plot data ===========================================================================
+  
+  
+  
+  #| ### Secondary plot data ======================================================================
+  
+  
+  
+  #| ### Draw plot ================================================================================
+  
 }
+
+
+
+#' Verify size range parameters
+#' 
+#' Verify size range parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_size_range <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (length(value) != 2) {
+      stop(paste0("Argument ", arg, " must be of length 2."))
+    }
+    if (! all(is.na(value)) && value[2] < value[1]) {
+      stop(paste0("The min value of ", arg, " is greater than its max."))
+    }
+  }
+}
+
+
+#' Verify transformation function parameters
+#' 
+#' Verify transformation function parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_trans <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (! is.function(value) && ! value %in% transform_data()) {
+      stop(paste0("Argument '", arg,
+                  "' must be a function or the name of a built-in transformation function."))
+    }
+    if (length(value) < 1) {
+      stop(paste0("Argument '", arg, "' is empty."))
+    }
+  }
+}
+
+#' Verify size parameters
+#' 
+#' Verify size parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_size <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (! is.numeric(value)) {
+      stop(paste0("Argument '", arg, "' is not numeric."))
+    }
+    if (length(value) < 1) {
+      stop(paste0("Argument '", arg, "' is empty."))
+    }
+  }
+}
+
+
+#' Verify color range parameters
+#' 
+#' Verify color range parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_color_range <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (! all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) | value %in% colors())) {
+      stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
+    }
+    if (length(value) < 1) {
+      stop(paste0("Argument '", arg, "' is empty."))
+    }
+  }
+}
+
+#' Verify color parameters
+#' 
+#' Verify color parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_color <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (length(value) < 1) {
+      stop(paste0("Argument '", arg, "' is empty."))
+    }
+  }
+}
+
+#' Transformation functions
+#' 
+#' Functions used by plotting funtions to transform data.
+#' Calling the function with no parameters returns available function names.
+#' 
+#' @param data (\code{numeric}) Data to transform
+#' @param func (\code{character}) Name of transformation to apply.
+transform_data <- function(data = NULL, func = NULL) {
+  funcs <- list("radius" = function(x) {x},
+                "area" = function(x) {(x/pi)^(1/2)},
+                "log10 radius" = function(x) {log(x, base = 10)},
+                "log2 radius" = function(x) {log(x, base = 2)},
+                "ln radius" = function(x) {log(x)},
+                "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
+                "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
+                "ln area" =  function(x) {log((x/pi)^(1/2))})
+  if (is.null(data) & is.null(func)) {
+    return(names(funcs))
+  } else {
+    return(vapply(X = data, FUN = funcs[[func]], FUN.VALUE = numeric(1)))
+  }
+}
+
+
+#' The defualt color palette
+#' 
+#' The default color palette for numeric data
+default_palette <- function() {
+  return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
+}
+
