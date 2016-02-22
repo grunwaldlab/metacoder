@@ -344,6 +344,32 @@ transform_data <- function(data = NULL, func = NULL) {
 }
 
 
+#' Layout functions
+#' 
+#' Functions used to determine graph layout.
+#' Calling the function with no parameters returns available function names.
+#' 
+#' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
+#' see all options. 
+layout_functions <- function(name = NULL) {
+  funcs <- list("automatic" = igraph::nicely(),
+                "reingold-tilford" = igraph::as_tree(circular = TRUE),
+                "davidson-harel" = igraph::with_dh(),
+                "gem" = igraph::with_gem(),
+                "graphopt" = igraph::with_graphopt(),
+                "mds" = igraph::with_mds(),
+                "sugiyama" = igraph::with_sugiyama(),
+                "fruchterman-reingold" = igraph::with_fr(),
+                "kamada-kawai" = igraph::with_kk(),
+                "large-graph" = igraph::with_lgl(),
+                "drl" = igraph::with_drl())
+  if (is.null(name)) {
+    return(names(funcs))
+  } else {
+    return(funcs[[name]])
+  }
+}
+
 
 #' The defualt quantative color palette
 #' 
