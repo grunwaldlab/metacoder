@@ -113,16 +113,38 @@
 #' 
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
-                              vertex_size = 1, vertex_size_range = c(NA, NA), vertex_size_trans = "area",
-                              vertex_color = "#999999", vertex_color_range = default_palette(), vertex_color_trans = vertex_size_trans,
-                              edge_size = vertex_size, egde_size_range = c(NA, NA), edge_size_trans = vertex_size_trans,
-                              edge_color = vertex_color, egde_color_range = vertex_color_range, edge_color_trans = vertex_color_trans,
-                              vertex_label_size = vertex_size, vertex_label_size_range = c(NA, NA), vertex_label_size_trans = vertex_size_trans,
-                              vertex_label_color = "#000000", vertex_label_color_range = default_palette(), vertex_label_color_trans = "area",
-                              edge_label_size = edge_size, edge_label_size_range = c(NA, NA), edge_label_size_trans = edge_size_trans,
-                              edge_label_color = "#000000", edge_label_color_range = default_palette(), edge_label_color_trans = "area",
-                              vertex_label_max = 20, edge_label_max = 20, 
-                              overlap_bias = 1, margin_size = c(0, 0), aspect_ratio = NULL, layout = igraph::layout.reingold.tilford) {
+                              vertex_size = 1,
+                              vertex_size_range = c(NA, NA),
+                              vertex_size_trans = "area",
+                              vertex_color = "#999999",
+                              vertex_color_range = quantative_palette(),
+                              vertex_color_trans = vertex_size_trans,
+                              edge_size = vertex_size,
+                              egde_size_range = c(NA, NA),
+                              edge_size_trans = vertex_size_trans,
+                              edge_color = vertex_color,
+                              egde_color_range = vertex_color_range,
+                              edge_color_trans = vertex_color_trans,
+                              vertex_label = NA,
+                              vertex_label_size = vertex_size,
+                              vertex_label_size_range = c(NA, NA),
+                              vertex_label_size_trans = vertex_size_trans,
+                              vertex_label_color = "#000000",
+                              vertex_label_color_range = quantative_palette(),
+                              vertex_label_color_trans = "area",
+                              edge_label = NA,
+                              edge_label_size = edge_size,
+                              edge_label_size_range = c(NA, NA),
+                              edge_label_size_trans = edge_size_trans,
+                              edge_label_color = "#000000",
+                              edge_label_color_range = quantative_palette(),
+                              edge_label_color_trans = "area",
+                              vertex_label_max = 20,
+                              edge_label_max = 20, 
+                              overlap_bias = 1,
+                              margin_size = c(0, 0),
+                              aspect_ratio = NULL,
+                              layout = igraph::layout.reingold.tilford) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -130,6 +152,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(taxon_id) == 0) {
     stop("'taxon_id' and 'parent_id' are empty.")
   }
+  check_element_length(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size",
+                         "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
+                         "vertex_label", "edge_label"))
   verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
   verify_size_range(c("vertex_size_range", "egde_size_range",
                       "vertex_label_size_range", "edge_label_size_range"))
@@ -137,16 +162,34 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                  "edge_size_trans", "edge_color_trans",
                  "vertex_label_size_trans", "vertex_label_color_trans",
                  "edge_label_size_trans", "edge_label_color_trans"))
-  verify_color(c("vertex_color", "edge_color", "vertex_label_color", "edge_label_color"))
   verify_color_range(c("vertex_color_range", "egde_color_range",
                        "vertex_label_color_range", "edge_label_color_range"))
-  
+  verify_label_count(c("vertex_label_max", "edge_label_max"))
+  if (length(overlap_bias) == 0 || ! is.numeric(overlap_bias)) {
+    stop("Argument 'overlap_bias' must be a numeric of length 1.")
+  }
+  if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
+    stop("Argument 'margin_size' must be a numeric of length 2.")
+  }
+  if (! is.null(aspect_ratio) && ! is.numeric(aspect_ratio)) {
+    stop("Argument 'aspect_ratio' must be a numeric of length 1.")
+  }
+  # TODO: verify layout
   #| ### Standardize source data ==================================================================
-  #   data <- data.frame(taxon_id = as.character(taxon_id),
-  #                      parent_id = as.character(parent_id),
-  #                      vs = vertex_size,
-  #                      vsr = )
-  #   
+  data <- data.frame(stringsAsFactors = FALSE,
+                     tid = as.character(taxon_id),
+                     pid = as.character(parent_id),
+                     vs = as.numeric(vertex_size),
+                     vc = as.character(vertex_color),
+                     es = as.numeric(edge_size),
+                     ec = as.character(edge_color),
+                     vls = as.numeric(vertex_label_size),
+                     vlc = as.character(vertex_label_color),
+                     els = as.numeric(edge_label_size),
+                     elc = as.character(edge_label_color),
+                     vl = as.character(vertex_label),
+                     el = as.character(edge_label))
+  
   
   #| ### Core plot data ===========================================================================
   
@@ -192,9 +235,6 @@ verify_trans <- function(args) {
       stop(paste0("Argument '", arg,
                   "' must be a function or the name of a built-in transformation function."))
     }
-    if (length(value) < 1) {
-      stop(paste0("Argument '", arg, "' is empty."))
-    }
   }
 }
 
@@ -208,9 +248,6 @@ verify_size <- function(args) {
     value <- get(arg, pos = parent.frame())
     if (! is.numeric(value)) {
       stop(paste0("Argument '", arg, "' is not numeric."))
-    }
-    if (length(value) < 1) {
-      stop(paste0("Argument '", arg, "' is empty."))
     }
   }
 }
@@ -227,25 +264,56 @@ verify_color_range <- function(args) {
     if (! all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) | value %in% colors())) {
       stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
     }
-    if (length(value) < 1) {
-      stop(paste0("Argument '", arg, "' is empty."))
+  }
+}
+
+
+
+#' Verify label count
+#' 
+#' Verify label count
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+verify_label_count <- function(args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    if (value %% 1 != 0 || value < 0) {
+      stop(paste0("Argument '", arg, "' must be a positive integer."))
     }
   }
 }
 
-#' Verify color parameters
+
+#' Check length of graph attributes
 #' 
-#' Verify color parameters
-#' 
-#' @param args (\code{character}) The names of arguments to verify.
-verify_color <- function(args) {
+#' Length should divind evenly into the number of taxon/parent IDs
+check_element_length <- function(args) {
   for (arg in args) {
-    value <- get(arg, pos = parent.frame())
-    if (length(value) < 1) {
+    observed_length <- length(get(arg, pos = parent.frame()))
+    correct_length <- length(get("taxon_id", pos = parent.frame()))
+    if (observed_length < 1) {
       stop(paste0("Argument '", arg, "' is empty."))
+    }
+    if (correct_length %% observed_length != 0) {
+      stop(paste0("Length of argument'", arg, "' must be a factor of the length of 'taxon_id'"))
     }
   }
 }
+
+# 
+# #' Standardize color input 
+# #' 
+# #' This forces user input to be the correct type.
+# standardize_color <- function(data) {
+#   if (all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", data) | data %in% colors())) {
+#     return(as.character(data))
+#   } else 
+#   
+#   if (is.factor(data)) {
+#     if (length)
+#   }
+# }
+# 
 
 #' Transformation functions
 #' 
@@ -271,10 +339,18 @@ transform_data <- function(data = NULL, func = NULL) {
 }
 
 
-#' The defualt color palette
+
+#' The defualt quantative color palette
 #' 
-#' The default color palette for numeric data
-default_palette <- function() {
+#' The default color palette for quantative data
+quantative_palette <- function() {
   return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
 }
 
+
+#' The defualt qualitative color palette
+#' 
+#' The default color palette for qualitative data
+qualitative_palette <- function() {
+  return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
+}
