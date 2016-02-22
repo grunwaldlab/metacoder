@@ -190,6 +190,11 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      vl = as.character(vertex_label),
                      el = as.character(edge_label))
   
+  #| ### Make layout ==============================================================================
+  graph <- igraph::graph_from_edgelist(as.matrix(data[!is.na(data$pid), c("pid", "tid")]))
+  coords <- layout_(graph, as_tree(), component_wise())
+  plot(graph, layout = coords)
+  
   
   #| ### Core plot data ===========================================================================
   
