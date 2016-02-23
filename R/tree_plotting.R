@@ -109,9 +109,12 @@
 #' Default: \code{0, 0}.
 #' @param aspect_ratio (\code{numeric}) The height / width of the plot. Default: Whatever the layout
 #' function produces.
-#' @param layout (\code{character} of length 1) The layout function to use.
-#' @param pre_align (\code{character} of length 1) 
-#' 
+#' @param layout (\code{character} of length 1) The layout function to use. 
+#' Type \code{\link{layout_functions}()} for available layout names.
+#' @param pre_align (\code{character} of length 1) Optional starting layout to use to initialize
+#' the final layout function.
+#' Type \code{\link{layout_functions}()} for available layout names.
+#'  
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
                               vertex_size = 1,
@@ -193,37 +196,62 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      el = as.character(edge_label))
   row.names(data) <- data$tid
   #| ### Make layout ==============================================================================
+  #| The layout is used to generate a list of coordinates to places graph verticies
+  #| First the edge list consituted by the `taxon_id` and `parent_id` columns is used to construct 
+  #| an `igraph` graph object and then the layout is generated for that object. 
+  #|
+  #| #### Make a graph for each root in the graph -------------------------------------------------
   get_sub_graphs <- function(taxa) {
     if (length(taxa) == 1) {
+      # Make a graph with only a single vertex
       return(igraph::graph.adjacency(matrix(c(taxa), ncol = 1)))
     } else {
+      # Make edge list from taxon_id and parent_id
       edgelist <- as.matrix(data[taxa, c("pid", "tid")])
+      # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid"]), ]
       return(igraph::graph_from_edgelist(edgelist))
     }
   }
-  
-  get_sub_layouts <- function(graph) {
+  data$pid[!(data$pid %in% data$tid)] <- NA # Needed by split_by_level
+  sub_graph_taxa <- split_by_level(data$tid, data$pid, level =  1)
+  sub_graphs <- lapply(sub_graph_taxa, get_sub_graphs)
+  #|
+  #| #### Generate a layout for each graph --------------------------------------------------------
+  #|
+  get_sub_layouts <- function(graph, backup_layout = 'fruchterman-reingold') {
+    # Calculate an initial layout if specified
     if (! is.null(pre_align) && layout != pre_align) {
-      intitial_coords <- igraph::layout_(graph, layout_functions(graph, pre_align))
+      intitial_coords <- igraph::layout_(graph, layout_functions(pre_align, graph = graph))
     } else {
       intitial_coords <- NULL
     }
-    coords <- igraph::layout_(graph, layout_functions(graph, layout, intitial_coords = intitial_coords))
+    # Calculate the primary layout 
+    coords <- igraph::layout_(graph, layout_functions(layout, graph = graph,
+                                                      intitial_coords = intitial_coords))
+    # Calculate backup layout if primary one does not work
     if (any(is.na(coords) | is.nan(unlist(coords)))) {
-      coords <- igraph::layout_(graph, layout_functions(graph, 'fruchterman-reingold'))
-      warning(paste0("Could not apply layout ", layout, " to subgraph with. Using 'fruchterman-reingold' instead."))
+      coords <- igraph::layout_(graph, layout_functions(backup_layout, graph = graph))
+      warning(paste0("Could not apply layout ", layout,
+                     " to subgraph with. Using 'fruchterman-reingold' instead."))
     }
     return(coords)
   }
-
-  data$pid[!(data$pid %in% data$tid)] <- NA
-  sub_graph_taxa <- split_by_level(data$tid, data$pid, level =  1)
-  sub_graphs <- lapply(sub_graph_taxa, get_sub_graphs)
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
+  #|
+  #| #### Merge layout coordinates into an overall graph ------------------------------------------
+  #|
   coords <- merge_coords(sub_graphs, sub_coords)
   graph <- disjoint_union(sub_graphs)
-  plot(graph, layout = coords, vertex.size = 1, edge.arrow.size = 0, vertex.label = NA)
+  row.names(coords) <- names(V(graph))
+  data$vx <- coords[data$tid, 1]
+  data$vy <- coords[data$tid, 2]
+  
+  
+  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vs"] / 70,
+       vertex.size = data[names(V(graph)), "vs"] / 10, vertex.label=data[names(V(graph)), "vl"])
+  ggplot(data) + geom_point(aes(x = vx, y = vy, size = vs))
+  
   
   #| ### Core plot data ===========================================================================
   
@@ -380,7 +408,15 @@ transform_data <- function(data = NULL, func = NULL) {
 #' 
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
-layout_functions <- function(graph, name = NULL, intitial_coords = NULL) {
+#' @param graph (\code{igraph}) The graph to generate the layout for.
+#' @param  intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of. 
+#' 
+#' @export
+layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL) {
+  return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
+  if (return_names) {
+    graph <- make_ring(1) # Dummy graph so that the list can be defined, but only names used
+  }
   funcs <- list("automatic" = igraph::nicely(),
                 "reingold-tilford" = igraph::as_tree(circular = TRUE,
                                                      mode = "out"),
@@ -430,8 +466,8 @@ layout_functions <- function(graph, name = NULL, intitial_coords = NULL) {
                                          options = drl_defaults$default,
                                          weights = E(graph)$weight,
                                          fixed = NULL))
-  if (is.null(name)) {
-    return(names(funcs))
+  if (return_names) {
+    return(names(funcs)) # Dummy graph so that the list can be defined, but only names used
   } else {
     return(funcs[[name]])
   }
