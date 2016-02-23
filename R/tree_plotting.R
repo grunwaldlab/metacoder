@@ -109,7 +109,8 @@
 #' Default: \code{0, 0}.
 #' @param aspect_ratio (\code{numeric}) The height / width of the plot. Default: Whatever the layout
 #' function produces.
-#' @param layout (\code{character}) The layout function to use. 
+#' @param layout (\code{character} of length 1) The layout function to use.
+#' @param pre_align (\code{character} of length 1) 
 #' 
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
@@ -144,7 +145,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               overlap_bias = 1,
                               margin_size = c(0, 0),
                               aspect_ratio = NULL,
-                              layout = "reingold-tilford") {
+                              layout = "reingold-tilford",
+                              pre_align = "fruchterman-reingold") {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -202,9 +204,14 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   get_sub_layouts <- function(graph) {
-    coords <- igraph::layout_(graph, layout_functions(layout))
+    if (! is.null(pre_align) && layout != pre_align) {
+      intitial_coords <- igraph::layout_(graph, layout_functions(graph, pre_align))
+    } else {
+      intitial_coords <- NULL
+    }
+    coords <- igraph::layout_(graph, layout_functions(graph, layout, intitial_coords = intitial_coords))
     if (any(is.na(coords) | is.nan(unlist(coords)))) {
-      coords <- igraph::layout_(graph, layout_functions('fruchterman-reingold'))
+      coords <- igraph::layout_(graph, layout_functions(graph, 'fruchterman-reingold'))
       warning(paste0("Could not apply layout ", layout, " to subgraph with. Using 'fruchterman-reingold' instead."))
     }
     return(coords)
@@ -373,18 +380,56 @@ transform_data <- function(data = NULL, func = NULL) {
 #' 
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
-layout_functions <- function(name = NULL) {
+layout_functions <- function(graph, name = NULL, intitial_coords = NULL) {
   funcs <- list("automatic" = igraph::nicely(),
-                "reingold-tilford" = igraph::as_tree(circular = TRUE),
-                "davidson-harel" = igraph::with_dh(),
-                "gem" = igraph::with_gem(),
-                "graphopt" = igraph::with_graphopt(),
+                "reingold-tilford" = igraph::as_tree(circular = TRUE,
+                                                     mode = "out"),
+                "davidson-harel" = igraph::with_dh(coords = intitial_coords,
+                                                   maxiter = 15,
+                                                   fineiter = max(15, log2(vcount(graph))),
+                                                   cool.fact = 0.75,
+                                                   weight.node.dist = 1,
+                                                   weight.border = 0,
+                                                   weight.edge.lengths = 1,
+                                                   weight.edge.crossings = 100,
+                                                   weight.node.edge.dist = 1),
+                "gem" = igraph::with_gem(coords = intitial_coords,
+                                         maxiter = 40 * vcount(graph)^2,
+                                         temp.max = vcount(graph),
+                                         temp.min = 1/10,
+                                         temp.init = sqrt(vcount(graph))),
+                "graphopt" = igraph::with_graphopt(start = intitial_coords,
+                                                   niter = 500,
+                                                   charge = 0.0005,
+                                                   mass = 30,
+                                                   spring.length = 0,
+                                                   spring.constant = 1,
+                                                   max.sa.movement = 5),
                 "mds" = igraph::with_mds(),
-                # "sugiyama" = igraph::with_sugiyama(), # has different output
-                "fruchterman-reingold" = igraph::with_fr(),
-                "kamada-kawai" = igraph::with_kk(),
-                "large-graph" = igraph::with_lgl(),
-                "drl" = igraph::with_drl())
+                "fruchterman-reingold" = igraph::with_fr(coords = intitial_coords,
+                                                         niter = 500,
+                                                         start.temp = sqrt(vcount(graph)),
+                                                         grid = "nogrid",
+                                                         weights = NULL),
+                "kamada-kawai" = igraph::with_kk(coords = intitial_coords,
+                                                 maxiter = 50 * vcount(graph),
+                                                 epsilon = 0,
+                                                 kkconst = vcount(graph),
+                                                 weights = NULL),
+                "large-graph" = igraph::with_lgl(maxiter = 150,
+                                                 maxdelta = vcount(graph),
+                                                 area = vcount(graph)^2,
+                                                 coolexp = 1.5,
+                                                 repulserad = vcount(graph)^2 * vcount(graph),
+                                                 cellsize = sqrt(sqrt(vcount(graph)^2)),
+                                                 root = 1),
+                "drl" = igraph::with_drl(use.seed = ! is.null(intitial_coords),
+                                         seed = ifelse(is.null(intitial_coords), 
+                                                       matrix(runif(vcount(graph) * 2), ncol = 2),
+                                                       intitial_coords),
+                                         options = drl_defaults$default,
+                                         weights = E(graph)$weight,
+                                         fixed = NULL))
   if (is.null(name)) {
     return(names(funcs))
   } else {
