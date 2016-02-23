@@ -107,11 +107,11 @@
 #' size range. Default: \code{1}.
 #' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins.
 #' Default: \code{0, 0}.
-#' @param aspect_ratio (\code{numeric}) The height / width of the plot. Default: Whatever the layout
-#' function produces.
+# #' @param aspect_ratio (\code{numeric}) The height / width of the plot. Default: Whatever the layout
+# #' function produces.
 #' @param layout (\code{character} of length 1) The layout function to use. 
 #' Type \code{\link{layout_functions}()} for available layout names.
-#' @param pre_align (\code{character} of length 1) Optional starting layout to use to initialize
+#' @param initial_layout (\code{character} of length 1) Optional starting layout to use to initialize
 #' the final layout function.
 #' Type \code{\link{layout_functions}()} for available layout names.
 #'  
@@ -147,9 +147,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               edge_label_max = 20, 
                               overlap_bias = 1,
                               margin_size = c(0, 0),
-                              aspect_ratio = NULL,
+                              # aspect_ratio = NULL,
                               layout = "reingold-tilford",
-                              pre_align = "fruchterman-reingold") {
+                              initial_layout = "fruchterman-reingold") {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -176,22 +176,27 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
     stop("Argument 'margin_size' must be a numeric of length 2.")
   }
-  if (! is.null(aspect_ratio) && ! is.numeric(aspect_ratio)) {
-    stop("Argument 'aspect_ratio' must be a numeric of length 1.")
+  #   if (! is.null(aspect_ratio) && ! is.numeric(aspect_ratio)) {
+  #     stop("Argument 'aspect_ratio' must be a numeric of length 1.")
+  #   }
+  if (! layout %in% layout_functions()) {
+    stop("Argument 'layout' must be an output of layout_functions().")
   }
-  # TODO: verify layout
+  if (! initial_layout %in% layout_functions()) {
+    stop("Argument 'initial_layout' must be an output of layout_functions().")
+  }
   #| ### Standardize source data ==================================================================
   data <- data.frame(stringsAsFactors = FALSE,
                      tid = as.character(taxon_id),
                      pid = as.character(parent_id),
                      vs = as.numeric(vertex_size),
-                     vc = as.character(vertex_color),
+                     vc = vertex_color,
                      es = as.numeric(edge_size),
-                     ec = as.character(edge_color),
+                     ec = edge_color,
                      vls = as.numeric(vertex_label_size),
-                     vlc = as.character(vertex_label_color),
+                     vlc = vertex_label_color,
                      els = as.numeric(edge_label_size),
-                     elc = as.character(edge_label_color),
+                     elc = edge_label_color,
                      vl = as.character(vertex_label),
                      el = as.character(edge_label))
   row.names(data) <- data$tid
@@ -221,8 +226,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   get_sub_layouts <- function(graph, backup_layout = 'fruchterman-reingold') {
     # Calculate an initial layout if specified
-    if (! is.null(pre_align) && layout != pre_align) {
-      intitial_coords <- igraph::layout_(graph, layout_functions(pre_align, graph = graph))
+    if (! is.null(initial_layout) && layout != initial_layout) {
+      intitial_coords <- igraph::layout_(graph, layout_functions(initial_layout, graph = graph))
     } else {
       intitial_coords <- NULL
     }
@@ -248,13 +253,29 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$vy <- coords[data$tid, 2]
   
   
-  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vs"] / 70,
-       vertex.size = data[names(V(graph)), "vs"] / 10, vertex.label=data[names(V(graph)), "vl"])
-  ggplot(data) + geom_point(aes(x = vx, y = vy, size = vs))
   
   
   #| ### Core plot data ===========================================================================
-  
+  #|
+  #| #### Apply statistic transformations ---------------------------------------------------------
+  #|
+  trans_key <- c(vs = vertex_size_trans, vc = vertex_color_trans,
+                 vls = vertex_label_size_trans, vlc = vertex_label_color_trans,
+                 es = edge_size_trans, ec = edge_color_trans,
+                 els = edge_label_size_trans, elc = edge_label_color_trans)
+  new_names <- paste0(names(trans_key), "_t")
+  apply_trans <- function(col_name) {
+    if (is.numeric(data[ , col_name])) { 
+      transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
+    } else {
+      data[ , col_name] # if colors are defined explicitly, then no transformation is done
+    }
+  }
+  data[, new_names] <- lapply(names(trans_key), apply_trans)
+
+  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vs_t"] / 5 ,
+       vertex.size = data[names(V(graph)), "vs_t"] , vertex.label=data[names(V(graph)), "vl"])
+  ggplot(data) + geom_point(aes(x = vx, y = vy, size = vs))
   
   
   #| ### Secondary plot data ======================================================================
