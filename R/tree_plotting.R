@@ -144,7 +144,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               overlap_bias = 1,
                               margin_size = c(0, 0),
                               aspect_ratio = NULL,
-                              layout = igraph::layout.reingold.tilford) {
+                              layout = "reingold-tilford") {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -189,12 +189,34 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      elc = as.character(edge_label_color),
                      vl = as.character(vertex_label),
                      el = as.character(edge_label))
-  
+  row.names(data) <- data$tid
   #| ### Make layout ==============================================================================
-  graph <- igraph::graph_from_edgelist(as.matrix(data[!is.na(data$pid), c("pid", "tid")]))
-  coords <- layout_(graph, as_tree(), component_wise())
-  plot(graph, layout = coords)
+  get_sub_graphs <- function(taxa) {
+    if (length(taxa) == 1) {
+      return(igraph::graph.adjacency(matrix(c(taxa), ncol = 1)))
+    } else {
+      edgelist <- as.matrix(data[taxa, c("pid", "tid")])
+      edgelist <- edgelist[! is.na(edgelist[, "pid"]), ]
+      return(igraph::graph_from_edgelist(edgelist))
+    }
+  }
   
+  get_sub_layouts <- function(graph) {
+    coords <- igraph::layout_(graph, layout_functions(layout))
+    if (any(is.na(coords) | is.nan(unlist(coords)))) {
+      coords <- igraph::layout_(graph, layout_functions('fruchterman-reingold'))
+      warning(paste0("Could not apply layout ", layout, " to subgraph with. Using 'fruchterman-reingold' instead."))
+    }
+    return(coords)
+  }
+
+  data$pid[!(data$pid %in% data$tid)] <- NA
+  sub_graph_taxa <- split_by_level(data$tid, data$pid, level =  1)
+  sub_graphs <- lapply(sub_graph_taxa, get_sub_graphs)
+  sub_coords <- lapply(sub_graphs, get_sub_layouts)
+  coords <- merge_coords(sub_graphs, sub_coords)
+  graph <- disjoint_union(sub_graphs)
+  plot(graph, layout = coords, vertex.size = 1, edge.arrow.size = 0, vertex.label = NA)
   
   #| ### Core plot data ===========================================================================
   
@@ -358,7 +380,7 @@ layout_functions <- function(name = NULL) {
                 "gem" = igraph::with_gem(),
                 "graphopt" = igraph::with_graphopt(),
                 "mds" = igraph::with_mds(),
-                "sugiyama" = igraph::with_sugiyama(),
+                # "sugiyama" = igraph::with_sugiyama(), # has different output
                 "fruchterman-reingold" = igraph::with_fr(),
                 "kamada-kawai" = igraph::with_kk(),
                 "large-graph" = igraph::with_lgl(),
