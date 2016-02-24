@@ -133,14 +133,14 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               vertex_label_size = vertex_size,
                               vertex_label_size_range = c(NA, NA),
                               vertex_label_size_trans = vertex_size_trans,
-                              vertex_label_color = "#000000",
+                              vertex_label_color = "#222222",
                               vertex_label_color_range = quantative_palette(),
                               vertex_label_color_trans = "area",
                               edge_label = NA,
                               edge_label_size = edge_size,
                               edge_label_size_range = c(NA, NA),
                               edge_label_size_trans = edge_size_trans,
-                              edge_label_color = "#000000",
+                              edge_label_color = "#555555",
                               edge_label_color_range = quantative_palette(),
                               edge_label_color_trans = "area",
                               vertex_label_max = 20,
@@ -349,7 +349,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   vertex_label_size_range_g <- infer_size_range(vertex_label_size_range, vertex_size_range_g, 
                                                 defualt_scale = 0.5)
   edge_label_size_range_g <- infer_size_range(edge_label_size_range, edge_size_range_g, 
-                                              defualt_scale = 0.5)
+                                              defualt_scale = 0.7)
   data$vls_g <- scales::rescale(data$vls_t, to = vertex_label_size_range_g)
   data$els_g <- scales::rescale(data$els_t, to = edge_label_size_range_g)
   #|
@@ -400,7 +400,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   element_data <- do.call(rbind, lapply(element_order, taxon_elements))
   element_data$group <- factor(element_data$group, levels = unique(element_data$group))
   #|
-  #| #### Make text grobs -------------------------------------------------------------------------
+  #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
   x_min <- min(element_data$x) - margin_size[1]
   x_max <- max(element_data$x) + margin_size[1]
@@ -412,15 +412,49 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (is.null(vertex_label_max) || is.na(vertex_label_max)) {
     vertex_label_shown <- data$tid
   } else {
-    vertex_label_shown <- data[order(data$es_g, decreasing = TRUE)[1:vertex_label_max], "tid"]
+    vertex_label_shown <- data[order(data$vs_g, decreasing = TRUE)[1:vertex_label_max], "tid"]
   }
   vertex_label_grobs <- plyr::dlply(data[vertex_label_shown, ], "tid",
                                function(row) resizingTextGrob(label = row['vl'],
                                                             y = row['vly_g'],
                                                             x = row['vlx_g'],
                                                             gp = grid::gpar(text_prop = row['vls_g'])))    
-  
-  
+  #|
+  #| #### Make edge text grobs -------------------------------------------------------------------
+  #|
+  data$el[is.na(data$pid)] <- ""
+  # line label rotation  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  data$el_slope <- (data$vy - data[data$pid, "vy"]) / (data$vx - data[data$pid, "vx"])
+  data$el_slope[is.na(data$el_slope)] <- 0
+  data$el_rotation <- atan(data$el_slope)
+  # line label coordinate  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  line_label_offset = 1
+  justify <- data[data$pid, "vx"] > data$vx
+  justify[is.na(justify)] <- TRUE
+  justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+  names(justification) <- data$tid
+  line_label_x_offset <- line_label_offset * data$vs_g * cos(data$el_rotation)
+  line_label_y_offset <- line_label_offset * data$vs_g * sin(data$el_rotation)
+  data$elx_g <- data$vx + ifelse(justify, 1, -1) * line_label_x_offset
+  data$ely_g <- data$vy + ifelse(justify, 1, -1) * line_label_y_offset
+  data$elx_g <- scales::rescale(data$elx_g, to = c(0, 1), from = c(x_min, x_max))
+  data$ely_g <- scales::rescale(data$ely_g, to = c(0, 1), from = c(y_min, y_max))
+  # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  mean_inter_pair <- mean(sqrt((data$vx - data[data$pid, "vx"])^2 + (data$vy - data[data$pid, "vy"])^2), na.rm = TRUE)
+  data$els_g <-  scales::rescale(data$els_g, to = c(0, 1), from = c(0, square_side_length)) 
+  if (is.null(edge_label_max) || is.na(edge_label_max)) {
+    edge_label_shown <- data$tid
+  } else {
+    edge_label_shown <- data[order(data$es_g, decreasing = TRUE)[1:edge_label_max], "tid"]
+  }
+  # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  edge_label_grobs <- plyr::dlply(data[edge_label_shown, ], "tid",
+                                    function(row) resizingTextGrob(label = row['el'],
+                                                                   y = row['ely_g'],
+                                                                   x = row['elx_g'],
+                                                                   gp = grid::gpar(text_prop = row['els_g']),
+                                                                   rot = row['el_rotation'] * 180 / pi,
+                                                                   just = justification[[row[['tid']]]]))
   #| ### Draw plot ================================================================================
   
   the_plot <- ggplot2::ggplot(data = data) +
@@ -439,6 +473,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                    axis.text  = ggplot2::element_blank(),
                    axis.ticks = ggplot2::element_blank(), 
                    axis.line  = ggplot2::element_blank())
+  for (a_grob in edge_label_grobs) {
+    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  }    
   for (a_grob in vertex_label_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
