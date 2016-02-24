@@ -316,7 +316,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                 function(x) find_overlap(x["min"], x["max"], all_pairwise))
   
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 0.01
+    overlap_weight <- 0.05
     minimum_weight <- 2
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_bias * overlap_weight)
   }
@@ -341,7 +341,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     return(result)
   }
   
-  edge_size_range_g <- infer_size_range(edge_size_range, vertex_size_range_g, defualt_scale = 0.125)
+  edge_size_range_g <- infer_size_range(edge_size_range, vertex_size_range_g, defualt_scale = 0.5)
   data$es_g <- scales::rescale(data$es_t, to = edge_size_range_g)
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
@@ -369,30 +369,43 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data[, new_names] <- lapply(names(color_colume_key),
                               function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   
-  # plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"],
-  #      vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
-  #      vertex.color = data[names(V(graph)), "vc_g"])
   #| ### Secondary plot data ======================================================================
   #|
   #| #### Calculate coordinants of graph elements -------------------------------------------------
-  #|
-  edge_data <- line_coords(x1 = data$vx, y1 = data$vy, x2 = data[data$pid, "vx"],
-                           y2 = data[data$pid, "vy"], width = data$es_g * 2)
-  edge_data$color <- rep(data$ec_g, each = 4)
-  circle_resolution <- 50
-  vertex_data <- polygon_coords(n = circle_resolution, x = data$vx, y = data$vy, radius = data$es_g)
-  vertex_data$color <- rep(data$vc_g, each = circle_resolution + 1)
-  edge_data$group <- as.numeric(edge_data$group) + length(unique(vertex_data$group))
-  index <- order(c(seq_along(unique(edge_data$group)), seq_along(unique(vertex_data$group))))
-  element_data <-c(split(edge_data, edge_data$group), split(vertex_data, vertex_data$group))[index]
-  element_data <- do.call(rbind, element_data)
+  #| The vertexes and edges must be specified by a dataframe of coordinates, with a colume 
+  #| grouping the coordinates of each shape.
+  #| These shapes must be added to the graph in a specific order.
+  #| A list of vertexes is sorted by first vertex depth in the heirarchy and then by vertex size.
+  taxon_elements <- function(taxon_id) {
+    circle_resolution <- 50
+    edge_data <- line_coords(x1 = data[taxon_id, 'vx'],
+                             y1 = data[taxon_id, 'vy'],
+                             x2 = data[data[taxon_id, 'pid'], "vx"],
+                             y2 = data[data[taxon_id, 'pid'], "vy"],
+                             width = data[taxon_id, 'es_g'] * 2)
+    edge_data$group <- paste0(taxon_id, "_edge")
+    edge_data$color <- rep(data[taxon_id, 'ec_g'], each = 4)
+    vertex_data <- polygon_coords(n = circle_resolution,
+                                  x = data[taxon_id, 'vx'],
+                                  y = data[taxon_id, 'vy'],
+                                  radius = data[taxon_id, 'vs_g'])
+    vertex_data$group <- paste0(taxon_id, "_vertex")
+    vertex_data$color <- rep(data[taxon_id, 'vc_g'], each = circle_resolution + 1)
+    output <- rbind(edge_data, vertex_data)
+    output$tid <- taxon_id
+    return(output[complete.cases(output),])
+  }
+  data$level = edge_list_depth(data$tid, data$pid)
+  element_order <- data$tid[order(data$level, 1 / data$vs_g, decreasing = TRUE)]
+  element_data <- do.call(rbind, lapply(element_order, taxon_elements))
+  element_data$group <- factor(element_data$group, levels = unique(element_data$group))
   #|
   #| #### Make text grobs -------------------------------------------------------------------------
   #|
-  x_min <-  min(vertex_data$x) - margin_size[1]
-  x_max <- max(vertex_data$x) + margin_size[1]
-  y_min <- min(vertex_data$y) - margin_size[2]
-  y_max <- max(vertex_data$y) + margin_size[2]
+  x_min <- min(element_data$x) - margin_size[1]
+  x_max <- max(element_data$x) + margin_size[1]
+  y_min <- min(element_data$y) - margin_size[2]
+  y_max <- max(element_data$y) + margin_size[2]
   data$vls_g <- scales::rescale(data$vls_g, to = c(0, 1), from = c(0, square_side_length))
   data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
   data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
