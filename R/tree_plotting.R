@@ -367,7 +367,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data[, new_names] <- lapply(names(color_colume_key),
                               function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   
-  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"] * 5 ,
+  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"],
        vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
        vertex.color = data[names(V(graph)), "vc_g"])
   #| ### Secondary plot data ======================================================================
