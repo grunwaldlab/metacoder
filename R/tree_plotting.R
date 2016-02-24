@@ -282,14 +282,14 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   y_diff <- max(data$vy) - min(data$vy)
   square_side_length <- sqrt(x_diff * y_diff)
   if (is.na(vertex_size_range[1])) {
-    min_range <- c(square_side_length / 2000, min(all_pairwise$distance))
+    min_range <- c(square_side_length / 1000, min(all_pairwise$distance))
   } else {
     min_range <- rep(vertex_size_range[1], 2) * square_side_length
   }
   if (is.na(vertex_size_range[2])) {
-    max_range <- c(min_range[1], square_side_length / sqrt(nrow(data)) / 2)
+    max_range <- c(min_range[1], square_side_length / 4)
   } else {
-    max_range <- ep(vertex_size_range[2], 2) * square_side_length
+    max_range <- c(vertex_size_range[2], 2) * square_side_length
   }
   
   get_search_space <- function(min_range, max_range, breaks_per_dim = 10) {
@@ -315,15 +315,17 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   search_space$overlap <- apply(search_space, MARGIN = 1,
                                 function(x) find_overlap(x["min"], x["max"], all_pairwise))
   
-  optimality_stat <- function(overlap, range_size) {
-    (1 + range_size) / (1 + overlap * overlap_bias)
+  optimality_stat <- function(overlap, range_size, minimum) {
+    overlap_weight <- 0.01
+    minimum_weight <- 2
+    (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_bias * overlap_weight)
   }
   
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
-                                 function(x) optimality_stat(x["overlap"], x["range_size"]))
+                                 function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
   vertex_size_range_g <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
   data$vs_g <- scales::rescale(data$vs_t, to = vertex_size_range_g)
-  ggplot(search_space) + geom_point(aes(x = max, y = min, size = opt_stat))
+  # ggplot(search_space) + geom_point(aes(x = max, y = min, size = opt_stat))
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
@@ -339,7 +341,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     return(result)
   }
   
-  edge_size_range_g <- infer_size_range(edge_size_range, vertex_size_range_g, defualt_scale = 0.5)
+  edge_size_range_g <- infer_size_range(edge_size_range, vertex_size_range_g, defualt_scale = 0.125)
   data$es_g <- scales::rescale(data$es_t, to = edge_size_range_g)
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
@@ -367,19 +369,23 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data[, new_names] <- lapply(names(color_colume_key),
                               function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   
-  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"],
-       vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
-       vertex.color = data[names(V(graph)), "vc_g"])
+  # plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"],
+  #      vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
+  #      vertex.color = data[names(V(graph)), "vc_g"])
   #| ### Secondary plot data ======================================================================
   #|
   #| #### Calculate coordinants of graph elements -------------------------------------------------
   #|
   edge_data <- line_coords(x1 = data$vx, y1 = data$vy, x2 = data[data$pid, "vx"],
-                           y2 = data[data$pid, "vy"], width = data$es_g)
+                           y2 = data[data$pid, "vy"], width = data$es_g * 2)
   edge_data$color <- rep(data$ec_g, each = 4)
   circle_resolution <- 50
   vertex_data <- polygon_coords(n = circle_resolution, x = data$vx, y = data$vy, radius = data$es_g)
   vertex_data$color <- rep(data$vc_g, each = circle_resolution + 1)
+  edge_data$group <- as.numeric(edge_data$group) + length(unique(vertex_data$group))
+  index <- order(c(seq_along(unique(edge_data$group)), seq_along(unique(vertex_data$group))))
+  element_data <-c(split(edge_data, edge_data$group), split(vertex_data, vertex_data$group))[index]
+  element_data <- do.call(rbind, element_data)
   #|
   #| #### Make text grobs -------------------------------------------------------------------------
   #|
@@ -387,7 +393,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   x_max <- max(vertex_data$x) + margin_size[1]
   y_min <- min(vertex_data$y) - margin_size[2]
   y_max <- max(vertex_data$y) + margin_size[2]
-  data$vls_g <- scales::rescale(data$vls_t, to = c(0, 1), from = c(0, square_side_length))
+  data$vls_g <- scales::rescale(data$vls_g, to = c(0, 1), from = c(0, square_side_length))
   data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
   data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
   if (is.null(vertex_label_max) || is.na(vertex_label_max)) {
@@ -405,10 +411,12 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #| ### Draw plot ================================================================================
   
   the_plot <- ggplot2::ggplot(data = data) +
-    ggplot2::geom_polygon(data = edge_data, ggplot2::aes(x = x, y = y, group = group),
-                          fill = edge_data$color) +
-    ggplot2::geom_polygon(data = vertex_data, ggplot2::aes(x = x, y = y, group = group),
-                          fill = vertex_data$color) +
+    # ggplot2::geom_polygon(data = edge_data, ggplot2::aes(x = x, y = y, group = group),
+    #                       fill = edge_data$color) +
+    # ggplot2::geom_polygon(data = vertex_data, ggplot2::aes(x = x, y = y, group = group),
+    #                       fill = vertex_data$color) +
+    ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
+                          fill = element_data$color) +
     ggplot2::guides(fill = "none") +
     ggplot2::coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
     scale_y_continuous(expand = c(0,0)) + scale_x_continuous(expand = c(0,0)) +
@@ -437,7 +445,7 @@ verify_size_range <- function(args) {
     if (length(value) != 2) {
       stop(paste0("Argument ", arg, " must be of length 2."))
     }
-    if (! all(is.na(value)) && value[2] < value[1]) {
+    if (all(!is.na(value)) && value[2] < value[1]) {
       stop(paste0("The min value of ", arg, " is greater than its max."))
     }
   }
