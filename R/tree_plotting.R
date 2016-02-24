@@ -53,7 +53,7 @@
 #' @param edge_size (\code{numeric)} The value to base edge size on. Default: relative to vertex
 #' size. 
 #' @param edge_size_range (\code{numeric} of length 2) The minimum and maximum size of edges.
-#' If either value is \code{NA}, the missing value(s) will be optimized relative to vertex size. 
+#' If either value is \code{NA}, the missing value(s) will be set relative to vertex size. 
 #' Default: relative to vertex size. 
 #' @param edge_size_trans (\code{function(value)} OR \code{character}) A function to transform the
 #' value of \code{edge_size}. Alternativly one of the following \code{character} values displayed
@@ -279,30 +279,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Optimize vertex size --------------------------------------------------------------------
   #|
-  
+
   all_pairwise <- molten_dist(x = data$vx, y = data$vy)
-  
-  find_overlap <- function(a_min, a_max, distance) {
-    scaled_vs <- scales::rescale(data$vs_t, to = c(a_min, a_max))
-    names(scaled_vs) <- data$tid
-    gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
-    gap <- ifelse(gap < 0, abs(gap), 0)
-    sum(gap)
-  } 
-  
-  
-  get_search_space <- function(min_range, max_range, breaks_per_dim = 10) {
-    min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
-    max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
-    space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
-                        max = rep(max_breaks, length(min_breaks)))
-    space[space$min <= space$max, ]
-  }
-  
-  optimality_stat <- function(overlap, range_size) {
-    (1 + range_size) / (1 + overlap)
-  }
-  
   x_diff <- max(data$vx) - min(data$vx)
   y_diff <- max(data$vy) - min(data$vy)
   square_side_length <- sqrt(x_diff * y_diff)
@@ -316,17 +294,50 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   } else {
     max_range <- ep(vertex_size_range[2], 2) * square_side_length
   }
-
+  
+  get_search_space <- function(min_range, max_range, breaks_per_dim = 10) {
+    min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
+    max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
+    space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
+                        max = rep(max_breaks, length(min_breaks)))
+    space[space$min <= space$max, ]
+  }
+  
+  
   search_space <- get_search_space(min_range, max_range, breaks_per_dim = 20)
   search_space$range_size <- search_space$max - search_space$min
+  
+  find_overlap <- function(a_min, a_max, distance) {
+    scaled_vs <- scales::rescale(data$vs_t, to = c(a_min, a_max))
+    names(scaled_vs) <- data$tid
+    gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
+    gap <- ifelse(gap < 0, abs(gap), 0)
+    sum(gap)
+  } 
+  
   search_space$overlap <- apply(search_space, MARGIN = 1,
                                 function(x) find_overlap(x["min"], x["max"], all_pairwise))
+  
+  optimality_stat <- function(overlap, range_size) {
+    (1 + range_size) / (1 + overlap)
+  }
+
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
                                  function(x) optimality_stat(x["overlap"], x["range_size"]))
-  
-  optimim_vs_range <- search_space[which.max(search_space$opt_stat), c("min", "max")]
-  
+  graphed_vs_range <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
+  data$vs_g <- scales::rescale(data$vs_t, to = graphed_vs_range)
   ggplot(search_space) + geom_point(aes(x = max, y = min, size = opt_stat))
+  #|
+  #| #### Infer edge size range -------------------------------------------------------------------
+  #|
+  graphed_es_range <- edge_size_range * square_side_length
+  if (is.na(graphed_es_range[1]) && is.na(graphed_es_range[2])) { # If the user has not set range
+    graphed_es_range <- graphed_vs_range * 0.5
+  } else if (is.na(graphed_es_range[1])) { # If the user has set a maximum but not a minimum
+    graphed_es_range[1] <- graphed_es_range[2] * graphed_vs_range[1] / graphed_vs_range[2]
+  } else if (is.na(graphed_es_range[2])) { # If the user has set a minimum but not a maximum
+    graphed_es_range[2] <- graphed_es_range[1] * graphed_vs_range[2] / graphed_vs_range[1]
+  }
   
   #| ### Secondary plot data ======================================================================
   
