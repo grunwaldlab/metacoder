@@ -124,10 +124,10 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               vertex_color_range = quantative_palette(),
                               vertex_color_trans = vertex_size_trans,
                               edge_size = vertex_size,
-                              egde_size_range = c(NA, NA),
+                              edge_size_range = c(NA, NA),
                               edge_size_trans = vertex_size_trans,
                               edge_color = vertex_color,
-                              egde_color_range = vertex_color_range,
+                              edge_color_range = vertex_color_range,
                               edge_color_trans = vertex_color_trans,
                               vertex_label = NA,
                               vertex_label_size = vertex_size,
@@ -161,13 +161,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                          "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
                          "vertex_label", "edge_label"))
   verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
-  verify_size_range(c("vertex_size_range", "egde_size_range",
+  verify_size_range(c("vertex_size_range", "edge_size_range",
                       "vertex_label_size_range", "edge_label_size_range"))
   verify_trans(c("vertex_size_trans", "vertex_color_trans", 
                  "edge_size_trans", "edge_color_trans",
                  "vertex_label_size_trans", "vertex_label_color_trans",
                  "edge_label_size_trans", "edge_label_color_trans"))
-  verify_color_range(c("vertex_color_range", "egde_color_range",
+  verify_color_range(c("vertex_color_range", "edge_color_range",
                        "vertex_label_color_range", "edge_label_color_range"))
   verify_label_count(c("vertex_label_max", "edge_label_max"))
   if (length(overlap_bias) == 0 || ! is.numeric(overlap_bias)) {
@@ -272,14 +272,11 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     }
   }
   data[, new_names] <- lapply(names(trans_key), apply_trans)
-
-  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vs_t"] / 5 ,
-       vertex.size = data[names(V(graph)), "vs_t"] , vertex.label=data[names(V(graph)), "vl"])
-  ggplot(data) + geom_point(aes(x = vx, y = vy, size = vs))
+  
   #|
   #| #### Optimize vertex size --------------------------------------------------------------------
   #|
-
+  
   all_pairwise <- molten_dist(x = data$vx, y = data$vy)
   x_diff <- max(data$vx) - min(data$vx)
   y_diff <- max(data$vy) - min(data$vy)
@@ -304,7 +301,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 20)
+  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 10)
   search_space$range_size <- search_space$max - search_space$min
   
   find_overlap <- function(a_min, a_max, distance) {
@@ -321,24 +318,58 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   optimality_stat <- function(overlap, range_size) {
     (1 + range_size) / (1 + overlap)
   }
-
+  
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
                                  function(x) optimality_stat(x["overlap"], x["range_size"]))
-  graphed_vs_range <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
-  data$vs_g <- scales::rescale(data$vs_t, to = graphed_vs_range)
+  vertex_size_range_g <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
+  data$vs_g <- scales::rescale(data$vs_t, to = vertex_size_range_g)
   ggplot(search_space) + geom_point(aes(x = max, y = min, size = opt_stat))
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
-  graphed_es_range <- edge_size_range * square_side_length
-  if (is.na(graphed_es_range[1]) && is.na(graphed_es_range[2])) { # If the user has not set range
-    graphed_es_range <- graphed_vs_range * 0.5
-  } else if (is.na(graphed_es_range[1])) { # If the user has set a maximum but not a minimum
-    graphed_es_range[1] <- graphed_es_range[2] * graphed_vs_range[1] / graphed_vs_range[2]
-  } else if (is.na(graphed_es_range[2])) { # If the user has set a minimum but not a maximum
-    graphed_es_range[2] <- graphed_es_range[1] * graphed_vs_range[2] / graphed_vs_range[1]
+  infer_size_range <- function(specified_range, reference_range, defualt_scale) {
+    result <- specified_range * square_side_length
+    if (is.na(result[1]) && is.na(result[2])) { # If the user has not set range
+      result <- reference_range * defualt_scale
+    } else if (is.na(result[1])) { # If the user has set a maximum but not a minimum
+      result[1] <- result[2] * reference_range[1] / reference_range[2]
+    } else if (is.na(result[2])) { # If the user has set a minimum but not a maximum
+      result[2] <- result[1] * reference_range[2] / reference_range[1]
+    }
+    return(result)
   }
   
+  edge_size_range_g <- infer_size_range(edge_size_range, vertex_size_range_g, defualt_scale = 0.5)
+  data$es_g <- scales::rescale(data$es_t, to = edge_size_range_g)
+  #|
+  #| #### Infer label size ranges -----------------------------------------------------------------
+  #|
+  vertex_label_size_range_g <- infer_size_range(vertex_label_size_range, vertex_size_range_g, 
+                                                defualt_scale = 0.5)
+  edge_label_size_range_g <- infer_size_range(edge_label_size_range, edge_size_range_g, 
+                                              defualt_scale = 0.5)
+  data$vls_g <- scales::rescale(data$vls_t, to = vertex_label_size_range_g)
+  data$els_g <- scales::rescale(data$els_t, to = edge_label_size_range_g)
+  #|
+  #| #### Assign color scales ---------------------------------------------------------------------
+  #|
+  apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
+    if (is.numeric(data$ec_t)) { ## Not factors, characters, or hex codes
+      palette <- colorRampPalette(color_series)(no_color_in_palette)
+      color_index <- as.integer(scales::rescale(values, to = c(1, no_color_in_palette)))
+      return(palette[color_index])
+    }
+  }
+  
+  color_colume_key <- list("ec_t" = edge_color_range, "vc_t" = vertex_color_range,
+                           "elc_t" = edge_label_color_range, "vlc_t" = vertex_label_color_range)
+  new_names <- gsub(pattern = "_t$", x = names(color_colume_key), replacement = "_g")
+  data[, new_names] <- lapply(names(color_colume_key),
+                              function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
+  
+  plot(graph, layout = coords,edge.arrow.size = 0,  vertex.label.cex = data[names(V(graph)), "vls_g"] * 5 ,
+       vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
+       vertex.color = data[names(V(graph)), "vc_g"])
   #| ### Secondary plot data ======================================================================
   
   
