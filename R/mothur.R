@@ -16,7 +16,7 @@ parse_summary_seqs <- function(text = NULL, file = NULL) {
   if (!missing(file)) text = readLines(file)
   # Split into lines
   text <- unlist(strsplit(text, split = "\n", fixed = TRUE))
-  # Subset the lines with statistics
+  # Subset the lines with statistics 
   text <- text[17:25]
   # Remove extra tab on header line
   text[1] <- gsub("\\t\\t", "\\\t", text[1])
