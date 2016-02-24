@@ -257,9 +257,10 @@ taxa <- original_data$taxa
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
 data_to_plot <- taxa
-plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
-              size = data_to_plot$item_count,
-              vertex_color = data_to_plot$item_count)
+new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+                  vertex_size = data_to_plot$item_count,
+                  vertex_color = data_to_plot$item_count,
+                  vertex_label = data_to_plot$name)
 ```
 
 
@@ -267,10 +268,10 @@ plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
 parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  4), function(i) taxa[i, ])
 
 data_to_plot <- parts[[2]]
-plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id, no_stem = FALSE, 
-              size = data_to_plot$item_count,
-              vertex_color = data_to_plot$item_count,
-              titles = data_to_plot$name)
+new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+                  vertex_size = data_to_plot$item_count,
+                  vertex_color = data_to_plot$item_count,
+                  vertex_label = data_to_plot$name)
 
 data_to_plot <- do.call(rbind, parts)
 plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,

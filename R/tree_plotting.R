@@ -22,9 +22,9 @@
 #' Colors and sizes of vertexes and edges can be mapped to variables.
 #' Uses \code{igraph} to make layout and \code{ggplot2} to make plots.
 #' 
-#' @param taxon_id (\code{character}} The unique ids of the taxon for each row.
-#' @param parent_id (\code{character}} The unique id of supertaxon \code{taxon_id} is a part of.
-#' @param vertex_size (\code{numeric)} The value to base vertex size on. Default: inverse of depth 
+#' @param taxon_id (\code{character}) The unique ids of the taxon for each row.
+#' @param parent_id (\code{character}) The unique id of supertaxon \code{taxon_id} is a part of.
+#' @param vertex_size (\code{numeric}) The value to base vertex size on. Default: inverse of depth 
 #' of taxa in hierarchy. 
 #' @param vertex_size_range (\code{numeric} of length 2) The minimum and maximum size of vertexes.
 #' If either value is \code{NA}, the missing value(s) will be optimized to maximize range and
@@ -316,7 +316,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                 function(x) find_overlap(x["min"], x["max"], all_pairwise))
   
   optimality_stat <- function(overlap, range_size) {
-    (1 + range_size) / (1 + overlap)
+    (1 + range_size) / (1 + overlap * overlap_bias)
   }
   
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
@@ -371,11 +371,57 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
        vertex.size = data[names(V(graph)), "vs_g"] * 2 , vertex.label= data[names(V(graph)), "vl"],
        vertex.color = data[names(V(graph)), "vc_g"])
   #| ### Secondary plot data ======================================================================
-  
+  #|
+  #| #### Calculate coordinants of graph elements -------------------------------------------------
+  #|
+  edge_data <- line_coords(x1 = data$vx, y1 = data$vy, x2 = data[data$pid, "vx"],
+                           y2 = data[data$pid, "vy"], width = data$es_g)
+  edge_data$color <- rep(data$ec_g, each = 4)
+  circle_resolution <- 50
+  vertex_data <- polygon_coords(n = circle_resolution, x = data$vx, y = data$vy, radius = data$es_g)
+  vertex_data$color <- rep(data$vc_g, each = circle_resolution + 1)
+  #|
+  #| #### Make text grobs -------------------------------------------------------------------------
+  #|
+  x_min <-  min(vertex_data$x) - margin_size[1]
+  x_max <- max(vertex_data$x) + margin_size[1]
+  y_min <- min(vertex_data$y) - margin_size[2]
+  y_max <- max(vertex_data$y) + margin_size[2]
+  data$vls_g <- scales::rescale(data$vls_t, to = c(0, 1), from = c(0, square_side_length))
+  data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
+  data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
+  if (is.null(vertex_label_max) || is.na(vertex_label_max)) {
+    vertex_label_shown <- data$tid
+  } else {
+    vertex_label_shown <- data[order(data$es_g, decreasing = TRUE)[1:vertex_label_max], "tid"]
+  }
+  vertex_label_grobs <- plyr::dlply(data[vertex_label_shown, ], "tid",
+                               function(row) resizingTextGrob(label = row['vl'],
+                                                            y = row['vly_g'],
+                                                            x = row['vlx_g'],
+                                                            gp = grid::gpar(text_prop = row['vls_g'])))    
   
   
   #| ### Draw plot ================================================================================
   
+  the_plot <- ggplot2::ggplot(data = data) +
+    ggplot2::geom_polygon(data = edge_data, ggplot2::aes(x = x, y = y, group = group),
+                          fill = edge_data$color) +
+    ggplot2::geom_polygon(data = vertex_data, ggplot2::aes(x = x, y = y, group = group),
+                          fill = vertex_data$color) +
+    ggplot2::guides(fill = "none") +
+    ggplot2::coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+    scale_y_continuous(expand = c(0,0)) + scale_x_continuous(expand = c(0,0)) +
+    ggplot2::theme(panel.grid = ggplot2::element_blank(), 
+                   panel.background = ggplot2::element_blank(),
+                   axis.title = ggplot2::element_blank(),
+                   axis.text  = ggplot2::element_blank(),
+                   axis.ticks = ggplot2::element_blank(), 
+                   axis.line  = ggplot2::element_blank())
+  for (a_grob in vertex_label_grobs) {
+    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  }    
+  the_plot
 }
 
 
