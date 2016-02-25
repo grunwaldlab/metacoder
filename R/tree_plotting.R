@@ -383,6 +383,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make text grobs -------------------------------------------------------------------------
   #|
+  margin_size <- margin_size * square_side_length
   x_min <-  min(vertex_data$x) - margin_size[1]
   x_max <- max(vertex_data$x) + margin_size[1]
   y_min <- min(vertex_data$y) - margin_size[2]
