@@ -385,10 +385,12 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
   apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
-    if (is.numeric(data$ec_t)) { ## Not factors, characters, or hex codes
+    if (is.numeric(values)) { ## Not factors, characters, or hex codes
       palette <- colorRampPalette(color_series)(no_color_in_palette)
       color_index <- as.integer(scales::rescale(values, to = c(1, no_color_in_palette)))
       return(palette[color_index])
+    } else {
+      return(values)
     }
   }
   
@@ -509,7 +511,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                                                  rot = 0,
                                                                  just = "center"))
   #| ### Draw plot ================================================================================
-  
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
                           fill = element_data$color) +
