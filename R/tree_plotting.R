@@ -128,6 +128,7 @@
 #' @param initial_layout (\code{character} of length 1) Optional starting layout to use to initialize
 #' the final layout function.
 #' Type \code{\link{layout_functions}()} for available layout names.
+#' @param ... (other arguments) Passed to igraph layout function used.
 #'  
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
@@ -169,7 +170,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               margin_size = c(0, 0),
                               # aspect_ratio = NULL,
                               layout = "reingold-tilford",
-                              initial_layout = "fruchterman-reingold") {
+                              initial_layout = "fruchterman-reingold",
+                              ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -256,7 +258,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     }
     # Calculate the primary layout 
     coords <- igraph::layout_(graph, layout_functions(layout, graph = graph,
-                                                      intitial_coords = intitial_coords))
+                                                      intitial_coords = intitial_coords, 
+                                                      ...))
     # Calculate backup layout if primary one does not work
     if (any(is.na(coords) | is.nan(unlist(coords)))) {
       coords <- igraph::layout_(graph, layout_functions(backup_layout, graph = graph))
@@ -441,11 +444,19 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$vls_g <- scales::rescale(data$vls_g, to = c(0, 1), from = c(0, square_side_length))
   data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
   data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
-  if (is.null(vertex_label_max) || is.na(vertex_label_max)) {
-    vertex_label_shown <- data$tid
-  } else {
-    vertex_label_shown <- data[order(data$vs_g, decreasing = TRUE)[1:vertex_label_max], "tid"]
+  
+  select_labels <- function(my_data, label_max, sort_by_colume, label_colume) {
+    if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
+      labels_shown <- my_data[ ,  "tid"]
+    } else {
+      top_indexes <- order(my_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
+      labels_shown <- my_data[top_indexes,  "tid"]
+    }
+    return( labels_shown[!is.na(my_data[labels_shown, label_colume])] ) # Do not make grobs for NA
   }
+  
+  vertex_label_shown <- select_labels(data, vertex_label_max,
+                                      sort_by_colume = "vls_g", label_colume = "vl")
   vertex_label_grobs <- plyr::dlply(data[vertex_label_shown, ], "tid",
                                function(row) resizingTextGrob(label = row['vl'],
                                                             y = row['vly_g'],
@@ -472,13 +483,10 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$elx_g <- scales::rescale(data$elx_g, to = c(0, 1), from = c(x_min, x_max))
   data$ely_g <- scales::rescale(data$ely_g, to = c(0, 1), from = c(y_min, y_max))
   # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$els_g <-  scales::rescale(data$els_g, to = c(0, 1), from = c(0, square_side_length)) 
-  if (is.null(edge_label_max) || is.na(edge_label_max)) {
-    edge_label_shown <- data$tid
-  } else {
-    edge_label_shown <- data[order(data$es_g, decreasing = TRUE)[1:edge_label_max], "tid"]
-  }
+  data$els_g <-  scales::rescale(data$els_g, to = c(0, 1), from = c(0, square_side_length))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  edge_label_shown <- select_labels(data, edge_label_max, 
+                                    sort_by_colume = "els_g", label_colume = "el")
   edge_label_grobs <- plyr::dlply(data[edge_label_shown, ], "tid",
                                     function(row) resizingTextGrob(label = row['el'],
                                                                    y = row['ely_g'],
@@ -498,11 +506,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   title_data$glx <- scales::rescale(title_data$glx, to = c(0, 1), from = c(x_min, x_max))
   title_data$gly <- scales::rescale(title_data$gly, to = c(0, 1), from = c(y_min, y_max)) + title_data$gls_g * 1.1
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (is.null(graph_label_max) || is.na(graph_label_max) || length(root_indexes) <= graph_label_max) {
-    graph_label_shown <- root_indexes
-  } else {
-    graph_label_shown <- title_data[order(title_data$gls_g, decreasing = TRUE)[1:graph_label_max], "tid"]
-  }
+  graph_label_shown <- select_labels(title_data, graph_label_max, 
+                                     sort_by_colume = "gls_g", label_colume = "gl")
   graph_label_grobs <- plyr::dlply(title_data[graph_label_shown, ], "tid",
                                   function(row) resizingTextGrob(label = row['gl'],
                                                                  x = row['glx'],
@@ -680,66 +685,78 @@ transform_data <- function(data = NULL, func = NULL) {
 #' see all options. 
 #' @param graph (\code{igraph}) The graph to generate the layout for.
 #' @param  intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of. 
+#' @param ... (other arguments) Passed to igraph layout function used.
 #' 
 #' @export
-layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL) {
+layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, ...) {
   return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
   if (return_names) {
     graph <- make_ring(1) # Dummy graph so that the list can be defined, but only names used
   }
-  funcs <- list("automatic" = igraph::nicely(),
-                "reingold-tilford" = igraph::as_tree(circular = TRUE,
-                                                     mode = "out"),
-                "davidson-harel" = igraph::with_dh(coords = intitial_coords,
-                                                   maxiter = 15,
-                                                   fineiter = max(15, log2(vcount(graph))),
-                                                   cool.fact = 0.75,
-                                                   weight.node.dist = 1,
-                                                   weight.border = 0,
-                                                   weight.edge.lengths = 1,
-                                                   weight.edge.crossings = 100,
-                                                   weight.node.edge.dist = 1),
-                "gem" = igraph::with_gem(coords = intitial_coords,
-                                         maxiter = 40 * vcount(graph)^2,
-                                         temp.max = vcount(graph),
-                                         temp.min = 1/10,
-                                         temp.init = sqrt(vcount(graph))),
-                "graphopt" = igraph::with_graphopt(start = intitial_coords,
-                                                   niter = 500,
-                                                   charge = 0.0005,
-                                                   mass = 30,
-                                                   spring.length = 0,
-                                                   spring.constant = 1,
-                                                   max.sa.movement = 5),
-                "mds" = igraph::with_mds(),
-                "fruchterman-reingold" = igraph::with_fr(coords = intitial_coords,
-                                                         niter = 500,
-                                                         start.temp = sqrt(vcount(graph)),
-                                                         grid = "nogrid",
-                                                         weights = NULL),
-                "kamada-kawai" = igraph::with_kk(coords = intitial_coords,
-                                                 maxiter = 50 * vcount(graph),
-                                                 epsilon = 0,
-                                                 kkconst = vcount(graph),
+  defaults <- list("automatic" = list(),
+                   "reingold-tilford" = list(circular = TRUE,
+                                             mode = "out"),
+                   "davidson-harel" = list(coords = intitial_coords,
+                                           maxiter = 15,
+                                           fineiter = max(15, log2(vcount(graph))),
+                                           cool.fact = 0.75,
+                                           weight.node.dist = 1,
+                                           weight.border = 0,
+                                           weight.edge.lengths = 1,
+                                           weight.edge.crossings = 100,
+                                           weight.node.edge.dist = 1),
+                   "gem" = list(coords = intitial_coords,
+                                maxiter = 40 * vcount(graph)^2,
+                                temp.max = vcount(graph),
+                                temp.min = 1/10,
+                                temp.init = sqrt(vcount(graph))),
+                   "graphopt" =list(start = intitial_coords,
+                                    niter = 500,
+                                    charge = 0.0005,
+                                    mass = 30,
+                                    spring.length = 0,
+                                    spring.constant = 1,
+                                    max.sa.movement = 5),
+                   "mds" = list(),
+                   "fruchterman-reingold" = list(coords = intitial_coords,
+                                                 niter = 500,
+                                                 start.temp = sqrt(vcount(graph)),
+                                                 grid = "nogrid",
                                                  weights = NULL),
-                "large-graph" = igraph::with_lgl(maxiter = 150,
-                                                 maxdelta = vcount(graph),
-                                                 area = vcount(graph)^2,
-                                                 coolexp = 1.5,
-                                                 repulserad = vcount(graph)^2 * vcount(graph),
-                                                 cellsize = sqrt(sqrt(vcount(graph)^2)),
-                                                 root = 1),
-                "drl" = igraph::with_drl(use.seed = ! is.null(intitial_coords),
-                                         seed = ifelse(is.null(intitial_coords), 
-                                                       matrix(runif(vcount(graph) * 2), ncol = 2),
-                                                       intitial_coords),
-                                         options = drl_defaults$default,
-                                         weights = E(graph)$weight,
-                                         fixed = NULL))
+                   "kamada-kawai" = list(coords = intitial_coords,
+                                         maxiter = 50 * vcount(graph),
+                                         epsilon = 0,
+                                         kkconst = vcount(graph),
+                                         weights = NULL),
+                   "large-graph" = list(maxiter = 150,
+                                        maxdelta = vcount(graph),
+                                        area = vcount(graph)^2,
+                                        coolexp = 1.5,
+                                        repulserad = vcount(graph)^2 * vcount(graph),
+                                        cellsize = sqrt(sqrt(vcount(graph)^2)),
+                                        root = 1),
+                   "drl" = list(use.seed = ! is.null(intitial_coords),
+                                seed = ifelse(is.null(intitial_coords), 
+                                              matrix(runif(vcount(graph) * 2), ncol = 2),
+                                              intitial_coords),
+                                options = drl_defaults$default,
+                                weights = E(graph)$weight,
+                                fixed = NULL))
+  funcs <- list("automatic" = igraph::nicely,
+                "reingold-tilford" = igraph::as_tree,
+                "davidson-harel" = igraph::with_dh,
+                "gem" = igraph::with_gem,
+                "graphopt" = igraph::with_graphopt,
+                "mds" = igraph::with_mds(),
+                "fruchterman-reingold" = igraph::with_fr,
+                "kamada-kawai" = igraph::with_kk,
+                "large-graph" = igraph::with_lgl,
+                "drl" = igraph::with_drl)
   if (return_names) {
-    return(names(funcs)) # Dummy graph so that the list can be defined, but only names used
+    return(names(funcs)) 
   } else {
-    return(funcs[[name]])
+    arguments <- modifyList(defaults[[name]], list(...))
+    return(do.call(funcs[[name]], arguments))
   }
 }
 
