@@ -66,7 +66,7 @@
 #' @param edge_color_trans (\code{function(value)} OR \code{character}) A function to transform the
 #' value of \code{edge_size}. Alternativly one of the following \code{character} values displayed
 #' under the \code{vertex_size_trans}. Default: same as vertex color transformation.
-#' @param vertex_label The values of labels over vertcies. Use \code{NA} to exclude labels.
+#' @param vertex_label (\code{character}) The values of labels over vertcies. Use \code{NA} to exclude labels.
 #' Default: no labels.
 #' @param vertex_label_size (\code{numeric)} The value to base veterx label size on. Default: 
 #' relative to veterx size.
@@ -85,7 +85,7 @@
 #' value of \code{vertex_label_size}. Alternativly one of the \code{character} values displayed
 #' under the \code{vertex_size_trans}. Default: \code{"area"}.
 #' @param vertex_label_max (\code{numeric}) The maximum number of vertex labels. Default: 20.
-#' @param edge_label The values of labels over edges. Default: no labels.
+#' @param edge_label (\code{character}) The values of labels over edges. Default: no labels.
 #' @param edge_label_size (\code{numeric)} The value to base edge label size on. Default: relative to
 #' edge size.
 #' @param edge_label_size_range (\code{numeric} of length 2) The minimum and maximum size of labels.
@@ -103,6 +103,20 @@
 #' value of \code{edge_label_size}. Alternativly one of the following \code{character} values displayed
 #' under the \code{vertex_size_trans}. Default: \code{"area"}.
 #' @param edge_label_max (\code{numeric}) The maximum number of edge labels. Default: 20.
+#' @param graph_label (\code{character}) The label to display above each graph. The value of the root
+#' taxon of each graph will be used. Default: None.
+#' @param graph_label_size_range (\code{numeric} of length 2) The minimum and maximum size of labels.
+#' If either value is \code{NA}, the missing value(s) will be relative to proportion of total vertexes
+#' in graph Default: relative to proportion of total vertexes in graph.
+#' @param graph_label_color (\code{numeric} OR \code{character}) The value to base graph label color on. 
+#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
+#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: black.
+#' @param  graph_label_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
+#' to low-high statistics supplied to \code{graph_label_color}. Default: Color-blind friendly palette. 
+#' @param graph_label_color_trans (\code{function(value)} OR \code{character}) A function to transform the
+#' value of \code{graph_label_color}. Alternativly one of the \code{character} values displayed
+#' under the \code{vertex_size_trans}. Default: \code{"area"}.
+#' @param graph_label_max (\code{numeric}) The maximum number of graph labels. Default: 20.
 #' @param overlap_bias (\code{numeric}) The relative importance of avoiding overlaps vs maximizing 
 #' size range. Default: \code{1}.
 #' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins.
@@ -143,8 +157,14 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               edge_label_color = "#555555",
                               edge_label_color_range = quantative_palette(),
                               edge_label_color_trans = "area",
+                              graph_label = NA,
+                              graph_label_size_range = c(NA, NA),
+                              graph_label_color = "#000000",
+                              graph_label_color_range = quantative_palette(),
+                              graph_label_color_trans = "area",
                               vertex_label_max = 20,
-                              edge_label_max = 20, 
+                              edge_label_max = 20,
+                              graph_label_max = 20,
                               overlap_bias = 1,
                               margin_size = c(0, 0),
                               # aspect_ratio = NULL,
@@ -159,17 +179,18 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   check_element_length(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size",
                          "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
-                         "vertex_label", "edge_label"))
+                         "vertex_label", "edge_label", "graph_label", "graph_label_color"))
   verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
   verify_size_range(c("vertex_size_range", "edge_size_range",
                       "vertex_label_size_range", "edge_label_size_range"))
   verify_trans(c("vertex_size_trans", "vertex_color_trans", 
                  "edge_size_trans", "edge_color_trans",
                  "vertex_label_size_trans", "vertex_label_color_trans",
-                 "edge_label_size_trans", "edge_label_color_trans"))
+                 "edge_label_size_trans", "edge_label_color_trans", "graph_label_color_trans"))
   verify_color_range(c("vertex_color_range", "edge_color_range",
-                       "vertex_label_color_range", "edge_label_color_range"))
-  verify_label_count(c("vertex_label_max", "edge_label_max"))
+                       "vertex_label_color_range", "edge_label_color_range",
+                       "graph_label_color_range"))
+  verify_label_count(c("vertex_label_max", "edge_label_max", "graph_label_max"))
   if (length(overlap_bias) == 0 || ! is.numeric(overlap_bias)) {
     stop("Argument 'overlap_bias' must be a numeric of length 1.")
   }
@@ -197,8 +218,10 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      vlc = vertex_label_color,
                      els = as.numeric(edge_label_size),
                      elc = edge_label_color,
+                     glc = graph_label_color,
                      vl = as.character(vertex_label),
-                     el = as.character(edge_label))
+                     el = as.character(edge_label),
+                     gl = as.character(graph_label))
   row.names(data) <- data$tid
   #| ### Make layout ==============================================================================
   #| The layout is used to generate a list of coordinates to places graph verticies
@@ -251,7 +274,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   row.names(coords) <- names(V(graph))
   data$vx <- coords[data$tid, 1]
   data$vy <- coords[data$tid, 2]
-  
+  data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
   
   
   
@@ -259,10 +282,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Apply statistic transformations ---------------------------------------------------------
   #|
+  data$subgraph_prop <- vapply(data$subgraph_root, function(x) sum(data$subgraph_root == x) / nrow(data), numeric(1))
+  data$gls <- data$subgraph_prop
   trans_key <- c(vs = vertex_size_trans, vc = vertex_color_trans,
                  vls = vertex_label_size_trans, vlc = vertex_label_color_trans,
                  es = edge_size_trans, ec = edge_color_trans,
-                 els = edge_label_size_trans, elc = edge_label_color_trans)
+                 els = edge_label_size_trans, elc = edge_label_color_trans,
+                 glc = graph_label_color_trans, gls = "area")
   new_names <- paste0(names(trans_key), "_t")
   apply_trans <- function(col_name) {
     if (is.numeric(data[ , col_name])) { 
@@ -350,8 +376,11 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                                 defualt_scale = 0.5)
   edge_label_size_range_g <- infer_size_range(edge_label_size_range, edge_size_range_g, 
                                               defualt_scale = 0.7)
+  graph_label_size_range_g <- infer_size_range(graph_label_size_range, range(data$subgraph_prop), 
+                                              defualt_scale = 0.1)
   data$vls_g <- scales::rescale(data$vls_t, to = vertex_label_size_range_g)
   data$els_g <- scales::rescale(data$els_t, to = edge_label_size_range_g)
+  data$gls_g <- scales::rescale(data$gls_t, to = graph_label_size_range_g)
   #|
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
@@ -364,6 +393,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   color_colume_key <- list("ec_t" = edge_color_range, "vc_t" = vertex_color_range,
+                           "glc_t" = graph_label_color_range,
                            "elc_t" = edge_label_color_range, "vlc_t" = vertex_label_color_range)
   new_names <- gsub(pattern = "_t$", x = names(color_colume_key), replacement = "_g")
   data[, new_names] <- lapply(names(color_colume_key),
@@ -402,10 +432,10 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
-  x_min <- min(element_data$x) - margin_size[1]
-  x_max <- max(element_data$x) + margin_size[1]
-  y_min <- min(element_data$y) - margin_size[2]
-  y_max <- max(element_data$y) + margin_size[2]
+  x_min <- min(element_data$x) - margin_size[1] * square_side_length
+  x_max <- max(element_data$x) + margin_size[1] * square_side_length
+  y_min <- min(element_data$y) - margin_size[2] * square_side_length
+  y_max <- max(element_data$y) + margin_size[2] * square_side_length
   data$vls_g <- scales::rescale(data$vls_g, to = c(0, 1), from = c(0, square_side_length))
   data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
   data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
@@ -440,7 +470,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$elx_g <- scales::rescale(data$elx_g, to = c(0, 1), from = c(x_min, x_max))
   data$ely_g <- scales::rescale(data$ely_g, to = c(0, 1), from = c(y_min, y_max))
   # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  mean_inter_pair <- mean(sqrt((data$vx - data[data$pid, "vx"])^2 + (data$vy - data[data$pid, "vy"])^2), na.rm = TRUE)
   data$els_g <-  scales::rescale(data$els_g, to = c(0, 1), from = c(0, square_side_length)) 
   if (is.null(edge_label_max) || is.na(edge_label_max)) {
     edge_label_shown <- data$tid
@@ -455,13 +484,33 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                                                    gp = grid::gpar(text_prop = row['els_g']),
                                                                    rot = row['el_rotation'] * 180 / pi,
                                                                    just = justification[[row[['tid']]]]))
+  #|
+  #| #### Make subplot title text grobs -----------------------------------------------------------
+  #|
+  root_indexes <- unique(data$subgraph_root)
+  title_data <- data[root_indexes, ]
+  title_data$glx <- vapply(title_data$subgraph_root, FUN.VALUE = numeric(1),
+                           function(x) mean(range(data[data$subgraph_root == x, "vx"])))
+  title_data$gly <- vapply(title_data$subgraph_root, FUN.VALUE = numeric(1),
+                           function(x) max(data[data$subgraph_root == x, "vy"]))
+  title_data$glx <- scales::rescale(title_data$glx, to = c(0, 1), from = c(x_min, x_max))
+  title_data$gly <- scales::rescale(title_data$gly, to = c(0, 1), from = c(y_min, y_max)) + title_data$gls_g * 1.1
+  # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (is.null(graph_label_max) || is.na(graph_label_max) || length(root_indexes) <= graph_label_max) {
+    graph_label_shown <- root_indexes
+  } else {
+    graph_label_shown <- title_data[order(title_data$gls_g, decreasing = TRUE)[1:graph_label_max], "tid"]
+  }
+  graph_label_grobs <- plyr::dlply(title_data[graph_label_shown, ], "tid",
+                                  function(row) resizingTextGrob(label = row['gl'],
+                                                                 x = row['glx'],
+                                                                 y = row['gly'],
+                                                                 gp = grid::gpar(text_prop = row['gls_g']),
+                                                                 rot = 0,
+                                                                 just = "center"))
   #| ### Draw plot ================================================================================
   
   the_plot <- ggplot2::ggplot(data = data) +
-    # ggplot2::geom_polygon(data = edge_data, ggplot2::aes(x = x, y = y, group = group),
-    #                       fill = edge_data$color) +
-    # ggplot2::geom_polygon(data = vertex_data, ggplot2::aes(x = x, y = y, group = group),
-    #                       fill = vertex_data$color) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
                           fill = element_data$color) +
     ggplot2::guides(fill = "none") +
@@ -477,6 +526,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
   for (a_grob in vertex_label_grobs) {
+    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  }    
+  for (a_grob in graph_label_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
   the_plot
