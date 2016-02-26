@@ -429,7 +429,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
   data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
   scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
-  sub_coords <- lapply(sub_coords, function(x) x * scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
+  sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
   #|
@@ -516,7 +516,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
-  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
+  tree_vertex_counts <-  as.numeric(table(data$subgraph_root)[unique(data$subgraph_root)])
   data$tree_area <- rep(tree_area, tree_vertex_counts)
   tsr_plot <- range(sqrt(tree_area))
   #|
@@ -552,7 +552,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
-  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
   data$tc_plot <- rep(data[data$is_root, "tc_plot"], tree_vertex_counts) # apply root color to trees
   to_replace <- ! is.na(data$tc_plot)
   data[to_replace, "vc_plot"] <- data[to_replace, "tc_plot"]
@@ -592,14 +591,15 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
   # Determine which labels will be shown -
-  select_labels <- function(my_data, label_max, sort_by_colume, label_colume) {
-    if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
-      labels_shown <- my_data[ ,  "tid_user"]
+  select_labels <- function(my_data, label_max, sort_by_colume, label_colume, subset = TRUE) {
+    subset_data <- data[subset, ]
+    if (is.null(label_max) || is.na(label_max) || nrow(subset_data) <= label_max) {
+      labels_shown <- subset_data[,  "tid_user"]
     } else {
-      top_indexes <- order(my_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
-      labels_shown <- my_data[top_indexes,  "tid_user"]
+      top_indexes <- order(subset_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
+      labels_shown <- subset_data[top_indexes,  "tid_user"]
     }
-    labels_shown <- labels_shown[!is.na(my_data[labels_shown, label_colume])]  # Do not make grobs for NA
+    labels_shown <- labels_shown[!is.na(subset_data[labels_shown, label_colume])]  # Do not make grobs for NA
     return(my_data[ ,  "tid_user"] %in% labels_shown)
   }
   
@@ -607,20 +607,18 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                     sort_by_colume = "vls_plot", label_colume = "vl_user")
   data$el_is_shown <- select_labels(data, edge_label_max,
                                     sort_by_colume = "els_plot", label_colume = "el_user")
-  data$tl_is_shown <- select_labels(data, tree_label_max,
+  data$tl_is_shown <- select_labels(data, tree_label_max, subset = data$is_root,
                                     sort_by_colume = "tls_plot", label_colume = "tl_user")
-  data[! data$is_root, "tl_is_shown"] <- FALSE
   # Estimate plotted radius of vertex and tree labels
-  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                          function(x) mean(range(x)))
-  data$tx_plot <- rep(tx_plot, tree_vertex_counts)
+  data$tx_plot <- rep(tx_plot[unique(data$subgraph_root)], tree_vertex_counts)
   ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                          function(x) mean(range(x)))
-  data$ty_plot <- rep(ty_plot, tree_vertex_counts)
+  data$ty_plot <- rep(ty_plot[unique(data$subgraph_root)], tree_vertex_counts)
   data$tlx_plot <- data$tx_plot 
   tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
-  data$tly_plot <- rep(tly_plot, tree_vertex_counts) + data$tls_plot * 1.1
+  data$tly_plot <- rep(tly_plot[unique(data$subgraph_root)], tree_vertex_counts) + data$tls_plot * 1.1
   data$tlx_plot <- data$tx_plot 
   vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
   tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
@@ -687,14 +685,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make subplot title text grobs -----------------------------------------------------------
   #|
-  root_indexes <- unique(data$subgraph_root)
-  title_data <- data[root_indexes, ]
+  title_data <- data[data$tl_is_shown, ]
   title_data$tlx_prop <- scales::rescale(title_data$tlx_plot, to = c(0, 1), from = c(x_min, x_max))
   title_data$tly_prop <- scales::rescale(title_data$tly_plot, to = c(0, 1), from = c(y_min, y_max))
-  title_data$tls_prop <- scales::rescale(title_data$tls_plot, to = c(0, 1), from = c(y_min, y_max))
+  title_data$tls_prop <- scales::rescale(title_data$tls_plot, to = c(0, 1), from = c(0, square_side_length))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  tree_label_grobs <- plyr::dlply(title_data[data$tl_is_shown, ], "tid_user",
-                                  function(row) resizingTextGrob(label = row['gl'],
+  tree_label_grobs <- plyr::dlply(title_data, "tid_user",
+                                  function(row) resizingTextGrob(label = row['tl_user'],
                                                                  x = row['tlx_prop'],
                                                                  y = row['tly_prop'],
                                                                  gp = grid::gpar(text_prop = row['tls_prop']),
