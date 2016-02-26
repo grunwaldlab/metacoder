@@ -246,15 +246,15 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               
                               vertex_size = 1,
                               edge_size = vertex_size,
-                              tree_size = NULL,
+                              tree_size = 1,
 
                               vertex_label_size = vertex_size,
                               edge_label_size = edge_size,
-                              tree_label_size = NULL, 
+                              tree_label_size = NA, 
                               
                               vertex_color = "#999999",
                               edge_color = vertex_color,
-                              tree_color = NULL,
+                              tree_color = NA,
                               
                               vertex_label_color = "#000000",
                               edge_label_color = "#000000",
@@ -491,7 +491,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
                                  function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
   vsr_plot <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
-  data$vs_g <- scales::rescale(data$vs_t, to = vsr_plot)
+  data$vs_plot <- scales::rescale(data$vs_t, to = vsr_plot)
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
@@ -508,7 +508,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   esr_plot <- infer_size_range(edge_size_range, vsr_plot, defualt_scale = 0.5)
-  data$es_g <- scales::rescale(data$es_t, to = esr_plot)
+  data$es_plot <- scales::rescale(data$es_t, to = esr_plot)
   #|
   #| #### Infer tree size range -------------------------------------------------------------------
   #|
@@ -547,6 +547,12 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   plot_value_names <- gsub(pattern = "_trans$", x = names(color_colume_key), replacement = "_plot")
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
+  # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
+  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
+  data$tc_plot <- rep(data[data$is_root, "tc_plot"], tree_vertex_counts) # apply root color to trees
+  to_replace <- ! is.na(data$tc_plot)
+  data[to_replace, "vc_plot"] <- data[to_replace, "tc_plot"]
+  data[to_replace, "ec_plot"] <- data[to_replace, "tc_plot"]
   
   #| ### Secondary plot data ======================================================================
   #|
@@ -555,39 +561,61 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #| grouping the coordinates of each shape.
   #| These shapes must be added to the graph in a specific order.
   #| A list of vertexes is sorted by first vertex depth in the heirarchy and then by vertex size.
-  taxon_elements <- function(taxon_id) {
+  taxon_elements <- function(tid) {
     circle_resolution <- 50
-    edge_data <- line_coords(x1 = data[taxon_id, 'vx_plot'],
-                             y1 = data[taxon_id, 'vy_plot'],
-                             x2 = data[data[taxon_id, 'pid_user'], "vx_plot"],
-                             y2 = data[data[taxon_id, 'pid_user'], "vy_plot"],
-                             width = data[taxon_id, 'es_g'] * 2)
-    edge_data$group <- paste0(taxon_id, "_edge")
-    edge_data$color <- rep(data[taxon_id, 'ec_g'], each = 4)
+    edge_data <- line_coords(x1 = data[tid, 'vx_plot'],
+                             y1 = data[tid, 'vy_plot'],
+                             x2 = data[data[tid, 'pid_user'], "vx_plot"],
+                             y2 = data[data[tid, 'pid_user'], "vy_plot"],
+                             width = data[tid, 'es_plot'] * 2)
+    edge_data$group <- paste0(tid, "_edge")
+    edge_data$color <- rep(data[tid, 'ec_plot'], each = 4)
     vertex_data <- polygon_coords(n = circle_resolution,
-                                  x = data[taxon_id, 'vx_plot'],
-                                  y = data[taxon_id, 'vy_plot'],
-                                  radius = data[taxon_id, 'vs_g'])
-    vertex_data$group <- paste0(taxon_id, "_vertex")
-    vertex_data$color <- rep(data[taxon_id, 'vc_g'], each = circle_resolution + 1)
+                                  x = data[tid, 'vx_plot'],
+                                  y = data[tid, 'vy_plot'],
+                                  radius = data[tid, 'vs_plot'])
+    vertex_data$group <- paste0(tid, "_vertex")
+    vertex_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
     output <- rbind(edge_data, vertex_data)
-    output$tid_user <- taxon_id
+    output$tid_user <- tid
     return(output[complete.cases(output),])
   }
   data$level = edge_list_depth(data$tid_user, data$pid_user)
-  element_order <- data$tid_user[order(data$level, 1 / data$vs_g, decreasing = TRUE)]
+  element_order <- data$tid_user[order(data$level, 1 / data$vs_plot, decreasing = TRUE)]
   element_data <- do.call(rbind, lapply(element_order, taxon_elements))
   element_data$group <- factor(element_data$group, levels = unique(element_data$group))
   #|
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
-  x_min <- min(element_data$x) - margin_size[1] * square_side_length
-  x_max <- max(element_data$x) + margin_size[1] * square_side_length
-  y_min <- min(element_data$y) - margin_size[2] * square_side_length
-  y_max <- max(element_data$y) + margin_size[2] * square_side_length
+  # Estimate plotted radius of vertex and tree labels
+  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
+  tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
+                         function(x) mean(range(x)))
+  data$tx_plot <- rep(tx_plot, tree_vertex_counts)
+  ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
+                         function(x) mean(range(x)))
+  data$ty_plot <- rep(ty_plot, tree_vertex_counts)
+  data$tlx_plot <- data$tx_plot 
+  tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
+  data$tly_plot <- rep(tly_plot, tree_vertex_counts) + data$tls_plot * 1.1
+  data$tlx_plot <- data$tx_plot 
+  vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
+  tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
+  x_points <- c(element_data$x, 
+                data$vx_plot + vl_radius_plot, data$vx_plot - vl_radius_plot,
+                data$tlx_plot + tl_radius_plot, data$tlx_plot - tl_radius_plot)
+  y_points <- c(element_data$y, 
+                data$vy_plot + data$vls_plot, data$vx_plot - data$vls_plot,
+                data$tly_plot + data$tls_plot, data$tly_plot - data$tls_plot)
+  
+  margin_size_plot <- margin_size * square_side_length
+  x_min <- min(x_points) - margin_size_plot
+  x_max <- max(x_points) + margin_size_plot
+  y_min <- min(y_points) - margin_size_plot
+  y_max <- max(y_points) + margin_size_plot
   data$vls_plot <- scales::rescale(data$vls_plot, to = c(0, 1), from = c(0, square_side_length))
-  data$vlx_g <- scales::rescale(data$vx_plot, to = c(0, 1), from = c(x_min, x_max))
-  data$vly_g <- scales::rescale(data$vy_plot, to = c(0, 1), from = c(y_min, y_max))
+  data$vlx_plot <- scales::rescale(data$vx_plot, to = c(0, 1), from = c(x_min, x_max))
+  data$vly_plot <- scales::rescale(data$vy_plot, to = c(0, 1), from = c(y_min, y_max))
   
   select_labels <- function(my_data, label_max, sort_by_colume, label_colume) {
     if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
@@ -600,16 +628,16 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   vertex_label_shown <- select_labels(data, vertex_label_max,
-                                      sort_by_colume = "vls_plot", label_colume = "vl")
+                                      sort_by_colume = "vls_plot", label_colume = "vl_user")
   vertex_label_grobs <- plyr::dlply(data[vertex_label_shown, ], "tid_user",
-                               function(row) resizingTextGrob(label = row['vl'],
-                                                            y = row['vly_g'],
-                                                            x = row['vlx_g'],
+                               function(row) resizingTextGrob(label = row['vl_user'],
+                                                            y = row['vly_plot'],
+                                                            x = row['vlx_plot'],
                                                             gp = grid::gpar(text_prop = row['vls_plot'])))    
   #|
   #| #### Make edge text grobs -------------------------------------------------------------------
   #|
-  data$el[is.na(data$pid_user)] <- ""
+  data$el_user[is.na(data$pid_user)] <- ""
   # line label rotation  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$el_slope <- (data$vy_plot - data[data$pid_user, "vy_plot"]) / (data$vx_plot - data[data$pid_user, "vx_plot"])
   data$el_slope[is.na(data$el_slope)] <- 0
@@ -620,21 +648,21 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   justify[is.na(justify)] <- TRUE
   justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
   names(justification) <- data$tid_user
-  line_label_x_offset <- line_label_offset * data$vs_g * cos(data$el_rotation)
-  line_label_y_offset <- line_label_offset * data$vs_g * sin(data$el_rotation)
-  data$elx_g <- data$vx_plot + ifelse(justify, 1, -1) * line_label_x_offset
-  data$ely_g <- data$vy_plot + ifelse(justify, 1, -1) * line_label_y_offset
-  data$elx_g <- scales::rescale(data$elx_g, to = c(0, 1), from = c(x_min, x_max))
-  data$ely_g <- scales::rescale(data$ely_g, to = c(0, 1), from = c(y_min, y_max))
+  line_label_x_offset <- line_label_offset * data$vs_plot * cos(data$el_rotation)
+  line_label_y_offset <- line_label_offset * data$vs_plot * sin(data$el_rotation)
+  data$elx_plot <- data$vx_plot + ifelse(justify, 1, -1) * line_label_x_offset
+  data$ely_plot <- data$vy_plot + ifelse(justify, 1, -1) * line_label_y_offset
+  data$elx_plot <- scales::rescale(data$elx_plot, to = c(0, 1), from = c(x_min, x_max))
+  data$ely_plot <- scales::rescale(data$ely_plot, to = c(0, 1), from = c(y_min, y_max))
   # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$els_plot <-  scales::rescale(data$els_plot, to = c(0, 1), from = c(0, square_side_length))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   edge_label_shown <- select_labels(data, edge_label_max, 
-                                    sort_by_colume = "els_plot", label_colume = "el")
+                                    sort_by_colume = "els_plot", label_colume = "el_user")
   edge_label_grobs <- plyr::dlply(data[edge_label_shown, ], "tid_user",
-                                    function(row) resizingTextGrob(label = row['el'],
-                                                                   y = row['ely_g'],
-                                                                   x = row['elx_g'],
+                                    function(row) resizingTextGrob(label = row['el_user'],
+                                                                   y = row['ely_plot'],
+                                                                   x = row['elx_plot'],
                                                                    gp = grid::gpar(text_prop = row['els_plot']),
                                                                    rot = row['el_rotation'] * 180 / pi,
                                                                    just = justification[[row[['tid_user']]]]))
@@ -643,20 +671,17 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   root_indexes <- unique(data$subgraph_root)
   title_data <- data[root_indexes, ]
-  title_data$glx <- vapply(title_data$subgraph_root, FUN.VALUE = numeric(1),
-                           function(x) mean(range(data[data$subgraph_root == x, "vx_plot"])))
-  title_data$gly <- vapply(title_data$subgraph_root, FUN.VALUE = numeric(1),
-                           function(x) max(data[data$subgraph_root == x, "vy_plot"]))
-  title_data$glx <- scales::rescale(title_data$glx, to = c(0, 1), from = c(x_min, x_max))
-  title_data$gly <- scales::rescale(title_data$gly, to = c(0, 1), from = c(y_min, y_max)) + title_data$tls_plot * 1.1
+  title_data$tlx_prop <- scales::rescale(title_data$tlx_plot, to = c(0, 1), from = c(x_min, x_max))
+  title_data$tly_prop <- scales::rescale(title_data$tly_plot, to = c(0, 1), from = c(y_min, y_max))
+  title_data$tls_prop <- scales::rescale(title_data$tls_plot, to = c(0, 1), from = c(y_min, y_max))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   tree_label_shown <- select_labels(title_data, tree_label_max, 
-                                     sort_by_colume = "tls_plot", label_colume = "gl")
+                                     sort_by_colume = "tly_prop", label_colume = "gl")
   tree_label_grobs <- plyr::dlply(title_data[tree_label_shown, ], "tid_user",
                                   function(row) resizingTextGrob(label = row['gl'],
-                                                                 x = row['glx'],
-                                                                 y = row['gly'],
-                                                                 gp = grid::gpar(text_prop = row['tls_plot']),
+                                                                 x = row['tlx_prop'],
+                                                                 y = row['tly_prop'],
+                                                                 gp = grid::gpar(text_prop = row['tls_prop']),
                                                                  rot = 0,
                                                                  just = "center"))
   #| ### Draw plot ================================================================================
