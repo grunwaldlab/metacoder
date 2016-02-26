@@ -558,11 +558,20 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
+<<<<<<< HEAD
+  margin_size <- margin_size * square_side_length
+  x_min <-  min(vertex_data$x) - margin_size[1]
+  x_max <- max(vertex_data$x) + margin_size[1]
+  y_min <- min(vertex_data$y) - margin_size[2]
+  y_max <- max(vertex_data$y) + margin_size[2]
+  data$vls_g <- scales::rescale(data$vls_t, to = c(0, 1), from = c(0, square_side_length))
+=======
   x_min <- min(element_data$x) - margin_size[1] * square_side_length
   x_max <- max(element_data$x) + margin_size[1] * square_side_length
   y_min <- min(element_data$y) - margin_size[2] * square_side_length
   y_max <- max(element_data$y) + margin_size[2] * square_side_length
   data$vls_g <- scales::rescale(data$vls_g, to = c(0, 1), from = c(0, square_side_length))
+>>>>>>> 636f95e9952b9b0baea31f57245c8ae759fac105
   data$vlx_g <- scales::rescale(data$vx, to = c(0, 1), from = c(x_min, x_max))
   data$vly_g <- scales::rescale(data$vy, to = c(0, 1), from = c(y_min, y_max))
   
