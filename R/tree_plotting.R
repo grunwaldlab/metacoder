@@ -77,18 +77,18 @@
 #' @param tree_size_trans See details on transformations.
 #' Default: \code{"area"}.
 #' 
-#' @param vertex_color_trans See details on transformations. 
-#' Default: \code{"area"}.
-#' @param edge_color_trans See details on transformations.
-#' Default: same as vertex color transformation.
-#' @param tree_color_trans See details on transformations.
-#' Default: \code{"area"}.
-#' 
 #' @param vertex_label_size_trans See details on transformations. 
 #' Default: same as \code{vertex_size_trans}.
 #' @param edge_label_size_trans See details on transformations. 
 #' Default: same as \code{edge_size_trans}.
 #' @param tree_label_size_trans See details on transformations.
+#' Default: \code{"area"}.
+#' 
+#' @param vertex_color_trans See details on transformations. 
+#' Default: \code{"area"}.
+#' @param edge_color_trans See details on transformations.
+#' Default: same as vertex color transformation.
+#' @param tree_color_trans See details on transformations.
 #' Default: \code{"area"}.
 #' 
 #' @param vertex_label_color_trans See details on transformations.
@@ -240,52 +240,64 @@
 #'  
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
-                              vertex_size = 1,
-                              edge_size = vertex_size,
-                              tree_size = 1,
-
-                              vertex_color = "#999999",
-                              edge_color = vertex_color,
-                              tree_color = NULL,
-                              
                               vertex_label = NA,
                               edge_label = NA,
                               tree_label = NA,
+                              
+                              vertex_size = 1,
+                              edge_size = vertex_size,
+                              tree_size = NULL,
 
                               vertex_label_size = vertex_size,
                               edge_label_size = edge_size,
                               tree_label_size = NULL, 
                               
+                              vertex_color = "#999999",
+                              edge_color = vertex_color,
+                              tree_color = NULL,
+                              
                               vertex_label_color = "#000000",
                               edge_label_color = "#000000",
                               tree_label_color = "#000000",
                               
+                              vertex_size_trans = "area",
+                              edge_size_trans = vertex_size_trans,
+                              tree_size_trans = "area",
+                              
+                              vertex_label_size_trans = vertex_size_trans,
+                              edge_label_size_trans = edge_size_trans,
+                              tree_label_size_range = c(NA, NA),
+                              
+                              vertex_color_trans = "area",
+                              edge_color_trans = vertex_color_trans,
+                              tree_color_trans = "area",
+                              
+                              vertex_label_color_trans = "area",
+                              edge_label_color_trans = "area",
+                              tree_label_color_trans = "area",
                               
                               vertex_size_range = c(NA, NA),
-                              vertex_size_trans = "area",
-                              vertex_color_range = quantative_palette(),
-                              vertex_color_trans = vertex_size_trans,
                               edge_size_range = c(NA, NA),
-                              edge_size_trans = vertex_size_trans,
-                              edge_color_range = vertex_color_range,
-                              edge_color_trans = vertex_color_trans,
+                              tree_size_range = c(NA, NA),
+
                               vertex_label_size_range = c(NA, NA),
-                              vertex_label_size_trans = vertex_size_trans,
-                              vertex_label_color_range = quantative_palette(),
-                              vertex_label_color_trans = "area",
                               edge_label_size_range = c(NA, NA),
-                              edge_label_size_trans = edge_size_trans,
-                              edge_label_color_range = quantative_palette(),
-                              edge_label_color_trans = "area",
                               tree_label_size_range = c(NA, NA),
+                              
+                              vertex_color_range = quantative_palette(),
+                              edge_color_range = vertex_color_range,
+                              tree_color_range = quantative_palette(),
+                              
+                              vertex_label_color_range = quantative_palette(),
+                              edge_label_color_range = quantative_palette(),
                               tree_label_color_range = quantative_palette(),
-                              tree_label_color_trans = "area",
+                              
                               vertex_label_max = 20,
                               edge_label_max = 20,
                               tree_label_max = 20,
+                              
                               overlap_avoidance = 1,
                               margin_size = c(0, 0),
-                              # aspect_ratio = NULL,
                               layout = "reingold-tilford",
                               initial_layout = "fruchterman-reingold",
                               ...) {
