@@ -483,7 +483,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
     overlap_weight <- 0.05
-    minimum_weight <- 2
+    minimum_weight <- 3
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
@@ -596,7 +596,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     if (is.null(label_max) || is.na(label_max) || nrow(subset_data) <= label_max) {
       labels_shown <- subset_data[,  "tid_user"]
     } else {
-      top_indexes <- order(subset_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
+      index_order <- rev(do.call(order, subset_data[ , sort_by_colume]))
+      top_indexes <- index_order[1:label_max]
       labels_shown <- subset_data[top_indexes,  "tid_user"]
     }
     labels_shown <- labels_shown[!is.na(subset_data[labels_shown, label_colume])]  # Do not make grobs for NA
@@ -604,11 +605,11 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   data$vl_is_shown <- select_labels(data, vertex_label_max,
-                                    sort_by_colume = "vls_plot", label_colume = "vl_user")
+                                    sort_by_colume = c("vls_plot", "vs_plot"), label_colume = "vl_user")
   data$el_is_shown <- select_labels(data, edge_label_max,
-                                    sort_by_colume = "els_plot", label_colume = "el_user")
+                                    sort_by_colume = c("els_plot", "es_plot"), label_colume = "el_user")
   data$tl_is_shown <- select_labels(data, tree_label_max, subset = data$is_root,
-                                    sort_by_colume = "tls_plot", label_colume = "tl_user")
+                                    sort_by_colume = c("tls_plot", "ts_plot"), label_colume = "tl_user")
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                          function(x) mean(range(x)))
