@@ -311,19 +311,21 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(unique(taxon_id)) != length(taxon_id)) {
     stop("All values of 'taxon_id' are not unique.")
   }
-  check_element_length(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size",
-                         "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
-                         "vertex_label", "edge_label", "tree_label", "tree_label_color"))
-  verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
-  verify_size_range(c("vertex_size_range", "edge_size_range",
-                      "vertex_label_size_range", "edge_label_size_range"))
-  verify_trans(c("vertex_size_trans", "vertex_color_trans", 
-                 "edge_size_trans", "edge_color_trans",
-                 "vertex_label_size_trans", "vertex_label_color_trans",
-                 "edge_label_size_trans", "edge_label_color_trans", "tree_label_color_trans"))
-  verify_color_range(c("vertex_color_range", "edge_color_range",
-                       "vertex_label_color_range", "edge_label_color_range",
-                       "tree_label_color_range"))
+  check_element_length(c("vertex_size", "edge_size", "tree_size",
+                         "vertex_label_size", "edge_label_size",  "tree_label_size",
+                         "vertex_color", "edge_color", "tree_color",
+                         "vertex_label_color", "edge_label_color", "tree_label_color",
+                         "vertex_label", "edge_label", "tree_label"))
+  verify_size(c("vertex_size", "edge_size", "tree_size",
+                "vertex_label_size", "edge_label_size", "tree_label_size"))
+  verify_size_range(c("vertex_size_range",  "edge_size_range", "tree_size_range",
+                      "vertex_label_size_range", "edge_label_size_range", "tree_label_size_range"))
+  verify_trans(c("vertex_size_trans", "edge_size_trans", "tree_size_trans",
+                 "vertex_color_trans", "edge_color_trans", "tree_color_trans",
+                 "vertex_label_size_trans", "edge_label_size_trans", "tree_label_size_trans", 
+                 "vertex_label_color_trans", "edge_label_color_trans", "tree_label_color_trans"))
+  verify_color_range(c("vertex_color_range", "edge_color_range", "tree_color_range",
+                       "vertex_label_color_range", "edge_label_color_range", "tree_label_color_range"))
   verify_label_count(c("vertex_label_max", "edge_label_max", "tree_label_max"))
   if (length(overlap_avoidance) == 0 || ! is.numeric(overlap_avoidance)) {
     stop("Argument 'overlap_avoidance' must be a numeric of length 1.")
@@ -331,9 +333,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
     stop("Argument 'margin_size' must be a numeric of length 2.")
   }
-  #   if (! is.null(aspect_ratio) && ! is.numeric(aspect_ratio)) {
-  #     stop("Argument 'aspect_ratio' must be a numeric of length 1.")
-  #   }
   if (! layout %in% layout_functions()) {
     stop("Argument 'layout' must be an output of layout_functions().")
   }
