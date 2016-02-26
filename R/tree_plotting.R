@@ -250,7 +250,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
 
                               vertex_label_size = vertex_size,
                               edge_label_size = edge_size,
-                              tree_label_size = NA, 
+                              tree_label_size = as.numeric(NA), 
                               
                               vertex_color = "#999999",
                               edge_color = vertex_color,
@@ -266,7 +266,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               
                               vertex_label_size_trans = vertex_size_trans,
                               edge_label_size_trans = edge_size_trans,
-                              tree_label_size_trans = c(NA, NA),
+                              tree_label_size_trans = "area",
                               
                               vertex_color_trans = "area",
                               edge_color_trans = vertex_color_trans,
@@ -366,14 +366,12 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   row.names(data) <- data$tid_user
   
   #| #### Apply statistic transformations =========================================================
-  trans_key <- c(vs = vertex_size_trans, es = edge_size_trans, ts = tree_size_trans,
-                 vls = vertex_label_size_trans, els = edge_label_size_trans,  tls = tree_label_size_trans,
-                 vc = vertex_color_trans, ec = edge_color_trans,
-                 vlc = vertex_label_color_trans, elc = edge_label_color_trans, tlc = graph_label_color_trans)
-  user_names <- paste0(names(trans_key), "_user")
-  transformed_names <- paste0(names(trans_key), "_trans")
-  apply_trans <- function(key) {
-    col_name <- user_names[key]
+  trans_key <- c(vs_user = vertex_size_trans, es_user = edge_size_trans, ts_user = tree_size_trans,
+                 vls_user = vertex_label_size_trans, els_user = edge_label_size_trans,  tls_user = tree_label_size_trans,
+                 vc_user = vertex_color_trans, ec_user = edge_color_trans, tc_user = edge_color_trans,
+                 vlc_user = vertex_label_color_trans, elc_user = edge_label_color_trans, tlc_user = tree_label_color_trans)
+  transformed_names <- gsub(pattern = "_user$", x = names(trans_key), replacement = "_trans")
+  apply_trans <- function(col_name) {
     if (is.numeric(data[ , col_name])) { 
       transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
     } else {
@@ -431,7 +429,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
   data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
   scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
-  sub_coords <- sub_coords * scaled_ts_trans[data$is_root] # Scale coordinates by tree_size
+  sub_coords <- lapply(sub_coords, function(x) x * scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
   #|
@@ -518,16 +516,22 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
+  tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
+  data$tree_area <- rep(tree_area, tree_vertex_counts)
   tsr_plot <- range(sqrt(tree_area))
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
   #|
+  if (all(is.na(data$tls_user))) {
+    data$tls_user <- sqrt(data$tree_area)
+    data$tls_trans <- apply_trans("tls_user") 
+  }
   vlsr_plot <- infer_size_range(vertex_label_size_range, vsr_plot, defualt_scale = 0.5)
   elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.7)
   tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
-  data$vls_plot <- scales::rescale(data$vls_t, to = vlsr_plot)
-  data$els_plot <- scales::rescale(data$els_t, to = elsr_plot)
-  data$tls_plot <- scales::rescale(data$gls_t, to = tlsr_plot)
+  data$vls_plot <- scales::rescale(data$vls_trans, to = vlsr_plot)
+  data$els_plot <- scales::rescale(data$els_trans, to = elsr_plot)
+  data$tls_plot <- scales::rescale(data$tls_trans, to = tlsr_plot)
   #|
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
@@ -587,6 +591,25 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
+  # Determine which labels will be shown -
+  select_labels <- function(my_data, label_max, sort_by_colume, label_colume) {
+    if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
+      labels_shown <- my_data[ ,  "tid_user"]
+    } else {
+      top_indexes <- order(my_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
+      labels_shown <- my_data[top_indexes,  "tid_user"]
+    }
+    labels_shown <- labels_shown[!is.na(my_data[labels_shown, label_colume])]  # Do not make grobs for NA
+    return(my_data[ ,  "tid_user"] %in% labels_shown)
+  }
+  
+  data$vl_is_shown <- select_labels(data, vertex_label_max,
+                                    sort_by_colume = "vls_plot", label_colume = "vl_user")
+  data$el_is_shown <- select_labels(data, edge_label_max,
+                                    sort_by_colume = "els_plot", label_colume = "el_user")
+  data$tl_is_shown <- select_labels(data, tree_label_max,
+                                    sort_by_colume = "tls_plot", label_colume = "tl_user")
+  data[! data$is_root, "tl_is_shown"] <- FALSE
   # Estimate plotted radius of vertex and tree labels
   tree_vertex_counts <-  as.numeric(table(data$subgraph_root))
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
@@ -601,35 +624,32 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$tlx_plot <- data$tx_plot 
   vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
   tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
-  x_points <- c(element_data$x, 
-                data$vx_plot + vl_radius_plot, data$vx_plot - vl_radius_plot,
-                data$tlx_plot + tl_radius_plot, data$tlx_plot - tl_radius_plot)
-  y_points <- c(element_data$y, 
-                data$vy_plot + data$vls_plot, data$vx_plot - data$vls_plot,
-                data$tly_plot + data$tls_plot, data$tly_plot - data$tls_plot)
+  vl_data_shown <- data[data$vl_is_shown, ]
+  tl_data_shown <- data[data$tl_is_shown, ]
+  
+  vlx_min <- (data$vx_plot - vl_radius_plot)[data$vl_is_shown]
+  vlx_max <- (data$vx_plot + vl_radius_plot)[data$vl_is_shown]
+  tlx_min <- (data$tx_plot - tl_radius_plot)[data$tl_is_shown]
+  tlx_max <- (data$tlx_plot + tl_radius_plot)[data$tl_is_shown]
+  vly_min <- (data$vy_plot - data$vls_plot)[data$vl_is_shown]
+  vly_max <- (data$vy_plot + data$vls_plot)[data$vl_is_shown]
+  tly_min <- (data$tly_plot - data$tls_plot)[data$tl_is_shown]
+  tly_max <- (data$tly_plot + data$tls_plot)[data$tl_is_shown]
+  
+  x_points <- c(element_data$x, vlx_min, vlx_max, tlx_min, tlx_max)
+  y_points <- c(element_data$y, vly_min, vly_max, tly_min, tly_max)
+
   
   margin_size_plot <- margin_size * square_side_length
-  x_min <- min(x_points) - margin_size_plot
-  x_max <- max(x_points) + margin_size_plot
-  y_min <- min(y_points) - margin_size_plot
-  y_max <- max(y_points) + margin_size_plot
+  x_min <- min(x_points) - margin_size_plot[1]
+  x_max <- max(x_points) + margin_size_plot[1]
+  y_min <- min(y_points) - margin_size_plot[2]
+  y_max <- max(y_points) + margin_size_plot[2]
   data$vls_plot <- scales::rescale(data$vls_plot, to = c(0, 1), from = c(0, square_side_length))
   data$vlx_plot <- scales::rescale(data$vx_plot, to = c(0, 1), from = c(x_min, x_max))
   data$vly_plot <- scales::rescale(data$vy_plot, to = c(0, 1), from = c(y_min, y_max))
   
-  select_labels <- function(my_data, label_max, sort_by_colume, label_colume) {
-    if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
-      labels_shown <- my_data[ ,  "tid_user"]
-    } else {
-      top_indexes <- order(my_data[ , sort_by_colume], decreasing = TRUE)[1:label_max]
-      labels_shown <- my_data[top_indexes,  "tid_user"]
-    }
-    return( labels_shown[!is.na(my_data[labels_shown, label_colume])] ) # Do not make grobs for NA
-  }
-  
-  vertex_label_shown <- select_labels(data, vertex_label_max,
-                                      sort_by_colume = "vls_plot", label_colume = "vl_user")
-  vertex_label_grobs <- plyr::dlply(data[vertex_label_shown, ], "tid_user",
+  vertex_label_grobs <- plyr::dlply(data[data$vl_is_shown, ], "tid_user",
                                function(row) resizingTextGrob(label = row['vl_user'],
                                                             y = row['vly_plot'],
                                                             x = row['vlx_plot'],
@@ -657,9 +677,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$els_plot <-  scales::rescale(data$els_plot, to = c(0, 1), from = c(0, square_side_length))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  edge_label_shown <- select_labels(data, edge_label_max, 
-                                    sort_by_colume = "els_plot", label_colume = "el_user")
-  edge_label_grobs <- plyr::dlply(data[edge_label_shown, ], "tid_user",
+  edge_label_grobs <- plyr::dlply(data[data$el_is_shown, ], "tid_user",
                                     function(row) resizingTextGrob(label = row['el_user'],
                                                                    y = row['ely_plot'],
                                                                    x = row['elx_plot'],
@@ -675,9 +693,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   title_data$tly_prop <- scales::rescale(title_data$tly_plot, to = c(0, 1), from = c(y_min, y_max))
   title_data$tls_prop <- scales::rescale(title_data$tls_plot, to = c(0, 1), from = c(y_min, y_max))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  tree_label_shown <- select_labels(title_data, tree_label_max, 
-                                     sort_by_colume = "tly_prop", label_colume = "gl")
-  tree_label_grobs <- plyr::dlply(title_data[tree_label_shown, ], "tid_user",
+  tree_label_grobs <- plyr::dlply(title_data[data$tl_is_shown, ], "tid_user",
                                   function(row) resizingTextGrob(label = row['gl'],
                                                                  x = row['tlx_prop'],
                                                                  y = row['tly_prop'],
