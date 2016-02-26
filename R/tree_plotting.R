@@ -365,25 +365,24 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      tlc_user = tree_label_color)
   row.names(data) <- data$tid
   
-  
-  #| #### Apply statistic transformations ---------------------------------------------------------
-  #|
-  data$subgraph_prop <- vapply(data$subgraph_root, function(x) sum(data$subgraph_root == x) / nrow(data), numeric(1))
-  data$gls <- data$subgraph_prop
-  trans_key <- c(vs = vertex_size_trans, vc = vertex_color_trans,
-                 vls = vertex_label_size_trans, vlc = vertex_label_color_trans,
-                 es = edge_size_trans, ec = edge_color_trans,
-                 els = edge_label_size_trans, elc = edge_label_color_trans,
-                 glc = graph_label_color_trans, gls = "area")
-  new_names <- paste0(names(trans_key), "_t")
-  apply_trans <- function(col_name) {
+  #| #### Apply statistic transformations =========================================================
+  # data$subgraph_prop <- vapply(data$subgraph_root, function(x) sum(data$subgraph_root == x) / nrow(data), numeric(1))
+  # data$tls <- data$subgraph_prop
+  trans_key <- c(vs = vertex_size_trans, es = edge_size_trans, ts = tree_size_trans,
+                 vls = vertex_label_size_trans, els = edge_label_size_trans,  tls = tree_label_size_trans,
+                 vc = vertex_color_trans, ec = edge_color_trans,
+                 vlc = vertex_label_color_trans, elc = edge_label_color_trans, tlc = graph_label_color_trans)
+  user_names <- paste0(names(trans_key), "_user")
+  transformed_names <- paste0(names(trans_key), "_trans")
+  apply_trans <- function(key) {
+    col_name <- user_names[key]
     if (is.numeric(data[ , col_name])) { 
       transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
     } else {
       data[ , col_name] # if colors are defined explicitly, then no transformation is done
     }
   }
-  data[, new_names] <- lapply(names(trans_key), apply_trans)
+  data[, transformed_names] <- lapply(names(trans_key), apply_trans)
   
   
   #| ### Make layout ==============================================================================
