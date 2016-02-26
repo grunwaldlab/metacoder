@@ -16,157 +16,274 @@
 #|
 #|
 #===================================================================================================
-#' Plot items on taxonomy
+#' Plot a taxonomic tree
 #' 
-#' Plots the distribution of values associated with an taxonomic classification.
-#' Colors and sizes of vertexes and edges can be mapped to variables.
-#' Uses \code{igraph} to make layout and \code{ggplot2} to make plots.
+#' Plots the distribution of values associated with a taxonomic classification.
+#' Taxonomic classifications can have multiple roots, resulting in multiple trees on the same plot.
+#' Sizes and colors of vertexes, edges, labels, and individual trees can be displayed relative to
+#' numbers (e.g. taxon statistics, such as abundance).
+#' The displayed range of colors and sizes can be explicitly defined or automatically genereated.
+#' Various transforamtions can be applied to numbers sizes/colors are mapped to.
+#' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
 #' 
-#' @param taxon_id (\code{character}) The unique ids of the taxon for each row.
-#' @param parent_id (\code{character}) The unique id of supertaxon \code{taxon_id} is a part of.
-#' @param vertex_size (\code{numeric}) The value to base vertex size on. Default: inverse of depth 
-#' of taxa in hierarchy. 
-#' @param vertex_size_range (\code{numeric} of length 2) The minimum and maximum size of vertexes.
-#' If either value is \code{NA}, the missing value(s) will be optimized to maximize range and
-#' minimizing overlaps. Defualt: \code{c(NA, NA)}.
-#' @param vertex_size_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{vertex_size}. Alternativly one of the following \code{character} values. Default:
-#' \code{"area"}.
+#' @param taxon_id The unique ids of taxa.
+#' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
+#' 
+#' @param vertex_label See details on labels.
+#' Default: no labels.
+#' @param edge_label See details on labels.
+#' Default: no labels.
+#' @param tree_label See details on labels.
+#' The label to display above each graph.
+#' The value of the root of each graph will be used.
+#' Default: None.
+#' 
+#' @param vertex_size See details on size.
+#' Default: constant size.
+#' @param edge_size See details on size.
+#' Default: relative to vertex size. 
+#' @param tree_size See details on size.
+#' The value of the root of each graph will be used.
+#' This scales the space used to display graphs, but does not effect vertex/edge size.
+#' Default: Not used. 
+#' 
+#' @param vertex_label_size See details on size.
+#' Default: relative to veterx size.
+#' @param edge_label_size See details on size.
+#' Default: relative to edge size.
+#' @param tree_label_size See details on size.
+#' Default: relative to graph size.
+#' 
+#' @param vertex_color See details on colors.
+#' Default: grey.
+#' @param edge_color See details on colors.
+#' Default: same as vertex color.
+#' @param tree_color See details on colors.
+#' The value of the root of each graph will be used.
+#' Overwrites the vertex and edge color if specified.
+#' Default: Not used.
+#' 
+#' @param vertex_label_color See details on colors.
+#' Default: black.
+#' @param edge_label_color See details on colors.
+#' Default: black.
+#' @param tree_label_color See details on colors.
+#' Default: black.
+#' 
+#' @param vertex_size_trans See details on transformations.
+#' Default: \code{"area"}.
+#' @param edge_size_trans See details on transformations. 
+#' Default: same as \code{vertex_size_trans}. 
+#' @param tree_size_trans See details on transformations.
+#' Default: \code{"area"}.
+#' 
+#' @param vertex_color_trans See details on transformations. 
+#' Default: \code{"area"}.
+#' @param edge_color_trans See details on transformations.
+#' Default: same as vertex color transformation.
+#' @param tree_color_trans See details on transformations.
+#' Default: \code{"area"}.
+#' 
+#' @param vertex_label_size_trans See details on transformations. 
+#' Default: same as \code{vertex_size_trans}.
+#' @param edge_label_size_trans See details on transformations. 
+#' Default: same as \code{edge_size_trans}.
+#' @param tree_label_size_trans See details on transformations.
+#' Default: \code{"area"}.
+#' 
+#' @param vertex_label_color_trans See details on transformations.
+#' Default: \code{"area"}.
+#' @param edge_label_color_trans See details on transformations.
+#' Default: \code{"area"}.
+#' @param tree_label_color_trans See details on transformations. 
+#' Default: \code{"area"}.
+#' 
+#' @param vertex_size_range See details on ranges.
+#' Defualt: Optimize to balance overlaps and range size.
+#' @param edge_size_range See details on ranges.
+#' Default: relative to vertex size range. 
+#' @param tree_size_range See details on ranges.
+#' Default: Not set.
+#' 
+#' @param vertex_label_size_range See details on ranges.
+#' Default: relative to vertex size. 
+#' @param edge_label_size_range See details on ranges.
+#' Default: relative to edge size.
+#' @param tree_label_size_range See details on ranges.
+#' Default: relative to tree size.
+#' 
+#' @param vertex_color_range See details on ranges.
+#' Default: Color-blind friendly palette. 
+#' @param edge_color_range See details on ranges.
+#' Default: same as vertex color.
+#' @param tree_color_range See details on ranges.
+#' Default: Color-blind friendly palette. 
+#' 
+#' @param vertex_label_color_range See details on ranges.
+#' Default: Color-blind friendly palette. 
+#' @param edge_label_color_range See details on ranges.
+#' Default: Color-blind friendly palette.
+#' @param  tree_label_color_range See details on ranges.
+#' Default: Color-blind friendly palette. 
+#' 
+#' 
+#' @param vertex_label_max The maximum number of vertex labels.
+#' Default: 20.
+#' @param edge_label_max The maximum number of edge labels.
+#' Default: 20.
+#' @param tree_label_max The maximum number of tree labels.
+#' Default: 20.
+#' 
+#' @param overlap_avoidance (\code{numeric})
+#' The relative importance of avoiding overlaps vs maximizing size range.
+#' Higher numbers will cause vertex size optimazation to avoid overlaps more.
+#' Default: \code{1}.
+#' 
+#' @param margin_size (\code{numeric} of length 2)
+#' The horizontal and vertical margins.
+#' Default: \code{0, 0}.
+#' 
+#' @param layout The layout algorithm used to position vertexes.
+#' See details on layouts.
+#' Default: \code{"reingold-tilford"}.
+#' @param initial_layout he layout algorithm used to set the initial position
+#' of vertexes, passed as input to the \code{layout} algorithm.
+#' See details on layouts.
+#' Default: Not used.
+#' 
+#' @param ... (other named arguments)
+#' Passed to the \code{\link{igraph}} layout function used.
+#' 
+#' 
+#' @section size:
+#' 
+#' 
+#' The size of vertexes, edges, labels, and trees can be mapped to arbitrary numbers.
+#' This is useful for displaying statistics for taxa, such as abundance.
+#' Only the relative size of numbers is used, not the values themeselves.
+#' They can be transformed to make the mapping non-linear using the transformation options.
+#' The range of actual sizes displayed on the graph can be set using the range options.
+#' 
+#' Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
+#' factor of its length.
+#' 
+#' @section colors:
+#' 
+#' The colors of vertexes, edges, labels, and trees can be mapped to arbitrary numbers.
+#' This is useful for highlighting groups of taxa.
+#' Only the relative size of numbers is used, not the values themeselves.
+#' They can be transformed to make the mapping non-linear using the transformation options.
+#' The range of actual colors displayed on the graph can be set using the range options.
+#' 
+#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+#' If a numeric vector is given, it is mapped to a color scale.
+#' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
+#' 
+#' @section labels:
+#' 
+#' The labels of vertexes, edges, and trees can be added.
+#' Vertex labels are centered over their vertex.
+#' Edge labels are displayed over edges, in the same orientation.
+#' Tree labels are displayed over their tree.
+#' 
+#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+#' 
+#' @section transformations:
+#' 
+#' Before any numbers specified are mapped to color/size, they can be transformed to make
+#' the mapping non-linear. 
+#' Any of the transformations listed below can be used by specifying their name.
+#' A customized function can also be supplied to do the transformation.
+#' 
 #' \describe{
 #'   \item{"radius"}{Proprotional to radius/diameter of vertex}
 #'   \item{"area"}{circular area; better perceptual accuracy than \code{"radius"}}
 #'   \item{"log10 radius"}{Log base 10 of radius}
 #'   \item{"log2 radius"}{Log base 2 of radius}
 #'   \item{"ln radius"}{Log base e of radius}
-#'   \item{"log10 area"}{Log base 10 of area}
-#'   \item{"log2 area"}{Log base 2 of area}
-#'   \item{"ln area"}{Log base e of area}
+#'   \item{"log10 area"}{Log base 10 of circular area}
+#'   \item{"log2 area"}{Log base 2 of circular area}
+#'   \item{"ln area"}{Log base e of circular area}
 #' }
-#' @param vertex_color (\code{numeric} OR \code{character}) The value to base vertex color on. 
-#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
-#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: grey.
-#' @param vertex_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
-#' to \code{vertex_color}. Default: Color-blind friendly palette. 
-#' @param vertex_color_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{vertex_size}. Alternativly, one of the \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: \code{"area"}.
-#' @param edge_size (\code{numeric)} The value to base edge size on. Default: relative to vertex
-#' size. 
-#' @param edge_size_range (\code{numeric} of length 2) The minimum and maximum size of edges.
-#' If either value is \code{NA}, the missing value(s) will be set relative to vertex size. 
-#' Default: relative to vertex size. 
-#' @param edge_size_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{edge_size}. Alternativly one of the following \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: same as \code{vertex_size_trans}. 
-#' @param edge_color (\code{numeric} OR \code{character}) The value to base edge color on. 
-#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
-#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: same as vertex color.
-#' @param edge_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
-#' to low-high statistics supplied to \code{edge_color}. Default: same as vertex color.
-#' @param edge_color_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{edge_size}. Alternativly one of the following \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: same as vertex color transformation.
-#' @param vertex_label (\code{character}) The values of labels over vertcies. Use \code{NA} to exclude labels.
-#' Default: no labels.
-#' @param vertex_label_size (\code{numeric)} The value to base veterx label size on. Default: 
-#' relative to veterx size.
-#' @param vertex_label_size_range (\code{numeric} of length 2) The minimum and maximum size of labels.
-#' If either value is \code{NA}, the missing value(s) will be optimized relative to vertex size. 
-#' Default: relative to vertex size. 
-#' @param vertex_label_size_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{vertex_label_size}. Alternativly one of the following \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: same as \code{vertex_size_trans}.
-#' @param vertex_label_color (\code{numeric} OR \code{character}) The value to base label color on. 
-#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
-#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: black.
-#' @param vertex_label_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
-#' to low-high statistics supplied to \code{vertex_label_color}. Default: Color-blind friendly palette. 
-#' @param vertex_label_color_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{vertex_label_size}. Alternativly one of the \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: \code{"area"}.
-#' @param vertex_label_max (\code{numeric}) The maximum number of vertex labels. Default: 20.
-#' @param edge_label (\code{character}) The values of labels over edges. Default: no labels.
-#' @param edge_label_size (\code{numeric)} The value to base edge label size on. Default: relative to
-#' edge size.
-#' @param edge_label_size_range (\code{numeric} of length 2) The minimum and maximum size of labels.
-#' If either value is \code{NA}, the missing value(s) will be relative to edge size. Default: relative to
-#' edge size.
-#' @param edge_label_size_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{edge_label_size}. Alternativly one of the \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: same as \code{edge_size_trans}.
-#' @param edge_label_color (\code{numeric} OR \code{character}) The value to base label color on. 
-#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
-#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: black.
-#' @param edge_label_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
-#' to low-high statistics supplied to \code{edge_label_color}. Default: Color-blind friendly palette.
-#' @param edge_label_color_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{edge_label_size}. Alternativly one of the following \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: \code{"area"}.
-#' @param edge_label_max (\code{numeric}) The maximum number of edge labels. Default: 20.
-#' @param graph_label (\code{character}) The label to display above each graph. The value of the root
-#' taxon of each graph will be used. Default: None.
-#' @param graph_label_size_range (\code{numeric} of length 2) The minimum and maximum size of labels.
-#' If either value is \code{NA}, the missing value(s) will be relative to proportion of total vertexes
-#' in graph Default: relative to proportion of total vertexes in graph.
-#' @param graph_label_color (\code{numeric} OR \code{character}) The value to base graph label color on. 
-#' If a numeric vector is given, it is used to  construct a color scale. Hex values or color 
-#' names can be used (e.g. \code{#000000} or \code{"black"}). Default: black.
-#' @param  graph_label_color_range (valid argument of \code{col2rgb}) A series of colors corresponding 
-#' to low-high statistics supplied to \code{graph_label_color}. Default: Color-blind friendly palette. 
-#' @param graph_label_color_trans (\code{function(value)} OR \code{character}) A function to transform the
-#' value of \code{graph_label_color}. Alternativly one of the \code{character} values displayed
-#' under the \code{vertex_size_trans}. Default: \code{"area"}.
-#' @param graph_label_max (\code{numeric}) The maximum number of graph labels. Default: 20.
-#' @param overlap_bias (\code{numeric}) The relative importance of avoiding overlaps vs maximizing 
-#' size range. Default: \code{1}.
-#' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins.
-#' Default: \code{0, 0}.
-# #' @param aspect_ratio (\code{numeric}) The height / width of the plot. Default: Whatever the layout
-# #' function produces.
-#' @param layout (\code{character} of length 1) The layout function to use. 
-#' Type \code{\link{layout_functions}()} for available layout names.
-#' @param initial_layout (\code{character} of length 1) Optional starting layout to use to initialize
-#' the final layout function.
-#' Type \code{\link{layout_functions}()} for available layout names.
-#' @param ... (other arguments) Passed to igraph layout function used.
+#' 
+#' @section ranges:
+#' 
+#' The displayed range of colors and sizes can be explicitly defined or automatically genereated.
+#' Size ranges are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
+#' The units used should be between 0 and 1, representing the proportion of a dimension of the graph.
+#' Since the dimensions of the graph are determined by layout, and not always square, the value
+#' that \code{1} corresponds to is the square root of the graph area (i.e. the side of a square with 
+#' the same area as the plotted space).
+#' Color ranges can be any number of color values as either HEX codes (e.g. \code{#000000}) or
+#' color names (e.g. \code{"black"}).
+#' 
+#' @section layout:
+#' 
+#' Layouts determine the position of vertexes on the graph.
+#' The are implemented using the \code{\link{igraph}} package.
+#' Any additional arguments passed to \code{plot_taxonomy} are passed to the  \code{\link{igraph}}
+#' function used.
+#' The following \code{character} values are understood:
+#' 
+#' \describe{
+#'   \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose the layout.}
+#'   \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like layout.}
+#'   \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated annealing.}
+#'   \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
+#'   \item{"graphopt"}{Use \code{\link[igraph]{with_graphopt}}. A force-directed layout.}
+#'   \item{"mds"}{Use \code{\link[igraph]{with_mds}}. Multidimensional scaling.}
+#'   \item{"fruchterman-reingold"}{Use \code{\link[igraph]{with_fr}}. A force-directed layout.}
+#'   \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a phyisical model of springs.}
+#'   \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
+#'   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
+#' }
 #'  
 #' @export
 new_plot_taxonomy <- function(taxon_id, parent_id, 
                               vertex_size = 1,
+                              edge_size = vertex_size,
+                              tree_size = 1,
+
+                              vertex_color = "#999999",
+                              edge_color = vertex_color,
+                              tree_color = NULL,
+                              
+                              vertex_label = NA,
+                              edge_label = NA,
+                              tree_label = NA,
+
+                              vertex_label_size = vertex_size,
+                              edge_label_size = edge_size,
+                              tree_label_size = NULL, 
+                              
+                              vertex_label_color = "#000000",
+                              edge_label_color = "#000000",
+                              tree_label_color = "#000000",
+                              
+                              
                               vertex_size_range = c(NA, NA),
                               vertex_size_trans = "area",
-                              vertex_color = "#999999",
                               vertex_color_range = quantative_palette(),
                               vertex_color_trans = vertex_size_trans,
-                              edge_size = vertex_size,
                               edge_size_range = c(NA, NA),
                               edge_size_trans = vertex_size_trans,
-                              edge_color = vertex_color,
                               edge_color_range = vertex_color_range,
                               edge_color_trans = vertex_color_trans,
-                              vertex_label = NA,
-                              vertex_label_size = vertex_size,
                               vertex_label_size_range = c(NA, NA),
                               vertex_label_size_trans = vertex_size_trans,
-                              vertex_label_color = "#222222",
                               vertex_label_color_range = quantative_palette(),
                               vertex_label_color_trans = "area",
-                              edge_label = NA,
-                              edge_label_size = edge_size,
                               edge_label_size_range = c(NA, NA),
                               edge_label_size_trans = edge_size_trans,
-                              edge_label_color = "#555555",
                               edge_label_color_range = quantative_palette(),
                               edge_label_color_trans = "area",
-                              graph_label = NA,
-                              graph_label_size_range = c(NA, NA),
-                              graph_label_color = "#000000",
-                              graph_label_color_range = quantative_palette(),
-                              graph_label_color_trans = "area",
+                              tree_label_size_range = c(NA, NA),
+                              tree_label_color_range = quantative_palette(),
+                              tree_label_color_trans = "area",
                               vertex_label_max = 20,
                               edge_label_max = 20,
-                              graph_label_max = 20,
-                              overlap_bias = 1,
+                              tree_label_max = 20,
+                              overlap_avoidance = 1,
                               margin_size = c(0, 0),
                               # aspect_ratio = NULL,
                               layout = "reingold-tilford",
@@ -181,20 +298,20 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   check_element_length(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size",
                          "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
-                         "vertex_label", "edge_label", "graph_label", "graph_label_color"))
+                         "vertex_label", "edge_label", "tree_label", "tree_label_color"))
   verify_size(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size"))
   verify_size_range(c("vertex_size_range", "edge_size_range",
                       "vertex_label_size_range", "edge_label_size_range"))
   verify_trans(c("vertex_size_trans", "vertex_color_trans", 
                  "edge_size_trans", "edge_color_trans",
                  "vertex_label_size_trans", "vertex_label_color_trans",
-                 "edge_label_size_trans", "edge_label_color_trans", "graph_label_color_trans"))
+                 "edge_label_size_trans", "edge_label_color_trans", "tree_label_color_trans"))
   verify_color_range(c("vertex_color_range", "edge_color_range",
                        "vertex_label_color_range", "edge_label_color_range",
-                       "graph_label_color_range"))
-  verify_label_count(c("vertex_label_max", "edge_label_max", "graph_label_max"))
-  if (length(overlap_bias) == 0 || ! is.numeric(overlap_bias)) {
-    stop("Argument 'overlap_bias' must be a numeric of length 1.")
+                       "tree_label_color_range"))
+  verify_label_count(c("vertex_label_max", "edge_label_max", "tree_label_max"))
+  if (length(overlap_avoidance) == 0 || ! is.numeric(overlap_avoidance)) {
+    stop("Argument 'overlap_avoidance' must be a numeric of length 1.")
   }
   if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
     stop("Argument 'margin_size' must be a numeric of length 2.")
@@ -220,11 +337,33 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      vlc = vertex_label_color,
                      els = as.numeric(edge_label_size),
                      elc = edge_label_color,
-                     glc = graph_label_color,
+                     glc = tree_label_color,
                      vl = as.character(vertex_label),
                      el = as.character(edge_label),
-                     gl = as.character(graph_label))
+                     gl = as.character(tree_label))
   row.names(data) <- data$tid
+  
+  
+  #| #### Apply statistic transformations ---------------------------------------------------------
+  #|
+  data$subgraph_prop <- vapply(data$subgraph_root, function(x) sum(data$subgraph_root == x) / nrow(data), numeric(1))
+  data$gls <- data$subgraph_prop
+  trans_key <- c(vs = vertex_size_trans, vc = vertex_color_trans,
+                 vls = vertex_label_size_trans, vlc = vertex_label_color_trans,
+                 es = edge_size_trans, ec = edge_color_trans,
+                 els = edge_label_size_trans, elc = edge_label_color_trans,
+                 glc = graph_label_color_trans, gls = "area")
+  new_names <- paste0(names(trans_key), "_t")
+  apply_trans <- function(col_name) {
+    if (is.numeric(data[ , col_name])) { 
+      transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
+    } else {
+      data[ , col_name] # if colors are defined explicitly, then no transformation is done
+    }
+  }
+  data[, new_names] <- lapply(names(trans_key), apply_trans)
+  
+  
   #| ### Make layout ==============================================================================
   #| The layout is used to generate a list of coordinates to places graph verticies
   #| First the edge list consituted by the `taxon_id` and `parent_id` columns is used to construct 
@@ -283,24 +422,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Core plot data ===========================================================================
   #|
-  #| #### Apply statistic transformations ---------------------------------------------------------
-  #|
-  data$subgraph_prop <- vapply(data$subgraph_root, function(x) sum(data$subgraph_root == x) / nrow(data), numeric(1))
-  data$gls <- data$subgraph_prop
-  trans_key <- c(vs = vertex_size_trans, vc = vertex_color_trans,
-                 vls = vertex_label_size_trans, vlc = vertex_label_color_trans,
-                 es = edge_size_trans, ec = edge_color_trans,
-                 els = edge_label_size_trans, elc = edge_label_color_trans,
-                 glc = graph_label_color_trans, gls = "area")
-  new_names <- paste0(names(trans_key), "_t")
-  apply_trans <- function(col_name) {
-    if (is.numeric(data[ , col_name])) { 
-      transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
-    } else {
-      data[ , col_name] # if colors are defined explicitly, then no transformation is done
-    }
-  }
-  data[, new_names] <- lapply(names(trans_key), apply_trans)
   
   #|
   #| #### Optimize vertex size --------------------------------------------------------------------
@@ -347,7 +468,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   optimality_stat <- function(overlap, range_size, minimum) {
     overlap_weight <- 0.05
     minimum_weight <- 2
-    (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_bias * overlap_weight)
+    (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
@@ -379,11 +500,11 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                                 defualt_scale = 0.5)
   edge_label_size_range_g <- infer_size_range(edge_label_size_range, edge_size_range_g, 
                                               defualt_scale = 0.7)
-  graph_label_size_range_g <- infer_size_range(graph_label_size_range, range(data$subgraph_prop), 
+  tree_label_size_range_g <- infer_size_range(tree_label_size_range, range(data$subgraph_prop), 
                                               defualt_scale = 0.1)
   data$vls_g <- scales::rescale(data$vls_t, to = vertex_label_size_range_g)
   data$els_g <- scales::rescale(data$els_t, to = edge_label_size_range_g)
-  data$gls_g <- scales::rescale(data$gls_t, to = graph_label_size_range_g)
+  data$gls_g <- scales::rescale(data$gls_t, to = tree_label_size_range_g)
   #|
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
@@ -398,7 +519,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   color_colume_key <- list("ec_t" = edge_color_range, "vc_t" = vertex_color_range,
-                           "glc_t" = graph_label_color_range,
+                           "glc_t" = tree_label_color_range,
                            "elc_t" = edge_label_color_range, "vlc_t" = vertex_label_color_range)
   new_names <- gsub(pattern = "_t$", x = names(color_colume_key), replacement = "_g")
   data[, new_names] <- lapply(names(color_colume_key),
@@ -506,9 +627,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   title_data$glx <- scales::rescale(title_data$glx, to = c(0, 1), from = c(x_min, x_max))
   title_data$gly <- scales::rescale(title_data$gly, to = c(0, 1), from = c(y_min, y_max)) + title_data$gls_g * 1.1
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  graph_label_shown <- select_labels(title_data, graph_label_max, 
+  tree_label_shown <- select_labels(title_data, tree_label_max, 
                                      sort_by_colume = "gls_g", label_colume = "gl")
-  graph_label_grobs <- plyr::dlply(title_data[graph_label_shown, ], "tid",
+  tree_label_grobs <- plyr::dlply(title_data[tree_label_shown, ], "tid",
                                   function(row) resizingTextGrob(label = row['gl'],
                                                                  x = row['glx'],
                                                                  y = row['gly'],
@@ -534,7 +655,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   for (a_grob in vertex_label_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
-  for (a_grob in graph_label_grobs) {
+  for (a_grob in tree_label_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
   the_plot
