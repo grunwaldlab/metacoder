@@ -651,7 +651,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                function(row) resizingTextGrob(label = row['vl_user'],
                                                             y = row['vly_plot'],
                                                             x = row['vlx_plot'],
-                                                            gp = grid::gpar(text_prop = row['vls_plot'])))    
+                                                            gp = grid::gpar(text_prop = row['vls_plot'],
+                                                                            col = as.character(row['vlc_plot']))))    
   #|
   #| #### Make edge text grobs -------------------------------------------------------------------
   #|
@@ -679,7 +680,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                     function(row) resizingTextGrob(label = row['el_user'],
                                                                    y = row['ely_plot'],
                                                                    x = row['elx_plot'],
-                                                                   gp = grid::gpar(text_prop = row['els_plot']),
+                                                                   gp = grid::gpar(text_prop = row['els_plot'],
+                                                                                   col = as.character(row['elc_plot'])),
                                                                    rot = row['el_rotation'] * 180 / pi,
                                                                    just = justification[[row[['tid_user']]]]))
   #|
@@ -694,7 +696,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                   function(row) resizingTextGrob(label = row['tl_user'],
                                                                  x = row['tlx_prop'],
                                                                  y = row['tly_prop'],
-                                                                 gp = grid::gpar(text_prop = row['tls_prop']),
+                                                                 gp = grid::gpar(text_prop = row['tls_prop'],
+                                                                                 col = as.character(row['tlc_plot'])),
                                                                  rot = 0,
                                                                  just = "center"))
   #| ### Draw plot ================================================================================
