@@ -341,20 +341,28 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   }
   #| ### Standardize source data ==================================================================
   data <- data.frame(stringsAsFactors = FALSE,
-                     tid = as.character(taxon_id),
-                     pid = as.character(parent_id),
-                     vs = as.numeric(vertex_size),
-                     vc = vertex_color,
-                     es = as.numeric(edge_size),
-                     ec = edge_color,
-                     vls = as.numeric(vertex_label_size),
-                     vlc = vertex_label_color,
-                     els = as.numeric(edge_label_size),
-                     elc = edge_label_color,
-                     glc = tree_label_color,
-                     vl = as.character(vertex_label),
-                     el = as.character(edge_label),
-                     gl = as.character(tree_label))
+                     tid_user = as.character(taxon_id),
+                     pid_user = as.character(parent_id),
+                     
+                     vl_user = as.character(vertex_label),
+                     el_user = as.character(edge_label),
+                     tl_user = as.character(tree_label),
+                     
+                     vs_user = as.numeric(vertex_size),
+                     es_user = as.numeric(edge_size),
+                     ts_user = as.numeric(tree_size),
+            
+                     vls_user = as.numeric(vertex_label_size),
+                     els_user = as.numeric(edge_label_size),
+                     tls_user = as.numeric(tree_label_size),
+                     
+                     vc_user = vertex_color,
+                     ec_user = edge_color,
+                     tc_user = tree_color,
+                     
+                     vlc_user = vertex_label_color,
+                     elc_user = edge_label_color,
+                     tlc_user = tree_label_color)
   row.names(data) <- data$tid
   
   
