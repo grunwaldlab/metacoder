@@ -296,6 +296,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(taxon_id) == 0) {
     stop("'taxon_id' and 'parent_id' are empty.")
   }
+  if (length(unique(taxon_id)) != length(taxon_id)) {
+    stop("All values of 'taxon_id' are not unique.")
+  }
   check_element_length(c("vertex_size", "edge_size", "vertex_label_size", "edge_label_size",
                          "vertex_color", "edge_color", "vertex_label_color", "edge_label_color",
                          "vertex_label", "edge_label", "tree_label", "tree_label_color"))
