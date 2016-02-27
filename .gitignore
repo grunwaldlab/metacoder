@@ -5,5 +5,4 @@
 *_cache
 vignettes/*_files*/
 inst/doc*/
-**.Rd
 vignettes/.build.timestamp
