@@ -44,7 +44,6 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   
   # Generate tick mark coordinates
   tick_color <- "#555555"
-  tick_size <- 0.1
   tick_div <- seq(0, 1, length.out = label_count)
   label_point_y <- tick_div * length
   tick_coords <- function(center_y) {
@@ -61,27 +60,35 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   tick_data <- do.call(rbind, tick_data)
   
   # Generate label coordinates
+  format_label <- function(n) {
+    format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
+  }
+  
   scale_undo_trans <- function(points, my_range, my_trans) {
     trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
     scales::rescale(trans_points, to = range(my_range))
   }
   
   label_color = "#000000"
-  label_size = max(width_range) / 10
+  label_size = max(width_range) / 5
+  
   
   make_size_label_data <- function() {
-    size_label_data <- data.frame(label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
-                                  x = max(width_range) * 1.05,
+    size_label_data <- data.frame(stringsAsFactors = FALSE, 
+                                  label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                                  x = max(width_range) * 1.1,
                                   y = rev(label_point_y),
                                   color = label_color,
                                   size = label_size,
                                   rot = 0,
-                                  just = "right")
+                                  just = "left")
   }
   
   make_color_label_data <- function() {
-    color_label_data <- data.frame(label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
-                                   x = 0 - max(width_range) * 0.05,
+    
+    color_label_data <- data.frame(stringsAsFactors = FALSE, 
+                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                   x = 0 - max(width_range) * 0.1,
                                    y = rev(label_point_y),
                                    color = label_color,
                                    size = label_size,

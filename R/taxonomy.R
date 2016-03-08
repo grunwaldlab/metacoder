@@ -132,7 +132,7 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_r
 
 #===================================================================================================
 extract_last <- function(classifications, column) {
-  vapply(classifications, function(x) x[nrow(x), column], character(1))
+  sapply(classifications, function(x) x[nrow(x), column])
 }
 
 #===================================================================================================

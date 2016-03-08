@@ -598,8 +598,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     
     legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
                                     y = min(element_data$y), 
-                                    length = y_range * 0.25, 
-                                    tick_size = y_range * 0.05, 
+                                    length = y_range * 0.3, 
+                                    tick_size = y_range * 0.003, 
                                     width_range = range(data$vs_plot) * 2, 
                                     width_stat_range = width_stat_range,
                                     width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
@@ -697,7 +697,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                                                    gp = grid::gpar(text_prop = row['s_prop'],
                                                                                    col = as.character(row['color'])),
                                                                    rot = row['rot'],
-                                                                   just = row['just']))
+                                                                   just =  row[['just']]))
     
   } else {
     legend_label_grobs <- list()
