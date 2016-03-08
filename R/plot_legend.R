@@ -5,6 +5,7 @@
 #' Make color/size legend
 #' 
 #' @param length (\code{numeric} of length 1) the length of the scale bar
+#' @param tick_size (\code{numeric} of length 1) the thickness of tick marks
 #' @param width_range (\code{numeric} of length 1 or 2) the width of the scale bar or the range
 #' @param width_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the size labels
 #' @param width_stat_trans (\code{function}) The transformation used to convert the statistic to size
@@ -17,14 +18,11 @@
 #' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
 #' @param divisions (\code{numeric} of length 1) The number of colors to display. 
 #' @param label_count (\code{numeric} of length 1) The number of labels.
-make_plot_legend <- function(length, width_range, width_stat_range, width_stat_trans = function(x) {x},
+make_plot_legend <- function(length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
                              divisions = 100, label_count = 5) {
-  inverse = function (f, lower = -100, upper = 100) {
-    function (y) uniroot((function (x) f(x) - y), lower = lower, upper = upper)[1]
-  }
   
   
   # Generate scale bar coordinates
@@ -32,26 +30,93 @@ make_plot_legend <- function(length, width_range, width_stat_range, width_stat_t
   point_data <- data.frame(x = max(width_range) - prop_div * (max(width_range) - min(width_range)),
                            y = prop_div * length)
   prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
-  seq_color <- apply_color_scale(prop_seg, color_range) 
+  seq_color <- apply_color_scale(rev(prop_seg), color_range) 
   scale_data <- lapply(1:(divisions - 1), 
                        function(i) scale_bar_coords(x1 = point_data$x[i + 1],
                                                     x2 = point_data$x[i],
                                                     y1 = point_data$y[i + 1],
                                                     y2 = point_data$y[i],
                                                     color = seq_color[i],
-                                                    group = i))
+                                                    group = paste0("scale-",i)))
   scale_data <- do.call(rbind, scale_data)
+  
   # Generate tick mark coordinates
+  tick_color <- "#555555"
+  tick_size <- 0.1
+  tick_div <- seq(0, 1, length.out = label_count)
+  label_point_y <- tick_div * length
+  tick_coords <- function(center_y) {
+    max_y <- center_y + tick_size / 2
+    min_y <- center_y - tick_size / 2
+    data.frame(x = c(0, 0, rep(max(width_range), 2)),
+               y = c(min_y, max_y, max_y, min_y),
+               color = tick_color,
+               group = paste0("tick-",center_y))
+  }
+  
+  
+  tick_data <- lapply(label_point_y, tick_coords)
+  tick_data <- do.call(rbind, tick_data)
   
   # Generate label coordinates
+  inverse = function (f, lower = -100, upper = 100) {
+    function (y) uniroot((function (x) f(x) - y), lower = lower, upper = upper)[[1]]
+  }
+  
+  scale_undo_trans <- function(points, my_range, my_trans) {
+    undo_trans <- inverse(my_trans, lower = min(points), upper = max(points))
+    trans_points <- vapply(points, undo_trans, FUN.VALUE = numeric(1))
+    scales::rescale(trans_points, to = range(my_range))
+  }
+  
+  label_color = "#000000"
+  label_size = max(width_range) / 10
+  size_label_data <- data.frame(label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                               x = max(width_range) * 1.05,
+                               y = rev(label_point_y),
+                               color = label_color,
+                               size = label_size,
+                               rot = 0,
+                               just = "right")
+  
+  color_label_data <- data.frame(label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                x = 0 - max(width_range) * 0.05,
+                                y = rev(label_point_y),
+                                color = label_color,
+                                size = label_size,
+                                rot = 0,
+                                just = "left")
+  
+  if (!is.null(width_stat_range) && !is.null(color_stat_range)) {
+    label_data <- rbind(size_label_data, color_label_data)
+  } else if (!is.null(width_stat_range)) {
+    label_data <- size_label_data
+  } else if (!is.null(color_stat_range)) {
+    label_data <- color_label_data
+  } else {
+    label_data <- NULL
+  }
   
   # Generate title coordinates
   
+    
+    
+  output <- list(shapes = rbind(tick_data, scale_data),
+                 labels = label_data)
+  return(output)
   
   # Graph 
-  ggplot2::ggplot(data = scale_data) +
-    ggplot2::geom_polygon(data = scale_data, ggplot2::aes(x = x, y = y, group = group),
-                          fill = scale_data$color) 
+#   ggplot2::ggplot(data = scale_data) +
+#     ggplot2::geom_polygon(data = output$shapes, ggplot2::aes(x = x, y = y, group = group),
+#                           fill = output$shapes$color) +
+#     ggplot2::coord_fixed() +
+#     ggplot2::scale_y_continuous(expand = c(0,0)) + ggplot2::scale_x_continuous(expand = c(0,0)) +
+#     ggplot2::theme(panel.grid = ggplot2::element_blank(), 
+#                    panel.background = ggplot2::element_blank(),
+#                    axis.title = ggplot2::element_blank(),
+#                    axis.text  = ggplot2::element_blank(),
+#                    axis.ticks = ggplot2::element_blank(), 
+#                    axis.line  = ggplot2::element_blank())
 }
 
 
