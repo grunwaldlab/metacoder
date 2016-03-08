@@ -150,6 +150,7 @@
 #' of vertexes, passed as input to the \code{layout} algorithm.
 #' See details on layouts.
 #' Default: Not used.
+#' @param make_legend if TRUE...
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -247,7 +248,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               vertex_size = 1,
                               edge_size = vertex_size,
                               tree_size = 1,
-
+                              
                               vertex_label_size = vertex_size,
                               edge_label_size = edge_size,
                               tree_label_size = as.numeric(NA), 
@@ -279,7 +280,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               vertex_size_range = c(NA, NA),
                               edge_size_range = c(NA, NA),
                               # tree_size_range = c(NA, NA),
-
+                              
                               vertex_label_size_range = c(NA, NA),
                               edge_label_size_range = c(NA, NA),
                               tree_label_size_range = c(NA, NA),
@@ -300,6 +301,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               margin_size = c(0, 0),
                               layout = "reingold-tilford",
                               initial_layout = "fruchterman-reingold",
+                              make_legend = FALSE,
                               ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
@@ -351,7 +353,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      vs_user = as.numeric(vertex_size),
                      es_user = as.numeric(edge_size),
                      ts_user = as.numeric(tree_size),
-            
+                     
                      vls_user = as.numeric(vertex_label_size),
                      els_user = as.numeric(edge_label_size),
                      tls_user = as.numeric(tree_label_size),
@@ -425,18 +427,18 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     }
     return(coords)
   }
-
+  
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
   data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
   scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
-  sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
+  # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
   #|
   
-  coords <- merge_coords(sub_graphs, sub_coords) # merge vertex coordinates for each tree
-  graph <- disjoint_union(sub_graphs) # merge graphs of each tree
-  row.names(coords) <- names(V(graph))
+  coords <- igraph::merge_coords(sub_graphs, sub_coords) # merge vertex coordinates for each tree
+  graph <- igraph::disjoint_union(sub_graphs) # merge graphs of each tree
+  row.names(coords) <- names(igraph::V(graph))
   data$vx_plot <- coords[data$tid_user, 1]
   data$vy_plot <- coords[data$tid_user, 2]
   
@@ -579,6 +581,39 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   element_data <- do.call(rbind, lapply(element_order, taxon_elements))
   element_data$group <- factor(element_data$group, levels = unique(element_data$group))
   #|
+  #| #### Make legend 
+  #|
+  if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
+    y_range <- max(element_data$y) - min(element_data$y)
+    if (missing(vertex_size)) {
+      width_stat_range <- NULL
+    } else {
+      width_stat_range <- range(vertex_size)
+    }
+    if (missing(vertex_color)) {
+      color_stat_range <- NULL
+    } else {
+      color_stat_range <- range(vertex_color)
+    }
+    
+    legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
+                                    y = min(element_data$y), 
+                                    length = y_range * 0.25, 
+                                    tick_size = y_range * 0.05, 
+                                    width_range = range(data$vs_plot) * 2, 
+                                    width_stat_range = width_stat_range,
+                                    width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
+                                    color_range = vertex_color_range,
+                                    color_stat_range = color_stat_range, 
+                                    color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
+                                    divisions = 60, label_count = 6)
+    legend_data$shapes$tid_user = NA
+    element_data <- rbind(element_data, legend_data$shapes)
+  } else {
+    legend_data <- NULL
+  }
+  
+  #|
   #| #### Make vertex text grobs ------------------------------------------------------------------
   #|
   # Determine which labels will be shown -
@@ -603,10 +638,10 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                                     sort_by_colume = c("tls_plot", "ts_plot"), label_colume = "tl_user")
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
-                         function(x) mean(range(x)))
+                    function(x) mean(range(x)))
   data$tx_plot <- rep(tx_plot[unique(data$subgraph_root)], tree_vertex_counts)
   ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
-                         function(x) mean(range(x)))
+                    function(x) mean(range(x)))
   data$ty_plot <- rep(ty_plot[unique(data$subgraph_root)], tree_vertex_counts)
   data$tlx_plot <- data$tx_plot 
   tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
@@ -628,7 +663,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   
   x_points <- c(element_data$x, vlx_min, vlx_max, tlx_min, tlx_max)
   y_points <- c(element_data$y, vly_min, vly_max, tly_min, tly_max)
-
+  
   
   margin_size_plot <- margin_size * square_side_length
   x_min <- min(x_points) - margin_size_plot[1]
@@ -640,11 +675,34 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$vly_plot <- scales::rescale(data$vy_plot, to = c(0, 1), from = c(y_min, y_max))
   
   vertex_label_grobs <- plyr::dlply(data[data$vl_is_shown, ], "tid_user",
-                               function(row) resizingTextGrob(label = row['vl_user'],
-                                                            y = row['vly_plot'],
-                                                            x = row['vlx_plot'],
-                                                            gp = grid::gpar(text_prop = row['vls_plot'],
-                                                                            col = as.character(row['vlc_plot']))))    
+                                    function(row) resizingTextGrob(label = row['vl_user'],
+                                                                   y = row['vly_plot'],
+                                                                   x = row['vlx_plot'],
+                                                                   gp = grid::gpar(text_prop = row['vls_plot'],
+                                                                                   col = as.character(row['vlc_plot']))))    
+  #|
+  #| #### Make legend text grobs -------------------------------------------------------------------
+  #|
+  if (!is.null(legend_data)) {
+    legend_label_data <- legend_data$labels
+    legend_label_data$x_prop <- scales::rescale(legend_label_data$x, to = c(0, 1), from = c(x_min, x_max))
+    legend_label_data$y_prop <- scales::rescale(legend_label_data$y, to = c(0, 1), from = c(y_min, y_max))
+    legend_label_data$s_prop <- scales::rescale(legend_label_data$size, to = c(0, 1), from = c(0, square_side_length))
+    legend_label_data$id <- 1:nrow(legend_label_data)
+    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    legend_label_grobs <- plyr::dlply(legend_label_data, "id",
+                                    function(row) resizingTextGrob(label = row['label'],
+                                                                   x = row['x_prop'],
+                                                                   y = row['y_prop'],
+                                                                   gp = grid::gpar(text_prop = row['s_prop'],
+                                                                                   col = as.character(row['color'])),
+                                                                   rot = row['rot'],
+                                                                   just = row['just']))
+    
+  } else {
+    legend_label_grobs <- list()
+  }
+  
   #|
   #| #### Make edge text grobs -------------------------------------------------------------------
   #|
@@ -669,13 +727,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$els_plot <-  scales::rescale(data$els_plot, to = c(0, 1), from = c(0, square_side_length))
   # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   edge_label_grobs <- plyr::dlply(data[data$el_is_shown, ], "tid_user",
-                                    function(row) resizingTextGrob(label = row['el_user'],
-                                                                   y = row['ely_plot'],
-                                                                   x = row['elx_plot'],
-                                                                   gp = grid::gpar(text_prop = row['els_plot'],
-                                                                                   col = as.character(row['elc_plot'])),
-                                                                   rot = row['el_rotation'] * 180 / pi,
-                                                                   just = justification[[row[['tid_user']]]]))
+                                  function(row) resizingTextGrob(label = row['el_user'],
+                                                                 y = row['ely_plot'],
+                                                                 x = row['elx_plot'],
+                                                                 gp = grid::gpar(text_prop = row['els_plot'],
+                                                                                 col = as.character(row['elc_plot'])),
+                                                                 rot = row['el_rotation'] * 180 / pi,
+                                                                 just = justification[[row[['tid_user']]]]))
   #|
   #| #### Make subplot title text grobs -----------------------------------------------------------
   #|
@@ -712,6 +770,9 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
   for (a_grob in tree_label_grobs) {
+    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  }    
+  for (a_grob in legend_label_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
   the_plot
@@ -836,17 +897,28 @@ check_element_length <- function(args) {
 #' 
 #' @param data (\code{numeric}) Data to transform
 #' @param func (\code{character}) Name of transformation to apply.
-transform_data <- function(data = NULL, func = NULL) {
-  funcs <- list("radius" = function(x) {x},
-                "area" = function(x) {(x/pi)^(1/2)},
-                "log10 radius" = function(x) {log(x, base = 10)},
-                "log2 radius" = function(x) {log(x, base = 2)},
-                "ln radius" = function(x) {log(x)},
-                "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
-                "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
-                "ln area" =  function(x) {log((x/pi)^(1/2))})
+#' @param inverse If TRUE, return inverse
+transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
+  if (inverse) {
+    funcs <- list("radius" = function(x) {x},
+                  "area" = function(x) {pi*x^2})
+    
+  } else {
+    funcs <- list("radius" = function(x) {x},
+                  "area" = function(x) {(x/pi)^(1/2)},
+                  "log10 radius" = function(x) {log(x, base = 10)},
+                  "log2 radius" = function(x) {log(x, base = 2)},
+                  "ln radius" = function(x) {log(x)},
+                  "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
+                  "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
+                  "ln area" =  function(x) {log((x/pi)^(1/2))})
+    
+  }
+  
   if (is.null(data) & is.null(func)) {
     return(names(funcs))
+  } else if (is.null(data)) {
+    return(funcs[[func]])
   } else {
     return(vapply(X = data, FUN = funcs[[func]], FUN.VALUE = numeric(1)))
   }

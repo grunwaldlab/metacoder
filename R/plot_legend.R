@@ -4,6 +4,8 @@
 #' 
 #' Make color/size legend
 #' 
+#' @param x bottom left
+#' @param y bottom left
 #' @param length (\code{numeric} of length 1) the length of the scale bar
 #' @param tick_size (\code{numeric} of length 1) the thickness of tick marks
 #' @param width_range (\code{numeric} of length 1 or 2) the width of the scale bar or the range
@@ -18,7 +20,7 @@
 #' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
 #' @param divisions (\code{numeric} of length 1) The number of colors to display. 
 #' @param label_count (\code{numeric} of length 1) The number of labels.
-make_plot_legend <- function(length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
+make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
@@ -48,10 +50,10 @@ make_plot_legend <- function(length, tick_size, width_range, width_stat_range, w
   tick_coords <- function(center_y) {
     max_y <- center_y + tick_size / 2
     min_y <- center_y - tick_size / 2
-    data.frame(x = c(0, 0, rep(max(width_range), 2)),
+    data.frame(group = paste0("tick-", center_y),
+               x = c(0, 0, rep(max(width_range), 2)),
                y = c(min_y, max_y, max_y, min_y),
-               color = tick_color,
-               group = paste0("tick-",center_y))
+               color = tick_color)
   }
   
   
@@ -59,40 +61,41 @@ make_plot_legend <- function(length, tick_size, width_range, width_stat_range, w
   tick_data <- do.call(rbind, tick_data)
   
   # Generate label coordinates
-  inverse = function (f, lower = -100, upper = 100) {
-    function (y) uniroot((function (x) f(x) - y), lower = lower, upper = upper)[[1]]
-  }
-  
   scale_undo_trans <- function(points, my_range, my_trans) {
-    undo_trans <- inverse(my_trans, lower = min(points), upper = max(points))
-    trans_points <- vapply(points, undo_trans, FUN.VALUE = numeric(1))
+    trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
     scales::rescale(trans_points, to = range(my_range))
   }
   
   label_color = "#000000"
   label_size = max(width_range) / 10
-  size_label_data <- data.frame(label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
-                               x = max(width_range) * 1.05,
-                               y = rev(label_point_y),
-                               color = label_color,
-                               size = label_size,
-                               rot = 0,
-                               just = "right")
   
-  color_label_data <- data.frame(label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
-                                x = 0 - max(width_range) * 0.05,
-                                y = rev(label_point_y),
-                                color = label_color,
-                                size = label_size,
-                                rot = 0,
-                                just = "left")
+  make_size_label_data <- function() {
+    size_label_data <- data.frame(label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                                  x = max(width_range) * 1.05,
+                                  y = rev(label_point_y),
+                                  color = label_color,
+                                  size = label_size,
+                                  rot = 0,
+                                  just = "right")
+  }
   
+  make_color_label_data <- function() {
+    color_label_data <- data.frame(label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                   x = 0 - max(width_range) * 0.05,
+                                   y = rev(label_point_y),
+                                   color = label_color,
+                                   size = label_size,
+                                   rot = 0,
+                                   just = "right")
+  } 
+  
+   
   if (!is.null(width_stat_range) && !is.null(color_stat_range)) {
-    label_data <- rbind(size_label_data, color_label_data)
+    label_data <- rbind(make_size_label_data(), make_color_label_data())
   } else if (!is.null(width_stat_range)) {
-    label_data <- size_label_data
+    label_data <- make_size_label_data()
   } else if (!is.null(color_stat_range)) {
-    label_data <- color_label_data
+    label_data <- make_color_label_data()
   } else {
     label_data <- NULL
   }
@@ -100,8 +103,17 @@ make_plot_legend <- function(length, tick_size, width_range, width_stat_range, w
   # Generate title coordinates
   
     
+  shape_data <- rbind(tick_data, scale_data)
+  shape_data$x <- shape_data$x + x
+  shape_data$y <- shape_data$y + y
+  
+  if (!is.null(label_data)) {
+    label_data$x <- label_data$x + x
+    label_data$y <- label_data$y + y
     
-  output <- list(shapes = rbind(tick_data, scale_data),
+  }
+  
+  output <- list(shapes = shape_data,
                  labels = label_data)
   return(output)
   
@@ -133,9 +145,10 @@ make_plot_legend <- function(length, tick_size, width_range, width_stat_range, w
 #' 
 #' @return \code{data.frame}
 scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
-  data.frame(x = c(x1, x2, 0, 0),
+  data.frame(group = group,
+             x = c(x1, x2, 0, 0),
              y = c(y1, y2, y2, y1),
-             color = color, 
-             group = group)
+             color = color)
+             
 }
 

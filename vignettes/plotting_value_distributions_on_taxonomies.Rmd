@@ -257,10 +257,10 @@ taxa <- original_data$taxa
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
 data_to_plot <- taxa
-new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
+new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id, make_legend = TRUE, margin_size = c(.01,.01),
                   vertex_size = data_to_plot$item_count,
                   vertex_color = data_to_plot$item_count,
-                  vertex_label = data_to_plot$name)
+                  vertex_label = data_to_plot$item_count)
 ```
 
 
