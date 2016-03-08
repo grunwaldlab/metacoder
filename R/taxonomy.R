@@ -367,7 +367,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     if (database != "none") class(item_data$taxon_id) <- id_class
   } else if ("item_id" %in% names(item_data) && database != "none") {
     if (is.null(taxid_from_seqid)) stop("Cannot look up taxonomy from sequence id using current database.")
-    item_data$taxon_id <- taxid_from_seqid(item_data$item_id)
+    item_data$taxon_id <- taxid_from_seqid(item_data$item_id, batch_size = 1)
   } else if ("taxon_name" %in% names(item_data) && database != "none") {
     item_data$taxon_id <- map_unique(item_data$taxon_name, id_from_name)
     report_found(item_data$taxon_id)
