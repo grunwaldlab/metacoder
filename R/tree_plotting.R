@@ -535,15 +535,6 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
-  apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
-    if (is.numeric(values)) { ## Not factors, characters, or hex codes
-      palette <- colorRampPalette(color_series)(no_color_in_palette)
-      color_index <- as.integer(scales::rescale(values, to = c(1, no_color_in_palette)))
-      return(palette[color_index])
-    } else {
-      return(values)
-    }
-  }
   
   color_colume_key <- list("ec_trans" = edge_color_range, "vc_trans" = vertex_color_range, 
                            "tc_trans" = tree_color_range, "vlc_trans" = vertex_label_color_range,
@@ -960,4 +951,16 @@ quantative_palette <- function() {
 #' The default color palette for qualitative data
 qualitative_palette <- function() {
   return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
+}
+
+
+
+apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
+  if (is.numeric(values)) { ## Not factors, characters, or hex codes
+    palette <- colorRampPalette(color_series)(no_color_in_palette)
+    color_index <- as.integer(scales::rescale(values, to = c(1, no_color_in_palette)))
+    return(palette[color_index])
+  } else {
+    return(values)
+  }
 }
