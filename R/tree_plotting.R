@@ -469,7 +469,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                         max = rep(max_breaks, length(min_breaks)))
     space[space$min <= space$max, ]
   }
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 10)
+  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 7)
   search_space$range_size <- search_space$max - search_space$min
   # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
   find_overlap <- function(a_min, a_max, distance) {
@@ -899,13 +899,17 @@ check_element_length <- function(args) {
 #' @param func (\code{character}) Name of transformation to apply.
 #' @param inverse If TRUE, return inverse
 transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
+  sign <- function(x) {
+    ifelse(x < 0, -1, 1)
+  }
+  
   if (inverse) {
     funcs <- list("radius" = function(x) {x},
-                  "area" = function(x) {pi*x^2})
+                  "area" = function(x) {sign(x) * pi*x^2})
     
   } else {
     funcs <- list("radius" = function(x) {x},
-                  "area" = function(x) {(x/pi)^(1/2)},
+                  "area" = function(x) {sign(x) * (abs(x)/pi)^(1/2)},
                   "log10 radius" = function(x) {log(x, base = 10)},
                   "log2 radius" = function(x) {log(x, base = 2)},
                   "ln radius" = function(x) {log(x)},

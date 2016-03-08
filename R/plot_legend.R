@@ -61,12 +61,13 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   
   # Generate label coordinates
   format_label <- function(n) {
-    format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
+    # format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
+    signif(n, digits = 3)
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
     trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
-    scales::rescale(trans_points, to = range(my_range))
+    format_label(scales::rescale(trans_points, to = range(my_range)))
   }
   
   label_color = "#000000"
