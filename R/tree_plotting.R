@@ -42,10 +42,10 @@
 #' Default: constant size.
 #' @param edge_size See details on size.
 #' Default: relative to vertex size. 
-#' @param tree_size See details on size.
-#' The value of the root of each graph will be used.
-#' This scales the space used to display graphs, but does not effect vertex/edge size.
-#' Default: Not used. 
+# #' @param tree_size See details on size.
+# #' The value of the root of each graph will be used.
+# #' This scales the space used to display graphs, but does not effect vertex/edge size.
+# #' Default: Not used. 
 #' 
 #' @param vertex_label_size See details on size.
 #' Default: relative to veterx size.
@@ -263,7 +263,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                               
                               vertex_size_trans = "area",
                               edge_size_trans = vertex_size_trans,
-                              tree_size_trans = "area",
+                              # tree_size_trans = "area",
                               
                               vertex_label_size_trans = vertex_size_trans,
                               edge_label_size_trans = edge_size_trans,
@@ -313,16 +313,16 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   if (length(unique(taxon_id)) != length(taxon_id)) {
     stop("All values of 'taxon_id' are not unique.")
   }
-  check_element_length(c("vertex_size", "edge_size", "tree_size",
+  check_element_length(c("vertex_size", "edge_size",# "tree_size",
                          "vertex_label_size", "edge_label_size",  "tree_label_size",
                          "vertex_color", "edge_color", "tree_color",
                          "vertex_label_color", "edge_label_color", "tree_label_color",
                          "vertex_label", "edge_label", "tree_label"))
-  verify_size(c("vertex_size", "edge_size", "tree_size",
+  verify_size(c("vertex_size", "edge_size", #"tree_size",
                 "vertex_label_size", "edge_label_size", "tree_label_size"))
   verify_size_range(c("vertex_size_range",  "edge_size_range", # "tree_size_range",
                       "vertex_label_size_range", "edge_label_size_range", "tree_label_size_range"))
-  verify_trans(c("vertex_size_trans", "edge_size_trans", "tree_size_trans",
+  verify_trans(c("vertex_size_trans", "edge_size_trans", #"tree_size_trans",
                  "vertex_color_trans", "edge_color_trans", "tree_color_trans",
                  "vertex_label_size_trans", "edge_label_size_trans", "tree_label_size_trans", 
                  "vertex_label_color_trans", "edge_label_color_trans", "tree_label_color_trans"))
@@ -352,7 +352,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
                      
                      vs_user = as.numeric(vertex_size),
                      es_user = as.numeric(edge_size),
-                     ts_user = as.numeric(tree_size),
+                     # ts_user = as.numeric(tree_size),
                      
                      vls_user = as.numeric(vertex_label_size),
                      els_user = as.numeric(edge_label_size),
@@ -368,7 +368,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   row.names(data) <- data$tid_user
   
   #| #### Apply statistic transformations =========================================================
-  trans_key <- c(vs_user = vertex_size_trans, es_user = edge_size_trans, ts_user = tree_size_trans,
+  trans_key <- c(vs_user = vertex_size_trans, es_user = edge_size_trans, #ts_user = tree_size_trans,
                  vls_user = vertex_label_size_trans, els_user = edge_label_size_trans,  tls_user = tree_label_size_trans,
                  vc_user = vertex_color_trans, ec_user = edge_color_trans, tc_user = edge_color_trans,
                  vlc_user = vertex_label_color_trans, elc_user = edge_label_color_trans, tlc_user = tree_label_color_trans)
@@ -392,12 +392,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   get_sub_graphs <- function(taxa) {
     if (length(taxa) == 1) {
       # Make a graph with only a single vertex
-      return(igraph::graph.adjacency(matrix(c(taxa), ncol = 1)))
+      adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
+      return(igraph::graph.adjacency(adj_matrix))
     } else {
       # Make edge list from taxon_id and parent_id
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
-      edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), ]
+      edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
       return(igraph::graph_from_edgelist(edgelist))
     }
   }
@@ -422,8 +423,8 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     # Calculate backup layout if primary one does not work
     if (any(is.na(coords) | is.nan(unlist(coords)))) {
       coords <- igraph::layout_(graph, layout_functions(backup_layout, graph = graph))
-      warning(paste0("Could not apply layout ", layout,
-                     " to subgraph with. Using 'fruchterman-reingold' instead."))
+      warning(paste0("Could not apply layout '", layout,
+                     "' to subgraph. Using 'fruchterman-reingold' instead."))
     }
     return(coords)
   }
@@ -635,7 +636,7 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
   data$el_is_shown <- select_labels(data, edge_label_max,
                                     sort_by_colume = c("els_plot", "es_plot"), label_colume = "el_user")
   data$tl_is_shown <- select_labels(data, tree_label_max, subset = data$is_root,
-                                    sort_by_colume = c("tls_plot", "ts_plot"), label_colume = "tl_user")
+                                    sort_by_colume = c("tls_plot", "vs_plot"), label_colume = "tl_user")
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
