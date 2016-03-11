@@ -11,7 +11,7 @@ new_plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   vertex_color = "#999999", edge_color = vertex_color, tree_color = NA,
   vertex_label_color = "#000000", edge_label_color = "#000000",
   tree_label_color = "#000000", vertex_size_trans = "area",
-  edge_size_trans = vertex_size_trans, tree_size_trans = "area",
+  edge_size_trans = vertex_size_trans,
   vertex_label_size_trans = vertex_size_trans,
   edge_label_size_trans = edge_size_trans, tree_label_size_trans = "area",
   vertex_color_trans = "area", edge_color_trans = vertex_color_trans,
@@ -28,7 +28,7 @@ new_plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   tree_label_color_range = quantative_palette(), vertex_label_max = 20,
   edge_label_max = 20, tree_label_max = 20, overlap_avoidance = 1,
   margin_size = c(0, 0), layout = "reingold-tilford",
-  initial_layout = "fruchterman-reingold", ...)
+  initial_layout = "fruchterman-reingold", make_legend = FALSE, ...)
 }
 \arguments{
 \item{taxon_id}{The unique ids of taxa.}
@@ -51,11 +51,6 @@ Default: constant size.}
 
 \item{edge_size}{See details on size.
 Default: relative to vertex size.}
-
-\item{tree_size}{See details on size.
-The value of the root of each graph will be used.
-This scales the space used to display graphs, but does not effect vertex/edge size.
-Default: Not used.}
 
 \item{vertex_label_size}{See details on size.
 Default: relative to veterx size.}
@@ -91,9 +86,6 @@ Default: \code{"area"}.}
 
 \item{edge_size_trans}{See details on transformations. 
 Default: same as \code{vertex_size_trans}.}
-
-\item{tree_size_trans}{See details on transformations.
-Default: \code{"area"}.}
 
 \item{vertex_label_size_trans}{See details on transformations. 
 Default: same as \code{vertex_size_trans}.}
@@ -182,8 +174,13 @@ of vertexes, passed as input to the \code{layout} algorithm.
 See details on layouts.
 Default: Not used.}
 
+\item{make_legend}{if TRUE...}
+
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}
+
+\item{tree_size_trans}{See details on transformations.
+Default: \code{"area"}.}
 }
 \description{
 Plots the distribution of values associated with a taxonomic classification.
