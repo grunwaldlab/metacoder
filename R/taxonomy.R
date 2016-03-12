@@ -320,7 +320,6 @@ make_new_ids <- function(count, existing) {
 #'    }
 #'    
 #' @export
-#===================================================================================================
 extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn") {
@@ -1072,20 +1071,3 @@ get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, sim
   
   return(output)
 }
-
-
-
-
-#===================================================================================================
-#' Apply a function to items of each taxon
-#' 
-#' Calculates a value for each taxon using a function that accepts a vector of item data/IDs for
-#' each taxon. Returns the a vector of results of the same length as order as the taxa used. 
-#' 
-#' @param taxa (\code{character}) Unique taxon IDs.
-#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of \code{taxa}. 
-#' @param items (\code{character}) Unique taxon IDs of a set of items.
-#' @param stat (\code{vector}) The input value given to the function corresponding to the
-#'   \code{items} argument. If not supplied, the \code{items} taxon IDs are given to the function.
-#' @param fun (\code{function}) The function to be applied. 
-#' 

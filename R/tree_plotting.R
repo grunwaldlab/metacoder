@@ -1,20 +1,3 @@
-#| ## Tree plotting
-#|
-#|
-#|
-#|
-#|
-#|
-#| 
-#|
-#| 
-#| 
-#|  
-#|
-#| 
-#|  
-#|
-#|
 #===================================================================================================
 #' Plot a taxonomic tree
 #' 
@@ -240,69 +223,69 @@
 #' }
 #'  
 #' @export
-new_plot_taxonomy <- function(taxon_id, parent_id, 
-                              vertex_label = NA,
-                              edge_label = NA,
-                              tree_label = NA,
-                              
-                              vertex_size = 1,
-                              edge_size = vertex_size,
-                              tree_size = 1,
-                              
-                              vertex_label_size = vertex_size,
-                              edge_label_size = edge_size,
-                              tree_label_size = as.numeric(NA), 
-                              
-                              vertex_color = "#999999",
-                              edge_color = vertex_color,
-                              tree_color = NA,
-                              
-                              vertex_label_color = "#000000",
-                              edge_label_color = "#000000",
-                              tree_label_color = "#000000",
-                              
-                              vertex_size_trans = "area",
-                              edge_size_trans = vertex_size_trans,
-                              # tree_size_trans = "area",
-                              
-                              vertex_label_size_trans = vertex_size_trans,
-                              edge_label_size_trans = edge_size_trans,
-                              tree_label_size_trans = "area",
-                              
-                              vertex_color_trans = "area",
-                              edge_color_trans = vertex_color_trans,
-                              tree_color_trans = "area",
-                              
-                              vertex_label_color_trans = "area",
-                              edge_label_color_trans = "area",
-                              tree_label_color_trans = "area",
-                              
-                              vertex_size_range = c(NA, NA),
-                              edge_size_range = c(NA, NA),
-                              # tree_size_range = c(NA, NA),
-                              
-                              vertex_label_size_range = c(NA, NA),
-                              edge_label_size_range = c(NA, NA),
-                              tree_label_size_range = c(NA, NA),
-                              
-                              vertex_color_range = quantative_palette(),
-                              edge_color_range = vertex_color_range,
-                              tree_color_range = quantative_palette(),
-                              
-                              vertex_label_color_range = quantative_palette(),
-                              edge_label_color_range = quantative_palette(),
-                              tree_label_color_range = quantative_palette(),
-                              
-                              vertex_label_max = 20,
-                              edge_label_max = 20,
-                              tree_label_max = 20,
-                              
-                              overlap_avoidance = 1,
-                              margin_size = c(0, 0),
-                              layout = "reingold-tilford",
-                              initial_layout = "fruchterman-reingold",
-                              make_legend = FALSE,
-                              ...) {
+plot_taxonomy <- function(taxon_id, parent_id, 
+                          vertex_label = NA,
+                          edge_label = NA,
+                          tree_label = NA,
+                          
+                          vertex_size = 1,
+                          edge_size = vertex_size,
+                          tree_size = 1,
+                          
+                          vertex_label_size = vertex_size,
+                          edge_label_size = edge_size,
+                          tree_label_size = as.numeric(NA), 
+                          
+                          vertex_color = "#999999",
+                          edge_color = vertex_color,
+                          tree_color = NA,
+                          
+                          vertex_label_color = "#000000",
+                          edge_label_color = "#000000",
+                          tree_label_color = "#000000",
+                          
+                          vertex_size_trans = "area",
+                          edge_size_trans = vertex_size_trans,
+                          # tree_size_trans = "area",
+                          
+                          vertex_label_size_trans = vertex_size_trans,
+                          edge_label_size_trans = edge_size_trans,
+                          tree_label_size_trans = "area",
+                          
+                          vertex_color_trans = "area",
+                          edge_color_trans = vertex_color_trans,
+                          tree_color_trans = "area",
+                          
+                          vertex_label_color_trans = "area",
+                          edge_label_color_trans = "area",
+                          tree_label_color_trans = "area",
+                          
+                          vertex_size_range = c(NA, NA),
+                          edge_size_range = c(NA, NA),
+                          # tree_size_range = c(NA, NA),
+                          
+                          vertex_label_size_range = c(NA, NA),
+                          edge_label_size_range = c(NA, NA),
+                          tree_label_size_range = c(NA, NA),
+                          
+                          vertex_color_range = quantative_palette(),
+                          edge_color_range = vertex_color_range,
+                          tree_color_range = quantative_palette(),
+                          
+                          vertex_label_color_range = quantative_palette(),
+                          edge_label_color_range = quantative_palette(),
+                          tree_label_color_range = quantative_palette(),
+                          
+                          vertex_label_max = 20,
+                          edge_label_max = 20,
+                          tree_label_max = 20,
+                          
+                          overlap_avoidance = 1,
+                          margin_size = c(0, 0),
+                          layout = "reingold-tilford",
+                          initial_layout = "fruchterman-reingold",
+                          make_legend = FALSE,
+                          ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
     stop("'taxon_id' and 'parent_id' must be of equal length.")
@@ -692,13 +675,13 @@ new_plot_taxonomy <- function(taxon_id, parent_id,
     legend_label_data$id <- 1:nrow(legend_label_data)
     # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     legend_label_grobs <- plyr::dlply(legend_label_data, "id",
-                                    function(row) resizingTextGrob(label = row['label'],
-                                                                   x = row['x_prop'],
-                                                                   y = row['y_prop'],
-                                                                   gp = grid::gpar(text_prop = row['s_prop'],
-                                                                                   col = as.character(row['color'])),
-                                                                   rot = row['rot'],
-                                                                   just =  row[['just']]))
+                                      function(row) resizingTextGrob(label = row['label'],
+                                                                     x = row['x_prop'],
+                                                                     y = row['y_prop'],
+                                                                     gp = grid::gpar(text_prop = row['s_prop'],
+                                                                                     col = as.character(row['color'])),
+                                                                     rot = row['rot'],
+                                                                     just =  row[['just']]))
     
   } else {
     legend_label_grobs <- list()
@@ -876,20 +859,6 @@ check_element_length <- function(args) {
   }
 }
 
-# 
-# #' Standardize color input 
-# #' 
-# #' This forces user input to be the correct type.
-# standardize_color <- function(data) {
-#   if (all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", data) | data %in% colors())) {
-#     return(as.character(data))
-#   } else 
-#   
-#   if (is.factor(data)) {
-#     if (length)
-#   }
-# }
-# 
 
 #' Transformation functions
 #' 
@@ -1032,6 +1001,18 @@ qualitative_palette <- function() {
 
 
 
+
+#' Covert numbers to colors
+#' 
+#' Convert numbers to colors.
+#' If colors are already supplied, return the input
+#' 
+#' @param values (\code{numeric}) The numbers to represent as colors
+#' @param color_series (\code{character}) Hex values or a character in \code{colors}
+#' @param no_color_in_palette (\code{numeric} of length 1) The number of distinct colors to use.
+#' 
+#' 
+#' @return \code{character} Hex color codes. 
 apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
   if (is.numeric(values)) { ## Not factors, characters, or hex codes
     palette <- colorRampPalette(color_series)(no_color_in_palette)
@@ -1041,3 +1022,318 @@ apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) 
     return(values)
   }
 }
+
+
+#===================================================================================================
+#' Makes coordinates for a regualr polygon
+#' 
+#' Generates an n x 2 matrix containing x and y coordinates between 1 and 0 for the points of a 
+#' regular polygon. 
+#' 
+#' Inspired by (i.e. stolen from) https://gist.github.com/baptiste/2224724, which was
+#' itself inspired from a post by William Dunlap on r-help (10/09/09)
+#' 
+#' @param n (\code{numeric} of length 1) The number of vertices in the polygon.
+#' @param x (\code{numeric} of length 1) x coordinate of center
+#' @param y (\code{numeric} of length 1) y coordinate of center
+#' @param radius (\code{numeric} of length 1) The diameter of the circle.
+#' @param angle (\code{numeric} of length 1) Angle to rotate points around the center of the circle.
+#' 
+#' @examples
+#' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
+polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
+  # Define function to make points for a single polygon --------------------------------------------
+  process_one <- function(n, x, y, r, a) {
+    if(n<3) stop("n must be more than 3!")
+    # Calculate imaginary coords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    coords <- exp(seq(0, n)*2i*pi/n)
+    # Rotate around center - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    coords <- coords * exp(1i*a)
+    # Translate to x, y coords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    coords <- data.frame(x = Re(coords), y = Im(coords))
+    # Scale to radius  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    coords <- coords * r
+    # Offset center to given x, y coords - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    coords$x <- coords$x + x
+    coords$y <- coords$y + y
+    return(coords)
+  }
+  # Compile of the points for multiple polygons ----------------------------------------------------
+  output <- mapply(process_one, n, x, y, radius, angle, SIMPLIFY = FALSE)
+  group <- rep(seq_along(output), vapply(output, nrow, numeric(1)))
+  cbind(group = as.factor(group), do.call(rbind, output))
+} 
+
+
+
+#===================================================================================================
+#' Makes coordinates for a line
+#' 
+#' Generates an n x 2 matrix containing x and y coordinates between 1 and 0 for the points of a 
+#' line with a specified width in cartesian coordinates. 
+#' 
+#' @param x1 (\code{numeric} of length 1) x coordinate of the center of one end
+#' @param y1 (\code{numeric} of length 1) y coordinate of the center of one end
+#' @param x2 (\code{numeric} of length 1) x coordinate of the center of the other end
+#' @param y2 (\code{numeric} of length 1) y coordinate of the center of the other end
+#' @param width (\code{numeric} of length 1) The width of the line.
+#' 
+#' @examples
+#' ggplot(data = line_coords(x1 = 1, y1 = 1, x2 = 2, y2 = 2, width = .1)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
+#' ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
+#'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
+#'   geom_polygon(aes(x = x, y = y, fill = group))
+#'   
+line_coords <- function(x1, y1, x2, y2, width) {
+  # Define function to make points for a single line rect ------------------------------------------
+  process_one <- function(x1, y1, x2, y2, w) {
+    slope <- (y2 - y1) / (x2 - x1)
+    inv_slope <- -1/slope
+    angle <- atan(inv_slope)
+    off_x <- w / 2 * cos(angle)
+    off_y <- w / 2 * sin(angle)
+    data.frame(x = c(x1 + off_x, x1 - off_x, x2 - off_x, x2 + off_x),
+               y = c(y1 + off_y, y1 - off_y, y2 - off_y, y2 + off_y))
+  }
+  # Compile of the points for multiple polygons ----------------------------------------------------
+  output <- mapply(process_one, x1, y1, x2, y2, width, SIMPLIFY = FALSE)
+  group <- rep(seq_along(output), vapply(output, nrow, numeric(1)))
+  cbind(group = as.factor(group), do.call(rbind, output))
+}
+
+
+#===================================================================================================
+#' Get all distances beween points
+#' 
+#' Returns the distances bewteen every possible combination of two points.
+#' 
+#' @param x (\code{numeric} of length 1) x coordinate
+#' @param y (\code{numeric} of length 1) y coordinate
+#' 
+#' @return A \code{data.frame}
+#' 
+#' @examples
+#' molten_dist(x = 1:5, y = 1:5)
+#' 
+molten_dist <- function(x, y) {
+  data <- as.matrix(dist(cbind(x, y)))
+  data[!lower.tri(data)] <- NA
+  data <- reshape2::melt(data)
+  names(data) <- c("index_1", "index_2", "distance")
+  data[!is.na(data$distance), ]    
+}
+
+#===================================================================================================
+#' Finds the gap/overlap of circle coordinates
+#' 
+#' Given a set of x, y coordinates and corresponding radii return the gap between every possible 
+#' combination.
+#' 
+#' @param x (\code{numeric} of length 1) x coordinate of center
+#' @param y (\code{numeric} of length 1) y coordinate of center
+#' @param r (\code{numeric} of length 1) The diameter of the circle.
+#' 
+#' @examples
+#' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
+#' 
+inter_circle_gap <- function(x, y, r) {
+  # Force x, y, and r to same length ---------------------------------------------------------------
+  temp <- as.data.frame(cbind(x, y, r))
+  x <- temp$x
+  y <- temp$y
+  r <- temp$r
+  # Get distance between all points ----------------------------------------------------------------
+  data <- molten_dist(x, y)
+  # Get distance between circles -------------------------------------------------------------------
+  data$gap <- data$distance - r[data$index_1] - r[data$index_2]
+  return(data)
+}
+
+
+
+#===================================================================================================
+#' Find optimal range
+#' 
+#' Finds optimal max and min value useing an optimality criterion.
+#' 
+#' @param max_range (\code{numeric} of length 2) The min and max boundries to the search space for
+#' the optimal maximum value.
+#' @param min_range (\code{numeric} of length 2) The min and max boundries to the search space for
+#' the optimal minimum value.
+#' @param resolution (\code{numeric} of length 2) The number of increments in each dimension.
+#' @param opt_crit (\code{function}) A function that takes two arguments, the max and min, and
+#' returns the optimality statistic.
+#' @param choose_best (\code{function}) A function that takes a list of \code{opt_crit} outputs
+#' and returns the index of the best one.
+#' 
+get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose_best, minimize = TRUE) {
+  # Validate arguments -----------------------------------------------------------------------------
+  if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
+  if (length(min_range) != 2 || min_range[1] > min_range[2]) stop('Invalid `min_range`')
+  # List of ranges to test -------------------------------------------------------------------------
+  max_increments <- seq(from = max_range[1], to = max_range[2], length.out = resolution[2])
+  min_increments <- seq(from = min_range[1], to = min_range[2], length.out = resolution[1])
+  search_space <- lapply(min_increments, function(x) lapply(max_increments, function(y) c(x, y)))
+  search_space <- unlist(search_space, recursive = F)
+  valid_range <- vapply(search_space, function(x) x[1] < x[2], logical(1))
+  search_space <- search_space[valid_range]
+  # Find optimal range -----------------------------------------------------------------------------
+  scores <- lapply(search_space, function(x) opt_crit(x[1], x[2]))
+  search_space[[choose_best(scores)]]
+}
+
+
+
+
+
+
+#' Make color/size legend
+#' 
+#' Make color/size legend
+#' 
+#' @param x bottom left
+#' @param y bottom left
+#' @param length (\code{numeric} of length 1) the length of the scale bar
+#' @param tick_size (\code{numeric} of length 1) the thickness of tick marks
+#' @param width_range (\code{numeric} of length 1 or 2) the width of the scale bar or the range
+#' @param width_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the size labels
+#' @param width_stat_trans (\code{function}) The transformation used to convert the statistic to size
+#' @param width_title (\code{character} of length 1) The title of the size labels.
+#' @param width_sig_fig (\code{numeric} of length 1) The number of significant figures to use in size labels.
+#' @param color_range (\code{character}) One ore more hex codes constituting a color scale.
+#' @param color_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the color labels
+#' @param color_stat_trans (\code{function}) The transformation used to convert the statistic to size
+#' @param color_title (\code{character} of length 1) The title of the color labels.
+#' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
+#' @param divisions (\code{numeric} of length 1) The number of colors to display. 
+#' @param label_count (\code{numeric} of length 1) The number of labels.
+make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
+                             width_title = "Size", width_sig_fig = 3,
+                             color_range, color_stat_range, color_stat_trans = function(x) {x},
+                             color_title = "Color", color_sig_fig = 3,
+                             divisions = 100, label_count = 5) {
+  
+  
+  # Generate scale bar coordinates
+  prop_div <- seq(0, 1, length.out = divisions)
+  point_data <- data.frame(x = max(width_range) - prop_div * (max(width_range) - min(width_range)),
+                           y = prop_div * length)
+  prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
+  seq_color <- apply_color_scale(rev(prop_seg), color_range) 
+  scale_data <- lapply(1:(divisions - 1), 
+                       function(i) scale_bar_coords(x1 = point_data$x[i + 1],
+                                                    x2 = point_data$x[i],
+                                                    y1 = point_data$y[i + 1],
+                                                    y2 = point_data$y[i],
+                                                    color = seq_color[i],
+                                                    group = paste0("scale-",i)))
+  scale_data <- do.call(rbind, scale_data)
+  
+  # Generate tick mark coordinates
+  tick_color <- "#555555"
+  tick_div <- seq(0, 1, length.out = label_count)
+  label_point_y <- tick_div * length
+  tick_coords <- function(center_y) {
+    max_y <- center_y + tick_size / 2
+    min_y <- center_y - tick_size / 2
+    data.frame(group = paste0("tick-", center_y),
+               x = c(0, 0, rep(max(width_range), 2)),
+               y = c(min_y, max_y, max_y, min_y),
+               color = tick_color)
+  }
+  
+  
+  tick_data <- lapply(label_point_y, tick_coords)
+  tick_data <- do.call(rbind, tick_data)
+  
+  # Generate label coordinates
+  format_label <- function(n) {
+    # format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
+    signif(n, digits = 3)
+  }
+  
+  scale_undo_trans <- function(points, my_range, my_trans) {
+    trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
+    format_label(scales::rescale(trans_points, to = range(my_range)))
+  }
+  
+  label_color = "#000000"
+  label_size = max(width_range) / 5
+  
+  
+  make_size_label_data <- function() {
+    size_label_data <- data.frame(stringsAsFactors = FALSE, 
+                                  label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                                  x = max(width_range) * 1.1,
+                                  y = rev(label_point_y),
+                                  color = label_color,
+                                  size = label_size,
+                                  rot = 0,
+                                  just = "left")
+  }
+  
+  make_color_label_data <- function() {
+    
+    color_label_data <- data.frame(stringsAsFactors = FALSE, 
+                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                   x = 0 - max(width_range) * 0.1,
+                                   y = rev(label_point_y),
+                                   color = label_color,
+                                   size = label_size,
+                                   rot = 0,
+                                   just = "right")
+  } 
+  
+  
+  if (!is.null(width_stat_range) && !is.null(color_stat_range)) {
+    label_data <- rbind(make_size_label_data(), make_color_label_data())
+  } else if (!is.null(width_stat_range)) {
+    label_data <- make_size_label_data()
+  } else if (!is.null(color_stat_range)) {
+    label_data <- make_color_label_data()
+  } else {
+    label_data <- NULL
+  }
+  
+  # Generate title coordinates
+  
+  
+  shape_data <- rbind(tick_data, scale_data)
+  shape_data$x <- shape_data$x + x
+  shape_data$y <- shape_data$y + y
+  
+  if (!is.null(label_data)) {
+    label_data$x <- label_data$x + x
+    label_data$y <- label_data$y + y
+    
+  }
+  
+  output <- list(shapes = shape_data,
+                 labels = label_data)
+  return(output)
+}
+
+
+#' Make scale bar division
+#' 
+#' Make scale bar division
+#' 
+#' @param x1 (\code{numeric} of length 1) x of top right 
+#' @param x2 (\code{numeric} of length 1) x of bottom right
+#' @param y1 (\code{numeric} of length 1) y of top right 
+#' @param y2 (\code{numeric} of length 1) y of bottom right
+#' @param color 
+#' @param group 
+#' 
+#' @return \code{data.frame}
+scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
+  data.frame(group = group,
+             x = c(x1, x2, 0, 0),
+             y = c(y1, y2, y2, y1),
+             color = color)
+  
+}
+
+
