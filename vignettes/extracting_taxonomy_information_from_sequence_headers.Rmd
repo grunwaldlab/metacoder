@@ -172,7 +172,7 @@ unite_ex_data_3 <- extract_taxonomy(names(sequences),
 ```{r}
 taxa <- unite_ex_data_3$taxa
 plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
+              vertex_size = taxa$item_count,
               vertex_color = taxa$item_count,
               vertex_label = taxa$name)
 ```
