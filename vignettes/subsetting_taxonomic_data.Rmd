@@ -44,3 +44,30 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
               vertex_label = taxa$name)
 ```
 
+
+##
+
+```{r}
+data <- classified(taxon_id = unite_ex_data_3$taxa$taxon_id,
+                   parent_id = unite_ex_data_3$taxa$parent_id,
+                   item_taxon_id = unite_ex_data_3$items$item_id,
+                   taxon_data = data.frame(name =  unite_ex_data_3$taxa$name,
+                                           item_count = unite_ex_data_3$taxa$item_count))
+```
+
+```{r}
+plot(data, 
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
+
+
+```{r}
+plot(subset_classified(data, taxon = data$taxon_data$name == "Ascomycota"),
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+

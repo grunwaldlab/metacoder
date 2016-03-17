@@ -1,3 +1,27 @@
+#' Plot a taxonomic tree
+#' 
+#' Plot a taxonomic tree
+#' 
+#' @param classified_data An object of class \link{classified}.
+#' @param ... Passed to \link{plot_taxonomy}
+#' 
+#' @inheritParams plot_taxonomy
+#' 
+#' @export
+plot.classified <- function(classified_data, ...) {
+  column_var_name <- colnames(classified_data$taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, classified_data$taxon_data[[x]], envir = parent.frame(2)))
+  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
+                 eval(substitute(list(...))))
+  do.call(plot_taxonomy, arguments)
+}
+
+
+
+
+
+
+
 #===================================================================================================
 #' Plot a taxonomic tree
 #' 
