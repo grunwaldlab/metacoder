@@ -65,9 +65,28 @@ plot(data,
 
 
 ```{r}
-plot(data[data$taxon_data$name == "Ascomycota", ],
+plot(data[name == "Ascomycota", ],
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name)
 ```
+
+
+
+```{r}
+plot(data[item_count > 5, , subtaxa = FALSE],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
+
+
+```{r}
+plot(data[name == "Ascomycota", ][item_count > 5 , , subtaxa = FALSE],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
 

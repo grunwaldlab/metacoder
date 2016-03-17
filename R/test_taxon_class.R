@@ -19,7 +19,7 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
                        taxon_data = NULL, item_data = NULL,
                        taxon_funcs = list(), item_funcs = list()) {
   # Check that taxon ids are unique
-  if (! all(unique(taxon_id) == taxon_id)) { stop("'taxon_id' must be unique") }
+  if (length(unique(taxon_id)) != length(taxon_id)) { stop("'taxon_id' must be unique") }
   # Check that parent_id is the same length of taxon_id
   if (length(taxon_id) != length(parent_id)) { stop("'parent_id' must be the same length as 'taxon_id'") }
   # All parent_id should be in taxon_id
@@ -104,6 +104,8 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' @param item A key to filter the item data.frame rows on
 #' 
 #' @return \code{\link{classified}}
+#' 
+#' @export
 `[.classified` <- function(...) {
   subset_classified(...)
 }
@@ -160,9 +162,10 @@ subset_classified <- function(obj, taxon, item, subtaxa = TRUE, supertaxa = FALS
                                 taxa = obj$taxon_id,
                                 parents = obj$parent_id,
                                 recursive = TRUE,
-                                simpliTfy = TRUE,
-                                include_target = TRUE))
+                                simplify = TRUE,
+                                include_target = FALSE))
   }
+  new_taxa <- unique(new_taxa)
   
   new_items <- item_id[item_id %in% new_taxa] #temp
 

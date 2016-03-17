@@ -492,7 +492,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 0.05
+    overlap_weight <- 0.10
     minimum_weight <- 3
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
