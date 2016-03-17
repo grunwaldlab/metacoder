@@ -300,15 +300,15 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           edge_label_color_range = quantative_palette(),
                           tree_label_color_range = quantative_palette(),
                           
-                          vertex_label_max = 20,
-                          edge_label_max = 20,
-                          tree_label_max = 20,
+                          vertex_label_max = 50,
+                          edge_label_max = 50,
+                          tree_label_max = 50,
                           
                           overlap_avoidance = 1,
-                          margin_size = c(0, 0),
+                          margin_size = c(0.1, 0.05),
                           layout = "reingold-tilford",
                           initial_layout = "fruchterman-reingold",
-                          make_legend = FALSE,
+                          make_legend = TRUE,
                           ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
@@ -438,7 +438,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
   data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
-  scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
+  # scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
   # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
@@ -473,11 +473,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
   get_search_space <- function(min_range, max_range, breaks_per_dim = 10) {
     min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
     max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
+    max_breaks <- scales::rescale(max_breaks^4, to = max_range)
     space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
                         max = rep(max_breaks, length(min_breaks)))
     space[space$min <= space$max, ]
   }
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 7)
+  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 10)
   search_space$range_size <- search_space$max - search_space$min
   # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
   find_overlap <- function(a_min, a_max, distance) {
