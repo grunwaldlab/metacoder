@@ -1,10 +1,3 @@
-f <- function(x) {
-  sfsddsdeognmvdfs = 2
-  eval(substitute(x), envir = environment())
-}
-
-
-
 #' Create an instance of \code{classified}
 #' 
 #' Create an instance of \code{classified} containing items classified by a taxonomy
@@ -111,7 +104,8 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' @param item A key to filter the item data.frame rows on
 #' 
 #' @return \code{\link{classified}}
-`[.classified` <- function(obj, taxon, item) {
+`[.classified` <- function(...) {
+  subset_classified(...)
 }
 
 
@@ -127,18 +121,25 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' 
 #' @export
 subset_classified <- function(obj, taxon, item, subtaxa = TRUE, supertaxa = FALSE) {
+  # non-standard argument evaluation
+  column_var_name <- colnames(obj$taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, obj$taxon_data[[x]], envir = parent.frame(2)))
+  
+  # Defaults
   if (missing(taxon) && missing(item)) {
     return(obj)
   }
   if (missing(taxon)) {
     taxon_id <- obj$taxon_id
   } else {
+    taxon <- eval(substitute(taxon))
     taxon_id <- obj$taxon_id[taxon]
   }
   parent_id <- obj$parent_id[taxon_id]
   if (missing(item)) {
     item_id <- obj$item_taxon_id
   } else {
+    item <- eval(substitute(item))
     item_id <- obj$item_taxon_id[item]
   }
   

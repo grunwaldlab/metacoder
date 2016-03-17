@@ -4,7 +4,7 @@
 \alias{[.classified}
 \title{Create a inclusive subset of \code{\link{classified}}}
 \usage{
-\method{[}{classified}(obj, taxon, item)
+\method{[}{classified}(...)
 }
 \arguments{
 \item{taxon}{A key to filter the taxon data.frame rows on}

@@ -65,7 +65,7 @@ plot(data,
 
 
 ```{r}
-plot(subset_classified(data, taxon = data$taxon_data$name == "Ascomycota"),
+plot(data[data$taxon_data$name == "Ascomycota", ],
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name)
