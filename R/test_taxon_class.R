@@ -87,11 +87,10 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' Only specified taxa and shared parent taxa of specified taxa with specified items are preserved.
 #' Only specified items assigned to specified taxa are preserved.
 #' 
-#' @param taxon A key to filter the taxon data.frame rows on
-#' @param item A key to filter the item data.frame rows on
+#' @inheritParams 
 #' 
 #' @return \code{\link{classified}}
-`[[.classified` <- function(taxon, item) {
+`[[.classified` <- function(...) {
   subset_classified(..., subtaxa = FALSE, supertaxa = FALSE)
 }
 

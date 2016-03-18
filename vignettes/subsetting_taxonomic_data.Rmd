@@ -85,6 +85,7 @@ plot(data[item_count > 5, , subtaxa = FALSE],
 ```{r}
 plot(data[name == "Ascomycota", ][item_count > 1 , , subtaxa = FALSE],
      vertex_size = item_count,
+     
      vertex_color = item_count,
      vertex_label = name)
 ```
