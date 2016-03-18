@@ -92,7 +92,7 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' 
 #' @return \code{\link{classified}}
 `[[.classified` <- function(taxon, item) {
-  
+  subset_classified(..., subtaxa = FALSE, supertaxa = FALSE)
 }
 
 #' Create a inclusive subset of \code{\link{classified}}

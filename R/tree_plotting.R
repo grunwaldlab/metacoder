@@ -593,7 +593,6 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Make legend 
   #|
   if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
-    y_range <- max(element_data$y) - min(element_data$y)
     if (missing(vertex_size)) {
       width_stat_range <- NULL
     } else {
@@ -604,7 +603,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     } else {
       color_stat_range <- range(vertex_color)
     }
-    
+    y_range <- max(element_data$y) - min(element_data$y)
     legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
                                     y = min(element_data$y), 
                                     length = y_range * 0.3, 
@@ -615,7 +614,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     color_range = vertex_color_range,
                                     color_stat_range = color_stat_range, 
                                     color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
-                                    divisions = 60, label_count = 6)
+                                    divisions = 100, label_count = 6)
     legend_data$shapes$tid_user = NA
     element_data <- rbind(element_data, legend_data$shapes)
   } else {
