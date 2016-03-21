@@ -14,10 +14,12 @@
 #' A single value must be returned derived from that information. 
 #' These values will be acessible as if it were a column in \code{item_data}.
 #' 
+#' @return An object of type \code{classified}
+#' 
 #' @export
 classified <- function(taxon_id, parent_id, item_taxon_id,
                        taxon_data = NULL, item_data = NULL,
-                       taxon_funcs = list(), item_funcs = list()) {
+                       taxon_funcs = list(item_count = count_items), item_funcs = list()) {
   # Check that taxon ids are unique
   if (length(unique(taxon_id)) != length(taxon_id)) { stop("'taxon_id' must be unique") }
   # Check that parent_id is the same length of taxon_id
@@ -84,29 +86,29 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' Create a restrictive subset of \code{\link{classified}}
 #' 
 #' Create a subset of items classified by a taxonomy.
-#' Only specified taxa and shared parent taxa of specified taxa with specified items are preserved.
-#' Only specified items assigned to specified taxa are preserved.
+#' Child and parent taxa of specified taxa are not preserved.
 #' 
-#' @inheritParams 
+#' @inheritParams subset.classified
 #' 
 #' @return \code{\link{classified}}
+#' 
+#' @export
 `[[.classified` <- function(...) {
-  subset_classified(..., subtaxa = FALSE, supertaxa = FALSE)
+  subset(..., subtaxa = FALSE, supertaxa = FALSE)
 }
 
 #' Create a inclusive subset of \code{\link{classified}}
 #' 
 #' Create a subset of items classified by a taxonomy.
-#' Only unspecified taxa with no items or children with items are discarded.
+#' Child and parent taxa of specified taxa are preserved.
 #' 
-#' @param taxon A key to filter the taxon data.frame rows on
-#' @param item A key to filter the item data.frame rows on
+#' @inheritParams subset.classified
 #' 
 #' @return \code{\link{classified}}
 #' 
 #' @export
 `[.classified` <- function(...) {
-  subset_classified(...)
+  subset(...)
 }
 
 
@@ -121,10 +123,11 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' @return \code{\link{classified}}
 #' 
 #' @export
-subset_classified <- function(obj, taxon, item, subtaxa = TRUE, supertaxa = FALSE) {
+subset.classified <- function(obj, taxon, item, subtaxa = TRUE, supertaxa = FALSE) {
   # non-standard argument evaluation
-  column_var_name <- colnames(obj$taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, obj$taxon_data[[x]], envir = parent.frame(2)))
+  my_taxon_data <- taxon_data(obj)
+  column_var_name <- colnames(my_taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
   
   # Defaults
   if (missing(taxon) && missing(item)) {
@@ -180,36 +183,92 @@ subset_classified <- function(obj, taxon, item, subtaxa = TRUE, supertaxa = FALS
 
 
 
+#' Return taxon data from \code{\link{classified}}
+#' 
+#' Return a table of data associated with taxa of and object of type
+#' \code{\link{classified}}.
+#' 
+#' @param obj (\code{\link{classified}}) 
+#' @param calculated_cols (\code{logical} of length 1) If \code{TRUE}, return calculated columns using
+#' \code{\link{classified}$taxon_funcs}.
+#' 
+#' @return \code{data.frame} with rows corresponding to taxa in input
+#' 
+#' @export
+taxon_data <- function(obj, calculated_cols = TRUE) {
+  UseMethod("taxon_data")
+}
 
-taxon_data.classified <- function(obj, col_names = NULL, calculated_cols = TRUE) {
-  data <- cbind(data.frame(taxon_id = taxon_id, parent_id = parent_id),
+#' @export
+taxon_data.classified <- function(obj, calculated_cols = TRUE) {
+  data <- cbind(data.frame(taxon_id = obj$taxon_id, parent_id = obj$parent_id),
                 obj$taxon_data)
   if (calculated_cols) {
-    calculated_data <- lapply(obj$taxon_funcs, taxon_apply)
+    calculated_data <- lapply(obj$taxon_funcs, taxon_apply, obj = obj)
     names(calculated_data) <- names(obj$taxon_funcs)
     data <- cbind(data, as.data.frame(calculated_data))
-  }
-  if (! is.null(col_names)) {
-    data <- data[ , col_names]
   }
   return(data)
 }
 
 
 
-taxon_apply.classfied <- function(obj, func) {
+#' Apply a function to every taxon
+#' 
+#' Apply  a function to every taxon in an object of type \code{\link{classified}}.
+#' 
+#' @param obj (\code{\link{classified}}) 
+#' @param func (\code{function}) A function that accepts an object of type \code{\link{classified}}.
+#' 
+#' @return \code{list} of length equal to the number of taxa in \code{obj}
+#' 
+#' @export
+taxon_apply <- function(obj, func) {
+  UseMethod("taxon_apply")
+}
+
+#' @export
+taxon_apply.classified <- function(obj, func) {
   unlist(lapply(split_by_taxon(obj), func), recursive = FALSE)
 }
 
 
+#' (NOT IMPLEMENTED) Apply a function to every item
+#' 
+#' Apply  a function to every item in an object of type \code{\link{classified}}.
+#' 
+#' @param obj (\code{\link{classified}}) 
+#' @param func (\code{function}) A function that accepts an object of type \code{\link{classified}}.
+#' 
+#' @return \code{list} of length equal to the number of items in \code{obj}
+#' 
+#' @export
+item_apply <- function(obj, func) {
+  UseMethod("item_apply")
+}
 
-
-item_apply.classfied <- function(obj, func) {
+#' @export
+item_apply.classified <- function(obj, func) {
   unlist(lapply(split_by_item(obj), func), recursive = FALSE)
 }
 
 
-split_by_taxon.classfied <- function(obj) {
+#' Split \code{\link{classified}} into individual taxa
+#' 
+#' Splits an object of type \code{\link{classified}} into a list  of 
+#' \code{\link{classified}} objects, one for each taxon in the input.
+#' 
+#' @param obj (\code{\link{classified}}) The object to split.
+#' 
+#' @return \code{list} of \code{\link{classified}} 
+#' 
+#' @export
+split_by_taxon <- function(obj) {
+  UseMethod("split_by_taxon")
+}
+
+#' @export
+split_by_taxon.classified <- function(obj) {
   split_sub_taxa <- get_subtaxa(targets = obj$taxon_id,
                                 taxa = obj$taxon_id,
                                 parents = obj$parent_id,
@@ -230,11 +289,12 @@ split_by_taxon.classfied <- function(obj) {
   
   process_one <- function(sub_taxa_ids, super_taxa_ids, taxon_item_ids) {
     new_taxa_id <- c(sub_taxa_ids, super_taxa_ids)
+    new_item_id <- obj$item_taxon_id[taxon_item_ids]
     classified(taxon_id = new_taxa_id,
                parent_id =  obj$parent_id[new_taxa_id],
-               item_taxon_id = taxon_item_ids,
-               taxon_data = obj$taxon_data[new_taxa_id, ],
-               item_data = obj$item_data[taxon_item_ids, ],
+               item_taxon_id = new_item_id,
+               taxon_data = obj$taxon_data[new_taxa_id, , drop = FALSE],
+               item_data = obj$item_data[new_item_id, , drop = FALSE],
                taxon_funcs = obj$taxon_funcs,
                item_funcs = obj$item_funcs)
   }
@@ -244,12 +304,32 @@ split_by_taxon.classfied <- function(obj) {
 
 
 
+#' (NOT IMPLEMENTED) Split \code{\link{classified}} by item
+#' 
+#' Splits an object of type \code{\link{classified}} into a list  of 
+#' \code{\link{classified}} objects, one for each item in the input.
+#' 
+#' @param obj (\code{\link{classified}}) The object to split.
+#' 
+#' @return \code{list} of \code{\link{classified}} 
+#' 
+#' @export
+split_by_item <- function(obj) {
+  UseMethod("split_by_item")
+}
 
-split_by_item.classfied <- function(obj) {
+#' @export
+split_by_item.classified <- function(obj) {
   
 }
 
-
+#' Count items in \code{\link{classified}}
+#' 
+#' Count items in \code{\link{classified}}
+#'
+#' @param obj (\code{\link{classified}})
+#' 
+#' @return \code{numeric} of length 1
 count_items <- function(obj) {
   length(obj$item_taxon_id)
 }

@@ -9,8 +9,9 @@
 #' 
 #' @export
 plot.classified <- function(classified_data, ...) {
-  column_var_name <- colnames(classified_data$taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, classified_data$taxon_data[[x]], envir = parent.frame(2)))
+  my_taxon_data <- taxon_data(classified_data)
+  column_var_name <- colnames(my_taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
   arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
                  eval(substitute(list(...))))
   do.call(plot_taxonomy, arguments)

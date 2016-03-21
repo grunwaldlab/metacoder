@@ -27,6 +27,7 @@ opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold')
 ## Pepare data
 
 ```{r eval=FALSE}
+
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_3 <- extract_taxonomy(names(sequences),
@@ -37,11 +38,11 @@ unite_ex_data_3 <- extract_taxonomy(names(sequences),
 ```
 
 ```{r}
-taxa <- unite_ex_data_3$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot_taxonomy(taxon_id = unite_ex_data_3$taxa$taxon_id,
+              parent_id = unite_ex_data_3$taxa$parent_id,
+              vertex_size = unite_ex_data_3$taxa$item_count,
+              vertex_color = unite_ex_data_3$taxa$item_count,
+              vertex_label = unite_ex_data_3$taxa$name)
 ```
 
 
@@ -50,9 +51,8 @@ plot_taxonomy(taxa$taxon_id, taxa$parent_id,
 ```{r}
 data <- classified(taxon_id = unite_ex_data_3$taxa$taxon_id,
                    parent_id = unite_ex_data_3$taxa$parent_id,
-                   item_taxon_id = unite_ex_data_3$items$item_id,
-                   taxon_data = data.frame(name =  unite_ex_data_3$taxa$name,
-                                           item_count = unite_ex_data_3$taxa$item_count))
+                   item_taxon_id = unite_ex_data_3$items$taxon_id,
+                   taxon_data = data.frame(name =  unite_ex_data_3$taxa$name))
 ```
 
 ```{r}
@@ -74,29 +74,18 @@ plot(data[name == "Ascomycota", ],
 
 
 ```{r}
-plot(data[item_count > 5, , subtaxa = FALSE],
+plot(data[[item_count > 5]],
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name)
 ```
-
-
-
-```{r}
-plot(data[name == "Ascomycota", ][item_count > 1 , , subtaxa = FALSE],
-     vertex_size = item_count,
-     
-     vertex_color = item_count,
-     vertex_label = name)
-```
-
-
 
 
 ```{r}
 plot(data[[item_count < 200]],
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = name)
+     vertex_label = name,
+     layout = "fruchterman-reingold")
 ```
 
