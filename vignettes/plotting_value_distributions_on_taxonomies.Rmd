@@ -38,10 +38,8 @@ original_data <- extract_taxonomy(names(sequences),
                          key = c(name = "item_info", seq_id = "item_info",
                                  other_id = "item_info", "class_name"),
                          database = "none")
-items <- original_data$items
-taxa <- original_data$taxa
-taxa$name <- factor(taxa$name, levels = unique(taxa$name[order(taxa$item_count, decreasing = TRUE)]), ordered = TRUE)
-taxa$rank <- factor(taxa$rank, levels = unique(taxa$rank),
+# taxa$name <- factor(taxa$name, levels = unique(taxa$name[order(taxa$item_count, decreasing = TRUE)]), ordered = TRUE)
+original_data$taxon_data$rank <- factor(taxa$rank, levels = unique(taxa$rank),
                     labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
                     ordered = TRUE)
 ```
