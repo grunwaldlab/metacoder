@@ -16,6 +16,7 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ape)
 library(metacoder)
+library(taxa)
 library(knitr)
 library(ggplot2)
 opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold')
@@ -38,16 +39,17 @@ original_data <- extract_taxonomy(names(sequences),
                          key = c(name = "item_info", seq_id = "item_info",
                                  other_id = "item_info", "class_name"),
                          database = "none")
-# taxa$name <- factor(taxa$name, levels = unique(taxa$name[order(taxa$item_count, decreasing = TRUE)]), ordered = TRUE)
-original_data$taxon_data$rank <- factor(taxa$rank, levels = unique(taxa$rank),
-                    labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
-                    ordered = TRUE)
 ```
 
 
 
 ```{r, echo=FALSE, fig.width = 6.5, fig.height = 6.5}
-ggplot(taxa[!taxa$rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
+data <- taxon_data(original_data)
+data$name <- factor(data$name, levels = unique(data$name[order(data$item_count, decreasing = TRUE)]), ordered = TRUE)
+data$rank <- factor(data$rank, levels = unique(data$rank),
+                    labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
+                    ordered = TRUE)
+ggplot(data[!data$rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
   geom_bar(aes(x = name, y = item_count), stat = "identity") +
   facet_wrap(~ rank, scales = "free") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
@@ -63,7 +65,7 @@ These details are typically important for the interpretation of results.
 Pie charts are also commonly used for this purpose, but they are just a less effective version of a bar chart.
 
 ```{r, echo=FALSE, fig.width = 6.5, fig.height = 6.5}
-ggplot(taxa[taxa$rank == "Phylum", ]) + 
+ggplot(data[data$rank == "Phylum", ]) + 
   geom_bar(aes(x = factor(1), y = item_count, fill = name), stat = "identity") +
   coord_polar(theta = "y") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
@@ -79,10 +81,10 @@ ggplot(taxa[taxa$rank == "Phylum", ]) +
 `Metacoder` approches this problem by using size and color to represent numeric data distributed along a phylogenetic tree:
 
 ```{r, echo=FALSE, fig.width=6.5, fig.height=6.5}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id, min_label_size = 0.005,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 In this example, both size and color are being used to represent the abundance of taxa.
@@ -98,37 +100,35 @@ We can see the default appearance of the data used in the introduction using the
 The `taxa` object is one of the two `data.frame`s returned by the function `extract_taxonomy`, which is covered in [another vignette](extracting_taxonomy_information_from_sequence_headers.html).
 
 ```{r, fig.width=6.5, fig.height=6.5}
-head(taxa)
-plot_taxonomy(taxa$taxon_id, taxa$parent_id)
+head(taxon_data(original_data))
+plot(original_data)
 ```
 
 Each vertex (i.e. circle) in the graph represents a taxon and each line represents its membership in a lower taxon. 
 
 ### Vertex/Line size
 
-By default, the size of each vertex is inversely proportional to its rank. 
-This makes higher ranked taxa smaller, making them easier to see. 
 The size of vertices and lines can be scaled to a number associated with each taxon using the `size` parameter. 
 Below, the number of sequences for each taxon is used to determine vertex size.
 
 ```{r, fig.width=6.5, fig.height=6.5}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count)
+plot(original_data,
+     vertex_size = item_count)
 ```
 
 Note that it was not necessary to specify the absolute vertex size; the range of absolute vertex sizes is optimized for each graph so as to minimize overlap of vertices and maximize the ranges of sizes.
-The argument `overlap_bias` is used to determine how much overlaps are avoided. 
+The argument `overlap_avoidance` is used to determine how much overlaps are avoided. 
 Higher values mean more importance is given to avoiding overlapping vertices than to maximizing the ranges of sizes.
-A high `overlap_bias` makes the connections between taxa more clear, but diminishes the visual effect of vertex size.
-Too low of an `overlap_bias` can make the graph hard to read.
+A high `overlap_avoidance` makes the connections between taxa more clear, but diminishes the visual effect of vertex size.
+Too low of an `overlap_avoidance` can make the graph hard to read.
 
 ```{r}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              overlap_bias = 50)
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              overlap_bias = 1)
+plot(original_data,
+     vertex_size = item_count,
+     overlap_avoidance = 10)
+plot(original_data,
+     vertex_size = item_count,
+     overlap_avoidance = 0.1)
 ```
 
 
@@ -141,52 +141,62 @@ The range of color used can be set using the `vertex_color_series` argument.
 This argument take a list of colors in the form of names, hex color codes, or integers. 
 
 ```{r}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_color = taxa$item_count)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count)
 
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_color = taxa$item_count,
-              vertex_color_series = c("turquoise", "darkorange3", "#4e567d", "gold", 23))
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_color_range = c("#FFFFFF", "darkorange3", "#4e567d", "gold"))
 ```
 
 ### Line color
 
-Unlike `size`, the color of lines can be set independently of vertices, although the default behavior is for the lines to have the same color as the vertices. 
+Unlike `vertex_size`, the color of lines can be set independently of vertices, although the default behavior is for the lines to have the same color as the vertices. 
 To only color vertices, you can set the lines to be a constant color or vise-versa.
 
 ```{r}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_color = taxa$item_count,
-              line_color = "grey")
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     edge_color = "grey")
 
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_color = "grey",
-              line_color = taxa$item_count)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = "grey",
+     edge_color = item_count)
 ```
 
-You can also set the color palette used for the lines in the same way as you set it for the vertex using the argument `line_color_series`. 
+You can also set the color palette used for the lines in the same way as you set it for the vertex using the argument `edge_color_range`. 
 
 ### Vertex labels 
 
 Labels can be added to vertices using the `vertex_label` option:
 
 ```{r, fig.width=6.5, fig.height=6.5}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id, 
-              vertex_label = taxa$name)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
-Label sizes are proportional to vertex size. 
-By default, only labels that are larger than some proportion of the total graph size are printed to avoid excessive crowding. 
-The minimum size of labels that will be printed is controlled by the `min_label_size` option:
+Label sizes are proportional to vertex size by default. 
+By default, only a maximum number of labels are printed to avoid excessive crowding. 
+The maximum number of labels that will be printed is controlled by the `vertex_label_max` option:
 
 ```{r}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,  
-              vertex_label = taxa$item_count,
-              min_label_size = 0.01)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name,
+     vertex_label_max = 5)
 
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,  
-              vertex_label = taxa$item_count,
-              min_label_size = 0.005)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name,
+     vertex_label_max = 100)
 ```
 
 Note that the labels are a special kind that scales with the size of the graph. 
@@ -194,12 +204,13 @@ This means that the text size will always be proportional to the graph size rega
 
 ### Line labels 
 
-Lines can be labeled as well using the `line_label` option, which works similarly to the `vertex_label` option:
+Lines can be labeled as well using the `edge_label` option, which works similarly to the `vertex_label` option:
 
 ```{r, fig.width=6.5, fig.height=6.5}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              line_label = taxa$name,
-              min_label_size = 0.005)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     edge_label = name)
 ```
 
 
@@ -228,11 +239,10 @@ In order to avoid using the NCBI servers more than necessary (and to avoid waiti
 The code below will use the included data set if the code above is not run (you don't need to run it to do the plotting). 
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
-taxa <- contaminants$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              titles = taxa$name)
+plot(contaminants,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 ### Spltting a taxonomy into multiple trees
@@ -248,33 +258,26 @@ original_data <- extract_taxonomy(names(sequences),
                          key = c(name = "item_info", seq_id = "item_info",
                                  other_id = "item_info", "class_name"),
                          database = "none")
-items <- original_data$items
-taxa <- original_data$taxa
 ```
 
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
-data_to_plot <- taxa
-new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id, make_legend = TRUE, margin_size = c(.05,.05),
-                  vertex_size = data_to_plot$item_count,
-                  vertex_color = data_to_plot$item_count,
-                  vertex_label = data_to_plot$item_count)
+plot(original_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 
 ```{r}
-parts <- lapply(split_by_level(taxa$taxon_id, taxa$parent_id, level =  4), function(i) taxa[i, ])
+plot(original_data[name == "Ascomycota"],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 
-data_to_plot <- parts[[2]]
-new_plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
-                  vertex_size = data_to_plot$item_count,
-                  vertex_color = data_to_plot$item_count,
-                  vertex_label = data_to_plot$name)
-
-data_to_plot <- do.call(rbind, parts)
-plot_taxonomy(data_to_plot$taxon_id, data_to_plot$parent_id,
-              size = data_to_plot$item_count,
-              vertex_color = data_to_plot$item_count,
-              titles = data_to_plot$name)
+plot(original_data[level > 1],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 

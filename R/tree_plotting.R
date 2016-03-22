@@ -845,7 +845,7 @@ verify_size <- function(args) {
 verify_color_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
-    if (! all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) | value %in% colors())) {
+    if (any(! grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) & ! value %in% colors())) {
       stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
     }
   }
