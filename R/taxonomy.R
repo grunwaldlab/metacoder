@@ -488,8 +488,13 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxon_data$level <- get_taxon_level(taxon_data$taxon_id, taxon_id_key)
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
-  names(item_data)[seq_along(key) + 1] <- names(key)  
-  return(list(taxonomy = taxon_id_key, taxa = taxon_data, items = item_data))
+  names(item_data)[seq_along(key) + 1] <- names(key)
+  # Make 'classified' output class
+  taxa::classified(taxon_id = taxon_data$taxon_id,
+                   parent_id = taxon_data$parent_id,
+                   item_taxon_id = item_data$taxon_id,
+                   taxon_data = taxon_data[ , ! colname(taxon_data) %in% c("taxon_id", "parent_id")],
+                   item_data = item_data[ , ! colname(item_data) %in% c("taxon_id")])
 }
 
 
