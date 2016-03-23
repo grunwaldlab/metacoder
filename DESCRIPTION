@@ -1,36 +1,24 @@
 Package: metacoder
 Title: Tools for metabarcoding experiment planning
-Version: 0.2.1
-Authors@R: c(
-  person("Zachary", "Foster", email = "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
-  person("Niklaus", "Grunwald", email = "grunwaln@science.oregonstate.edu", role = c("aut")))
-Description: A set of tools for metabarcoding (i.e. amplicon metagenomics)
-    experiment planning and analysis. Has functions for parseing out taxonomic
-    information from diverse metadata (e.g. sequence headers), for taxonomically-
-    balanced subsampling of items with associated taxonomy information (e.g.
-    sequences), and for making publication-quality graphics showing distributions of
-    taxon statistics over taxonomic/phylogenetic trees.
-Depends: 
-    R (>= 3.0.2)
+Version: 0.2.2
+Authors@R: c( person("Zachary", "Foster", email =
+        "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
+        person("Niklaus", "Grunwald", email =
+        "grunwaln@science.oregonstate.edu", role = c("aut")))
+Description: A set of tools for metabarcoding (i.e. amplicon
+        metagenomics) experiment planning and analysis. Has functions
+        for parseing out taxonomic information from diverse metadata
+        (e.g. sequence headers), for taxonomically- balanced
+        subsampling of items with associated taxonomy information (e.g.
+        sequences), and for making publication-quality graphics showing
+        distributions of taxon statistics over taxonomic/phylogenetic
+        trees.
+Depends: R (>= 3.0.2)
 License: GPL2
 LazyData: true
-Imports: 
-    stringr,
-    ggplot2,
-    igraph,
-    scales,
-    grid,
-    taxize,
-    plyr,
-    seqinr,
-    reshape2,
-    zoo,
-    spider,
-    proxy,
-    traits,
-    taxa
-Suggests: 
-    knitr,
-    rmarkdown
+Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
+        reshape2, zoo, spider, proxy, traits, taxa
+Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
+Date: 2016-03-23

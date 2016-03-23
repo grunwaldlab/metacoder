@@ -98,7 +98,7 @@ The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the sub-samp
 
 It might also be desirable to not included sequences from underrepresented taxa.
 Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classification to compare them to.
-For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included. 
+For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included.
 
 ```{r}
 index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
