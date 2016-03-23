@@ -79,14 +79,13 @@ The sequence headers have the format:
 cat(genbank_ex_data$items$input[1])
 ```
 
-We can plot the result using `plot_taxonomy`:
+We can plot the result using `plot`:
 
 ```{r}
-taxa <- genbank_ex_data$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(genbank_ex_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 
@@ -119,11 +118,10 @@ cat(unite_ex_data$items$input[1])
 ```
 
 ```{r}
-taxa <- unite_ex_data$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(unite_ex_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 #### Using included classification names to look up the taxon id
@@ -142,11 +140,10 @@ unite_ex_data_2 <- extract_taxonomy(names(sequences),
 ```
 
 ```{r}
-taxa <- unite_ex_data_2$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(unite_ex_data_2,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
@@ -170,11 +167,10 @@ unite_ex_data_3 <- extract_taxonomy(names(sequences),
 ```
 
 ```{r}
-taxa <- unite_ex_data_3$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              vertex_size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(unite_ex_data_3,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 ### ITS1 DB FASTA headers
@@ -198,11 +194,10 @@ cat(its1_ex_data$items$input[1])
 ```
 
 ```{r}
-taxa <- its1_ex_data$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(its1_ex_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 ### PR2 FASTA headers
@@ -228,11 +223,10 @@ cat(pr2_ex_data$items$input[1])
 ```
 
 ```{r}
-taxa <- pr2_ex_data$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(pr2_ex_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 ### RDP FASTA headers
@@ -259,10 +253,8 @@ cat(rdp_ex_data$items$input[212])
 ```
 
 ```{r}
-taxa <- rdp_ex_data$taxa
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name,
-              min_label_size = .0215)
+plot(rdp_ex_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```

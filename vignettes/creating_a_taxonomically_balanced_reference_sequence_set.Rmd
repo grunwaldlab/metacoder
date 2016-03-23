@@ -84,10 +84,10 @@ Depending on the goal, this might or might not be a problem.
 The overepresentation of Agaricales is likely a bigger problem. 
 
 ```{r all_data}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
 
 Information from both these tables is needed to make a taxonomically balanced subset of `items`.
@@ -119,11 +119,11 @@ sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how ma
 We can now view the difference between the original and sub-sampled data sets using `plot_taxonomy` again.
 
 ```{r subset_1}
-plot_taxonomy(sampled_taxa$taxon_id, sampled_taxa$parent_id,
-              size = sampled_taxa$item_count,
-              vertex_color = sampled_taxa$item_count,
-              vertex_label = ifelse(sampled_taxa$rank %in% c("s", "o"), sampled_taxa$item_count, NA),
-              line_label = ifelse(sampled_taxa$rank == "o", sampled_taxa$name, NA))
+plot(sampled_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = ifelse(rank %in% c("s", "o"), item_count, NA),
+     edge_label = ifelse(rank == "o", name, NA))
 ```
 
 
@@ -146,11 +146,9 @@ ncbi_fungi_sample <- extract_taxonomy(sequence_data$gi_no, regex = "(.*)", key =
 
 
 ```{r}
-taxa <- ncbi_fungi_sample$taxa # Rename parts of the result for later convenience
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = ifelse(taxa$rank == "phylum", taxa$name, taxa$item_count),
-              min_label_size = .01)
+plot(ncbi_fungi_sample,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = ifelse(rank == "phylum", name, item_count))
 ```
 
