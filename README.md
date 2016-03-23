@@ -1,5 +1,8 @@
 # MetacodeR
 
+![example plot](https://github.com/grunwaldlab/metacoder/blob/master/readme_plot.svg)
+
+
 `MetacodeR` is an R package that provides a set of tools for:
 
 - Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
