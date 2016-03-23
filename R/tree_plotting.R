@@ -438,7 +438,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
-  data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
+  subgraph_key <- setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
+                           unlist(sub_graph_taxa))
+  data$subgraph_root <- subgraph_key[data$tid_user]
   # scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
   # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
@@ -528,8 +530,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
-  tree_vertex_counts <-  as.numeric(table(data$subgraph_root)[unique(data$subgraph_root)])
-  data$tree_area <- rep(tree_area, tree_vertex_counts)
+  data$tree_area <- tree_area[data$subgraph_root]
   tsr_plot <- range(sqrt(tree_area))
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
@@ -555,7 +556,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$tc_plot <- rep(data[data$is_root, "tc_plot"], tree_vertex_counts) # apply root color to trees
+  data$tc_plot <- data[data$subgraph_root, "tc_plot"]
   to_replace <- ! is.na(data$tc_plot)
   data[to_replace, "vc_plot"] <- data[to_replace, "tc_plot"]
   data[to_replace, "ec_plot"] <- data[to_replace, "tc_plot"]
@@ -648,13 +649,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$tx_plot <- rep(tx_plot[unique(data$subgraph_root)], tree_vertex_counts)
+  data$tx_plot <- tx_plot[data$subgraph_root]
   ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$ty_plot <- rep(ty_plot[unique(data$subgraph_root)], tree_vertex_counts)
+  data$ty_plot <- ty_plot[data$subgraph_root]
   data$tlx_plot <- data$tx_plot 
   tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
-  data$tly_plot <- rep(tly_plot[unique(data$subgraph_root)], tree_vertex_counts) + data$tls_plot * 1.1
+  data$tly_plot <- tly_plot[data$subgraph_root] + data$tls_plot * 1.1
   data$tlx_plot <- data$tx_plot 
   vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
   tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2

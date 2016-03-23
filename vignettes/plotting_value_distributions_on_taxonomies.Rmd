@@ -239,10 +239,13 @@ In order to avoid using the NCBI servers more than necessary (and to avoid waiti
 The code below will use the included data set if the code above is not run (you don't need to run it to do the plotting). 
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
+fruchterman-reingold
 plot(contaminants,
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = name)
+     vertex_label = name,
+     tree_label = name,
+     layout = "fruchterman-reingold")
 ```
 
 ### Spltting a taxonomy into multiple trees
