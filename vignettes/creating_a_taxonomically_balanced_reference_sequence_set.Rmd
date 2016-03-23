@@ -64,13 +64,11 @@ library(metacoder)
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path) # Reads an example FASTA file
 names(sequences)[1] # Print an example of the sequence header format
-data <- extract_taxonomy(names(sequences), # Parse the sequence headers
-                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                         key = c(name = "item_info", seq_id = "item_info",
-                                 other_id = "item_info", "class_name"),
-                         database = "none")
-items <- data$items # Rename parts of the result for later convenience
-taxa <- data$taxa # Rename parts of the result for later convenience
+unite_ex_data_3 <- extract_taxonomy(names(sequences), # Parse the sequence headers
+                                    regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                                    key = c(name = "item_info", seq_id = "item_info",
+                                            other_id = "item_info", "class_name"),
+                                    database = "none")
 ```
 
 At this point, the taxonomy information has been extracted from the sequences headers. 
