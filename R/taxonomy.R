@@ -105,7 +105,7 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' 
 #' @export
 parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_rank = FALSE,
-                          taxon_col_name = "taxon", rank_col_name = "rank") {
+                          taxon_col_name = "taxon", rank_col_name = "rank_name") {
   taxa <- strsplit(lineage, split = taxon_sep, fixed = TRUE)
   if (taxon_sep == rank_sep) {
     odd_taxa <- which(vapply(taxa, function(x) length(x) %% 2 == 1, logical(1)))
@@ -380,7 +380,7 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     item_classification <- map_unique(item_data$taxon_id, taxize::classification,
                                       db = database, return_id = TRUE)
     item_classification[!is.na(item_classification)] <- lapply(item_classification[!is.na(item_classification)],
-                                                               setNames, nm = c("name", "rank", "taxon_id"))
+                                                               setNames, nm = c("name", "rank_name", "taxon_id"))
   } else if ("class_id" %in% names(item_data) && taxon_in_lineage) {
     item_classification <- parse_lineage(item_data$class_id, taxon_sep = class_tax_sep,
                                          rank_sep = class_rank_sep, rev_taxon = class_tax_rev,
@@ -439,19 +439,19 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   }
   # Get taxon name and rank if necessary -----------------------------------------------------------
   if (!arbitrary_taxon_ids && database != "none") {
-    if (!("name" %in% names(taxon_data)) || !("rank" %in% names(taxon_data))) {
+    if (!("name" %in% names(taxon_data)) || !("rank_name" %in% names(taxon_data))) {
       result <- taxize::classification(taxon_data$taxon_id)
-      result <- lapply(result, setNames, nm = c("name", "rank", "taxon_id"))
+      result <- lapply(result, setNames, nm = c("name", "rank_name", "taxon_id"))
     }
     if (!("name" %in% names(taxon_data))) {
       taxon_data$name <- extract_last(result, column = "name")
       taxon_id_key <- lapply(seq_along(taxon_id_key),
                              function(i) cbind(taxon_id_key[[i]], result[[i]][ , "name", drop = FALSE]))
     }    
-    if (!("rank" %in% names(taxon_data))) {
-      taxon_data$rank <- extract_last(result, column = "rank")
+    if (!("rank_name" %in% names(taxon_data))) {
+      taxon_data$rank_name <- extract_last(result, column = "rank_name")
       taxon_id_key <- lapply(seq_along(taxon_id_key),
-                             function(i) cbind(taxon_id_key[[i]], result[[i]][ , "rank", drop = FALSE]))
+                             function(i) cbind(taxon_id_key[[i]], result[[i]][ , "rank_name", drop = FALSE]))
     }
   }
   # Add taxon info ---------------------------------------------------------------------------------
@@ -478,14 +478,6 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
     unlist(parents)
   }
   taxon_data$parent_id <- get_parent(taxon_data$taxon_id, taxon_id_key)
-  # Add counts to taxon_data -----------------------------------------------------------------------
-  # taxon_data$item_count <- get_taxon_count(taxon_data$taxon_id, taxon_data$parent_id, item_data$taxon_id)
-  # Add taxon level column -------------------------------------------------------------------------
-  get_taxon_level <- function(taxa, classifications) {
-    taxon_classifications <- lapply(taxon_data$taxon_id, function(x) classifications[[x]])
-    vapply(taxon_classifications, nrow, numeric(1))
-  }
-  taxon_data$level <- get_taxon_level(taxon_data$taxon_id, taxon_id_key)
   # Format and return output -----------------------------------------------------------------------
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)

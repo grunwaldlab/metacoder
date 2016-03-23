@@ -5,7 +5,7 @@
 \title{Parse taxonomic classification strings}
 \usage{
 parse_lineage(lineage, taxon_sep, rank_sep, rev_taxon = FALSE,
-  rev_rank = FALSE, taxon_col_name = "taxon", rank_col_name = "rank")
+  rev_rank = FALSE, taxon_col_name = "taxon", rank_col_name = "rank_name")
 }
 \arguments{
 \item{lineage}{(\code{character}) Taxonomic classifications in the form of delimited strings.}

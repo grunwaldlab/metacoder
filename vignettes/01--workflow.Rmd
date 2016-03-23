@@ -88,29 +88,28 @@ data <- extract_taxonomy(names(sequences),
                          key = c("item_id", "class_name"),
                          class_tax_sep = "|",
                          database = "none")
-taxa <- data$taxa
-items <- data$items
 ```
 
-`extract_taxonomy` returns two `data.frame`s:
+`extract_taxonomy` returns an object of type `classfied`.
+This object stores information assoicated with taxa as well as sequences.
 
-* `taxa`: containes information for every unique taxon
-* `items`: containes information for evey item (e.g. sequence), including the taxon id defined in `taxa`
+We can use the `taxon_data` function to get data associated with taxa and the `item_data` function to get information associated with sequences. 
 
-Lets take a look at the first few rows of `taxa` to get and idea of its structure.
-
-```{r, results='asis', echo=FALSE}
-kable(head(taxa))
+```{r}
+head(taxon_data(data))
+head(item_data(data))
 ```
 
-To easily see the results, we can use `plot_taxonomy` to see how the abundance of different taxa are distributed. 
+To easily see the results, we can plot the information to see how the abundance of different taxa are distributed. 
 
 ```{r, fig.height=7, fig.width=7}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = taxa$item_count,
-              vertex_label = taxa$name)
+plot(data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
 ```
+
+Note that `item_count` and `name` are column names in `taxon_data(data)`
 
 ### Subsampling
 
