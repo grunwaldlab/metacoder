@@ -1,12 +1,9 @@
 ---
 title: "Introduction and workflow example"
-output:
+output: 
   rmarkdown::html_vignette:
-    toc: true
+    toc: false
     css: custom.css
-    includes:
-      before_body: doc_prefix.html
-      after_body: doc_suffix.html
 vignette: >
   %\VignetteIndexEntry{Introduction and workflow example}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,7 +13,7 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', warning = FALSE, message = FALSE)
+opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, eval = FALSE)
 ```
 
 ## Introduction

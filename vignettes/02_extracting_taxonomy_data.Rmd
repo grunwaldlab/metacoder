@@ -2,11 +2,8 @@
 title: "Extracting taxonomy information from metadata"
 output:
   rmarkdown::html_vignette:
-    toc: true
+    toc: false
     css: custom.css
-    includes:
-      before_body: doc_prefix.html
-      after_body: doc_suffix.html
 vignette: >
   %\VignetteIndexEntry{Extracting taxonomy information from metadata}
   %\VignetteEngine{knitr::rmarkdown}
@@ -17,7 +14,7 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, swarning = FALSE, message = FALSE)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, swarning = FALSE, message = FALSE, eval = FALSE)
 ```
 
 ## Parsing taxonomy data with `extract_taxonomy`

@@ -5,8 +5,11 @@ use_file_names: yes
 use_file_suffix: yes
 name_sep: "--"
 partial_copy: no
-menu_name_parser: !expr function(x) gsub('^[0-9]*--', '', x)
+menu_name_parser: !expr function(x) gsub('^[0-9]*_', '', x)
 type: Rmd
 placement:
-- 01--introductory_workflow_example.Rmd:
+- index.Rmd:
   - ""
+- '*_*':
+  - Vignettes
+  - .

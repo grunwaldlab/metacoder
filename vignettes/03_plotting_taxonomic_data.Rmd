@@ -2,11 +2,8 @@
 title: "Plotting value distributions on taxonomies"
 output:
   rmarkdown::html_vignette:
-    toc: true
+    toc: false
     css: custom.css
-    includes:
-      before_body: doc_prefix.html
-      after_body: doc_suffix.html
 vignette: >
   %\VignetteIndexEntry{Plotting value distributions on taxonomies}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,7 +16,7 @@ library(metacoder)
 library(taxa)
 library(knitr)
 library(ggplot2)
-opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold')
+opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold', eval = FALSE)
 ```
 
 ## Introduction

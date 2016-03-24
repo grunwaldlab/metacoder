@@ -1,6 +1,23 @@
-# MetacodeR
+---
+title: The `Metacoder` Package
+output: 
+  rmarkdown::html_vignette:
+    toc: false
+    css: custom.css
+vignette: >
+  %\VignetteIndexEntry{Package introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
 
-<img src="https://cdn.rawgit.com/grunwaldlab/metacoder/master/readme_plot.svg" style="width:400px;height:200px">
+## UNDER DEVELOPMENT
+
+Metacoder is still under active development and might not always work correctly until this notice is removed.
+It is being developed on the Ubuntu operating system.
+It should probably work on IOS and Windows. 
+
+
+## MetacodeR
 
 `MetacodeR` is an R package that provides a set of tools for:
 
@@ -10,7 +27,9 @@
 
 To accomplish these goals, metacoder leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R. Using R means that metacoder is entirely open-source, works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated with the best free tools for statistical analysis.
 
-## Download current version
+<img src="https://cdn.rawgit.com/grunwaldlab/metacoder/master/readme_plot.svg" style="width:400px;height:200px">
+
+## Download the current version
 
 While this project is in development it can be installed through github:
 
@@ -20,8 +39,7 @@ While this project is in development it can be installed through github:
 If you've built the vignettes, you can browse them with:
 
     browseVignettes(package="metacoder")
-    
-    
-## Documentation
+  
 
-For more information, visit our website at http://grunwaldlab.github.io/metacoder.
+    
+
