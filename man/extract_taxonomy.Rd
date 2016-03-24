@@ -2,9 +2,12 @@
 % Please edit documentation in R/taxonomy.R
 \name{extract_taxonomy}
 \alias{extract_taxonomy}
+\alias{extract_taxonomy.default}
 \title{Extract taxonomy information from sequence headers}
 \usage{
-extract_taxonomy(input, regex, key, class_tax_sep = ";",
+extract_taxonomy(...)
+
+\method{extract_taxonomy}{default}(input, regex, key, class_tax_sep = ";",
   class_rank_sep = "__", class_tax_rev = FALSE, class_rank_rev = FALSE,
   taxon_in_lineage = TRUE, database = "ncbi", arbitrary_ids = "warn")
 }

@@ -4,26 +4,12 @@
 \alias{taxonomic_sample}
 \title{Recursivly sample a set of taxonomic assignments}
 \usage{
-taxonomic_sample(root_id, item_ids, taxon_ids, parent_ids, ranks = NULL,
-  max_counts = c(), min_counts = c(), max_children = c(),
-  min_children = c(), item_filters = list(), subtaxa_filters = list(),
-  stop_conditions = list(), ...)
+taxonomic_sample(classified_data, max_counts = c(), min_counts = c(),
+  max_children = c(), min_children = c(), item_filters = list(),
+  subtaxa_filters = list(), stop_conditions = list(), ...)
 }
 \arguments{
-\item{root_id}{(\code{character} of length 1) The taxon to sample. By default, the root of the
-taxonomy used.}
-
-\item{item_ids}{(\code{character}) Unique taxon IDs of a set of items.}
-
-\item{taxon_ids}{(\code{character}) All possible unique taxon IDs. Must have same order and
-length as \code{parent_id}.}
-
-\item{parent_ids}{(\code{character}) Unique taxon IDs of supertaxa of \code{taxon_ids}. Must have
-same order and length as \code{taxon_ids}.}
-
-\item{ranks}{(\code{character}) Ranks of \code{taxon_ids}. Must have
-same order and length as \code{taxon_ids}.
-Together these two arguments form an adjacency list, defining the taxonomy used to sample.}
+\item{classified_data}{(An object of type \link{classified})}
 
 \item{max_counts}{(\code{numeric}) A named vector that defines that maximum number of
 items in for each level specified. The names of the vector specifies that level each number

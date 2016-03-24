@@ -320,7 +320,19 @@ make_new_ids <- function(count, existing) {
 #'    }
 #'    
 #' @export
-extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
+#' @rdname extract_taxonomy
+extract_taxonomy <- function(...) {
+  UseMethod("extract_taxonomy")
+}
+
+
+
+
+
+#' @method extract_taxonomy default
+#' @export
+#' @rdname extract_taxonomy
+extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
                              taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn") {
   # Constants --------------------------------------------------------------------------------------
@@ -485,8 +497,8 @@ extract_taxonomy <- function(input, regex, key, class_tax_sep = ";", class_rank_
   taxa::classified(taxon_id = taxon_data$taxon_id,
                    parent_id = taxon_data$parent_id,
                    item_taxon_id = item_data$taxon_id,
-                   taxon_data = taxon_data[ , ! colnames(taxon_data) %in% c("taxon_id", "parent_id")],
-                   item_data = item_data[ , ! colnames(item_data) %in% c("taxon_id")])
+                   taxon_data = taxon_data[ , ! colnames(taxon_data) %in% c("taxon_id", "parent_id"), drop = FALSE],
+                   item_data = item_data[ , ! colnames(item_data) %in% c("taxon_id"), drop = FALSE])
 }
 
 
@@ -594,7 +606,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
     stop_recursion = any(vapply(stop_conditions, function(func) func(id, ...), logical(1)))
     # Get and filter subtaxa of current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (!stop_recursion) {
-      sub_taxa <- get_subtaxa(id)
+      sub_taxa <- taxa::get_subtaxa(id)
       for (func in subtaxa_filters) {
         sub_taxa <- func(sub_taxa, id, ...)
         if (is.null(sub_taxa)) return(NULL)
@@ -627,16 +639,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
 #' This function takes other functions as arguments that define how the taxonomy is iterpreted.
 #' 
-#' @param item_ids (\code{character}) Unique taxon IDs of a set of items. 
-#' @param taxon_ids (\code{character}) All possible unique taxon IDs. Must have same order and
-#' length as \code{parent_id}.
-#' @param parent_ids (\code{character}) Unique taxon IDs of supertaxa of \code{taxon_ids}. Must have
-#' same order and length as \code{taxon_ids}.
-#' @param ranks (\code{character}) Ranks of \code{taxon_ids}. Must have
-#' same order and length as \code{taxon_ids}.
-#' Together these two arguments form an adjacency list, defining the taxonomy used to sample.
-#' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
-#' taxonomy used.
+#' @param classified_data (An object of type \link{classified})
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
 #' items in for each level specified. The names of the vector specifies that level each number
 #' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
@@ -664,7 +667,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @export
-taxonomic_sample <- function(root_id, item_ids, taxon_ids, parent_ids, ranks = NULL,
+taxonomic_sample <- function(classified_data,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
@@ -878,193 +881,193 @@ validate_edge_list <- function(taxa, parents) {
 
 
 
-#===================================================================================================
-#' Get all supertaxa of a taxon
-#' 
-#' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
-#' supertaxa (i.e. all taxa the target taxa are a part of).
-#' 
-#' @param targets (\code{character}) Taxon IDs for which supertaxa will be returned.
-#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
-#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
-#'   lack of a parent should be coded as \code{NA}.
-#' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
-#'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc. 
-#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs 
-#' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
-#'  
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
-get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE,
-                          include_target = FALSE) {
-  # Argument validataion ---------------------------------------------------------------------------
-  if (length(targets) == 0) stop("Argument 'targets' has 0 length")
-  if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
-  validate_edge_list(taxa, parents)
-  parents[!(parents %in% taxa)] <- NA
-  
-  # Recursive function for one target --------------------------------------------------------------
-  get_one <- function(target) {
-    supertaxon <- parents[taxa == target]
-    if (recursive) {
-      if (is.na(supertaxon)) {
-        return(target)
-      } else {
-        return(c(target, get_one(supertaxon)))
-      }
-    } else {
-      return(c(target, supertaxon))
-    }
-  }
-  
-  # Apply function to all targets ------------------------------------------------------------------
-  supertaxa <- lapply(targets, get_one)
-  if (!include_target) supertaxa <- lapply(supertaxa, `[`, -1)
-  if (simplify) supertaxa <- unlist(supertaxa)
-  return(supertaxa)
-}
+#' #===================================================================================================
+#' #' Get all supertaxa of a taxon
+#' #' 
+#' #' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
+#' #' supertaxa (i.e. all taxa the target taxa are a part of).
+#' #' 
+#' #' @param targets (\code{character}) Taxon IDs for which supertaxa will be returned.
+#' #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
+#' #'   lack of a parent should be coded as \code{NA}.
+#' #' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
+#' #'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc. 
+#' #' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#' #'   vector of unique taxon IDs 
+#' #' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
+#' #'  
+#' #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
+#' #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
+#' #'   IDs for all \code{target} taxa are returned in a single vector.
+#' get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE,
+#'                           include_target = FALSE) {
+#'   # Argument validataion ---------------------------------------------------------------------------
+#'   if (length(targets) == 0) stop("Argument 'targets' has 0 length")
+#'   if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
+#'   validate_edge_list(taxa, parents)
+#'   parents[!(parents %in% taxa)] <- NA
+#'   
+#'   # Recursive function for one target --------------------------------------------------------------
+#'   get_one <- function(target) {
+#'     supertaxon <- parents[taxa == target]
+#'     if (recursive) {
+#'       if (is.na(supertaxon)) {
+#'         return(target)
+#'       } else {
+#'         return(c(target, get_one(supertaxon)))
+#'       }
+#'     } else {
+#'       return(c(target, supertaxon))
+#'     }
+#'   }
+#'   
+#'   # Apply function to all targets ------------------------------------------------------------------
+#'   supertaxa <- lapply(targets, get_one)
+#'   if (!include_target) supertaxa <- lapply(supertaxa, `[`, -1)
+#'   if (simplify) supertaxa <- unlist(supertaxa)
+#'   return(supertaxa)
+#' }
 
 
 
 
 
-#===================================================================================================
-#' Get all subtaxa of a taxon
-#' 
-#' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
-#' subtaxa
-#' 
-#' @param targets (\code{character}) Taxon IDs for which subtaxa will be returned.
-#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
-#' @param parents (\code{character}) Unique taxon IDs for the subtaxa of every possible taxon. The
-#'   lack of a parent should be coded as \code{NA}.
-#' @param recursive (\code{logical}) If \code{FALSE}, only return the subtaxa one level above the
-#'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc. 
-#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs 
-#' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
-#'  
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
-#' 
-#' @export
-get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE) {
-  # Argument validataion ---------------------------------------------------------------------------
-  if (length(targets) == 0) stop("Argument 'targets' has 0 length")
-  if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
-  validate_edge_list(taxa, parents)
-  parents[!(parents %in% taxa)] <- NA
-  
-  # Get level of each input to determin processing order -------------------------------------------
-  levels <- vapply(get_supertaxa(targets, taxa, parents), length, numeric(1))
-  original_targets <- targets
-  targets <- targets[order(levels, decreasing = TRUE)]
-  
-  # Recursive function for one target --------------------------------------------------------------
-  get_one <- function(target, output) {
-    if (target %in% names(output)) { #if this taxa has already been processed
-      return(output[[target]])
-    } else {
-      subtaxa <- taxa[parents == target]
-      subtaxa <- subtaxa[!is.na(subtaxa)]
-      if (recursive) {
-        if (length(subtaxa) == 0) {
-          return(subtaxa)
-        } else {
-          subsubtaxa <- unlist(lapply(subtaxa, get_one, output = output))
-          return(c(subtaxa, subsubtaxa))
-        }
-      } else {
-        return(subtaxa)
-      }
-    }
-  }
-  
-  # Apply recursive function -----------------------------------------------------------------------
-  output <- list()
-  for (target in targets)  {
-    result <- list(get_one(target, output))
-    output <- c(output, result)
-  }
-  names(output) <- targets
-  output <- output[original_targets]
-  
-  # Apply `simplify` option ------------------------------------------------------------------------
-  if (simplify) output <- unique(unname(unlist(output)))
-  
-  return(output)
-}
+#' #===================================================================================================
+#' #' Get all subtaxa of a taxon
+#' #' 
+#' #' Given one or more taxa IDs and the edge list defining the taxonomy, return the taxon IDs of all 
+#' #' subtaxa
+#' #' 
+#' #' @param targets (\code{character}) Taxon IDs for which subtaxa will be returned.
+#' #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' #' @param parents (\code{character}) Unique taxon IDs for the subtaxa of every possible taxon. The
+#' #'   lack of a parent should be coded as \code{NA}.
+#' #' @param recursive (\code{logical}) If \code{FALSE}, only return the subtaxa one level above the
+#' #'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc. 
+#' #' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#' #'   vector of unique taxon IDs 
+#' #' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
+#' #'  
+#' #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned 
+#' #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
+#' #'   IDs for all \code{target} taxa are returned in a single vector.
+#' #' 
+#' #' @export
+#' get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE) {
+#'   # Argument validataion ---------------------------------------------------------------------------
+#'   if (length(targets) == 0) stop("Argument 'targets' has 0 length")
+#'   if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
+#'   validate_edge_list(taxa, parents)
+#'   parents[!(parents %in% taxa)] <- NA
+#'   
+#'   # Get level of each input to determin processing order -------------------------------------------
+#'   levels <- vapply(taxa::get_supertaxa(targets, taxa, parents), length, numeric(1))
+#'   original_targets <- targets
+#'   targets <- targets[order(levels, decreasing = TRUE)]
+#'   
+#'   # Recursive function for one target --------------------------------------------------------------
+#'   get_one <- function(target, output) {
+#'     if (target %in% names(output)) { #if this taxa has already been processed
+#'       return(output[[target]])
+#'     } else {
+#'       subtaxa <- taxa[parents == target]
+#'       subtaxa <- subtaxa[!is.na(subtaxa)]
+#'       if (recursive) {
+#'         if (length(subtaxa) == 0) {
+#'           return(subtaxa)
+#'         } else {
+#'           subsubtaxa <- unlist(lapply(subtaxa, get_one, output = output))
+#'           return(c(subtaxa, subsubtaxa))
+#'         }
+#'       } else {
+#'         return(subtaxa)
+#'       }
+#'     }
+#'   }
+#'   
+#'   # Apply recursive function -----------------------------------------------------------------------
+#'   output <- list()
+#'   for (target in targets)  {
+#'     result <- list(get_one(target, output))
+#'     output <- c(output, result)
+#'   }
+#'   names(output) <- targets
+#'   output <- output[original_targets]
+#'   
+#'   # Apply `simplify` option ------------------------------------------------------------------------
+#'   if (simplify) output <- unique(unname(unlist(output)))
+#'   
+#'   return(output)
+#' }
 
 
 
-#===================================================================================================
-#' Get items associated with taxa
-#' 
-#' Given one or more taxa IDs and the edge list defining the taxonomy, return the items
-#' (e.g. sequence information) associated with each taxon.
-#' 
-#' @param targets (\code{character}) Taxon IDs for which items will be returned.
-#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
-#' @param parents (\code{character}) Unique taxon IDs for the subtaxa of every possible taxon. The
-#'   lack of a parent should be coded as \code{NA}.
-#' @param items (\code{character}) Taxon IDs for a set of items.
-#' @param recursive (\code{logical}) If \code{FALSE}, only return the item assigned to the specified
-#'   target taxa, not its subtaxa. If \code{TRUE}, return all the items of every subtaxa, etc. 
-#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
-#'   vector of unique item indexes. 
-#'
-#' @return If \code{simplify = FALSE}, then a list of vectors of item indexes are returned 
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
-#'   for all \code{target} taxa are returned in a single vector.
-#' 
-#' @export
-get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, simplify = FALSE) {
-  # Argument validataion ---------------------------------------------------------------------------
-  if (length(targets) == 0) stop("Argument 'targets' has 0 length")
-  if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
-  validate_edge_list(taxa, parents)
-  parents[!(parents %in% taxa)] <- NA
-  
-  # Get level of each input to determin processing order -------------------------------------------
-  levels <- vapply(get_supertaxa(targets, taxa, parents), length, numeric(1))
-  original_targets <- targets
-  targets <- targets[order(levels, decreasing = TRUE)]
-  
-  # Recursive function for one target --------------------------------------------------------------
-  get_one <- function(target, output) {
-    if (target %in% names(output)) { #if this taxa has already been processed
-      return(output[[target]])
-    } else {
-      subtaxa <- taxa[parents == target]
-      subtaxa <- subtaxa[!is.na(subtaxa)]
-      target_items <- which(items == target)
-      if (recursive) {
-        if (length(subtaxa) == 0) {
-          return(target_items)
-        } else {
-          subtaxa_items <- unlist(lapply(subtaxa, get_one, output = output))
-          return(c(target_items, subtaxa_items))
-        }
-      } else {
-        return(target_items)
-      }
-    }
-  }
-  
-  # Apply recursive function -----------------------------------------------------------------------
-  output <- list()
-  for (target in targets)  {
-    result <- list(get_one(target, output))
-    output <- c(output, result)
-  }
-  names(output) <- targets
-  output <- output[original_targets]
-  
-  # Apply `simplify` option ------------------------------------------------------------------------
-  if (simplify) output <- unique(unname(unlist(output)))
-  
-  return(output)
-}
+#' #===================================================================================================
+#' #' Get items associated with taxa
+#' #' 
+#' #' Given one or more taxa IDs and the edge list defining the taxonomy, return the items
+#' #' (e.g. sequence information) associated with each taxon.
+#' #' 
+#' #' @param targets (\code{character}) Taxon IDs for which items will be returned.
+#' #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' #' @param parents (\code{character}) Unique taxon IDs for the subtaxa of every possible taxon. The
+#' #'   lack of a parent should be coded as \code{NA}.
+#' #' @param items (\code{character}) Taxon IDs for a set of items.
+#' #' @param recursive (\code{logical}) If \code{FALSE}, only return the item assigned to the specified
+#' #'   target taxa, not its subtaxa. If \code{TRUE}, return all the items of every subtaxa, etc. 
+#' #' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#' #'   vector of unique item indexes. 
+#' #'
+#' #' @return If \code{simplify = FALSE}, then a list of vectors of item indexes are returned 
+#' #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
+#' #'   for all \code{target} taxa are returned in a single vector.
+#' #' 
+#' #' @export
+#' get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, simplify = FALSE) {
+#'   # Argument validataion ---------------------------------------------------------------------------
+#'   if (length(targets) == 0) stop("Argument 'targets' has 0 length")
+#'   if (!all(targets %in% taxa)) stop("All 'targets' taxon IDs not found in 'taxa' taxon IDs")
+#'   validate_edge_list(taxa, parents)
+#'   parents[!(parents %in% taxa)] <- NA
+#'   
+#'   # Get level of each input to determin processing order -------------------------------------------
+#'   levels <- vapply(taxa::get_supertaxa(targets, taxa, parents), length, numeric(1))
+#'   original_targets <- targets
+#'   targets <- targets[order(levels, decreasing = TRUE)]
+#'   
+#'   # Recursive function for one target --------------------------------------------------------------
+#'   get_one <- function(target, output) {
+#'     if (target %in% names(output)) { #if this taxa has already been processed
+#'       return(output[[target]])
+#'     } else {
+#'       subtaxa <- taxa[parents == target]
+#'       subtaxa <- subtaxa[!is.na(subtaxa)]
+#'       target_items <- which(items == target)
+#'       if (recursive) {
+#'         if (length(subtaxa) == 0) {
+#'           return(target_items)
+#'         } else {
+#'           subtaxa_items <- unlist(lapply(subtaxa, get_one, output = output))
+#'           return(c(target_items, subtaxa_items))
+#'         }
+#'       } else {
+#'         return(target_items)
+#'       }
+#'     }
+#'   }
+#'   
+#'   # Apply recursive function -----------------------------------------------------------------------
+#'   output <- list()
+#'   for (target in targets)  {
+#'     result <- list(get_one(target, output))
+#'     output <- c(output, result)
+#'   }
+#'   names(output) <- targets
+#'   output <- output[original_targets]
+#'   
+#'   # Apply `simplify` option ------------------------------------------------------------------------
+#'   if (simplify) output <- unique(unname(unlist(output)))
+#'   
+#'   return(output)
+#' }
