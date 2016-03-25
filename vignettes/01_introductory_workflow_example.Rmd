@@ -140,23 +140,34 @@ To tackle this problem, `metacoder` has a function called `taxonomic_sample` tha
 The data set used for this example is small enough to use whole, but to demonstrate how `taxonomic_sample` works we will sub-sample it anyway.
 
 ```{r}
-# index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-#                           parent_ids = taxa$parent_id, ranks = taxa$level, max_counts = c("7" = 3, "8" = 1),
-#                           min_counts = c("5" = 3))
 subsampled_data <- taxonomic_sample(data,
-                                    max_counts = c("7" = 3, "8" = 1),
-                                    min_counts = c("5" = 3))
-# sampled_items <- items[index, ] # Subsample sequence metadata
-# sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
-                                         # parents = taxa$parent_id,
-                                         # subset = sampled_items$taxon_id)
-# sampled_taxa <- taxa[sampled_taxa_index, ] # Subsample the taxa to only those in the subset of items 
-# sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how many items are in each taxon
-                                           # sampled_taxa$parent_id,
-                                           # sampled_items$taxon_id)
+                                    max_counts = c("6" = 3, "7" = 1),
+                                    min_counts = c("4" = 3))
 ```
 
-We can then plot the results as we did before.
+We can then plot the results as we did before, but this time lets put the item count on the vertex labels instead of the taxon name and compare the counts before and after sampling.
+
+```{r}
+plot(data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = item_count)
+```
+
+
+```{r}
+plot(subsampled_data,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = item_count)
+```
+
+Note that there are now taxa that have no sequences; these taxa did not meet the minimum out requirement and all their items were dropped, but taxon information was preserved. 
+We can remove the sequenceless taxa with `subset`:
+
+```{r}
+subsampled_data <- subset(subsampled_data, item_count > 0, itemless = FALSE) 
+```
 
 ```{r}
 plot(subsampled_data,
