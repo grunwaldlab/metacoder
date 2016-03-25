@@ -80,7 +80,7 @@ cat(names(sequences)[1])
 We can now use `extract_taxonomy` to get a standardized `data.frame` representation of the taxonomic information.
 
 ```{r}
-data <- extract_taxonomy(names(sequences),
+data <- extract_taxonomy(sequences,
                          regex = "^(.*\\..*?)\\|(.*)$",
                          key = c("item_id", "class_name"),
                          class_tax_sep = "|",
@@ -187,12 +187,11 @@ First we will do the *in silico* PCR:
 
 
 ```{r}
-pcr <- primersearch(sequence = sequences,
-                    seq_name = items$item_id,
-                    forward = "GCGGTAATTCCAGC",
-                    reverse = "CCCGTGTTGAGTCAAAT",
-                    pair_name = "F-574__and__R-1200",
-                    mismatch = 10)
+subsampled_data <- primersearch(subsampled_data,
+                                forward = "GCGGTAATTCCAGC",
+                                reverse = "CCCGTGTTGAGTCAAAT",
+                                pair_name = "F-574__and__R-1200",
+                                mismatch = 10)
 ```
 
 Then, we will calculate the proportion of each taxon's sequences that were able to be amplified. 
