@@ -37,4 +37,5 @@ Execute EMBOSS Primerseach
 \seealso{
 \code{\link{parse_primersearch}}
 }
+\keyword{internal}
 

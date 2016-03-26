@@ -28,5 +28,7 @@ itself inspired from a post by William Dunlap on r-help (10/09/09)
 \examples{
 ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
   geom_polygon(aes(x = x, y = y, fill = group))
+  
 }
+\keyword{internal}
 

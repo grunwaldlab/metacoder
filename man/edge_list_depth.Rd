@@ -15,4 +15,5 @@ Root taxa should have \code{NA} in this column.}
 \description{
 Gets the number of ancestors/supergroups for items of an edge/adjacency list
 }
+\keyword{internal}
 

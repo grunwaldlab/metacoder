@@ -46,4 +46,5 @@ make_plot_legend(x, y, length, tick_size, width_range, width_stat_range,
 \description{
 Make color/size legend
 }
+\keyword{internal}
 

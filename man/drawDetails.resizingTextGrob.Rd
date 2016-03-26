@@ -12,4 +12,5 @@ Called automatically when drawing a grob using grob.draw.
 \details{
 Taken from: http://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/
 }
+\keyword{internal}
 

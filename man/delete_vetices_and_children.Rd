@@ -9,4 +9,5 @@ delete_vetices_and_children(graph, vertices)
 \description{
 delete_vetices_and_children
 }
+\keyword{internal}
 

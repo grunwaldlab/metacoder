@@ -20,4 +20,5 @@ apply_color_scale(values, color_series, no_color_in_palette = 1000)
 Convert numbers to colors.
 If colors are already supplied, return the input
 }
+\keyword{internal}
 

@@ -12,4 +12,5 @@ verify_label_count(args)
 \description{
 Verify label count
 }
+\keyword{internal}
 

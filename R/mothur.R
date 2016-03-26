@@ -9,6 +9,7 @@
 #' 
 #' @return A \code{data.frame} of statistics
 #' 
+#' @keywords internal
 parse_summary_seqs <- function(text = NULL, file = NULL) {
   # Parse arguments
   if (sum(missing(text), missing(file)) != 1)

@@ -15,4 +15,5 @@ A character vecotr of taxonomy strings pasted together with delimiters.
 \description{
 Format taxize output to string
 }
+\keyword{internal}
 

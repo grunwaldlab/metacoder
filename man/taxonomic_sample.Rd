@@ -44,8 +44,10 @@ returned rather than looking for items of subtaxa, stopping the recursion.}
 
 \item{...}{Additional parameters are passed to all of the function options.}
 }
+\value{
+Returns an object of type \code{classified}
+}
 \description{
 Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
-This function takes other functions as arguments that define how the taxonomy is iterpreted.
 }
 

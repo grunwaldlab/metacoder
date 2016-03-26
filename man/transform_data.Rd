@@ -17,4 +17,5 @@ transform_data(data = NULL, func = NULL, inverse = FALSE)
 Functions used by plotting funtions to transform data.
 Calling the function with no parameters returns available function names.
 }
+\keyword{internal}
 

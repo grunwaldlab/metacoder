@@ -10,4 +10,5 @@ fapply(iterable, functions, .preprocessor = {     function(x) x },
 \description{
 under development
 }
+\keyword{internal}
 

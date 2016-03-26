@@ -9,4 +9,5 @@ get_edge_parents(graph)
 \description{
 get_edge_parents
 }
+\keyword{internal}
 

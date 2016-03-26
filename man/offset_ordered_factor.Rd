@@ -9,4 +9,5 @@ offset_ordered_factor(ordered_factor, offset)
 \description{
 under development
 }
+\keyword{internal}
 

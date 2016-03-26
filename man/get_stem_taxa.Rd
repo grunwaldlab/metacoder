@@ -21,4 +21,5 @@ A interger vector of indexes corresponding to taxa shared by all subtaxa.
 \description{
 Given an adjacency/edge list, return the indexes of taxa shared by all subtaxa.
 }
+\keyword{internal}
 

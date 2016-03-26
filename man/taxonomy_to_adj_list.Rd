@@ -14,4 +14,5 @@ adjacency list. Each classification must be a \code{data.frame} with a column na
 Makes an adjacency list from a list of taxonomic classifications meant to represent the tree 
 structure shared by the classifications given.
 }
+\keyword{internal}
 

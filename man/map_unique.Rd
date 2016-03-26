@@ -9,4 +9,5 @@ map_unique(input, func, ...)
 \description{
 run a function on unique values of a iterable
 }
+\keyword{internal}
 

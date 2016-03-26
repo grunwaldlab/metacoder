@@ -9,4 +9,5 @@ get_nodes_from_leafs(leafs, sep = ";")
 \description{
 get nodes from leafs
 }
+\keyword{internal}
 

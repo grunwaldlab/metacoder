@@ -25,4 +25,5 @@ and returns the index of the best one.}
 \description{
 Finds optimal max and min value useing an optimality criterion.
 }
+\keyword{internal}
 

@@ -18,4 +18,5 @@ lack of a parent should be coded as \code{NA}.}
 \description{
 Validate a taxon edge list for use in other functions
 }
+\keyword{internal}
 

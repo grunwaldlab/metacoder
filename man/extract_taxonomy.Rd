@@ -15,7 +15,8 @@ extract_taxonomy(...)
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
 \arguments{
-\item{input}{(\code{character}) A vector from which to extract taxonomy information.}
+\item{input}{A vector from which to extract taxonomy information or an object of class
+\code{\link{ape}{DNAbin}}.}
 
 \item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
 indicating the locations of relevant information. The identity of the information must
@@ -27,7 +28,7 @@ Any names added to the terms will be used as column names in the output.
 Each term must be one of those decribed below:
 \describe{
   \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database}}
-  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
+  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interpretable)
   to a particular \code{database}.}
   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
   \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
@@ -35,9 +36,9 @@ from broad to specific (see \code{class_tax_rev}) for a particular \code{databas
 are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
 \code{class_rank_sep} argument.}
   \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic
-classification from broad to specific. Same usage as \code{class_id}}.
+classification from broad to specific. Same usage as \code{class_id}.
 Individual names are not necessarily unique, but are specific (i.e. interperable)
-to a particular \code{database}.
+to a particular \code{database}.}
   \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
 looked up if available. Requires an internet connection.}
   \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
@@ -62,7 +63,8 @@ classification.}
 
 \item{database}{(\code{character; length == 1}): The name of the database that patterns given in 
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
-and "nbn".}
+"nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
+internet.}
 
 \item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary IDs is
 handled. Possible options are:
@@ -76,22 +78,13 @@ handled. Possible options are:
 }}
 }
 \value{
-Returns a list of two elements:
- \describe{
-   \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
-   unique taxon. The order of the elements corresponds to the rows in the "taxa" 
-   \code{data.frame} described below.}
-   \item{\code{taxa}}{A data.frame with one row per taxon, containing available information
-   on each taxon. The number and nature of columns depend on the input data. Typically, a column
-   of taxon names is present.}
-   \item{\code{items}}{A data.frame with one row per input item (typically sequences)
-   containing their taxon IDs and other informtion, depending on input.}
-   }
+Returns an object of type \code{classified}
 }
 \description{
-Extracts the taxonomy used by a set of sequences based on their header information. A data 
-structure representing the heirerarchical nature of the taxonomy as well as a vector
-identifing the taxon of each sequence is returned. Taxa are translated into unique codes if they
-are not already encoded this way.
+Extracts the taxonomy from metadata (e.g. sequence headers) or parsed sequence data. 
+The location and identity of important information in the input is specified using a regular expression
+with capture groups and an corresponding key.
+An object of type \code{\link{classified}} is returned containing the specifed information.
+Taxa are translated into unique codes if they are not already encoded this way.
 }
 

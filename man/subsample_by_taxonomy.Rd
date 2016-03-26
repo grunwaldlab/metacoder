@@ -10,4 +10,5 @@ subsample_by_taxonomy(distance_matrix, taxon, taxon_level, level_order,
 \description{
 subsample_by_taxonomy
 }
+\keyword{internal}
 

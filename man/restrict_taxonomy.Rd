@@ -22,4 +22,5 @@ Subsets a table representing every unique taxon based on a subset of taxa.
 This preserves supertaxa, not specified in the subset, but needed to define the internal tree 
 structure of the taxonomy.
 }
+\keyword{internal}
 

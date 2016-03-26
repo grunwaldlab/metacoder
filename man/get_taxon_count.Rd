@@ -19,4 +19,5 @@ A named vector of counts corresponding to the taxa in \code{taxa}
 \description{
 Get counts of items at each unique taxon in a taxonomy, including internal taxa.
 }
+\keyword{internal}
 

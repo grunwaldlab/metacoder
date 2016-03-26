@@ -25,4 +25,5 @@ scale_bar_coords(x1, x2, y1, y2, color, group)
 \description{
 Make scale bar division
 }
+\keyword{internal}
 

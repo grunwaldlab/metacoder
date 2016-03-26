@@ -12,4 +12,5 @@ verify_trans(args)
 \description{
 Verify transformation function parameters
 }
+\keyword{internal}
 

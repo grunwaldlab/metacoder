@@ -3,6 +3,7 @@
 #===================================================================================================
 #' under development 
 #' 
+#' @keywords internal
 offset_ordered_factor <- function(ordered_factor, offset) { 
   my_levels <-  levels(ordered_factor)
   new_level <- my_levels[which(my_levels == ordered_factor) + offset]
@@ -12,6 +13,8 @@ offset_ordered_factor <- function(ordered_factor, offset) {
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 fapply <- function(iterable, functions, 
                    .preprocessor={function(x) x},
                    .preprocessor_args=list(),
@@ -65,6 +68,7 @@ fapply <- function(iterable, functions,
 #===================================================================================================
 #' under development 
 #' 
+#' @keywords internal
 remove_all_na_rows <- function(input) {
   na_rows <- sapply(1:nrow(input), function(x) sum(!is.na(input[x,])) != 0)
   input[na_rows, ]
@@ -74,6 +78,8 @@ remove_all_na_rows <- function(input) {
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 remove_outliers <- function(x, na.rm = TRUE, ...) {
   qnt <- quantile(x, probs=c(.01, .99), na.rm = na.rm, ...)
   H <- 1.5 * IQR(x, na.rm = na.rm)
@@ -87,12 +93,16 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 which_median <- function(x) which.min(abs(x - median(x)))
 
 
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 which_middle <- function(x) {
   middle <- (max(x) + min(x)) / 2
   which.min(abs(x - middle))
@@ -104,6 +114,8 @@ which_middle <- function(x) {
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 rm_ext <- function(file) {
   sub("[.][^.]*$", "", file, perl=TRUE)
 }
@@ -112,6 +124,8 @@ rm_ext <- function(file) {
 #===================================================================================================
 #' under development 
 #' 
+#' 
+#' @keywords internal
 next_incremental_file_number <-function(directory) {
   current_numbers <- as.integer(rm_ext(list.files(directory, no..=TRUE)))
   if (length(current_numbers) == 0) {
@@ -126,6 +140,7 @@ next_incremental_file_number <-function(directory) {
 #===================================================================================================
 #' under development
 #' 
+#' @keywords internal
 taxon_edge_list <- function(taxonomy, separator) {
   get_taxon_edge_list <- function(taxon) {
     apply(matrix(c(1:(length(taxon)-1),2:length(taxon)), ncol = 2), 1, function(x) c(taxon[x[1]], taxon[x[2]]))
@@ -142,6 +157,7 @@ taxon_edge_list <- function(taxonomy, separator) {
 #===================================================================================================
 #' get_edge_parents
 #' 
+#' @keywords internal
 get_edge_parents <-function(graph) {
   igraph::get.edges(graph, 1:igraph::ecount(graph))[,1]
 }
@@ -150,6 +166,7 @@ get_edge_parents <-function(graph) {
 #===================================================================================================
 #' get_edge_children
 #' 
+#' @keywords internal
 get_edge_children <- function(graph) {
   igraph::get.edges(graph, 1:igraph::ecount(graph))[,2]
 }
@@ -158,13 +175,15 @@ get_edge_children <- function(graph) {
 #===================================================================================================
 #' get_vertex_children
 #' 
+#' @keywords internal
 get_vertex_children <- function(graph, vertex) {
   which(igraph::shortest.paths(graph, igraph::V(graph)[vertex], mode="out") != Inf)
 }
 
 #===================================================================================================
 #' delete_vetices_and_children
-#'
+#' 
+#' @keywords internal
 delete_vetices_and_children <- function(graph, vertices) {
   vertices <- unlist(sapply(vertices, function(x) get_vertex_children(graph, x)))
   graph <- igraph::delete.vertices(graph, vertices)
@@ -178,6 +197,7 @@ delete_vetices_and_children <- function(graph, vertices) {
 #===================================================================================================
 #' add_alpha
 #' 
+#' @keywords internal
 add_alpha <- function(col, alpha=1){
   apply(sapply(col, col2rgb)/255, 2,
         function(x)
@@ -192,6 +212,7 @@ add_alpha <- function(col, alpha=1){
 #===================================================================================================
 #' get nodes from leafs
 #' 
+#' @keywords internal
 get_nodes_from_leafs <- function(leafs, sep = ";") {
   if (is.atomic(leafs)) leafs <- strsplit(leafs, sep, fixed=TRUE)
   taxons <- lapply(leafs, function(x) sapply(seq(1, length(x)), function(y) paste(x[1:y], collapse=sep)))
@@ -202,6 +223,7 @@ get_nodes_from_leafs <- function(leafs, sep = ";") {
 #===================================================================================================
 #' count nodes in leafs
 #' 
+#' @keywords internal
 count_nodes_in_leafs <- function(leafs, nodes = NULL, sep = ";") {
   if (is.null(nodes)) nodes <- get_nodes_from_leafs(leafs, sep = sep)
   vapply(nodes, function(x) sum(grepl(x, leafs, fixed = TRUE)), numeric(1))
@@ -215,6 +237,7 @@ get_tips <- function(nodes, sep = "__") {
 #===================================================================================================
 #' get indexes of a unique set of the input
 #' 
+#' @keywords internal
 unique_mapping <- function(input) {
   unique_input <- unique(input)
   vapply(input, function(x) {if (is.na(x)) which(is.na(unique_input)) else which(x == unique_input)}, numeric(1))
@@ -224,6 +247,7 @@ unique_mapping <- function(input) {
 #===================================================================================================
 #' run a function on unique values of a iterable 
 #' 
+#' @keywords internal
 map_unique <- function(input, func, ...) {
   input_class <- class(input)
   unique_input = unique(input)
@@ -242,6 +266,7 @@ map_unique <- function(input, func, ...) {
 #' 
 #' @param dna_bin (\code{DNAbin} of length 1) the input.
 #' 
+#' @keywords internal
 DNAbin_to_char <- function(dna_bin) {
   vapply(as.character(dna_bin), paste, character(1), collapse="")
 }

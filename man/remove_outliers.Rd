@@ -9,4 +9,5 @@ remove_outliers(x, na.rm = TRUE, ...)
 \description{
 under development
 }
+\keyword{internal}
 

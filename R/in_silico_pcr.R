@@ -15,7 +15,8 @@
 #' @param ... Additional arguments are passed to \code{primersearch}.
 #' @return The command generated as a character vector of length 1.
 #' @seealso \code{\link{parse_primersearch}}
-#' @export
+#' 
+#' @keywords internal
 run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),
                              program_path = 'primersearch', dont_run = FALSE, ...) {
   extra_args <- as.list(match.call(expand.dots=F))$...
@@ -46,7 +47,8 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = 
 #' @param file_path The path to a primersearch output file.
 #' @return A data frame with each row corresponding to amplicon data
 #' @seealso \code{\link{run_primersearch}}
-#' @export
+#' 
+#' @keywords internal
 parse_primersearch <- function(file_path) {
   # Split output into chunks for each primer--------------------------------------------------------
   raw_output <- readLines(file_path)
@@ -93,6 +95,7 @@ parse_primersearch <- function(file_path) {
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
 #' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
 #' @return Output from \code{\link{parse_primersearch}} (A dataframe)
+#' 
 #' @export
 primersearch <- function(sequence, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {

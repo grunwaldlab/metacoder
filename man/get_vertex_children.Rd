@@ -9,4 +9,5 @@ get_vertex_children(graph, vertex)
 \description{
 get_vertex_children
 }
+\keyword{internal}
 

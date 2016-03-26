@@ -9,4 +9,5 @@ unique_mapping(input)
 \description{
 get indexes of a unique set of the input
 }
+\keyword{internal}
 

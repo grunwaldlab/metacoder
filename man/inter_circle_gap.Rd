@@ -20,5 +20,7 @@ combination.
 \examples{
 inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
 
+
 }
+\keyword{internal}
 

@@ -22,4 +22,5 @@ with overlapping level ranges will cause an error.}
 Returns an ordered factor of the ranks of a given taxonomy.
 It also checks if rank corresponds consistently with level.
 }
+\keyword{internal}
 

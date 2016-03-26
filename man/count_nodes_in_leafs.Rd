@@ -9,4 +9,5 @@ count_nodes_in_leafs(leafs, nodes = NULL, sep = ";")
 \description{
 count nodes in leafs
 }
+\keyword{internal}
 

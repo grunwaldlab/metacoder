@@ -70,4 +70,5 @@ user-friendly functions.
 \seealso{
 \code{\link{taxonomic_sample}}
 }
+\keyword{internal}
 

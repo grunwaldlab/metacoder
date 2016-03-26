@@ -9,4 +9,5 @@ add_alpha(col, alpha = 1)
 \description{
 add_alpha
 }
+\keyword{internal}
 

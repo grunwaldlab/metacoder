@@ -4,7 +4,7 @@
 #' Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
 #'   hierarchy.
 #'   
-#' @export
+#' @keywords internal
 get_taxonomy_levels <- function() {
   unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
   unique_levels <- tolower(unique_levels)
@@ -17,6 +17,8 @@ get_taxonomy_levels <- function() {
 #' 
 #' @param taxa Output from taxize::classification
 #' @return A character vecotr of taxonomy strings pasted together with delimiters.
+#' 
+#' @keywords internal
 format_taxize <- function(taxa) {
   output <- vapply(taxa, function(x) paste(paste(x$rank, gsub(' ', '_', x$name), sep = "__"), collapse = ";"), character(1))
   paste("Superkingdom__Life;", output, sep="")
@@ -25,6 +27,8 @@ format_taxize <- function(taxa) {
 
 #===================================================================================================
 #' filter_taxonomy_string
+#' 
+#' @keywords internal
 filter_taxonomy_string <- function(taxon, min_level, max_level, taxon_levels) {
   parsed_taxonomy <- sapply(unlist(strsplit(taxon, split=';', fixed=T)),
                             strsplit, split='__', fixed=T)
@@ -35,6 +39,10 @@ filter_taxonomy_string <- function(taxon, min_level, max_level, taxon_levels) {
 
 #===================================================================================================
 #' subsample_by_taxonomy
+#' 
+#' subsample_by_taxonomy
+#' 
+#' @keywords internal
 subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_order, triangular=TRUE, level_to_analyze = 'subtaxon', max_subset=NA) {
   base_level <- offset_ordered_factor(taxon_level, 1)
   if (level_to_analyze == 'subtaxon') {
@@ -66,6 +74,10 @@ subsample_by_taxonomy <- function(distance_matrix, taxon, taxon_level, level_ord
 
 #===================================================================================================
 #' taxon_info
+#' 
+#' taxon_info
+#' 
+#' @keywords internal
 taxon_info <- function(identifications, level_order, separator=';') {
   split_taxonomy <- strsplit(identifications, separator, fixed=TRUE)
   taxonomy <- unlist(lapply(split_taxonomy, function(x) sapply(seq(1, length(x)), function(y) paste(x[1:y], collapse=separator))))
@@ -101,9 +113,10 @@ taxon_info <- function(identifications, level_order, separator=';') {
 #' @param taxon_col_name (\code{character}) The name of the taxon column in the \code{data.frame}s 
 #' representing each classification. 
 #' @param rank_col_name (\code{character}) The name of the rank column in the \code{data.frame}s 
-#' representing each classification. 
+#' representing each classification.
 #' 
-#' @export
+#' 
+#' @keywords internal
 parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_rank = FALSE,
                           taxon_col_name = "taxon", rank_col_name = "rank_name") {
   taxa <- strsplit(lineage, split = taxon_sep, fixed = TRUE)
@@ -131,6 +144,7 @@ parse_lineage <- function(lineage, taxon_sep, rank_sep, rev_taxon = FALSE, rev_r
 
 
 #===================================================================================================
+#' @keywords internal
 extract_last <- function(classifications, column) {
   sapply(classifications, function(x) x[nrow(x), column])
 }
@@ -148,7 +162,7 @@ extract_last <- function(classifications, column) {
 #' @return (\code{list} of \code{data.frame}) Taxonomic classifications of every unique taxon in 
 #' the list of classifications given. 
 #' 
-#' @export
+#' @keywords internal
 unique_taxa <- function(classifications, id_column = NULL) {
   split_classification <- function(a_classification) {
     if (!is.data.frame(a_classification) && is.na(a_classification)) return(NA)
@@ -173,7 +187,7 @@ unique_taxa <- function(classifications, id_column = NULL) {
 #' @param classifications (\code{list} of \code{data.frame}) Taxnomic classifications used to build
 #' adjacency list. Each classification must be a \code{data.frame} with a column named "taxon".
 #' 
-#' @export
+#' @keywords internal
 taxonomy_to_adj_list  <- function(classifications) {
   process_one <- function(taxon) {
     t(mapply(function(x, y) taxon$taxon[c(x,y)],
@@ -196,6 +210,8 @@ taxonomy_to_adj_list  <- function(classifications) {
 #' @param data (named \code{list}) The column content to add. The name of each element 
 #' should match a column in the \code{data.frame}s in \code{my_list}. Each element should consist
 #' of as many values as their are \code{data.frame}s in \code{my_list}.
+#' 
+#' @keywords internal
 append_to_each <- function(my_list, data) {
   process_one <- function(element, index) {
     element <- rbind(element, rep(NA, length(element)))
@@ -218,6 +234,8 @@ append_to_each <- function(my_list, data) {
 #' to each classification.
 #' 
 #' @seealso unique_taxa
+#' 
+#' @keywords internal
 add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "taxon_id") {
   if (is.null(id_key)) id_key <- unique_taxa(classifications)
   add_ids_to_one <- function(a_classification) {
@@ -237,6 +255,8 @@ add_taxon_ids <- function(classifications, id_key = NULL, id_col_name = "taxon_i
 #' Makes a vector of unique IDs that differ from a previously defined set of unique IDs. 
 #' @param count (\code{numeric} of length 1) The number of new unique IDs to generate
 #' @param existing (\code{character}) Existing unique IDs. These will not appear in the output.
+#' 
+#' @keywords internal
 make_new_ids <- function(count, existing) {
   output <- rep(NA, count)
   current <- 1
@@ -252,12 +272,14 @@ make_new_ids <- function(count, existing) {
 #===================================================================================================
 #' Extract taxonomy information from sequence headers
 #' 
-#' Extracts the taxonomy used by a set of sequences based on their header information. A data 
-#' structure representing the heirerarchical nature of the taxonomy as well as a vector
-#' identifing the taxon of each sequence is returned. Taxa are translated into unique codes if they
-#' are not already encoded this way.
+#' Extracts the taxonomy from metadata (e.g. sequence headers) or parsed sequence data. 
+#' The location and identity of important information in the input is specified using a regular expression
+#' with capture groups and an corresponding key.
+#' An object of type \code{\link{classified}} is returned containing the specifed information.
+#' Taxa are translated into unique codes if they are not already encoded this way.
 #' 
-#' @param input (\code{character}) A vector from which to extract taxonomy information. 
+#' @param input A vector from which to extract taxonomy information or an object of class
+#' \code{\link{ape}{DNAbin}}. 
 #' @param regex (\code{character; length == 1}) A regular expression with capturing groups
 #'  indicating the locations of relevant information. The identity of the information must
 #'  be specified using the \code{key} argument.
@@ -267,7 +289,7 @@ make_new_ids <- function(count, existing) {
 #'  Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database}}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interperable)
+#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interpretable)
 #'    to a particular \code{database}.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'    \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
@@ -275,9 +297,9 @@ make_new_ids <- function(count, existing) {
 #'  are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
 #'  \code{class_rank_sep} argument.}
 #'    \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic
-#'  classification from broad to specific. Same usage as \code{class_id}}.
+#'  classification from broad to specific. Same usage as \code{class_id}.
 #'  Individual names are not necessarily unique, but are specific (i.e. interperable)
-#'  to a particular \code{database}.
+#'  to a particular \code{database}.}
 #'    \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
 #'  looked up if available. Requires an internet connection.}
 #'    \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
@@ -296,7 +318,8 @@ make_new_ids <- function(count, existing) {
 #' classification.
 #' @param database (\code{character; length == 1}): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
-#'  and "nbn".
+#'  "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
+#'  internet.
 #' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary IDs is
 #'  handled. Possible options are:
 #'  \describe{
@@ -307,17 +330,7 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
 #'    \item{\code{"none"}}{Do not use a database to look up information.}
 #'  } 
-#' @return Returns a list of two elements:
-#'  \describe{
-#'    \item{\code{taxonomy}}{A list of \code{data.frame}s containing the classification of each
-#'    unique taxon. The order of the elements corresponds to the rows in the "taxa" 
-#'    \code{data.frame} described below.}
-#'    \item{\code{taxa}}{A data.frame with one row per taxon, containing available information
-#'    on each taxon. The number and nature of columns depend on the input data. Typically, a column
-#'    of taxon names is present.}
-#'    \item{\code{items}}{A data.frame with one row per input item (typically sequences)
-#'    containing their taxon IDs and other informtion, depending on input.}
-#'    }
+#' @return Returns an object of type \code{classified}
 #'    
 #' @export
 #' @rdname extract_taxonomy
@@ -561,8 +574,7 @@ extract_taxonomy.DNAbin <- function(input, ...) {
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @seealso \code{\link{taxonomic_sample}}
-#' 
-#' @export
+#' @keywords internal
 recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
@@ -646,7 +658,6 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' Recursivly sample a set of taxonomic assignments
 #' 
 #' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
-#' This function takes other functions as arguments that define how the taxonomy is iterpreted.
 #' 
 #' @param classified_data (An object of type \link{classified})
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
@@ -674,6 +685,8 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
 #' returned rather than looking for items of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
+#' 
+#' @return Returns an object of type \code{classified}
 #' 
 #' @export
 taxonomic_sample <- function(classified_data,
@@ -717,7 +730,7 @@ taxonomic_sample <- function(classified_data,
 #' 
 #' @return A list of vectors of taxa IDs. Each list entry corresponds to the \code{taxa} supplied.
 #' 
-#' @export
+#' @keywords internal
 get_class_from_el <- function(taxa, parents) {
   process_one <- function(x) {
     output <- character(0)
@@ -743,7 +756,7 @@ get_class_from_el <- function(taxa, parents) {
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
 #' 
-#' @export
+#' @keywords internal
 edge_list_depth <-  function(taxa, parents) {
   vapply(get_class_from_el(taxa, parents), length, numeric(1))
 }
@@ -762,6 +775,8 @@ edge_list_depth <-  function(taxa, parents) {
 #' \code{taxa}.
 #' @param strict If \code{FALSE}, ranks with inconsistent levels will be allowed. Otherwise ranks 
 #' with overlapping level ranges will cause an error. 
+#' 
+#' @keywords internal
 taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
   # Get rank data ----------------------------------------------------------------------------------
   level_by_rank <- split(edge_list_depth(taxa, parents), rank)
@@ -795,7 +810,7 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 #' @return a \code{list} of taxon id \code{character} vectors. 
 #' \code{taxa}.
 #' 
-#' @export
+#' @keywords internal
 split_by_level <- function(taxa, parents, level, rank = NULL) {
   class_data <- get_class_from_el(taxa, parents)
   data <- data.frame(taxa = taxa, parents = parents, 
@@ -827,7 +842,7 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
 #' 
 #' @return A vector of unique taxon IDs.
 #' 
-#' @export
+#' @keywords internal
 restrict_taxonomy <- function(taxa, parents, subset) {
   subset <- unique(subset)
   tax_class <- get_class_from_el(taxa, parents)
@@ -845,7 +860,8 @@ restrict_taxonomy <- function(taxa, parents, subset) {
 #' @param items (\code{character}) Taxon IDs for a set of items to count.
 #' 
 #' @return A named vector of counts corresponding to the taxa in \code{taxa}
-#' @export
+#' 
+#' @keywords internal
 get_taxon_count <- function(taxa, parents, items) {
   tax_class <- get_class_from_el(taxa, parents)
   counts <- table(unlist(tax_class[items]))
@@ -867,7 +883,8 @@ get_taxon_count <- function(taxa, parents, items) {
 #'   rank that still contains all other taxa). 
 #' 
 #' @return A interger vector of indexes corresponding to taxa shared by all subtaxa.
-#' @export
+#' 
+#' @keywords internal
 get_stem_taxa <- function(taxa, parents, include_root = FALSE) {
   parents[!(parents %in% taxa)] <- NA
   stem_indexes <- c()
@@ -893,6 +910,8 @@ get_stem_taxa <- function(taxa, parents, include_root = FALSE) {
 #'   lack of a parent should be coded as \code{NA}.
 #' 
 #' @return (\code{logical}) Returns \code{TRUE} if the list is valid.
+#' 
+#' @keywords internal
 validate_edge_list <- function(taxa, parents) {
   if (length(taxa) == 0) stop("'taxa' has 0 length")
   if (length(parents) == 0) stop("'parents' has 0 length")

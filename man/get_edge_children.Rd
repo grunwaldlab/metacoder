@@ -9,4 +9,5 @@ get_edge_children(graph)
 \description{
 get_edge_children
 }
+\keyword{internal}
 

@@ -14,4 +14,5 @@ make_new_ids(count, existing)
 \description{
 Makes a vector of unique IDs that differ from a previously defined set of unique IDs.
 }
+\keyword{internal}
 

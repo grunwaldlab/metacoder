@@ -12,4 +12,5 @@ verify_color_range(args)
 \description{
 Verify color range parameters
 }
+\keyword{internal}
 

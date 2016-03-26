@@ -18,4 +18,5 @@ A \code{data.frame} of statistics
 Extract statistics from the command line output of mothur command \code{summary.seqs} and
 return the resutls in a \code{data.frame}
 }
+\keyword{internal}
 

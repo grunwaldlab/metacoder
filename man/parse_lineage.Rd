@@ -30,4 +30,5 @@ representing each classification.}
 Parses taxonomic classification strings into a list of \code{data.frame}
 Can extract taxonomic ranks if present.
 }
+\keyword{internal}
 

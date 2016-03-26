@@ -12,4 +12,5 @@ verify_size(args)
 \description{
 Verify size parameters
 }
+\keyword{internal}
 

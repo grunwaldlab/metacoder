@@ -20,4 +20,5 @@ the list of classifications given.
 \description{
 Indentifies unique taxa in a list of taxonomic classifications.
 }
+\keyword{internal}
 

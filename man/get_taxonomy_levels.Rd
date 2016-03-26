@@ -10,4 +10,5 @@ get_taxonomy_levels()
 Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
   hierarchy.
 }
+\keyword{internal}
 

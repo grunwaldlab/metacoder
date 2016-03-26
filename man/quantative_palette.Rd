@@ -9,4 +9,5 @@ quantative_palette()
 \description{
 The default color palette for quantative data
 }
+\keyword{internal}
 

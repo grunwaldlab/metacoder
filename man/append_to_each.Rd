@@ -16,4 +16,5 @@ of as many values as their are \code{data.frame}s in \code{my_list}.}
 \description{
 Add a row to each \code{data.frame} in a list.
 }
+\keyword{internal}
 

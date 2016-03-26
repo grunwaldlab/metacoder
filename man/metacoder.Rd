@@ -37,8 +37,6 @@ To learn how to use the package and what it can do view the package vignettes by
 
 \itemize{
   \item \code{\link{taxonomic_sample}}
-  \item \code{\link{restrict_taxonomy}}
-  \item \code{\link{get_taxon_count}}
   \item \code{\link{ncbi_taxon_sample}}
 }
 
