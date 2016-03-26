@@ -2,12 +2,20 @@
 % Please edit documentation in R/in_silico_pcr.R
 \name{primersearch}
 \alias{primersearch}
+\alias{primersearch.classified}
+\alias{primersearch.default}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
-primersearch(sequence, forward, reverse, seq_name = NULL, pair_name = NULL,
-  mismatch = 5, ...)
+primersearch(...)
+
+\method{primersearch}{default}(sequence, forward, reverse, seq_name = NULL,
+  pair_name = NULL, mismatch = 5, ...)
+
+\method{primersearch}{classified}(classified_data, embed = TRUE, ...)
 }
 \arguments{
+\item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
+
 \item{sequence}{A list of character vectors of DNA sequence or a file path to FASTA file 
 containing sequences.}
 
@@ -23,7 +31,7 @@ the names are used to construct the primer pair names.}
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
 
-\item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
+\item{embed}{If \code{TRUE}, embed output in input object and return}
 }
 \value{
 Output from \code{\link{parse_primersearch}} (A dataframe)

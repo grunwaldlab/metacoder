@@ -81,6 +81,7 @@ parse_primersearch <- function(file_path) {
 } 
 
 
+
 #===================================================================================================
 #' Use EMBOSS primersearch for in silico PCR 
 #' 
@@ -97,7 +98,15 @@ parse_primersearch <- function(file_path) {
 #' @return Output from \code{\link{parse_primersearch}} (A dataframe)
 #' 
 #' @export
-primersearch <- function(sequence, forward, reverse,
+#' @rdname primersearch
+primersearch <- function(...) {
+  UseMethod("primersearch")
+}
+
+#' @method primersearch default
+#' @export
+#' @rdname primersearch
+primersearch.default <- function(sequence, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
   # Read input file if supplied --------------------------------------------------------------------
   if (class(sequence) == "DNAbin") {
@@ -139,5 +148,33 @@ primersearch <- function(sequence, forward, reverse,
     (output$reverse_index + nchar(output$reverse_primer)) + 1
   output$amplicon <- Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
                          as.character(sequence[output$sequence]), output$amp_start, output$amp_end)
+  return(output)
+}
+
+
+#' @param embed If \code{TRUE}, embed output in input object and return
+#' 
+#' @method primersearch classified
+#' @export
+#' @rdname primersearch
+primersearch.classified <- function(classified_data, embed = TRUE, ...) {
+  if (is.null(classified_data$item_data$sequence)) {
+    stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
+  }
+  result <- primersearch(sequence = classified_data$item_data$sequence,
+                         seq_name = seq_along(classified_data$item_data),
+                         ...)
+  
+  if (embed) {
+    classified_data$item_data[ , colnames(result)] <- NA
+    classified_data$item_data[result$sequence, colnames(result)] <- result
+    classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
+                                     proportion_amplified = function(obj, taxon) {
+                                       sum(! is.na(obj$item_data$sequence)) / nrow(obj$item_data)
+                                     })
+    output <- classified_data
+  } else {
+    output <- result
+  }
   return(output)
 }

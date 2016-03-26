@@ -198,35 +198,11 @@ Then, we will calculate the proportion of each taxon's sequences that were able 
 The `primersearch` function returns the item ids that amplified and we can use those ids to look up their taxon ids from the output of `extract_taxonomy`:
 
 ```{r}
-amplified_taxa <- items$taxon_id[pcr$sequence] 
+plot(subsampled_data,
+     vertex_size = item_count,
+     vertex_color = proportion_amplified,
+     vertex_color_range = c("grey", "red", "yellow", "green"),
+     vertex_label = name)
 ```
 
-`get_taxon_count` can be used to count how many sequences were amplified at every rank. 
-
-```{r}
-amplified_counts <- get_taxon_count(taxa$taxon_id, taxa$parent_id, amplified_taxa) 
-```
-
-We can then calculate the proportion of sequences for each taxon that was amplified. 
-
-```{r}
-proportion_amplified <- amplified_counts / taxa$item_count 
-```
-
-If there were multiple amplifications from a single sequence, the proportion could be above 1. 
-We will cap the proportion at 1 to make the graph easier to read. 
-
-```{r}
-proportion_amplified[proportion_amplified > 1] = 1 
-```
-
-Finally, lets see the results by making the vertex color correspond to the proportion of sequences amplified:
-
-```{r}
-plot_taxonomy(taxa$taxon_id, taxa$parent_id,
-              size = taxa$item_count,
-              vertex_color = proportion_amplified,
-              vertex_label = taxa$name)
-
-```
 
