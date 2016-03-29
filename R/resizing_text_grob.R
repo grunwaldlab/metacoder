@@ -8,7 +8,8 @@
 #' @param size The height of text
 #' @param color The color of text
 #' @param rotation The rotation of text
-#' @param justification A \code{list} of \code{character} indicating the justification of text
+#' @param justification A \code{character} indicating the justification of text. 
+#' Is split by \code{"-"}
 #' @param x_range The minimum and maximum x value in the plot 
 #' @param y_range The minimum and maximum y value in the plot
 #' 
@@ -21,7 +22,7 @@ make_text_grobs <- function(label, x, y, size, color, rotation, justification, x
                      gp = grid::gpar(text_prop = size,
                                      col = color),
                      rot = rotation,
-                     just =  justification)
+                     just =  strsplit(justification, split = "-")[[1]])
   }
   square_side_length <- sqrt((x_range[2] - x_range[1]) * (y_range[2] - y_range[1]))
   x <- scales::rescale(x, to = c(0, 1), from = x_range)

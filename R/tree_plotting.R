@@ -637,8 +637,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
     line_label_offset = 1
     justify <- el_data[el_data$pid_user, "vx_plot"] > el_data$vx_plot
     justify[is.na(justify)] <- TRUE
-    justification <- lapply(1:nrow(el_data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
-    names(justification) <- el_data$tid_user
+    justification <- ifelse(justify, "left-center", "right-center")
+#     justification <- lapply(1:nrow(el_data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+#     names(justification) <- el_data$tid_user
     line_label_x_offset <- line_label_offset * el_data$vs_plot * cos(el_data$el_rotation)
     line_label_y_offset <- line_label_offset * el_data$vs_plot * sin(el_data$el_rotation)
     el_data$elx_plot <- el_data$vx_plot + ifelse(justify, 1, -1) * line_label_x_offset

@@ -20,7 +20,8 @@ make_text_grobs(label, x, y, size, color, rotation, justification, x_range,
 
 \item{rotation}{The rotation of text}
 
-\item{justification}{A \code{list} of \code{character} indicating the justification of text}
+\item{justification}{A \code{character} indicating the justification of text. 
+Is split by \code{"-"}}
 
 \item{x_range}{The minimum and maximum x value in the plot}
 
