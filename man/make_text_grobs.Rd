@@ -18,7 +18,7 @@ make_text_grobs(label, x, y, size, color, rotation, justification, x_range,
 
 \item{color}{The color of text}
 
-\item{rotation}{The rotation of text}
+\item{rotation}{The rotation of text. In radians.}
 
 \item{justification}{A \code{character} indicating the justification of text. 
 Is split by \code{"-"}}
