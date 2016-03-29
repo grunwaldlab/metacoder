@@ -691,10 +691,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   
     
-  label_x <- do.call(mapply, args = c(text_data[ , c("x", "size", "label")],
-                            FUN = label_x_bounds))
-  label_y <- do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
-                                      FUN = label_y_bounds))
+  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label")],
+                            FUN = label_x_bounds)))
+  label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
+                                      FUN = label_y_bounds)))
   
   x_points <- c(element_data$x, label_x)
   y_points <- c(element_data$y, label_y)
@@ -704,7 +704,6 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   
   
-  text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
                           fill = element_data$color) +
@@ -717,9 +716,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
                    axis.text  = ggplot2::element_blank(),
                    axis.ticks = ggplot2::element_blank(), 
                    axis.line  = ggplot2::element_blank())
-  for (a_grob in text_grobs) {
-    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-  }    
+  if (!is.null(text_data)) {
+    text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
+    for (a_grob in text_grobs) {
+      the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+    }
+  }
   return(the_plot)
 }
 
