@@ -1,3 +1,27 @@
+#' Plot a taxonomic tree
+#' 
+#' Plot a taxonomic tree
+#' 
+#' @param classified_data An object of class \link{classified}.
+#' @param ... Passed to \link{plot_taxonomy}
+#' 
+#' @inheritParams plot_taxonomy
+#' 
+#' @export
+plot.classified <- function(classified_data, ...) {
+  column_var_name <- colnames(classified_data$taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, classified_data$taxon_data[[x]], envir = parent.frame(2)))
+  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
+                 eval(substitute(list(...))))
+  do.call(plot_taxonomy, arguments)
+}
+
+
+
+
+
+
+
 #===================================================================================================
 #' Plot a taxonomic tree
 #' 
@@ -223,7 +247,6 @@
 #' }
 #'  
 #' @export
-#' @rdname plot_taxonomy
 plot_taxonomy <- function(taxon_id, parent_id, 
                           vertex_label = NA,
                           edge_label = NA,
@@ -414,9 +437,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
-  subgraph_key <- setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
-                           unlist(sub_graph_taxa))
-  data$subgraph_root <- subgraph_key[data$tid_user]
+  data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
   # scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
   # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
@@ -506,7 +527,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
-  data$tree_area <- tree_area[data$subgraph_root]
+  tree_vertex_counts <-  as.numeric(table(data$subgraph_root)[unique(data$subgraph_root)])
+  data$tree_area <- rep(tree_area, tree_vertex_counts)
   tsr_plot <- range(sqrt(tree_area))
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
@@ -532,7 +554,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$tc_plot <- data[data$subgraph_root, "tc_plot"]
+  data$tc_plot <- rep(data[data$is_root, "tc_plot"], tree_vertex_counts) # apply root color to trees
   to_replace <- ! is.na(data$tc_plot)
   data[to_replace, "vc_plot"] <- data[to_replace, "tc_plot"]
   data[to_replace, "ec_plot"] <- data[to_replace, "tc_plot"]
@@ -625,13 +647,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$tx_plot <- tx_plot[data$subgraph_root]
+  data$tx_plot <- rep(tx_plot[unique(data$subgraph_root)], tree_vertex_counts)
   ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$ty_plot <- ty_plot[data$subgraph_root]
+  data$ty_plot <- rep(ty_plot[unique(data$subgraph_root)], tree_vertex_counts)
   data$tlx_plot <- data$tx_plot 
   tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
-  data$tly_plot <- tly_plot[data$subgraph_root] + data$tls_plot * 1.1
+  data$tly_plot <- rep(tly_plot[unique(data$subgraph_root)], tree_vertex_counts) + data$tls_plot * 1.1
   data$tlx_plot <- data$tx_plot 
   vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
   tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
@@ -765,27 +787,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
 }
 
 
-#' @method plot classified
-#' @export
-#' @rdname plot_taxonomy
-plot.classified <- function(classified_data, ...) {
-  my_taxon_data <- taxa::taxon_data(classified_data)
-  column_var_name <- colnames(my_taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
-  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
-                 eval(substitute(list(...))))
-  do.call(plot_taxonomy, arguments)
-}
-
-
 
 #' Verify size range parameters
 #' 
 #' Verify size range parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
-#' 
-#' @keywords internal
 verify_size_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -804,8 +811,6 @@ verify_size_range <- function(args) {
 #' Verify transformation function parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
-#' 
-#' @keywords internal
 verify_trans <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -821,8 +826,6 @@ verify_trans <- function(args) {
 #' Verify size parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
-#' 
-#' @keywords internal
 verify_size <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -838,12 +841,10 @@ verify_size <- function(args) {
 #' Verify color range parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
-#' 
-#' @keywords internal
 verify_color_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
-    if (any(! grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) & ! value %in% colors())) {
+    if (! all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) | value %in% colors())) {
       stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
     }
   }
@@ -856,8 +857,6 @@ verify_color_range <- function(args) {
 #' Verify label count
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
-#' 
-#' @keywords internal
 verify_label_count <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -871,8 +870,6 @@ verify_label_count <- function(args) {
 #' Check length of graph attributes
 #' 
 #' Length should divind evenly into the number of taxon/parent IDs
-#' 
-#' @keywords internal
 check_element_length <- function(args) {
   for (arg in args) {
     observed_length <- length(get(arg, pos = parent.frame()))
@@ -895,8 +892,6 @@ check_element_length <- function(args) {
 #' @param data (\code{numeric}) Data to transform
 #' @param func (\code{character}) Name of transformation to apply.
 #' @param inverse If TRUE, return inverse
-#' 
-#' @keywords internal
 transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
   sign <- function(x) {
     ifelse(x < 0, -1, 1)
@@ -1016,8 +1011,6 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
 #' The defualt quantative color palette
 #' 
 #' The default color palette for quantative data
-#' 
-#' @keywords internal
 quantative_palette <- function() {
   return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
 }
@@ -1026,8 +1019,6 @@ quantative_palette <- function() {
 #' The defualt qualitative color palette
 #' 
 #' The default color palette for qualitative data
-#' 
-#' @keywords internal
 qualitative_palette <- function() {
   return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
 }
@@ -1046,8 +1037,6 @@ qualitative_palette <- function() {
 #' 
 #' 
 #' @return \code{character} Hex color codes. 
-#' 
-#' @keywords internal
 apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
   if (is.numeric(values)) { ## Not factors, characters, or hex codes
     palette <- colorRampPalette(color_series)(no_color_in_palette)
@@ -1077,8 +1066,6 @@ apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) 
 #' @examples
 #' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
-#'   
-#' @keywords internal
 polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   # Define function to make points for a single polygon --------------------------------------------
   process_one <- function(n, x, y, r, a) {
@@ -1122,8 +1109,7 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 #' ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
 #'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
-#'
-#' @keywords internal
+#'   
 line_coords <- function(x1, y1, x2, y2, width) {
   # Define function to make points for a single line rect ------------------------------------------
   process_one <- function(x1, y1, x2, y2, w) {
@@ -1155,8 +1141,6 @@ line_coords <- function(x1, y1, x2, y2, width) {
 #' @examples
 #' molten_dist(x = 1:5, y = 1:5)
 #' 
-#' 
-#' @keywords internal
 molten_dist <- function(x, y) {
   data <- as.matrix(dist(cbind(x, y)))
   data[!lower.tri(data)] <- NA
@@ -1178,8 +1162,6 @@ molten_dist <- function(x, y) {
 #' @examples
 #' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
 #' 
-#' 
-#' @keywords internal
 inter_circle_gap <- function(x, y, r) {
   # Force x, y, and r to same length ---------------------------------------------------------------
   temp <- as.data.frame(cbind(x, y, r))
@@ -1210,8 +1192,6 @@ inter_circle_gap <- function(x, y, r) {
 #' @param choose_best (\code{function}) A function that takes a list of \code{opt_crit} outputs
 #' and returns the index of the best one.
 #' 
-#' 
-#' @keywords internal
 get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose_best, minimize = TRUE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
@@ -1231,157 +1211,5 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
 
 
 
-
-
-#' Make color/size legend
-#' 
-#' Make color/size legend
-#' 
-#' @param x bottom left
-#' @param y bottom left
-#' @param length (\code{numeric} of length 1) the length of the scale bar
-#' @param tick_size (\code{numeric} of length 1) the thickness of tick marks
-#' @param width_range (\code{numeric} of length 1 or 2) the width of the scale bar or the range
-#' @param width_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the size labels
-#' @param width_stat_trans (\code{function}) The transformation used to convert the statistic to size
-#' @param width_title (\code{character} of length 1) The title of the size labels.
-#' @param width_sig_fig (\code{numeric} of length 1) The number of significant figures to use in size labels.
-#' @param color_range (\code{character}) One ore more hex codes constituting a color scale.
-#' @param color_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the color labels
-#' @param color_stat_trans (\code{function}) The transformation used to convert the statistic to size
-#' @param color_title (\code{character} of length 1) The title of the color labels.
-#' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
-#' @param divisions (\code{numeric} of length 1) The number of colors to display. 
-#' @param label_count (\code{numeric} of length 1) The number of labels.
-#' 
-#' @keywords internal
-make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
-                             width_title = "Size", width_sig_fig = 3,
-                             color_range, color_stat_range, color_stat_trans = function(x) {x},
-                             color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 5) {
-  
-  
-  # Generate scale bar coordinates
-  prop_div <- seq(0, 1, length.out = divisions)
-  point_data <- data.frame(x = max(width_range) - prop_div * (max(width_range) - min(width_range)),
-                           y = prop_div * length)
-  prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
-  seq_color <- apply_color_scale(rev(prop_seg), color_range) 
-  scale_data <- lapply(1:(divisions - 1), 
-                       function(i) scale_bar_coords(x1 = point_data$x[i + 1],
-                                                    x2 = point_data$x[i],
-                                                    y1 = point_data$y[i + 1],
-                                                    y2 = point_data$y[i],
-                                                    color = seq_color[i],
-                                                    group = paste0("scale-",i)))
-  scale_data <- do.call(rbind, scale_data)
-  
-  # Generate tick mark coordinates
-  tick_color <- "#555555"
-  tick_div <- seq(0, 1, length.out = label_count)
-  label_point_y <- tick_div * length
-  tick_coords <- function(center_y) {
-    max_y <- center_y + tick_size / 2
-    min_y <- center_y - tick_size / 2
-    data.frame(group = paste0("tick-", center_y),
-               x = c(0, 0, rep(max(width_range), 2)),
-               y = c(min_y, max_y, max_y, min_y),
-               color = tick_color)
-  }
-  
-  
-  tick_data <- lapply(label_point_y, tick_coords)
-  tick_data <- do.call(rbind, tick_data)
-  
-  # Generate label coordinates
-  format_label <- function(n) {
-    # format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
-    signif(n, digits = 3)
-  }
-  
-  scale_undo_trans <- function(points, my_range, my_trans) {
-    trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
-    format_label(scales::rescale(trans_points, to = range(my_range)))
-  }
-  
-  label_color = "#000000"
-  label_size = max(width_range) / 5
-  
-  
-  make_size_label_data <- function() {
-    size_label_data <- data.frame(stringsAsFactors = FALSE, 
-                                  label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
-                                  x = max(width_range) * 1.1,
-                                  y = rev(label_point_y),
-                                  color = label_color,
-                                  size = label_size,
-                                  rot = 0,
-                                  just = "left")
-  }
-  
-  make_color_label_data <- function() {
-    
-    color_label_data <- data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
-                                   x = 0 - max(width_range) * 0.1,
-                                   y = rev(label_point_y),
-                                   color = label_color,
-                                   size = label_size,
-                                   rot = 0,
-                                   just = "right")
-  } 
-  
-  
-  if (!is.null(width_stat_range) && !is.null(color_stat_range)) {
-    label_data <- rbind(make_size_label_data(), make_color_label_data())
-  } else if (!is.null(width_stat_range)) {
-    label_data <- make_size_label_data()
-  } else if (!is.null(color_stat_range)) {
-    label_data <- make_color_label_data()
-  } else {
-    label_data <- NULL
-  }
-  
-  # Generate title coordinates
-  
-  
-  shape_data <- rbind(tick_data, scale_data)
-  shape_data$x <- shape_data$x + x
-  shape_data$y <- shape_data$y + y
-  
-  if (!is.null(label_data)) {
-    label_data$x <- label_data$x + x
-    label_data$y <- label_data$y + y
-    
-  }
-  
-  output <- list(shapes = shape_data,
-                 labels = label_data)
-  return(output)
-}
-
-
-#' Make scale bar division
-#' 
-#' Make scale bar division
-#' 
-#' @param x1 (\code{numeric} of length 1) x of top right 
-#' @param x2 (\code{numeric} of length 1) x of bottom right
-#' @param y1 (\code{numeric} of length 1) y of top right 
-#' @param y2 (\code{numeric} of length 1) y of bottom right
-#' @param color 
-#' @param group 
-#' 
-#' @return \code{data.frame}
-#' 
-#' @keywords internal
-scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
-  data.frame(group = group,
-             x = c(x1, x2, 0, 0),
-             y = c(y1, y2, y2, y1),
-             color = color)
-  
-}
 
 
