@@ -18,6 +18,7 @@
 #' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
 #' @param divisions (\code{numeric} of length 1) The number of colors to display. 
 #' @param label_count (\code{numeric} of length 1) The number of labels.
+#' @keywords internal
 make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
@@ -137,6 +138,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
 #' @param group 
 #' 
 #' @return \code{data.frame}
+#' @keywords internal
 scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
   data.frame(group = group,
              x = c(x1, x2, 0, 0),

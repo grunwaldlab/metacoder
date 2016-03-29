@@ -1,27 +1,3 @@
-#' Plot a taxonomic tree
-#' 
-#' Plot a taxonomic tree
-#' 
-#' @param classified_data An object of class \link{classified}.
-#' @param ... Passed to \link{plot_taxonomy}
-#' 
-#' @inheritParams plot_taxonomy
-#' 
-#' @export
-plot.classified <- function(classified_data, ...) {
-  column_var_name <- colnames(classified_data$taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, classified_data$taxon_data[[x]], envir = parent.frame(2)))
-  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
-                 eval(substitute(list(...))))
-  do.call(plot_taxonomy, arguments)
-}
-
-
-
-
-
-
-
 #===================================================================================================
 #' Plot a taxonomic tree
 #' 
@@ -247,6 +223,7 @@ plot.classified <- function(classified_data, ...) {
 #' }
 #'  
 #' @export
+#' @rdname plot_taxonomy
 plot_taxonomy <- function(taxon_id, parent_id, 
                           vertex_label = NA,
                           edge_label = NA,
@@ -437,7 +414,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
-  data$subgraph_root <- rep(names(sub_coords), vapply(sub_coords, nrow, numeric(1)))
+  subgraph_key <- setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
+                           unlist(sub_graph_taxa))
+  data$subgraph_root <- subgraph_key[data$tid_user]
   # scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
   # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
@@ -527,8 +506,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
-  tree_vertex_counts <-  as.numeric(table(data$subgraph_root)[unique(data$subgraph_root)])
-  data$tree_area <- rep(tree_area, tree_vertex_counts)
+  data$tree_area <- tree_area[data$subgraph_root]
   tsr_plot <- range(sqrt(tree_area))
   #|
   #| #### Infer label size ranges -----------------------------------------------------------------
@@ -554,7 +532,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
   # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$tc_plot <- rep(data[data$is_root, "tc_plot"], tree_vertex_counts) # apply root color to trees
+  data$tc_plot <- data[data$subgraph_root, "tc_plot"]
   to_replace <- ! is.na(data$tc_plot)
   data[to_replace, "vc_plot"] <- data[to_replace, "tc_plot"]
   data[to_replace, "ec_plot"] <- data[to_replace, "tc_plot"]
@@ -647,13 +625,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
   # Estimate plotted radius of vertex and tree labels
   tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$tx_plot <- rep(tx_plot[unique(data$subgraph_root)], tree_vertex_counts)
+  data$tx_plot <- tx_plot[data$subgraph_root]
   ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
                     function(x) mean(range(x)))
-  data$ty_plot <- rep(ty_plot[unique(data$subgraph_root)], tree_vertex_counts)
+  data$ty_plot <- ty_plot[data$subgraph_root]
   data$tlx_plot <- data$tx_plot 
   tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
-  data$tly_plot <- rep(tly_plot[unique(data$subgraph_root)], tree_vertex_counts) + data$tls_plot * 1.1
+  data$tly_plot <- tly_plot[data$subgraph_root] + data$tls_plot * 1.1
   data$tlx_plot <- data$tx_plot 
   vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
   tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
@@ -787,12 +765,27 @@ plot_taxonomy <- function(taxon_id, parent_id,
 }
 
 
+#' @method plot classified
+#' @export
+#' @rdname plot_taxonomy
+plot.classified <- function(classified_data, ...) {
+  my_taxon_data <- taxa::taxon_data(classified_data)
+  column_var_name <- colnames(my_taxon_data)
+  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
+  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
+                 eval(substitute(list(...))))
+  do.call(plot_taxonomy, arguments)
+}
+
+
 
 #' Verify size range parameters
 #' 
 #' Verify size range parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
 verify_size_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -811,6 +804,8 @@ verify_size_range <- function(args) {
 #' Verify transformation function parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
 verify_trans <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -826,6 +821,8 @@ verify_trans <- function(args) {
 #' Verify size parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
 verify_size <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -841,10 +838,12 @@ verify_size <- function(args) {
 #' Verify color range parameters
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
 verify_color_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
-    if (! all(grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) | value %in% colors())) {
+    if (any(! grepl("^#(?:[0-9a-fA-F]{3}){1,2}$", value) & ! value %in% colors())) {
       stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
     }
   }
@@ -857,6 +856,8 @@ verify_color_range <- function(args) {
 #' Verify label count
 #' 
 #' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
 verify_label_count <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
@@ -870,6 +871,8 @@ verify_label_count <- function(args) {
 #' Check length of graph attributes
 #' 
 #' Length should divind evenly into the number of taxon/parent IDs
+#' 
+#' @keywords internal
 check_element_length <- function(args) {
   for (arg in args) {
     observed_length <- length(get(arg, pos = parent.frame()))
@@ -892,6 +895,8 @@ check_element_length <- function(args) {
 #' @param data (\code{numeric}) Data to transform
 #' @param func (\code{character}) Name of transformation to apply.
 #' @param inverse If TRUE, return inverse
+#' 
+#' @keywords internal
 transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
   sign <- function(x) {
     ifelse(x < 0, -1, 1)
@@ -1011,6 +1016,8 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
 #' The defualt quantative color palette
 #' 
 #' The default color palette for quantative data
+#' 
+#' @keywords internal
 quantative_palette <- function() {
   return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
 }
@@ -1019,6 +1026,8 @@ quantative_palette <- function() {
 #' The defualt qualitative color palette
 #' 
 #' The default color palette for qualitative data
+#' 
+#' @keywords internal
 qualitative_palette <- function() {
   return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
 }
@@ -1037,6 +1046,8 @@ qualitative_palette <- function() {
 #' 
 #' 
 #' @return \code{character} Hex color codes. 
+#' 
+#' @keywords internal
 apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
   if (is.numeric(values)) { ## Not factors, characters, or hex codes
     palette <- colorRampPalette(color_series)(no_color_in_palette)
@@ -1066,6 +1077,8 @@ apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) 
 #' @examples
 #' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
+#'   
+#' @keywords internal
 polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
   # Define function to make points for a single polygon --------------------------------------------
   process_one <- function(n, x, y, r, a) {
@@ -1109,7 +1122,8 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 #' ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
 #'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
-#'   
+#'
+#' @keywords internal
 line_coords <- function(x1, y1, x2, y2, width) {
   # Define function to make points for a single line rect ------------------------------------------
   process_one <- function(x1, y1, x2, y2, w) {
@@ -1141,6 +1155,8 @@ line_coords <- function(x1, y1, x2, y2, width) {
 #' @examples
 #' molten_dist(x = 1:5, y = 1:5)
 #' 
+#' 
+#' @keywords internal
 molten_dist <- function(x, y) {
   data <- as.matrix(dist(cbind(x, y)))
   data[!lower.tri(data)] <- NA
@@ -1162,6 +1178,8 @@ molten_dist <- function(x, y) {
 #' @examples
 #' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
 #' 
+#' 
+#' @keywords internal
 inter_circle_gap <- function(x, y, r) {
   # Force x, y, and r to same length ---------------------------------------------------------------
   temp <- as.data.frame(cbind(x, y, r))
@@ -1192,6 +1210,8 @@ inter_circle_gap <- function(x, y, r) {
 #' @param choose_best (\code{function}) A function that takes a list of \code{opt_crit} outputs
 #' and returns the index of the best one.
 #' 
+#' 
+#' @keywords internal
 get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose_best, minimize = TRUE) {
   # Validate arguments -----------------------------------------------------------------------------
   if (length(max_range) != 2 || max_range[1] > max_range[2]) stop('Invalid `max_range`')
@@ -1207,9 +1227,3 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
   scores <- lapply(search_space, function(x) opt_crit(x[1], x[2]))
   search_space[[choose_best(scores)]]
 }
-
-
-
-
-
-
