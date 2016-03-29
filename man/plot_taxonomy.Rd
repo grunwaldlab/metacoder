@@ -28,7 +28,7 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   edge_label_color_range = quantative_palette(),
   tree_label_color_range = quantative_palette(), vertex_label_max = 50,
   edge_label_max = 50, tree_label_max = 50, overlap_avoidance = 1,
-  margin_size = c(0.1, 0.05), layout = "reingold-tilford",
+  margin_size = c(0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE, ...)
 
 \method{plot}{classified}(classified_data, ...)

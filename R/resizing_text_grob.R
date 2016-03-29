@@ -1,3 +1,39 @@
+#' Create a list of text grobs
+#' 
+#' Creates a list of resizing text grobs
+#' 
+#' @param label Text to display
+#' @param x x
+#' @param y y
+#' @param size The height of text
+#' @param color The color of text
+#' @param rotation The rotation of text
+#' @param justification A \code{list} of \code{character} indicating the justification of text
+#' @param x_range The minimum and maximum x value in the plot 
+#' @param y_range The minimum and maximum y value in the plot
+#' 
+#' @return \code{list} of \code{\link{resizingTextGrob}}
+#' 
+#' @keywords internal
+make_text_grobs <- function(label, x, y, size, color, rotation, justification, x_range, y_range) {
+  make_text_grob <- function(label, x, y, size, color, rotation, justification) {
+    resizingTextGrob(label = label, x = x, y = y,
+                     gp = grid::gpar(text_prop = size,
+                                     col = color),
+                     rot = rotation,
+                     just =  justification)
+  }
+  square_side_length <- sqrt((x_range[2] - x_range[1]) * (y_range[2] - y_range[1]))
+  x <- scales::rescale(x, to = c(0, 1), from = x_range)
+  y <- scales::rescale(y, to = c(0, 1), from = y_range)
+  size <- scales::rescale(size, to = c(0, 1), from = c(0, square_side_length))
+  mapply(make_text_grob, label, x, y, size, color, rotation, justification, SIMPLIFY = FALSE)
+}
+
+
+
+
+
 #===================================================================================================
 #' Adds text grob that scales with viewport size
 #' 

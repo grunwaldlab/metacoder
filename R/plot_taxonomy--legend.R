@@ -61,7 +61,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   # Generate label coordinates
   format_label <- function(n) {
     # format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
-    signif(n, digits = 3)
+    as.character(signif(n, digits = 3))
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
@@ -74,26 +74,25 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   
   
   make_size_label_data <- function() {
-    size_label_data <- data.frame(stringsAsFactors = FALSE, 
-                                  label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
-                                  x = max(width_range) * 1.1,
-                                  y = rev(label_point_y),
-                                  color = label_color,
-                                  size = label_size,
-                                  rot = 0,
-                                  just = "left")
+    data.frame(stringsAsFactors = FALSE, 
+               label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+               x = max(width_range) * 1.1,
+               y = rev(label_point_y),
+               size = label_size,
+               color = label_color,
+               rotation = 0,
+               justification = "left")
   }
   
   make_color_label_data <- function() {
-    
-    color_label_data <- data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
-                                   x = 0 - max(width_range) * 0.1,
-                                   y = rev(label_point_y),
-                                   color = label_color,
-                                   size = label_size,
-                                   rot = 0,
-                                   just = "right")
+    data.frame(stringsAsFactors = FALSE, 
+               label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+               x = 0 - max(width_range) * 0.1,
+               y = rev(label_point_y),
+               size = label_size,
+               color = label_color,
+               rotation = 0,
+               justification = "right")
   } 
   
   

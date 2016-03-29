@@ -282,7 +282,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           tree_label_max = 50,
                           
                           overlap_avoidance = 1,
-                          margin_size = c(0.1, 0.05),
+                          margin_size = c(0, 0),
                           layout = "reingold-tilford",
                           initial_layout = "fruchterman-reingold",
                           make_legend = TRUE,
@@ -568,7 +568,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   element_data <- do.call(rbind, lapply(element_order, taxon_elements))
   element_data$group <- factor(element_data$group, levels = unique(element_data$group))
   #|
-  #| #### Make legend 
+  #| #### Make legend -----------------------------------------------------------------------
   #|
   if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
     if (missing(vertex_size)) {
@@ -600,148 +600,117 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   #|
-  #| #### Make vertex text grobs ------------------------------------------------------------------
+  #| #### Make text data ------------------------------------------------------------------
   #|
-  # Determine which labels will be shown -
-  select_labels <- function(my_data, label_max, sort_by_colume, label_colume, subset = TRUE) {
-    subset_data <- data[subset, ]
-    if (is.null(label_max) || is.na(label_max) || nrow(subset_data) <= label_max) {
-      labels_shown <- subset_data[,  "tid_user"]
-    } else {
-      index_order <- rev(do.call(order, subset_data[ , sort_by_colume]))
-      top_indexes <- index_order[1:label_max]
-      labels_shown <- subset_data[top_indexes,  "tid_user"]
-    }
-    labels_shown <- labels_shown[!is.na(subset_data[labels_shown, label_colume])]  # Do not make grobs for NA
-    return(my_data[ ,  "tid_user"] %in% labels_shown)
-  }
-  
+  # Get vertex label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$vl_is_shown <- select_labels(data, vertex_label_max,
-                                    sort_by_colume = c("vls_plot", "vs_plot"), label_colume = "vl_user")
-  data$el_is_shown <- select_labels(data, edge_label_max,
-                                    sort_by_colume = c("els_plot", "es_plot"), label_colume = "el_user")
-  data$tl_is_shown <- select_labels(data, tree_label_max, subset = data$is_root,
-                                    sort_by_colume = c("tls_plot", "vs_plot"), label_colume = "tl_user")
-  # Estimate plotted radius of vertex and tree labels
-  tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
-                    function(x) mean(range(x)))
-  data$tx_plot <- tx_plot[data$subgraph_root]
-  ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
-                    function(x) mean(range(x)))
-  data$ty_plot <- ty_plot[data$subgraph_root]
-  data$tlx_plot <- data$tx_plot 
-  tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
-  data$tly_plot <- tly_plot[data$subgraph_root] + data$tls_plot * 1.1
-  data$tlx_plot <- data$tx_plot 
-  vl_radius_plot <- data$vls_plot * nchar(data$vl_user) / 2
-  tl_radius_plot <- data$tls_plot * nchar(data$tl_user) / 2
-  vl_data_shown <- data[data$vl_is_shown, ]
-  tl_data_shown <- data[data$tl_is_shown, ]
-  
-  vlx_min <- (data$vx_plot - vl_radius_plot)[data$vl_is_shown]
-  vlx_max <- (data$vx_plot + vl_radius_plot)[data$vl_is_shown]
-  tlx_min <- (data$tx_plot - tl_radius_plot)[data$tl_is_shown]
-  tlx_max <- (data$tlx_plot + tl_radius_plot)[data$tl_is_shown]
-  vly_min <- (data$vy_plot - data$vls_plot)[data$vl_is_shown]
-  vly_max <- (data$vy_plot + data$vls_plot)[data$vl_is_shown]
-  tly_min <- (data$tly_plot - data$tls_plot)[data$tl_is_shown]
-  tly_max <- (data$tly_plot + data$tls_plot)[data$tl_is_shown]
-  
-  x_points <- c(element_data$x, vlx_min, vlx_max, tlx_min, tlx_max)
-  y_points <- c(element_data$y, vly_min, vly_max, tly_min, tly_max)
-  
-  
-  margin_size_plot <- margin_size * square_side_length
-  x_min <- min(x_points) - margin_size_plot[1]
-  x_max <- max(x_points) + margin_size_plot[1]
-  y_min <- min(y_points) - margin_size_plot[2]
-  y_max <- max(y_points) + margin_size_plot[2]
-  data$vls_plot <- scales::rescale(data$vls_plot, to = c(0, 1), from = c(0, square_side_length))
-  data$vlx_plot <- scales::rescale(data$vx_plot, to = c(0, 1), from = c(x_min, x_max))
-  data$vly_plot <- scales::rescale(data$vy_plot, to = c(0, 1), from = c(y_min, y_max))
-  
-  vertex_label_grobs <- plyr::dlply(data[data$vl_is_shown, ], "tid_user",
-                                    function(row) resizingTextGrob(label = row['vl_user'],
-                                                                   y = row['vly_plot'],
-                                                                   x = row['vlx_plot'],
-                                                                   gp = grid::gpar(text_prop = row['vls_plot'],
-                                                                                   col = as.character(row['vlc_plot']))))    
-  #|
-  #| #### Make legend text grobs -------------------------------------------------------------------
-  #|
-  if (!is.null(legend_data)) {
-    legend_label_data <- legend_data$labels
-    legend_label_data$x_prop <- scales::rescale(legend_label_data$x, to = c(0, 1), from = c(x_min, x_max))
-    legend_label_data$y_prop <- scales::rescale(legend_label_data$y, to = c(0, 1), from = c(y_min, y_max))
-    legend_label_data$s_prop <- scales::rescale(legend_label_data$size, to = c(0, 1), from = c(0, square_side_length))
-    legend_label_data$id <- 1:nrow(legend_label_data)
-    # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    legend_label_grobs <- plyr::dlply(legend_label_data, "id",
-                                      function(row) resizingTextGrob(label = row['label'],
-                                                                     x = row['x_prop'],
-                                                                     y = row['y_prop'],
-                                                                     gp = grid::gpar(text_prop = row['s_prop'],
-                                                                                     col = as.character(row['color'])),
-                                                                     rot = row['rot'],
-                                                                     just =  row[['just']]))
-    
+                                    sort_by_column = c("vls_plot", "vs_plot"),
+                                    label_column = "vl_user")
+  if (any(data$vl_is_shown)) {
+    vl_data <- data[data$vl_is_shown, , drop = FALSE]
+    text_data <- data.frame(stringsAsFactors = FALSE,
+                          label = vl_data$vl_user,
+                          x = vl_data$vx_plot,
+                          y = vl_data$vy_plot,
+                          size = vl_data$vls_plot,
+                          color = vl_data$vlc_plot,
+                          rotation = 0,
+                          justification = "center")
   } else {
-    legend_label_grobs <- list()
+    text_data <- NULL
+  }
+  # Get legend label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  text_data <- rbind(text_data,
+                     legend_data$labels)
+  # Get edge label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  data$el_is_shown <- select_labels(data, edge_label_max,
+                                    sort_by_column = c("els_plot", "es_plot"),
+                                    label_column = "el_user")
+  data[is.na(data$pid_user), "el_is_shown"] <- FALSE # taxa with no parents get no line label
+  if (any(data$el_is_shown)) {
+    el_data <- data[data$el_is_shown, ]
+    # edge label rotation 
+    el_data$el_slope <- (el_data$vy_plot - el_data[el_data$pid_user, "vy_plot"]) / (el_data$vx_plot - el_data[el_data$pid_user, "vx_plot"])
+    el_data$el_slope[is.na(el_data$el_slope)] <- 0
+    el_data$el_rotation <- atan(el_data$el_slope) * 180 / pi
+    # edge label coordinate 
+    line_label_offset = 1
+    justify <- el_data[el_data$pid_user, "vx_plot"] > el_data$vx_plot
+    justify[is.na(justify)] <- TRUE
+    justification <- lapply(1:nrow(el_data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
+    names(justification) <- el_data$tid_user
+    line_label_x_offset <- line_label_offset * el_data$vs_plot * cos(el_data$el_rotation)
+    line_label_y_offset <- line_label_offset * el_data$vs_plot * sin(el_data$el_rotation)
+    el_data$elx_plot <- el_data$vx_plot + ifelse(justify, 1, -1) * line_label_x_offset
+    el_data$ely_plot <- el_data$vy_plot + ifelse(justify, 1, -1) * line_label_y_offset
+    # create text data   
+    text_data <- rbind(text_data,
+                       data.frame(stringsAsFactors = FALSE, 
+                                  label = el_data$el_user,
+                                  x = el_data$elx_plot,
+                                  y = el_data$ely_plot,
+                                  size = el_data$els_plot,
+                                  color = el_data$elc_plot,
+                                  rotation = el_data$el_rotation,
+                                  justification = justification))
+  }
+  # Get tree label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  data$tl_is_shown <- select_labels(data[data$is_root, , drop = FALSE], tree_label_max,
+                                    sort_by_column = c("tls_plot", "vs_plot"), label_column = "tl_user")
+  if (any(data$tl_is_shown)) {
+    title_data <- data[data$tl_is_shown, , drop = FALSE]
+    tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
+                      function(x) mean(range(x)))
+    title_data$tx_plot <- tx_plot[title_data$subgraph_root]
+    ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
+                      function(x) mean(range(x)))
+    title_data$ty_plot <- ty_plot[title_data$subgraph_root]
+    title_data$tlx_plot <- title_data$tx_plot 
+    tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
+    title_data$tly_plot <- tly_plot[title_data$subgraph_root] + title_data$tls_plot * 1.1
+    text_data <- rbind(text_data,
+                       data.frame(stringsAsFactors = FALSE, 
+                                  label = title_data$tl_user,
+                                  x = title_data$tlx_plot,
+                                  y = title_data$tly_plot,
+                                  size = title_data$tls_plot,
+                                  color = title_data$tlc_plot,
+                                  rotation = 0,
+                                  justification = "center"))
+    
+  }
+  #| ### Draw plot ================================================================================
+  
+  label_x_bounds <- function(x, size, label) {
+    spread <- size  * nchar(label) * 0.65
+    c(x + spread, x - spread)
+  }
+  label_y_bounds <- function(y, size, label) {
+    spread <- size / 2
+    c(y + spread, y - spread)
   }
   
-  #|
-  #| #### Make edge text grobs -------------------------------------------------------------------
-  #|
-  data$el_user[is.na(data$pid_user)] <- ""
-  # line label rotation  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$el_slope <- (data$vy_plot - data[data$pid_user, "vy_plot"]) / (data$vx_plot - data[data$pid_user, "vx_plot"])
-  data$el_slope[is.na(data$el_slope)] <- 0
-  data$el_rotation <- atan(data$el_slope)
-  # line label coordinate  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  line_label_offset = 1
-  justify <- data[data$pid_user, "vx_plot"] > data$vx_plot
-  justify[is.na(justify)] <- TRUE
-  justification <- lapply(1:nrow(data), function(i) if (justify[i]) c("left", "center") else c("right", "center"))
-  names(justification) <- data$tid_user
-  line_label_x_offset <- line_label_offset * data$vs_plot * cos(data$el_rotation)
-  line_label_y_offset <- line_label_offset * data$vs_plot * sin(data$el_rotation)
-  data$elx_plot <- data$vx_plot + ifelse(justify, 1, -1) * line_label_x_offset
-  data$ely_plot <- data$vy_plot + ifelse(justify, 1, -1) * line_label_y_offset
-  data$elx_plot <- scales::rescale(data$elx_plot, to = c(0, 1), from = c(x_min, x_max))
-  data$ely_plot <- scales::rescale(data$ely_plot, to = c(0, 1), from = c(y_min, y_max))
-  # line label text size - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$els_plot <-  scales::rescale(data$els_plot, to = c(0, 1), from = c(0, square_side_length))
-  # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  edge_label_grobs <- plyr::dlply(data[data$el_is_shown, ], "tid_user",
-                                  function(row) resizingTextGrob(label = row['el_user'],
-                                                                 y = row['ely_plot'],
-                                                                 x = row['elx_plot'],
-                                                                 gp = grid::gpar(text_prop = row['els_plot'],
-                                                                                 col = as.character(row['elc_plot'])),
-                                                                 rot = row['el_rotation'] * 180 / pi,
-                                                                 just = justification[[row[['tid_user']]]]))
-  #|
-  #| #### Make subplot title text grobs -----------------------------------------------------------
-  #|
-  title_data <- data[data$tl_is_shown, ]
-  title_data$tlx_prop <- scales::rescale(title_data$tlx_plot, to = c(0, 1), from = c(x_min, x_max))
-  title_data$tly_prop <- scales::rescale(title_data$tly_plot, to = c(0, 1), from = c(y_min, y_max))
-  title_data$tls_prop <- scales::rescale(title_data$tls_plot, to = c(0, 1), from = c(0, square_side_length))
-  # create text grobs  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  tree_label_grobs <- plyr::dlply(title_data, "tid_user",
-                                  function(row) resizingTextGrob(label = row['tl_user'],
-                                                                 x = row['tlx_prop'],
-                                                                 y = row['tly_prop'],
-                                                                 gp = grid::gpar(text_prop = row['tls_prop'],
-                                                                                 col = as.character(row['tlc_plot'])),
-                                                                 rot = 0,
-                                                                 just = "center"))
-  #| ### Draw plot ================================================================================
+  
+    
+  label_x <- do.call(mapply, args = c(text_data[ , c("x", "size", "label")],
+                            FUN = label_x_bounds))
+  label_y <- do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
+                                      FUN = label_y_bounds))
+  
+  x_points <- c(element_data$x, label_x)
+  y_points <- c(element_data$y, label_y)
+  margin_size_plot <- margin_size * square_side_length
+  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
+  y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
+  
+  
+  
+  text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
                           fill = element_data$color) +
     ggplot2::guides(fill = "none") +
-    ggplot2::coord_fixed(xlim = c(x_max, x_min), ylim = c(y_max, y_min)) +
+    ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +
     ggplot2::scale_y_continuous(expand = c(0,0)) + ggplot2::scale_x_continuous(expand = c(0,0)) +
     ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                    panel.background = ggplot2::element_blank(),
@@ -749,19 +718,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
                    axis.text  = ggplot2::element_blank(),
                    axis.ticks = ggplot2::element_blank(), 
                    axis.line  = ggplot2::element_blank())
-  for (a_grob in edge_label_grobs) {
+  for (a_grob in text_grobs) {
     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
   }    
-  for (a_grob in vertex_label_grobs) {
-    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-  }    
-  for (a_grob in tree_label_grobs) {
-    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-  }    
-  for (a_grob in legend_label_grobs) {
-    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-  }    
-  the_plot
+  return(the_plot)
 }
 
 
@@ -1226,4 +1186,28 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
   # Find optimal range -----------------------------------------------------------------------------
   scores <- lapply(search_space, function(x) opt_crit(x[1], x[2]))
   search_space[[choose_best(scores)]]
+}
+
+
+#' Pick labels to show
+#' 
+#' Pick labels to show based off a column name to sort by anda maximum number
+#' 
+#' @param my_data \code{data.frame}
+#' @param label_max \code{numeric} of length 1
+#' @param sort_by_column \code{character} of length 1; the name of a column in \code{my_data}
+#' @param label_column \code{character} of length 1; the name of a column in \code{my_data}
+#' containing labels
+#' 
+#' @return \code{character} IDs of rows with labels to show
+select_labels <- function(my_data, label_max, sort_by_column, label_column) {
+  if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
+    labels_shown <- rownames(my_data)
+  } else {
+    index_order <- rev(do.call(order, my_data[ , sort_by_column]))
+    top_indexes <- index_order[1:label_max]
+    labels_shown <- rownames(my_data)[top_indexes]
+  }
+  labels_shown <- labels_shown[!is.na(my_data[labels_shown, label_column])]  # Do not make grobs for NA
+  return(rownames(my_data) %in% labels_shown)
 }
