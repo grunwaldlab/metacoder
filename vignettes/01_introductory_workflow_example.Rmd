@@ -187,18 +187,18 @@ First we will do the *in silico* PCR:
 
 
 ```{r}
-subsampled_data <- primersearch(subsampled_data,
-                                forward = "GCGGTAATTCCAGC",
-                                reverse = "CCCGTGTTGAGTCAAAT",
-                                pair_name = "F-574__and__R-1200",
-                                mismatch = 10)
+pcr_results <- primersearch(subsampled_data,
+                            forward = "GCGGTAATTCCAGC",
+                            reverse = "CCCGTGTTGAGTCAAAT",
+                            pair_name = "F-574__and__R-1200",
+                            mismatch = 10)
 ```
 
 Then, we will calculate the proportion of each taxon's sequences that were able to be amplified. 
 The `primersearch` function returns the item ids that amplified and we can use those ids to look up their taxon ids from the output of `extract_taxonomy`:
 
 ```{r}
-plot(subsampled_data,
+plot(pcr_results,
      vertex_size = item_count,
      vertex_color = proportion_amplified,
      vertex_color_range = c("grey", "red", "yellow", "green"),

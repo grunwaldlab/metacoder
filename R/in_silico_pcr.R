@@ -67,10 +67,10 @@ parse_primersearch <- function(file_path) {
   primer_data <- do.call(rbind, stringr::str_match_all(primer_chunks, pattern))[,-1]
   # Reformat amplicon data -------------------------------------------------------------------------
   primer_data <- plyr::name_rows(as.data.frame(primer_data))
-  colnames(primer_data) <- c("amplimer", "sequence", "name", "forward_primer", "forward_index",
+  colnames(primer_data) <- c("amplimer", "seq_id", "name", "forward_primer", "forward_index",
                              "forward_mismatch",  "reverse_primer", "reverse_index",
                              "reverse_mismatch", "length", "primer_pair")
-  primer_data <- primer_data[c("primer_pair", "amplimer", "length", "sequence", "name",
+  primer_data <- primer_data[c("primer_pair", "amplimer", "length", "seq_id", "name",
                                "forward_primer", "forward_index", "forward_mismatch",
                                "reverse_primer", "reverse_index", "reverse_mismatch")]
   for (i in seq_along(primer_data)) primer_data[[i]] <- as.character(primer_data[[i]])
@@ -142,12 +142,12 @@ primersearch.default <- function(sequence, forward, reverse,
   on.exit(file.remove(output_path))
   output <- parse_primersearch(output_path)
   # Extract amplicon sequence ---------------------------------------------------------------------
-  output$sequence <- as.numeric(output$sequence)
+  output$seq_id <- as.numeric(output$seq_id)
   output$amp_start <- output$forward_index + nchar(output$forward_primer)
-  output$amp_end <- vapply(sequence[output$sequence], length, numeric(1)) -
+  output$amp_end <- vapply(sequence[output$seq_id], length, numeric(1)) -
     (output$reverse_index + nchar(output$reverse_primer)) + 1
   output$amplicon <- Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
-                         as.character(sequence[output$sequence]), output$amp_start, output$amp_end)
+                         as.character(sequence[output$seq_id]), output$amp_start, output$amp_end)
   return(output)
 }
 
@@ -167,10 +167,12 @@ primersearch.classified <- function(classified_data, embed = TRUE, ...) {
   
   if (embed) {
     classified_data$item_data[ , colnames(result)] <- NA
-    classified_data$item_data[result$sequence, colnames(result)] <- result
+    classified_data$item_data[result$seq_id, colnames(result)] <- result
+    classified_data$item_data$amplified <- ! is.na(classified_data$item_data$seq_id)
     classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
-                                     proportion_amplified = function(obj, taxon) {
-                                       sum(! is.na(obj$item_data$sequence)) / nrow(obj$item_data)
+                                     count_amplified = function(obj, taxon) {
+                                       print(obj$item_data)
+                                       sum(obj$item_data$amplified)
                                      })
     output <- classified_data
   } else {
