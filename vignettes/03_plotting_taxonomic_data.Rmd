@@ -13,7 +13,7 @@ vignette: >
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ape)
 library(metacoder)
-library(taxa)
+library(magrittr)
 library(knitr)
 library(ggplot2)
 opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold', eval = FALSE)
@@ -270,20 +270,21 @@ plot(original_data,
 
 
 ```{r}
-plot(original_data[name == "Ascomycota"],
-     vertex_size = item_count,
+subset(original_data, name == "Ascomycota") %>%
+  plot(vertex_size = item_count,
+       vertex_color = item_count,
+       vertex_label = name,
+       tree_label = name)
+
+
+subset(original_data, rank > 1) %>%
+plot(vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name,
      tree_label = name)
 
-plot(original_data[level > 1],
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = name,
-     tree_label = name)
-
-plot(original_data[level > 3],
-     vertex_size = item_count,
+subset(original_data, rank > 3) %>%
+plot(vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name,
      tree_label = name)

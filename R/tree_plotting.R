@@ -654,7 +654,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   justification = justification))
   }
   # Get tree label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$tl_is_shown <- select_labels(data[data$is_root, , drop = FALSE], tree_label_max,
+  data$tl_is_shown <- FALSE
+  data[data$is_root, "tl_is_shown"] <- select_labels(data[data$is_root, ], tree_label_max,
                                     sort_by_column = c("tls_plot", "vs_plot"), label_column = "tl_user")
   if (any(data$tl_is_shown)) {
     title_data <- data[data$tl_is_shown, , drop = FALSE]
