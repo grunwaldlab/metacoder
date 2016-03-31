@@ -134,6 +134,8 @@
 #' See details on layouts.
 #' Default: Not used.
 #' @param make_legend if TRUE...
+#' @param title Name to print above the graph.
+#' @param title_size The size of the title realtive to the rest of the graph. 
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -286,6 +288,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           layout = "reingold-tilford",
                           initial_layout = "fruchterman-reingold",
                           make_legend = TRUE,
+                          title = NULL,
+                          title_size = 0.1,
                           ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
@@ -677,12 +681,26 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   color = title_data$tlc_plot,
                                   rotation = 0,
                                   justification = "center"))
+  }
+  # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (! is.null(title)) {
+    max_label_size <- ifelse(is.null(text_data), 0, max(text_data$size))
+    x_range <- range(element_data$x)
     
+    text_data <- rbind(text_data,
+                       data.frame(stringsAsFactors = FALSE, 
+                                  label = title,
+                                  x = mean(x_range),
+                                  y = max(element_data$y) * 1.05 + diff(x_range) * title_size + max_label_size,
+                                  size = diff(x_range) * title_size,
+                                  color = "#000000",
+                                  rotation = 0,
+                                  justification = "center"))
   }
   #| ### Draw plot ================================================================================
   
   label_x_bounds <- function(x, size, label) {
-    spread <- size  * nchar(label) * 0.65
+    spread <- size  * nchar(label) * 0.21
     c(x + spread, x - spread)
   }
   label_y_bounds <- function(y, size, label) {

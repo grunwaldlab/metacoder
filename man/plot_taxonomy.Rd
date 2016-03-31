@@ -29,7 +29,8 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   tree_label_color_range = quantative_palette(), vertex_label_max = 50,
   edge_label_max = 50, tree_label_max = 50, overlap_avoidance = 1,
   margin_size = c(0, 0), layout = "reingold-tilford",
-  initial_layout = "fruchterman-reingold", make_legend = TRUE, ...)
+  initial_layout = "fruchterman-reingold", make_legend = TRUE,
+  title = NULL, title_size = 0.1, ...)
 
 \method{plot}{classified}(classified_data, ...)
 }
@@ -178,6 +179,10 @@ See details on layouts.
 Default: Not used.}
 
 \item{make_legend}{if TRUE...}
+
+\item{title}{Name to print above the graph.}
+
+\item{title_size}{The size of the title realtive to the rest of the graph.}
 
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}
