@@ -18,12 +18,13 @@
 #' @param color_sig_fig (\code{numeric} of length 1) The number of significant figures to use in color labels.
 #' @param divisions (\code{numeric} of length 1) The number of colors to display. 
 #' @param label_count (\code{numeric} of length 1) The number of labels.
+#' @param title (\code{character} of length 1) The title of the legend
 #' @keywords internal
 make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 5) {
+                             divisions = 100, label_count = 5, title = NULL, label_size = 0.04, title_size = 0.06) {
   
   
   # Generate scale bar coordinates
@@ -70,7 +71,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   }
   
   label_color = "#000000"
-  label_size = max(width_range) / 5
+  label_size = max(length) * label_size 
   
   
   make_size_label_data <- function() {
@@ -105,6 +106,20 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   } else {
     label_data <- NULL
   }
+  # Add legend title
+  if (!is.null(title)) {
+    y_range <- range(point_data$y)
+    label_data <- rbind(label_data, 
+                        data.frame(stringsAsFactors = FALSE, 
+                                   label = title,
+                                   x = mean(range(point_data$x)),
+                                   y = diff(y_range) * 1.05 + diff(y_range) * title_size,
+                                   size = diff(y_range) * title_size,
+                                   color = "#000000",
+                                   rotation = 0,
+                                   justification = "center"))
+  } 
+  
   
   # Generate title coordinates
   

@@ -564,45 +564,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
     vertex_data$group <- paste0(tid, "_vertex")
     vertex_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
     output <- rbind(edge_data, vertex_data)
-    output$tid_user <- tid
+    # output$tid_user <- tid
     return(output[complete.cases(output),])
   }
   data$level = edge_list_depth(data$tid_user, data$pid_user)
   element_order <- data$tid_user[order(data$level, 1 / data$vs_plot, decreasing = TRUE)]
   element_data <- do.call(rbind, lapply(element_order, taxon_elements))
   element_data$group <- factor(element_data$group, levels = unique(element_data$group))
-  #|
-  #| #### Make legend -----------------------------------------------------------------------
-  #|
-  if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
-    if (missing(vertex_size)) {
-      width_stat_range <- NULL
-    } else {
-      width_stat_range <- range(vertex_size)
-    }
-    if (missing(vertex_color)) {
-      color_stat_range <- NULL
-    } else {
-      color_stat_range <- range(vertex_color)
-    }
-    y_range <- max(element_data$y) - min(element_data$y)
-    legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
-                                    y = min(element_data$y), 
-                                    length = y_range * 0.3, 
-                                    tick_size = y_range * 0.003, 
-                                    width_range = range(data$vs_plot) * 2, 
-                                    width_stat_range = width_stat_range,
-                                    width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
-                                    color_range = vertex_color_range,
-                                    color_stat_range = color_stat_range, 
-                                    color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
-                                    divisions = 100, label_count = 6)
-    legend_data$shapes$tid_user = NA
-    element_data <- rbind(element_data, legend_data$shapes)
-  } else {
-    legend_data <- NULL
-  }
-  
   #|
   #| #### Make text data ------------------------------------------------------------------
   #|
@@ -623,9 +591,6 @@ plot_taxonomy <- function(taxon_id, parent_id,
   } else {
     text_data <- NULL
   }
-  # Get legend label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  text_data <- rbind(text_data,
-                     legend_data$labels)
   # Get edge label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$el_is_shown <- select_labels(data, edge_label_max,
                                     sort_by_column = c("els_plot", "es_plot"),
@@ -697,10 +662,32 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   rotation = 0,
                                   justification = "center"))
   }
+  #|
+  #| #### Make legend -----------------------------------------------------------------------
+  #|
+  if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
+    y_range <- max(element_data$y) - min(element_data$y)
+    legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
+                                    y = min(element_data$y), 
+                                    length = y_range * 0.4, 
+                                    tick_size = y_range * 0.003, 
+                                    width_range = range(data$vs_plot) * 2, 
+                                    width_stat_range =  range(vertex_size),
+                                    width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
+                                    color_range = vertex_color_range,
+                                    color_stat_range = range(vertex_color), 
+                                    color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
+                                    divisions = 100, label_count = 6,
+                                    title = "Verticies")
+    element_data <- rbind(element_data, legend_data$shapes)
+    text_data <- rbind(text_data, legend_data$labels)
+  } else {
+    legend_data <- NULL
+  }
   #| ### Draw plot ================================================================================
   
   label_x_bounds <- function(x, size, label) {
-    spread <- size  * nchar(label) * 0.21
+    spread <- size  * nchar(label) * 0.3
     c(x + spread, x - spread)
   }
   label_y_bounds <- function(y, size, label) {
