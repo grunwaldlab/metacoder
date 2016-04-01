@@ -8,6 +8,7 @@
 #' @param tick_size (\code{numeric} of length 1) the thickness of tick marks
 #' @param width_range (\code{numeric} of length 1 or 2) the width of the scale bar or the range
 #' @param width_stat_range (\code{numeric} of length 1 or 2) The stat range to display in the size labels
+#' @param group_prefix (\code{character} of length 1) The prefix of the group field in the shape data returned
 #' @param width_stat_trans (\code{function}) The transformation used to convert the statistic to size
 #' @param width_title (\code{character} of length 1) The title of the size labels.
 #' @param width_sig_fig (\code{numeric} of length 1) The number of significant figures to use in size labels.
@@ -22,12 +23,17 @@
 #' @param color_axis_label (\code{character} of length 1) The label for the color axis
 #' @param size_axis_label (\code{character} of length 1) The label for the size axis
 #' @keywords internal 
-make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
+make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, group_prefix, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
                              divisions = 100, label_count = 7, title = NULL, label_size = 0.035, title_size = 0.04,
                              color_axis_label = NULL, size_axis_label = NULL) {
+  #
+  if (length(unique(width_range)) == 1) {
+    label_count = 2
+    size_axis_label = NULL
+  }
   
   
   # Generate scale bar coordinates
@@ -42,7 +48,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
                                                     y1 = point_data$y[i + 1],
                                                     y2 = point_data$y[i],
                                                     color = seq_color[i],
-                                                    group = paste0("scale-",i)))
+                                                    group = paste0("scale-", group_prefix, i)))
   scale_data <- do.call(rbind, scale_data)
   
   # Generate tick mark coordinates
@@ -52,7 +58,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   tick_coords <- function(center_y) {
     max_y <- center_y + tick_size / 2
     min_y <- center_y - tick_size / 2
-    data.frame(group = paste0("tick-", center_y),
+    data.frame(group = paste0("tick-", group_prefix, center_y),
                x = c(0, 0, rep(max(width_range), 2)),
                y = c(min_y, max_y, max_y, min_y),
                color = tick_color)

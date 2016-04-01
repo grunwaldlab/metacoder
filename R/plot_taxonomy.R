@@ -663,16 +663,19 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   justification = "center"))
   }
   #|
-  #| #### Make legend -----------------------------------------------------------------------
+  #| #### Make vertex legend -----------------------------------------------------------------------
   #|
+  y_range <- max(element_data$y) - min(element_data$y)
+  legend_length <- square_side_length * 0.3
+  right_plot_boundry <- max(element_data$x) * 1.1
   if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
-    y_range <- max(element_data$y) - min(element_data$y)
-    legend_data <- make_plot_legend(x = max(element_data$x) * 1.1,
+    legend_data <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
-                                    length = square_side_length * 0.4, 
+                                    length = legend_length, 
                                     tick_size = y_range * 0.003, 
                                     width_range = range(data$vs_plot) * 2, 
                                     width_stat_range =  range(vertex_size),
+                                    group_prefix = "vertex_legend",
                                     width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
                                     color_range = vertex_color_range,
                                     color_stat_range = range(vertex_color), 
