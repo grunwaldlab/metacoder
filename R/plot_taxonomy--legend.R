@@ -19,12 +19,15 @@
 #' @param divisions (\code{numeric} of length 1) The number of colors to display. 
 #' @param label_count (\code{numeric} of length 1) The number of labels.
 #' @param title (\code{character} of length 1) The title of the legend
-#' @keywords internal
+#' @param color_axis_label (\code{character} of length 1) The label for the color axis
+#' @param size_axis_label (\code{character} of length 1) The label for the size axis
+#' @keywords internal 
 make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 5, title = NULL, label_size = 0.04, title_size = 0.06) {
+                             divisions = 100, label_count = 5, title = NULL, label_size = 0.04, title_size = 0.06,
+                             color_axis_label = NULL, size_axis_label = NULL) {
   
   
   # Generate scale bar coordinates
@@ -106,6 +109,37 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   } else {
     label_data <- NULL
   }
+  # Add color axis label
+  y_range <- range(point_data$y)
+  axis_label_size <- diff(y_range) * 0.05
+  spacer <- length * 0.03
+  if (!is.null(color_axis_label)) {
+    label_x_min <- min(label_data$x - text_grob_length(label_data$label) * label_data$size)
+    label_data <- rbind(label_data, 
+                        data.frame(stringsAsFactors = FALSE, 
+                                   label = color_axis_label,
+                                   x = label_x_min - spacer - axis_label_size,
+                                   y = mean(y_range),
+                                   size = axis_label_size,
+                                   color = "#000000",
+                                   rotation = pi / 2,
+                                   justification = "center"))
+  } 
+  # Add size axis label
+  if (!is.null(size_axis_label)) {
+    label_x_max <- max(label_data$x + text_grob_length(label_data$label) * label_data$size)
+    label_data <- rbind(label_data, 
+                        data.frame(stringsAsFactors = FALSE, 
+                                   label = size_axis_label,
+                                   x = label_x_max + spacer + axis_label_size,
+                                   y = mean(y_range),
+                                   size = axis_label_size,
+                                   color = "#000000",
+                                   rotation = pi / 2,
+                                   justification = "center"))
+  } 
+  
+  
   # Add legend title
   if (!is.null(title)) {
     y_range <- range(point_data$y)

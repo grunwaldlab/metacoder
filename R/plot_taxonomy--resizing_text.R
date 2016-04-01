@@ -1,3 +1,19 @@
+#' Estimate text grob length
+#' 
+#' Estimate the printed length of `resizingTextGrob` text
+#' 
+#' @param text \code{character} The text to be printed
+#' 
+#' @return The estimated length of the printed text as a multiple of its height
+#' 
+#' @keywords internal 
+text_grob_length <- function(text) {
+  nchar(text) * 0.4
+}
+
+
+
+
 #' Create a list of text grobs
 #' 
 #' Creates a list of resizing text grobs

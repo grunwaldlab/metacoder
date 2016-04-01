@@ -678,7 +678,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     color_stat_range = range(vertex_color), 
                                     color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
                                     divisions = 100, label_count = 6,
-                                    title = "Verticies")
+                                    title = "Verticies",
+                                    color_axis_label = "Color label",
+                                    size_axis_label = "Size label")
     element_data <- rbind(element_data, legend_data$shapes)
     text_data <- rbind(text_data, legend_data$labels)
   } else {
@@ -687,7 +689,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| ### Draw plot ================================================================================
   
   label_x_bounds <- function(x, size, label) {
-    spread <- size  * nchar(label) * 0.3
+    spread <- size  * text_grob_length(label)
     c(x + spread, x - spread)
   }
   label_y_bounds <- function(y, size, label) {
