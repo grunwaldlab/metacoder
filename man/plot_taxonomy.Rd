@@ -30,7 +30,9 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   edge_label_max = 50, tree_label_max = 50, overlap_avoidance = 1,
   margin_size = c(0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE,
-  title = NULL, title_size = 0.1, ...)
+  title = NULL, title_size = 0.1, vertex_color_axis_label = NULL,
+  vertex_size_axis_label = NULL, edge_color_axis_label = NULL,
+  edge_size_axis_label = NULL, ...)
 
 \method{plot}{classified}(classified_data, ...)
 }
@@ -183,6 +185,18 @@ Default: Not used.}
 \item{title}{Name to print above the graph.}
 
 \item{title_size}{The size of the title realtive to the rest of the graph.}
+
+\item{vertex_color_axis_label}{The label on the scale axis corresponding to \code{vertex_color}.
+Default: The expression given to \code{vertex_color}.}
+
+\item{vertex_size_axis_label}{The label on the scale axis corresponding to \code{vertex_size}.
+Default: The expression given to \code{vertex_size}.}
+
+\item{edge_color_axis_label}{The label on the scale axis corresponding to \code{edge_color}.
+Default: The expression given to \code{edge_color}.}
+
+\item{edge_size_axis_label}{The label on the scale axis corresponding to \code{edge_size}.
+Default: The expression given to \code{edge_size}.}
 
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}

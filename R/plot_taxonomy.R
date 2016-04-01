@@ -137,6 +137,15 @@
 #' @param title Name to print above the graph.
 #' @param title_size The size of the title realtive to the rest of the graph. 
 #' 
+#' @param vertex_color_axis_label The label on the scale axis corresponding to \code{vertex_color}.
+#' Default: The expression given to \code{vertex_color}.
+#' @param vertex_size_axis_label The label on the scale axis corresponding to \code{vertex_size}.
+#' Default: The expression given to \code{vertex_size}.
+#' @param edge_color_axis_label The label on the scale axis corresponding to \code{edge_color}.
+#' Default: The expression given to \code{edge_color}.
+#' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
+#' Default: The expression given to \code{edge_size}.
+#' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
@@ -290,6 +299,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           make_legend = TRUE,
                           title = NULL,
                           title_size = 0.1,
+                          
+                          vertex_color_axis_label = NULL, 
+                          vertex_size_axis_label = NULL,
+                          edge_color_axis_label = NULL, 
+                          edge_size_axis_label = NULL,
+                          
                           ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(parent_id)) {
@@ -682,8 +697,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
                                     divisions = 100, label_count = 8,
                                     title = "Verticies",
-                                    color_axis_label = "Color label",
-                                    size_axis_label = "Size label")
+                                    color_axis_label = vertex_color_axis_label,
+                                    size_axis_label = vertex_size_axis_label)
     element_data <- rbind(element_data, legend_data$shapes)
     text_data <- rbind(text_data, legend_data$labels)
   } else {
@@ -746,6 +761,21 @@ plot.classified <- function(classified_data, ...) {
   unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
   arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
                  eval(substitute(list(...))))
+  # Use variable name for scale axis labels
+  if (! "vertex_color_axis_label" %in% names(arguments)) {
+    arguments$vertex_color_axis_label <- deparse(as.list(match.call())$vertex_color)
+  }
+  if (! "vertex_size_axis_label" %in% names(arguments)) {
+    arguments$vertex_size_axis_label <- deparse(as.list(match.call())$vertex_size)
+  }
+  if (! "edge_color_axis_label" %in% names(arguments)) {
+    arguments$edge_color_axis_label <- deparse(as.list(match.call())$edge_color)
+  }
+  if (! "edge_size_axis_label" %in% names(arguments)) {
+    arguments$edge_size_axis_label <- deparse(as.list(match.call())$edge_size)
+  }
+    
+  
   do.call(plot_taxonomy, arguments)
 }
 
