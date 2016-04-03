@@ -684,7 +684,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   legend_length <- square_side_length * 0.3
   right_plot_boundry <- max(element_data$x) * 1.1
   if (make_legend) {
-    legend_data <- make_plot_legend(x = right_plot_boundry,
+    vertex_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
                                     length = legend_length, 
                                     width_range = range(data$vs_plot) * 2, 
@@ -699,8 +699,26 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     size_axis_label = vertex_size_axis_label,
                                     hide_size = missing(vertex_size),
                                     hide_color = missing(vertex_color))
-    element_data <- rbind(element_data, legend_data$shapes)
-    text_data <- rbind(text_data, legend_data$labels)
+  #|
+  #| #### Make edge legend -----------------------------------------------------------------------
+  #|
+    edge_legend <- make_plot_legend(x = right_plot_boundry,
+                                    y = max(element_data$y) - legend_length - 0.1 * legend_length, 
+                                    length = legend_length, 
+                                    width_range = range(data$es_plot) * 2, 
+                                    width_stat_range =  range(edge_size),
+                                    group_prefix = "edge_legend",
+                                    width_stat_trans = transform_data(func = edge_size_trans),
+                                    color_range = edge_color_range,
+                                    color_stat_range = range(edge_color), 
+                                    color_stat_trans =  transform_data(func = edge_color_trans),
+                                    title = "Edges",
+                                    color_axis_label = edge_color_axis_label,
+                                    size_axis_label = edge_size_axis_label,
+                                    hide_size = missing(edge_size),
+                                    hide_color = missing(edge_color))
+    element_data <- rbind(element_data, vertex_legend$shapes, edge_legend$shapes)
+    text_data <- rbind(text_data, vertex_legend$labels, edge_legend$labels)
   } else {
     legend_data <- NULL
   }
