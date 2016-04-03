@@ -10,7 +10,7 @@ make_plot_legend(x, y, length, tick_size, width_range, width_stat_range,
   color_stat_trans = function(x) {     x }, color_title = "Color",
   color_sig_fig = 3, divisions = 100, label_count = 7, title = NULL,
   label_size = 0.035, title_size = 0.04, color_axis_label = NULL,
-  size_axis_label = NULL)
+  size_axis_label = NULL, hide_size = FALSE, hide_color = FALSE)
 }
 \arguments{
 \item{x}{bottom left}

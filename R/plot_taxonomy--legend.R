@@ -22,21 +22,30 @@
 #' @param title (\code{character} of length 1) The title of the legend
 #' @param color_axis_label (\code{character} of length 1) The label for the color axis
 #' @param size_axis_label (\code{character} of length 1) The label for the size axis
+#' @param hide_size
+#' @param hide_color
 #' @keywords internal 
 make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, group_prefix, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
                              divisions = 100, label_count = 7, title = NULL, label_size = 0.035, title_size = 0.04,
-                             color_axis_label = NULL, size_axis_label = NULL) {
-  #
-  if (length(unique(width_range)) == 1) {
-    label_count = 2
-    size_axis_label = NULL
+                             color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
+                             hide_color = FALSE) {
+  # if both scales are hidden then return null
+  if (hide_size && hide_color) {
+    return(NULL)
   }
   
+  # if (length(unique(width_range)) == 1) {
+  #   size_axis_label = NULL
+  # }
+  # if (length(unique(color_range)) == 1) {
+  #   color_axis_label = NULL
+  # }
   
-  # Generate scale bar coordinates
+  # Scale bar shapes ===============================================================================
+  # Scale bar coordinates --------------------------------------------------------------------------
   prop_div <- seq(0, 1, length.out = divisions)
   point_data <- data.frame(x = max(width_range) - prop_div * (max(width_range) - min(width_range)),
                            y = prop_div * length)
@@ -51,7 +60,7 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
                                                     group = paste0("scale-", group_prefix, i)))
   scale_data <- do.call(rbind, scale_data)
   
-  # Generate tick mark coordinates
+  # Tick mark coordinates --------------------------------------------------------------------------
   tick_color <- "#555555"
   tick_div <- seq(0, 1, length.out = label_count)
   label_point_y <- tick_div * length
@@ -63,14 +72,14 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
                y = c(min_y, max_y, max_y, min_y),
                color = tick_color)
   }
-  
-  
   tick_data <- lapply(label_point_y, tick_coords)
   tick_data <- do.call(rbind, tick_data)
+  shape_data <- rbind(tick_data, scale_data)
   
-  # Generate label coordinates
+  
+  
+  # Text output ====================================================================================
   format_label <- function(n) {
-    # format(n, scientific = FALSE, drop0trailing = TRUE, digits = 3)
     as.character(signif(n, digits = 3))
   }
   
@@ -82,45 +91,39 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   
   label_color = "#000000"
   label_size = length * label_size 
+  label_data <- NULL
   
-  
-  make_size_label_data <- function() {
-    data.frame(stringsAsFactors = FALSE, 
-               label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
-               x = max(width_range) * 1.1,
-               y = rev(label_point_y),
-               size = label_size,
-               color = label_color,
-               rotation = 0,
-               justification = "left")
+  # Size axis labels -------------------------------------------------------------------------------
+  if (!hide_size) {
+    label_data <- rbind(label_data, 
+                        data.frame(stringsAsFactors = FALSE, 
+                                   label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                                   x = max(width_range) * 1.1,
+                                   y = rev(label_point_y),
+                                   size = label_size,
+                                   color = label_color,
+                                   rotation = 0,
+                                   justification = "left"))
+    
+  }
+  # Color axis labels ------------------------------------------------------------------------------
+  if (!hide_color) {
+    label_data <- rbind(label_data, 
+                        data.frame(stringsAsFactors = FALSE, 
+                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                   x = 0 - max(width_range) * 0.1,
+                                   y = rev(label_point_y),
+                                   size = label_size,
+                                   color = label_color,
+                                   rotation = 0,
+                                   justification = "right"))
   }
   
-  make_color_label_data <- function() {
-    data.frame(stringsAsFactors = FALSE, 
-               label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
-               x = 0 - max(width_range) * 0.1,
-               y = rev(label_point_y),
-               size = label_size,
-               color = label_color,
-               rotation = 0,
-               justification = "right")
-  } 
-  
-  
-  if (!is.null(width_stat_range) && !is.null(color_stat_range)) {
-    label_data <- rbind(make_size_label_data(), make_color_label_data())
-  } else if (!is.null(width_stat_range)) {
-    label_data <- make_size_label_data()
-  } else if (!is.null(color_stat_range)) {
-    label_data <- make_color_label_data()
-  } else {
-    label_data <- NULL
-  }
-  # Add color axis label
+  # Add color axis title ---------------------------------------------------------------------------
   y_range <- range(point_data$y)
   axis_label_size <- length * 0.04
   spacer <- length * 0.03
-  if (!is.null(color_axis_label)) {
+  if (!hide_color && !is.null(color_axis_label)) {
     label_x_min <- min(label_data$x - text_grob_length(label_data$label) * label_data$size)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
@@ -131,9 +134,10 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
                                    color = "#000000",
                                    rotation = pi / 2,
                                    justification = "center"))
-  } 
-  # Add size axis label
-  if (!is.null(size_axis_label)) {
+  }
+  
+  # Add size axis title ----------------------------------------------------------------------------
+  if (!hide_size && !is.null(size_axis_label)) {
     label_x_max <- max(label_data$x + text_grob_length(label_data$label) * label_data$size)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
@@ -144,10 +148,9 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
                                    color = "#000000",
                                    rotation = pi / 2,
                                    justification = "center"))
-  } 
+  }
   
-  
-  # Add legend title
+  # Add legend title -------------------------------------------------------------------------------
   if (!is.null(title)) {
     y_range <- range(point_data$y)
     label_data <- rbind(label_data, 
@@ -162,10 +165,9 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   } 
   
   
-  # Generate title coordinates
   
   
-  shape_data <- rbind(tick_data, scale_data)
+  # Adjust origin coordinates
   shape_data$x <- shape_data$x + x
   shape_data$y <- shape_data$y + y
   

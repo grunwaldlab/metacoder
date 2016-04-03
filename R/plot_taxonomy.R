@@ -596,13 +596,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
   if (any(data$vl_is_shown)) {
     vl_data <- data[data$vl_is_shown, , drop = FALSE]
     text_data <- data.frame(stringsAsFactors = FALSE,
-                          label = vl_data$vl_user,
-                          x = vl_data$vx_plot,
-                          y = vl_data$vy_plot,
-                          size = vl_data$vls_plot,
-                          color = vl_data$vlc_plot,
-                          rotation = 0,
-                          justification = "center")
+                            label = vl_data$vl_user,
+                            x = vl_data$vx_plot,
+                            y = vl_data$vy_plot,
+                            size = vl_data$vls_plot,
+                            color = vl_data$vlc_plot,
+                            rotation = 0,
+                            justification = "center")
   } else {
     text_data <- NULL
   }
@@ -640,7 +640,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   # Get tree label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$tl_is_shown <- FALSE
   data[data$is_root, "tl_is_shown"] <- select_labels(data[data$is_root, ], tree_label_max,
-                                    sort_by_column = c("tls_plot", "vs_plot"), label_column = "tl_user")
+                                                     sort_by_column = c("tls_plot", "vs_plot"), label_column = "tl_user")
   if (any(data$tl_is_shown)) {
     title_data <- data[data$tl_is_shown, , drop = FALSE]
     tx_plot <- vapply(split(data$vx_plot, data$subgraph_root), FUN.VALUE = numeric(1),
@@ -683,7 +683,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   y_range <- max(element_data$y) - min(element_data$y)
   legend_length <- square_side_length * 0.3
   right_plot_boundry <- max(element_data$x) * 1.1
-  if (make_legend && (!missing(vertex_size) || !missing(vertex_color))) {
+  if (make_legend) {
     legend_data <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
                                     length = legend_length, 
@@ -698,7 +698,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     divisions = 100, label_count = 8,
                                     title = "Verticies",
                                     color_axis_label = vertex_color_axis_label,
-                                    size_axis_label = vertex_size_axis_label)
+                                    size_axis_label = vertex_size_axis_label,
+                                    hide_size = missing(vertex_size),
+                                    hide_color = missing(vertex_color))
     element_data <- rbind(element_data, legend_data$shapes)
     text_data <- rbind(text_data, legend_data$labels)
   } else {
@@ -716,11 +718,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   
-    
+  
   label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label")],
-                            FUN = label_x_bounds)))
+                                             FUN = label_x_bounds)))
   label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
-                                      FUN = label_y_bounds)))
+                                             FUN = label_y_bounds)))
   
   x_points <- c(element_data$x, label_x)
   y_points <- c(element_data$y, label_y)
@@ -774,7 +776,7 @@ plot.classified <- function(classified_data, ...) {
   if (! "edge_size_axis_label" %in% names(arguments)) {
     arguments$edge_size_axis_label <- deparse(as.list(match.call())$edge_size)
   }
-    
+  
   
   do.call(plot_taxonomy, arguments)
 }
@@ -905,14 +907,14 @@ transform_data <- function(func = NULL, data = NULL) {
   }
   
   funcs <- list("radius" = function(x) {x},
-                  "area" = function(x) {sign(x) * (abs(x)/pi)^(1/2)},
-                  "log10 radius" = function(x) {log(x, base = 10)},
-                  "log2 radius" = function(x) {log(x, base = 2)},
-                  "ln radius" = function(x) {log(x)},
-                  "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
-                  "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
-                  "ln area" =  function(x) {log((x/pi)^(1/2))})
-
+                "area" = function(x) {sign(x) * (abs(x)/pi)^(1/2)},
+                "log10 radius" = function(x) {log(x, base = 10)},
+                "log2 radius" = function(x) {log(x, base = 2)},
+                "ln radius" = function(x) {log(x)},
+                "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
+                "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
+                "ln area" =  function(x) {log((x/pi)^(1/2))})
+  
   if (is.null(data) & is.null(func)) {
     return(names(funcs))
   } else if (is.null(data)) {
