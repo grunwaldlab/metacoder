@@ -378,7 +378,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   transformed_names <- gsub(pattern = "_user$", x = names(trans_key), replacement = "_trans")
   apply_trans <- function(col_name) {
     if (is.numeric(data[ , col_name])) { 
-      transform_data(data[ , col_name], trans_key[col_name]) # if numbers are supplied
+      transform_data(trans_key[col_name], data[ , col_name]) # if numbers are supplied
     } else {
       data[ , col_name] # if colors are defined explicitly, then no transformation is done
     }
@@ -691,10 +691,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     width_range = range(data$vs_plot) * 2, 
                                     width_stat_range =  range(vertex_size),
                                     group_prefix = "vertex_legend",
-                                    width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
+                                    width_stat_trans = transform_data(func = vertex_size_trans),
                                     color_range = vertex_color_range,
                                     color_stat_range = range(vertex_color), 
-                                    color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
+                                    color_stat_trans =  transform_data(func = vertex_color_trans),
                                     divisions = 100, label_count = 8,
                                     title = "Verticies",
                                     color_axis_label = vertex_color_axis_label,
@@ -893,23 +893,18 @@ check_element_length <- function(args) {
 #' 
 #' Functions used by plotting funtions to transform data.
 #' Calling the function with no parameters returns available function names.
+#' Calling with just the function name returns the transformation function
 #' 
 #' @param data (\code{numeric}) Data to transform
 #' @param func (\code{character}) Name of transformation to apply.
-#' @param inverse If TRUE, return inverse
 #' 
 #' @keywords internal
-transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
+transform_data <- function(func = NULL, data = NULL) {
   sign <- function(x) {
     ifelse(x < 0, -1, 1)
   }
   
-  if (inverse) {
-    funcs <- list("radius" = function(x) {x},
-                  "area" = function(x) {sign(x) * pi*x^2})
-    
-  } else {
-    funcs <- list("radius" = function(x) {x},
+  funcs <- list("radius" = function(x) {x},
                   "area" = function(x) {sign(x) * (abs(x)/pi)^(1/2)},
                   "log10 radius" = function(x) {log(x, base = 10)},
                   "log2 radius" = function(x) {log(x, base = 2)},
@@ -917,9 +912,7 @@ transform_data <- function(data = NULL, func = NULL, inverse = FALSE) {
                   "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
                   "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
                   "ln area" =  function(x) {log((x/pi)^(1/2))})
-    
-  }
-  
+
   if (is.null(data) & is.null(func)) {
     return(names(funcs))
   } else if (is.null(data)) {

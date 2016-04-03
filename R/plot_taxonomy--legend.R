@@ -75,8 +75,9 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
-    trans_points <- vapply(points, my_trans, FUN.VALUE = numeric(1))
-    format_label(scales::rescale(trans_points, to = range(my_range)))
+    pre_scaled <- scales::rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
+    trans_points <- inverse(my_trans, interval = my_range)(pre_scaled)
+    format_label(scales::rescale(trans_points, to = my_range))
   }
   
   label_color = "#000000"
@@ -202,3 +203,15 @@ scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
 }
 
 
+
+#' Generate the inverse of a function
+#' 
+#' http://stackoverflow.com/questions/10081479/solving-for-the-inverse-of-a-function-in-r
+inverse = function (f, interval) {
+  function (y) {
+    process_one <- function(one_y) {
+      uniroot((function (x) f(x) - one_y), interval = interval, extendInt = "yes")[1]
+    }
+    unname(unlist(lapply(y, process_one)))
+  }
+}
