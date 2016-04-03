@@ -193,7 +193,7 @@ plot(original_data,
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name,
-     vertex_label_max = 100)
+     vertex_label_max = 200)
 ```
 
 Note that the labels are a special kind that scales with the size of the graph. 
@@ -248,17 +248,6 @@ plot(contaminants,
 
 You can also take a taxonomy with a single root and display it by splitting it at a specified level/rank. 
 
-```{r}
-file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
-sequences <- ape::read.FASTA(file_path)
-cat(names(sequences)[1])
-original_data <- extract_taxonomy(names(sequences),
-                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                         key = c(name = "item_info", seq_id = "item_info",
-                                 other_id = "item_info", "class_name"),
-                         database = "none")
-```
-
 
 ```{r, fig.width = 6.5, fig.height = 6.5}
 plot(original_data,
@@ -276,13 +265,19 @@ subset(original_data, name == "Ascomycota") %>%
        vertex_label = name,
        tree_label = name)
 
+```
 
+
+```{r}
 subset(original_data, rank > 1) %>%
 plot(vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name,
      tree_label = name)
+```
 
+
+```{r}
 subset(original_data, rank > 3) %>%
 plot(vertex_size = item_count,
      vertex_color = item_count,

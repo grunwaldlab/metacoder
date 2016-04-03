@@ -33,6 +33,12 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
                              divisions = 100, label_count = 8, title = NULL, label_size = 0.035, title_size = 0.04,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
+  # if the color is defined explicitly, do not print color scale labels
+  explicit_color_scale <- is.character(color_stat_range) && length(unique(color_stat_range)) ==  1
+  if (explicit_color_scale) {
+    hide_color = TRUE
+  }
+
   # if both scales are hidden then return null
   if (hide_size && hide_color) {
     return(NULL)
@@ -52,7 +58,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
                            y = prop_div * length)
   prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
   if (hide_color) {
-    if (is.character(color_stat_range) && length(unique(color_stat_range)) ==  1) {
+    if (explicit_color_scale) {
       seq_color <- rep(unique(color_stat_range), length(prop_seg))
     } else {
       seq_color <- rep("#000000", length(prop_seg))
@@ -68,24 +74,25 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
                                                     color = seq_color[i],
                                                     group = paste0("scale-", group_prefix, i)))
   scale_data <- do.call(rbind, scale_data)
+  shape_data <- scale_data
   
   # Tick mark coordinates --------------------------------------------------------------------------
   tick_color <- "#555555"
   tick_div <- seq(0, 1, length.out = label_count)
   label_point_y <- tick_div * length
-  tick_coords <- function(center_y) {
-    max_y <- center_y + tick_size * length / 2
-    min_y <- center_y - tick_size * length / 2
-    data.frame(group = paste0("tick-", group_prefix, center_y),
-               x = c(0, 0, rep(max(width_range), 2)),
-               y = c(min_y, max_y, max_y, min_y),
-               color = tick_color)
+  if (!hide_size) {
+    tick_coords <- function(center_y) {
+      max_y <- center_y + tick_size * length / 2
+      min_y <- center_y - tick_size * length / 2
+      data.frame(group = paste0("tick-", group_prefix, center_y),
+                 x = c(0, 0, rep(max(width_range), 2)),
+                 y = c(min_y, max_y, max_y, min_y),
+                 color = tick_color)
+    }
+    tick_data <- lapply(label_point_y, tick_coords)
+    tick_data <- do.call(rbind, tick_data)
+    shape_data <- rbind(tick_data, shape_data)
   }
-  tick_data <- lapply(label_point_y, tick_coords)
-  tick_data <- do.call(rbind, tick_data)
-  shape_data <- rbind(tick_data, scale_data)
-  
-  
   
   # Text output ====================================================================================
   format_label <- function(n) {
