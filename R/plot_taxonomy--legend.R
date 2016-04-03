@@ -22,14 +22,15 @@
 #' @param title (\code{character} of length 1) The title of the legend
 #' @param color_axis_label (\code{character} of length 1) The label for the color axis
 #' @param size_axis_label (\code{character} of length 1) The label for the size axis
-#' @param hide_size
-#' @param hide_color
+#' @param hide_size (\code{logical} of length 1) If \code{TRUE} hide size axis
+#' @param hide_color (\code{logical} of length 1) If \code{TRUE} hide color axis
 #' @keywords internal 
-make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_range, group_prefix, width_stat_trans = function(x) {x},
+make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_prefix,
+                             tick_size = .007, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 7, title = NULL, label_size = 0.035, title_size = 0.04,
+                             divisions = 100, label_count = 8, title = NULL, label_size = 0.035, title_size = 0.04,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
   # if both scales are hidden then return null
@@ -50,7 +51,15 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   point_data <- data.frame(x = max(width_range) - prop_div * (max(width_range) - min(width_range)),
                            y = prop_div * length)
   prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
-  seq_color <- apply_color_scale(rev(prop_seg), color_range) 
+  if (hide_color) {
+    if (is.character(color_stat_range) && length(unique(color_stat_range)) ==  1) {
+      seq_color <- rep(unique(color_stat_range), length(prop_seg))
+    } else {
+      seq_color <- rep("#000000", length(prop_seg))
+    }
+  } else {
+    seq_color <- apply_color_scale(rev(prop_seg), color_range) 
+  }
   scale_data <- lapply(1:(divisions - 1), 
                        function(i) scale_bar_coords(x1 = point_data$x[i + 1],
                                                     x2 = point_data$x[i],
@@ -65,8 +74,8 @@ make_plot_legend <- function(x, y, length, tick_size, width_range, width_stat_ra
   tick_div <- seq(0, 1, length.out = label_count)
   label_point_y <- tick_div * length
   tick_coords <- function(center_y) {
-    max_y <- center_y + tick_size / 2
-    min_y <- center_y - tick_size / 2
+    max_y <- center_y + tick_size * length / 2
+    min_y <- center_y - tick_size * length / 2
     data.frame(group = paste0("tick-", group_prefix, center_y),
                x = c(0, 0, rep(max(width_range), 2)),
                y = c(min_y, max_y, max_y, min_y),

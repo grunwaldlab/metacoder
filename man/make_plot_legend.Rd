@@ -4,11 +4,11 @@
 \alias{make_plot_legend}
 \title{Make color/size legend}
 \usage{
-make_plot_legend(x, y, length, tick_size, width_range, width_stat_range,
-  group_prefix, width_stat_trans = function(x) {     x },
+make_plot_legend(x, y, length, width_range, width_stat_range, group_prefix,
+  tick_size = 0.007, width_stat_trans = function(x) {     x },
   width_title = "Size", width_sig_fig = 3, color_range, color_stat_range,
   color_stat_trans = function(x) {     x }, color_title = "Color",
-  color_sig_fig = 3, divisions = 100, label_count = 7, title = NULL,
+  color_sig_fig = 3, divisions = 100, label_count = 8, title = NULL,
   label_size = 0.035, title_size = 0.04, color_axis_label = NULL,
   size_axis_label = NULL, hide_size = FALSE, hide_color = FALSE)
 }
@@ -19,13 +19,13 @@ make_plot_legend(x, y, length, tick_size, width_range, width_stat_range,
 
 \item{length}{(\code{numeric} of length 1) the length of the scale bar}
 
-\item{tick_size}{(\code{numeric} of length 1) the thickness of tick marks}
-
 \item{width_range}{(\code{numeric} of length 1 or 2) the width of the scale bar or the range}
 
 \item{width_stat_range}{(\code{numeric} of length 1 or 2) The stat range to display in the size labels}
 
 \item{group_prefix}{(\code{character} of length 1) The prefix of the group field in the shape data returned}
+
+\item{tick_size}{(\code{numeric} of length 1) the thickness of tick marks}
 
 \item{width_stat_trans}{(\code{function}) The transformation used to convert the statistic to size}
 
@@ -52,6 +52,10 @@ make_plot_legend(x, y, length, tick_size, width_range, width_stat_range,
 \item{color_axis_label}{(\code{character} of length 1) The label for the color axis}
 
 \item{size_axis_label}{(\code{character} of length 1) The label for the size axis}
+
+\item{hide_size}{(\code{logical} of length 1) If \code{TRUE} hide size axis}
+
+\item{hide_color}{(\code{logical} of length 1) If \code{TRUE} hide color axis}
 }
 \description{
 Make color/size legend
