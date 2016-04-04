@@ -131,8 +131,8 @@ primersearch.default <- function(sequence, forward, reverse,
   if (is.null(names(forward))) names(forward) <- seq_along(forward)
   if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
   if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep="__and__")
-  forward <- unlist(lapply(forward, paste, collapse=""))
-  reverse <- unlist(lapply(reverse, paste, collapse=""))
+  forward <- unlist(lapply(forward, paste, collapse = ""))
+  reverse <- unlist(lapply(reverse, paste, collapse = ""))
   primer_path <- tempfile("primersearch_primer_input_", fileext=".txt")
   on.exit(file.remove(primer_path))
   write.table(cbind(pair_name, forward, reverse), primer_path,
@@ -146,8 +146,8 @@ primersearch.default <- function(sequence, forward, reverse,
   output$amp_start <- output$forward_index + nchar(output$forward_primer)
   output$amp_end <- vapply(sequence[output$seq_id], length, numeric(1)) -
     (output$reverse_index + nchar(output$reverse_primer)) + 1
-  output$amplicon <- Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
-                         as.character(sequence[output$seq_id]), output$amp_start, output$amp_end)
+  output$amplicon <- unlist(Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
+                         as.character(sequence[output$seq_id]), output$amp_start, output$amp_end))
   return(output)
 }
 
@@ -162,17 +162,16 @@ primersearch.classified <- function(classified_data, embed = TRUE, ...) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
   }
   result <- primersearch(sequence = classified_data$item_data$sequence,
-                         seq_name = seq_along(classified_data$item_data),
+                         seq_name = rownames(classified_data$item_data),
                          ...)
   
   if (embed) {
     classified_data$item_data[ , colnames(result)] <- NA
-    classified_data$item_data[result$seq_id, colnames(result)] <- result
+    classified_data$item_data[result$name, colnames(result)] <- result
     classified_data$item_data$amplified <- ! is.na(classified_data$item_data$seq_id)
     classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
                                      count_amplified = function(obj, taxon) {
-                                       print(obj$item_data)
-                                       sum(obj$item_data$amplified)
+                                       sum(obj$item_data$amplified, na.rm = TRUE)
                                      })
     output <- classified_data
   } else {

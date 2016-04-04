@@ -1,0 +1,84 @@
+---
+title: "In silico PCR"
+output:
+  rmarkdown::html_vignette:
+    toc: false
+    css: custom.css
+vignette: >
+  %\VignetteIndexEntry{In silico PCR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+library(Rcurl)
+opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE, eval = FALSE)
+```
+
+
+## In silico PCR
+
+
+```{r}
+# Parse taxonomy and sequnences:
+file_path <- "~/repositories/Reports/2015_04_02-metacoder-spring_cgrb_conference_poster/trainset10_082014.rdp.fasta" 
+seqs <- ape::read.dna(file_path, format = "fasta")
+original <- extract_taxonomy(seqs,
+                         regex = "^.*\\t(.*)",
+                         key = c("class_name"),
+                         class_tax_sep = ";",
+                         database = "none")
+plot(original,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name) 
+
+# Make balanced subsample:
+subsampled <- taxonomic_sample(original,
+                      max_counts = c("3" = 100,
+                                     "4" = 20),
+                      min_counts = c("4" = 5)) 
+subsampled <- subset(subsampled, item_count > 0, itemless = FALSE) 
+plot(subsampled,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name) 
+
+# Do in silio PCR:
+pcr_results <- primersearch(subsampled,
+                            forward = "CTCCTACGGGAGGCAGCAG",
+                            reverse = "GWATTACCGCGGCKGCTG",
+                            pair_name = "357F_+_519R",
+                            mismatch = 10)
+pcr_results %>%
+  subset(rank > 1) %>%
+  plot(vertex_size = item_count,
+       vertex_color = count_amplified / item_count,
+       vertex_color_range = c("red", "yellow", "green"),
+       vertex_label = name,
+       layout = "davidson-harel")
+
+
+pcr_results %>%
+  subset(count_amplified < item_count, subtaxa = FALSE) %>%
+  subset(rank > 1) %>%
+  plot(vertex_size = item_count - count_amplified,
+       vertex_color = count_amplified / item_count,
+       vertex_color_range = c("red", "yellow", "green"),
+       vertex_label = name,
+       tree_label = name,
+       layout = "davidson-harel")
+
+pcr_results %>%
+  subset(count_amplified == item_count, subtaxa = FALSE, supertaxa = TRUE) %>%
+  subset(rank > 1) %>%
+  plot(vertex_size = item_count,
+       vertex_color = count_amplified / item_count,
+       vertex_color_range = c("red", "yellow", "green"),
+       vertex_label = name)
+
+```
+

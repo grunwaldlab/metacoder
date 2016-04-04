@@ -520,7 +520,7 @@ extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", cla
 #' @rdname extract_taxonomy
 extract_taxonomy.DNAbin <- function(input, ...) {
   output <- extract_taxonomy(names(input), ...)
-  output$item_data$sequence <- unlist(lapply(as.character(sequences),
+  output$item_data$sequence <- unlist(lapply(as.character(input),
                                               function(x) paste0(x, collapse = "")))
   return(output)
 }

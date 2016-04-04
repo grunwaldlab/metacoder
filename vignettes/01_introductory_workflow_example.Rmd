@@ -200,8 +200,8 @@ The `primersearch` function returns the item ids that amplified and we can use t
 ```{r}
 plot(pcr_results,
      vertex_size = item_count,
-     vertex_color = proportion_amplified,
-     vertex_color_range = c("grey", "red", "yellow", "green"),
+     vertex_color = count_amplified / item_count,
+     vertex_color_range = c("red", "yellow", "green"),
      vertex_label = name)
 ```
 
