@@ -14,12 +14,35 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-library(Rcurl)
+library(RCurl)
+library(R.utils)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE, eval = FALSE)
 ```
 
 
 ## In silico PCR
+
+### Download RDP data
+
+```{r}
+rdp_fasta_url <- "http://rdp.cme.msu.edu/download/current_Bacteria_unaligned.fa.gz"
+local_file_path <- file.path(tempdir(), basename(rdp_fasta_url))
+download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
+```
+
+### Uncompress
+
+```{r}
+local_file_path <- gunzip(local_file_path)
+```
+
+
+### Read into R
+
+```{r}
+sequence_data <- ape::read.dna(local_file_path, format = "fasta", nlines = 2)
+```
+
 
 
 ```{r}
