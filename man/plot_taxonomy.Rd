@@ -26,7 +26,10 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   tree_color_range = quantative_palette(),
   vertex_label_color_range = quantative_palette(),
   edge_label_color_range = quantative_palette(),
-  tree_label_color_range = quantative_palette(), vertex_label_max = 50,
+  tree_label_color_range = quantative_palette(),
+  vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
+  vertex_color_interval = NULL, edge_size_interval = vertex_size_interval,
+  edge_color_interval = vertex_color_interval, vertex_label_max = 50,
   edge_label_max = 50, tree_label_max = 50, overlap_avoidance = 1,
   margin_size = c(0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE,
@@ -152,6 +155,18 @@ Default: Color-blind friendly palette.}
 
 \item{tree_label_color_range}{See details on ranges.
 Default: Color-blind friendly palette.}
+
+\item{vertex_size_interval}{See details on intervals.
+Default: The range of values in \code{vertex_size}.}
+
+\item{vertex_color_interval}{See details on intervals.
+Default: The range of values in \code{vertex_color}.}
+
+\item{edge_size_interval}{See details on intervals.
+Default: The range of values in \code{edge_size}.}
+
+\item{edge_color_interval}{See details on intervals.
+Default: The range of values in \code{edge_color}.}
 
 \item{vertex_label_max}{The maximum number of vertex labels.
 Default: 20.}
@@ -306,5 +321,17 @@ The following \code{character} values are understood:
   \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
 }
+}
+
+\section{intervals}{
+
+
+This is the minimum and maximum of values displayed on the legend scales.
+Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
+These are defined in the same units as element size/color.
+By default, the minimum and maximum equals the range of the values used to infer size/color.
+Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
+or setting logical bounderies (such as \code{c(0,1)} for proportions.
+Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 }
 

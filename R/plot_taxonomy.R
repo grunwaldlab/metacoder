@@ -109,6 +109,15 @@
 #' @param  tree_label_color_range See details on ranges.
 #' Default: Color-blind friendly palette. 
 #' 
+#' @param vertex_size_interval See details on intervals.
+#' Default: The range of values in \code{vertex_size}. 
+#' @param vertex_color_interval See details on intervals.
+#' Default: The range of values in \code{vertex_color}. 
+#' @param edge_size_interval See details on intervals.
+#' Default: The range of values in \code{edge_size}. 
+#' @param edge_color_interval See details on intervals.
+#' Default: The range of values in \code{edge_color}. 
+#' 
 #' 
 #' @param vertex_label_max The maximum number of vertex labels.
 #' Default: 20.
@@ -232,6 +241,17 @@
 #'   \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
 #'   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
 #' }
+#' 
+#' 
+#' @section intervals:
+#' 
+#' This is the minimum and maximum of values displayed on the legend scales.
+#' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
+#' These are defined in the same units as element size/color.
+#' By default, the minimum and maximum equals the range of the values used to infer size/color.
+#' Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
+#' or setting logical bounderies (such as \code{c(0,1)} for proportions.
+#' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #'  
 #' @export
 #' @rdname plot_taxonomy
@@ -288,6 +308,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           edge_label_color_range = quantative_palette(),
                           tree_label_color_range = quantative_palette(),
                           
+                          vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
+                          vertex_color_interval = NULL,
+                          edge_size_interval = vertex_size_interval,
+                          edge_color_interval = vertex_color_interval,
+                          
                           vertex_label_max = 50,
                           edge_label_max = 50,
                           tree_label_max = 50,
@@ -324,7 +349,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   verify_size(c("vertex_size", "edge_size", #"tree_size",
                 "vertex_label_size", "edge_label_size", "tree_label_size"))
   verify_size_range(c("vertex_size_range",  "edge_size_range", # "tree_size_range",
-                      "vertex_label_size_range", "edge_label_size_range", "tree_label_size_range"))
+                      "vertex_label_size_range", "edge_label_size_range", "tree_label_size_range",
+                      "vertex_size_interval", "edge_size_interval"))
   verify_trans(c("vertex_size_trans", "edge_size_trans", #"tree_size_trans",
                  "vertex_color_trans", "edge_color_trans", "tree_color_trans",
                  "vertex_label_size_trans", "edge_label_size_trans", "tree_label_size_trans", 
@@ -344,6 +370,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
   if (! initial_layout %in% layout_functions()) {
     stop("Argument 'initial_layout' must be an output of layout_functions().")
   }
+  
+  #| ### Parse arguments
+  
+  if (is.null(vertex_color_interval) && is.numeric(vertex_color)) {
+    vertex_color_interval <- range(vertex_color, na.rm = TRUE, finite = TRUE)
+  }
+  if (is.null(edge_color_interval) && is.numeric(edge_color)) {
+    edge_color_interval <- range(edge_color, na.rm = TRUE, finite = TRUE)
+  }
+  
   #| ### Standardize source data ==================================================================
   data <- data.frame(stringsAsFactors = FALSE,
                      tid_user = as.character(taxon_id),
@@ -384,6 +420,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
     }
   }
   data[, transformed_names] <- lapply(names(trans_key), apply_trans)
+  # transform intervals
+  vertex_size_interval_trans <- transform_data(vertex_size_trans, vertex_size_interval)
+  edge_size_interval_trans <- transform_data(edge_size_trans, edge_size_interval)
+  vertex_color_interval_trans <- transform_data(vertex_color_trans, vertex_color_interval)
+  edge_color_interval_trans <- transform_data(edge_color_trans, edge_color_interval)
   
   
   #| ### Make layout ==============================================================================
@@ -436,12 +477,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   subgraph_key <- setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
                            unlist(sub_graph_taxa))
   data$subgraph_root <- subgraph_key[data$tid_user]
-  # scaled_ts_trans <- scales::rescale(data$ts_trans, to = c(1, 2)) # make sure numbers are reasonable
-  # sub_coords <- mapply(`*`, sub_coords, scaled_ts_trans[data$is_root]) # Scale coordinates by tree_size
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
   #|
-  
   coords <- igraph::merge_coords(sub_graphs, sub_coords) # merge vertex coordinates for each tree
   graph <- igraph::disjoint_union(sub_graphs) # merge graphs of each tree
   row.names(coords) <- names(igraph::V(graph))
@@ -471,7 +509,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   get_search_space <- function(min_range, max_range, breaks_per_dim = 10) {
     min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
     max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
-    max_breaks <- scales::rescale(max_breaks^4, to = max_range)
+    max_breaks <- rescale(max_breaks^4, to = max_range)
     space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
                         max = rep(max_breaks, length(min_breaks)))
     space[space$min <= space$max, ]
@@ -480,7 +518,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   search_space$range_size <- search_space$max - search_space$min
   # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
   find_overlap <- function(a_min, a_max, distance) {
-    scaled_vs <- scales::rescale(data$vs_t, to = c(a_min, a_max))
+    scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = vertex_size_interval_trans)
     names(scaled_vs) <- data$tid_user
     gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
     gap <- ifelse(gap < 0, abs(gap), 0)
@@ -498,7 +536,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
                                  function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
   vsr_plot <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
-  data$vs_plot <- scales::rescale(data$vs_t, to = vsr_plot)
+  data$vs_plot <- rescale(data$vs_t, to = vsr_plot, from = vertex_size_interval_trans)
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
@@ -515,7 +553,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   esr_plot <- infer_size_range(edge_size_range, vsr_plot, defualt_scale = 0.5)
-  data$es_plot <- scales::rescale(data$es_t, to = esr_plot)
+  data$es_plot <- rescale(data$es_t, to = esr_plot, from = edge_size_interval_trans)
   #|
   #| #### Infer tree size range -------------------------------------------------------------------
   #|
@@ -537,9 +575,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   vlsr_plot <- infer_size_range(vertex_label_size_range, vsr_plot, defualt_scale = 0.5)
   elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.7)
   tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
-  data$vls_plot <- scales::rescale(data$vls_trans, to = vlsr_plot)
-  data$els_plot <- scales::rescale(data$els_trans, to = elsr_plot)
-  data$tls_plot <- scales::rescale(data$tls_trans, to = tlsr_plot)
+  data$vls_plot <- rescale(data$vls_trans, to = vlsr_plot)
+  data$els_plot <- rescale(data$els_trans, to = elsr_plot)
+  data$tls_plot <- rescale(data$tls_trans, to = tlsr_plot)
   #|
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
@@ -547,9 +585,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
   color_colume_key <- list("ec_trans" = edge_color_range, "vc_trans" = vertex_color_range, 
                            "tc_trans" = tree_color_range, "vlc_trans" = vertex_label_color_range,
                            "elc_trans" = edge_label_color_range, "tlc_trans" = tree_label_color_range)
+  color_interval_key <- list("ec_trans" = edge_color_interval_trans, "vc_trans" = vertex_color_interval_trans)
   plot_value_names <- gsub(pattern = "_trans$", x = names(color_colume_key), replacement = "_plot")
   data[, plot_value_names] <- lapply(names(color_colume_key),
-                                     function(x) apply_color_scale(data[ , x], color_colume_key[[x]]))
+                                     function(x) apply_color_scale(data[ , x],
+                                                                   color_colume_key[[x]],
+                                                                   interval = color_interval_key[[x]]))
   # If tree_color is used, overwrite other colors - - - - - - - - - - - - - - - - - - - - - - - - -
   data$tc_plot <- data[data$subgraph_root, "tc_plot"]
   to_replace <- ! is.na(data$tc_plot)
@@ -688,11 +729,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     y = min(element_data$y), 
                                     length = legend_length, 
                                     width_range = range(data$vs_plot) * 2, 
-                                    width_stat_range =  range(vertex_size),
+                                    width_stat_range =  vertex_size_interval,
                                     group_prefix = "vertex_legend",
                                     width_stat_trans = transform_data(func = vertex_size_trans),
                                     color_range = vertex_color_range,
-                                    color_stat_range = range(vertex_color), 
+                                    color_stat_range = vertex_color_interval, 
                                     color_stat_trans =  transform_data(func = vertex_color_trans),
                                     title = "Verticies",
                                     color_axis_label = vertex_color_axis_label,
@@ -706,11 +747,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     y = max(element_data$y) - legend_length - 0.1 * legend_length, 
                                     length = legend_length, 
                                     width_range = range(data$es_plot) * 2, 
-                                    width_stat_range =  range(edge_size),
+                                    width_stat_range =  edge_size_interval,
                                     group_prefix = "edge_legend",
                                     width_stat_trans = transform_data(func = edge_size_trans),
                                     color_range = edge_color_range,
-                                    color_stat_range = range(edge_color), 
+                                    color_stat_range = edge_color_interval, 
                                     color_stat_trans =  transform_data(func = edge_color_trans),
                                     title = "Edges",
                                     color_axis_label = edge_color_axis_label,
@@ -1056,15 +1097,19 @@ qualitative_palette <- function() {
 #' @param values (\code{numeric}) The numbers to represent as colors
 #' @param color_series (\code{character}) Hex values or a character in \code{colors}
 #' @param no_color_in_palette (\code{numeric} of length 1) The number of distinct colors to use.
+#' @param interval (\code{numeric} of length 2) The range \code{values} could have taken.
 #' 
 #' 
 #' @return \code{character} Hex color codes. 
 #' 
 #' @keywords internal
-apply_color_scale <- function(values, color_series, no_color_in_palette = 1000) {
+apply_color_scale <- function(values, color_series, interval = NULL, no_color_in_palette = 1000) {
   if (is.numeric(values)) { ## Not factors, characters, or hex codes
     palette <- colorRampPalette(color_series)(no_color_in_palette)
-    color_index <- as.integer(scales::rescale(values, to = c(1, no_color_in_palette)))
+    if (is.null(interval)) {
+      interval <- range(values, na.rm = TRUE, finite = TRUE)
+    }
+    color_index <- as.integer(rescale(values, to = c(1, no_color_in_palette), from = interval))
     return(palette[color_index])
   } else {
     return(values)
@@ -1244,7 +1289,7 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
 
 #' Pick labels to show
 #' 
-#' Pick labels to show based off a column name to sort by anda maximum number
+#' Pick labels to show based off a column name to sort by and a maximum number
 #' 
 #' @param my_data \code{data.frame}
 #' @param label_max \code{numeric} of length 1
@@ -1253,6 +1298,8 @@ get_optimal_range <- function(max_range, min_range, resolution, opt_crit, choose
 #' containing labels
 #' 
 #' @return \code{character} IDs of rows with labels to show
+#' 
+#' @keywords internal
 select_labels <- function(my_data, label_max, sort_by_column, label_column) {
   if (is.null(label_max) || is.na(label_max) || nrow(my_data) <= label_max) {
     labels_shown <- rownames(my_data)
@@ -1263,4 +1310,25 @@ select_labels <- function(my_data, label_max, sort_by_column, label_column) {
   }
   labels_shown <- labels_shown[!is.na(my_data[labels_shown, label_column])]  # Do not make grobs for NA
   return(rownames(my_data) %in% labels_shown)
+}
+
+#' Rescale numeric vector to have specified minimum and maximum.
+#' 
+#' Rescale numeric vector to have specified minimum and maximum, but allow for hard boundries.
+#' Light wrapper for scales::rescale
+#' 
+#' @param x values to rescale
+#' @param to range to scale to
+#' @param from range of values the x could have been
+#' @param hard_bounds If \code{TRUE}, all values will be forced into the range of \code{to}.
+#' 
+#' @keywords internal
+rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE), hard_bounds = TRUE) 
+{
+  result <- scales::rescale(x, to, from)
+  if (hard_bounds) {
+    result[result > max(to)] <- max(to)
+    result[result < min(to)] <- min(to)
+  }
+  return(result)
 }
