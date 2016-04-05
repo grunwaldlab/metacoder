@@ -20,9 +20,9 @@ opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.height = 7, fig.
 
 The goal of the `metacoder` package is to provide a set of tools for:
 
-* Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
 * Standardized parsing of taxonomic information.
 * Visualization of statistics distributed over taxonomic classifications.
+* Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
 
 To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R.
 Using R means that `metacoder` is entirely open-source,  works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated with the best free tools for statistical analysis. 
@@ -61,7 +61,7 @@ The three most common sources of taxonomy information are:
 
 From any one of these, a hierarchy of unique taxon ids must be assigned to each sequence.
 The function `extract_taxonomy` is used to parse any format containing one or more of these pieces of information.
-There is another [vignette](extracting_taxonomy_information_from_sequence_headers.html) that covers `extract_taxonomy` in more detail. 
+There is another [vignette](02_extracting_taxonomy_data.html) that covers `extract_taxonomy` in more detail. 
 
 Lets parse the embedded taxonomic hierarchy from an included sample of the PR2 database. 
 We can use the `read.FASTA` function from the `ape` package to read a FASTA file and get the sequence headers. 
