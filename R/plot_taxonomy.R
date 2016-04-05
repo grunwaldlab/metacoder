@@ -367,7 +367,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   if (! layout %in% layout_functions()) {
     stop("Argument 'layout' must be an output of layout_functions().")
   }
-  if (! initial_layout %in% layout_functions()) {
+  if (!is.null(initial_layout) && ! initial_layout %in% layout_functions()) {
     stop("Argument 'initial_layout' must be an output of layout_functions().")
   }
   
@@ -522,15 +522,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
     names(scaled_vs) <- data$tid_user
     gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
     gap <- ifelse(gap < 0, abs(gap), 0)
-    sum(gap)
+    gap <- gap^2
+    sqrt(sum(gap))
   } 
   search_space$overlap <- apply(search_space, MARGIN = 1,
                                 function(x) find_overlap(x["min"], x["max"], all_pairwise))
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 0.10
-    minimum_weight <- 3
+    overlap_weight <- 0.03
+    minimum_weight <- 10
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
@@ -572,8 +573,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
     data$tls_user <- sqrt(data$tree_area)
     data$tls_trans <- apply_trans("tls_user") 
   }
-  vlsr_plot <- infer_size_range(vertex_label_size_range, vsr_plot, defualt_scale = 0.5)
-  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.7)
+  vlsr_plot <- infer_size_range(vertex_label_size_range, vsr_plot, defualt_scale = 0.8)
+  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.8)
   tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
   data$vls_plot <- rescale(data$vls_trans, to = vlsr_plot)
   data$els_plot <- rescale(data$els_trans, to = elsr_plot)
