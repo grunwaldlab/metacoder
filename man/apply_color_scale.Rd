@@ -4,12 +4,15 @@
 \alias{apply_color_scale}
 \title{Covert numbers to colors}
 \usage{
-apply_color_scale(values, color_series, no_color_in_palette = 1000)
+apply_color_scale(values, color_series, interval = NULL,
+  no_color_in_palette = 1000)
 }
 \arguments{
 \item{values}{(\code{numeric}) The numbers to represent as colors}
 
 \item{color_series}{(\code{character}) Hex values or a character in \code{colors}}
+
+\item{interval}{(\code{numeric} of length 2) The range \code{values} could have taken.}
 
 \item{no_color_in_palette}{(\code{numeric} of length 1) The number of distinct colors to use.}
 }

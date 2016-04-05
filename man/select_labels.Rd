@@ -20,6 +20,7 @@ containing labels}
 \code{character} IDs of rows with labels to show
 }
 \description{
-Pick labels to show based off a column name to sort by anda maximum number
+Pick labels to show based off a column name to sort by and a maximum number
 }
+\keyword{internal}
 
