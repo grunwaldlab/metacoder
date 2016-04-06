@@ -461,6 +461,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     # Calculate an initial layout if specified
     if (! is.null(initial_layout) && layout != initial_layout) {
       intitial_coords <- igraph::layout_(graph, layout_functions(initial_layout, graph))
+      intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
     } else {
       intitial_coords <- NULL
     }
@@ -1039,7 +1040,7 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                                                  niter = 500 * effort * 5,
                                                  start.temp = sqrt(igraph::vcount(graph)) * (1 + effort * 0.1) * 3,
                                                  grid = "nogrid",
-                                                 weights = NULL), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
+                                                 weights = e_weight), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
                    "kamada-kawai" = list(coords = intitial_coords,
                                          maxiter = 100 * igraph::vcount(graph),
                                          epsilon = 0,
