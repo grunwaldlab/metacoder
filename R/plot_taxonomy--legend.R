@@ -44,6 +44,11 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
     return(NULL)
   }
   
+  # If size and color are the same, only show color scale
+  if (width_stat_range == color_stat_range && all.equal(width_stat_trans, color_stat_trans)) {
+    hide_size = TRUE
+  }
+  
   # if (length(unique(width_range)) == 1) {
   #   size_axis_label = NULL
   # }

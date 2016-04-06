@@ -20,9 +20,9 @@ opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.height = 7, fig.
 
 The goal of the `metacoder` package is to provide a set of tools for:
 
-* Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
 * Standardized parsing of taxonomic information.
 * Visualization of statistics distributed over taxonomic classifications.
+* Evaluating potential metabarcoding primers/loci for taxonomic specificity and discrimination.
 
 To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with external programs, and provides novel functions where needed to allow for entire analyses within R.
 Using R means that `metacoder` is entirely open-source,  works on the Linux, Windows, and Apple operating systems, and is seamlessly integrated with the best free tools for statistical analysis. 
@@ -61,15 +61,39 @@ The three most common sources of taxonomy information are:
 
 From any one of these, a hierarchy of unique taxon ids must be assigned to each sequence.
 The function `extract_taxonomy` is used to parse any format containing one or more of these pieces of information.
-There is another [vignette](extracting_taxonomy_information_from_sequence_headers.html) that covers `extract_taxonomy` in more detail. 
+There is another [vignette](02_extracting_taxonomy_data.html) that covers `extract_taxonomy` in more detail. 
 
-Lets parse the embedded taxonomic hierarchy from an included sample of the PR2 database. 
+
+#### Get RDP mothur training data set
+
+Lets parse the embedded taxonomic hierarchy from the RDP mothur training data set. 
+R can be used to download files from the internet and decompress them.
+The code below downloads the compressed data to a temporary directory.
+
+```{r}
+rdp_fasta_url <- "http://mothur.org/w/images/b/b5/Trainset10_082014.rdp.tgz"
+temp_dir_path <- tempdir() # make temporary directory
+local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url)) 
+download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
+```
+
+Next we will uncompress the archive and identify the fasta file.
+
+```{r}
+unpacked_file_paths <- untar(local_file_path, list = TRUE) # get contents of archive
+untar(local_file_path, exdir = temp_dir_path) # uncompress the archive
+packed_fasta_path <- unpacked_file_paths[grepl("fasta$", unpacked_file_paths)] # identify the FASTA file
+unpacked_fasta_path <- file.path(temp_dir_path, packed_fasta_path) # uncompress FASTA file
+```
+
+#### Read FASTA file
+
 We can use the `read.FASTA` function from the `ape` package to read a FASTA file and get the sequence headers. 
 
 ```{r}
-file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
-sequences <- ape::read.dna(file_path, format = "fasta")
+sequences <- ape::read.dna(unpacked_fasta_path, format = "fasta")
 ```
+
 
 The sequence headers are the `names` of the sequence object and have the format:
 
@@ -77,25 +101,26 @@ The sequence headers are the `names` of the sequence object and have the format:
 cat(names(sequences)[1])
 ```
 
-We can now use `extract_taxonomy` to get a standardized `data.frame` representation of the taxonomic information.
+#### Parse sequence headers
+
+We can now use `extract_taxonomy` to get a standardized representation of the taxonomic information.
 
 ```{r}
 data <- extract_taxonomy(sequences,
-                         regex = "^(.*\\..*?)\\|(.*)$",
-                         key = c("item_id", "class_name"),
-                         class_tax_sep = "|",
+                         regex = "^.*\\t(.*)",
+                         key = c("class_name"),
+                         class_tax_sep = ";",
                          database = "none")
 ```
 
-`extract_taxonomy` returns an object of type `classfied`.
-This object stores information assoicated with taxa as well as sequences.
-
+`extract_taxonomy` returns an object of type `classfied`, which stores information assoicated with taxa as well as sequences.
 We can use the `taxon_data` function to get data associated with taxa and the `item_data` function to get information associated with sequences. 
 
 ```{r}
 head(taxon_data(data))
-head(item_data(data))
 ```
+
+### Plot taxonomic information
 
 To easily see the results, we can plot the information to see how the abundance of different taxa are distributed. 
 
@@ -106,7 +131,8 @@ plot(data,
      vertex_label = name)
 ```
 
-All data is in "Stamenopiles", so lets remove the redundant "Eukaryota" to make the data simpler
+We can see that there are a lot of taxa divided between Bacteria and Archea.
+Lets split the data into these two groups to make the plots easier to understand.
 
 ```{r}
 data <- subset(data, rank > 1)
@@ -116,7 +142,9 @@ data <- subset(data, rank > 1)
 plot(data,
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = name)
+     vertex_label = name,
+     tree_label = name,
+     layout = "davidson-harel")
 ```
 
 Note that `rank` is a calculated column, meaning that its content is generated when needed.
@@ -140,9 +168,9 @@ To tackle this problem, `metacoder` has a function called `taxonomic_sample` tha
 The data set used for this example is small enough to use whole, but to demonstrate how `taxonomic_sample` works we will sub-sample it anyway.
 
 ```{r}
-subsampled_data <- taxonomic_sample(data,
-                                    max_counts = c("6" = 3, "7" = 1),
-                                    min_counts = c("4" = 3))
+data <- taxonomic_sample(data,
+                         max_counts = c("5" = 3, "6" = 1),
+                         min_counts = c("3" = 3))
 ```
 
 We can then plot the results as we did before, but this time lets put the item count on the vertex labels instead of the taxon name and compare the counts before and after sampling.
@@ -151,29 +179,25 @@ We can then plot the results as we did before, but this time lets put the item c
 plot(data,
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = item_count)
-```
-
-
-```{r}
-plot(subsampled_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = item_count)
+     vertex_label = name,
+     tree_label = name,
+     layout = "davidson-harel")
 ```
 
 Note that there are now taxa that have no sequences; these taxa did not meet the minimum out requirement and all their items were dropped, but taxon information was preserved. 
 We can remove the sequenceless taxa with `subset`:
 
 ```{r}
-subsampled_data <- subset(subsampled_data, item_count > 0, itemless = FALSE) 
+data <- subset(data, item_count > 0, itemless = FALSE) 
 ```
 
 ```{r}
-plot(subsampled_data,
+plot(data,
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = name)
+     vertex_label = name,
+     tree_label = name,
+     layout = "davidson-harel")
 ```
 
 
