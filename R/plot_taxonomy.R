@@ -313,9 +313,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           edge_size_interval = vertex_size_interval,
                           edge_color_interval = NULL,
                           
-                          vertex_label_max = 50,
-                          edge_label_max = 50,
-                          tree_label_max = 50,
+                          vertex_label_max = 40,
+                          edge_label_max = 40,
+                          tree_label_max = 40,
                           
                           overlap_avoidance = 1,
                           margin_size = c(0, 0),
@@ -535,7 +535,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 10 / square_side_length
+    overlap_weight <- 1 / sqrt(nrow(data))
     minimum_weight <- 10
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
@@ -1015,12 +1015,12 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                    "reingold-tilford" = list(circular = TRUE,
                                              mode = "out"),
                    "davidson-harel" = list(coords = intitial_coords,
-                                           maxiter = 15 * effort,
-                                           fineiter = max(10, log2(igraph::vcount(graph))) * effort,
+                                           maxiter = 20 * effort,
+                                           fineiter = max(15, log2(igraph::vcount(graph))) * effort,
                                            cool.fact = 0.75 - effort * 0.1,
-                                           weight.node.dist = 1, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
+                                           weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
                                            weight.border = 0,
-                                           weight.edge.lengths = 1, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
+                                           weight.edge.lengths = 0.5, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
                                            weight.edge.crossings = 100,
                                            weight.node.edge.dist = 1), #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]]), 
                    "gem" = list(coords = intitial_coords,
@@ -1083,7 +1083,7 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
 #' 
 #' The default color palette for quantative data
 #' 
-#' @keywords internal
+#' @export
 quantative_palette <- function() {
   return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
 }
@@ -1093,11 +1093,19 @@ quantative_palette <- function() {
 #' 
 #' The default color palette for qualitative data
 #' 
-#' @keywords internal
+#' @export
 qualitative_palette <- function() {
   return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
 }
 
+#' The defualt diverging color palette
+#' 
+#' The default color palette for diverging data
+#' 
+#' @export
+diverging_palette <- function() {
+  return(c("#8c510a", "#DDDDDD", "#01665e"))
+}
 
 
 

@@ -9,5 +9,4 @@ qualitative_palette()
 \description{
 The default color palette for qualitative data
 }
-\keyword{internal}
 

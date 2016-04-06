@@ -43,14 +43,19 @@ unpacked_fasta_path <- file.path(temp_dir_path,
 
 ### Read into R
 
+
 ```{r}
-# Parse taxonomy and sequnences:
 sequences <- ape::read.dna(unpacked_fasta_path, format = "fasta")
 original <- extract_taxonomy(sequences,
                              regex = "^.*\\t(.*)",
                              key = c("class_name"),
                              class_tax_sep = ";",
                              database = "none")
+```
+
+
+```{r}
+# Parse taxonomy and sequnences:
 plot(original,
      vertex_size = item_count,
      vertex_color = item_count,

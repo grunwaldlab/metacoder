@@ -172,6 +172,9 @@ primersearch.classified <- function(classified_data, embed = TRUE, ...) {
     classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
                                      count_amplified = function(obj, taxon) {
                                        sum(obj$item_data$amplified, na.rm = TRUE)
+                                     },
+                                     prop_amplified = function(obj, taxon) {
+                                       sum(obj$item_data$amplified, na.rm = TRUE) / nrow(obj$item_data)
                                      })
     output <- classified_data
   } else {

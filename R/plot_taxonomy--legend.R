@@ -111,7 +111,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
-    pre_scaled <- scales::rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
+    pre_scaled <- points#scales::rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
     trans_points <- inverse(my_trans, interval = my_range)(pre_scaled)
     format_label(scales::rescale(trans_points, to = my_range))
   }
@@ -151,7 +151,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   axis_label_size <- length * 0.04
   spacer <- length * 0.03
   if (!hide_color && !is.null(color_axis_label)) {
-    label_x_min <- min(label_data$x - text_grob_length(label_data$label) * label_data$size)
+    label_x_min <- min(label_data$x - text_grob_length(label_data$label) * label_data$size - axis_label_size/2)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
                                    label = color_axis_label,
@@ -165,7 +165,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   
   # Add size axis title ----------------------------------------------------------------------------
   if (!hide_size && !is.null(size_axis_label)) {
-    label_x_max <- max(label_data$x + text_grob_length(label_data$label) * label_data$size)
+    label_x_max <- max(label_data$x + text_grob_length(label_data$label) * label_data$size  - axis_label_size/2)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
                                    label = size_axis_label,
