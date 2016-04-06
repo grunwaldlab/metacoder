@@ -24,4 +24,4 @@ If you've built the vignettes, you can browse them with:
     
 ## Documentation
 
-For more information, visit our website at http://grunwaldlab.github.io/metacoder.
+Documentation is under construction at http://grunwaldlab.github.io/metacoder.
