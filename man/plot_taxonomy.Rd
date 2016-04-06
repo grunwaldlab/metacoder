@@ -29,13 +29,12 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   tree_label_color_range = quantative_palette(),
   vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
   vertex_color_interval = NULL, edge_size_interval = vertex_size_interval,
-  edge_color_interval = vertex_color_interval, vertex_label_max = 50,
-  edge_label_max = 50, tree_label_max = 50, overlap_avoidance = 1,
-  margin_size = c(0, 0), layout = "reingold-tilford",
-  initial_layout = "fruchterman-reingold", make_legend = TRUE,
-  title = NULL, title_size = 0.1, vertex_color_axis_label = NULL,
-  vertex_size_axis_label = NULL, edge_color_axis_label = NULL,
-  edge_size_axis_label = NULL, ...)
+  edge_color_interval = NULL, vertex_label_max = 70, edge_label_max = 70,
+  tree_label_max = 70, overlap_avoidance = 1, margin_size = c(0, 0),
+  layout = "reingold-tilford", initial_layout = "fruchterman-reingold",
+  make_legend = TRUE, title = NULL, title_size = 0.1,
+  vertex_color_axis_label = NULL, vertex_size_axis_label = NULL,
+  edge_color_axis_label = NULL, edge_size_axis_label = NULL, ...)
 
 \method{plot}{classified}(classified_data, ...)
 }

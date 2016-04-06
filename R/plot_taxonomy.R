@@ -311,7 +311,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
                           vertex_color_interval = NULL,
                           edge_size_interval = vertex_size_interval,
-                          edge_color_interval = vertex_color_interval,
+                          edge_color_interval = NULL,
                           
                           vertex_label_max = 50,
                           edge_label_max = 50,
@@ -373,10 +373,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Parse arguments
   
-  if (is.null(vertex_color_interval) && is.numeric(vertex_color)) {
+  if (is.null(vertex_color_interval)) {
     vertex_color_interval <- range(vertex_color, na.rm = TRUE, finite = TRUE)
   }
-  if (is.null(edge_color_interval) && is.numeric(edge_color)) {
+  if (is.null(edge_color_interval)) {
     edge_color_interval <- range(edge_color, na.rm = TRUE, finite = TRUE)
   }
   
@@ -437,14 +437,18 @@ plot_taxonomy <- function(taxon_id, parent_id,
     if (length(taxa) == 1) {
       # Make a graph with only a single vertex
       adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
-      return(igraph::graph.adjacency(adj_matrix))
+      sub_graph <- igraph::graph.adjacency(adj_matrix)
     } else {
       # Make edge list from taxon_id and parent_id
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
-      return(igraph::graph_from_edgelist(edgelist))
+      sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
+    igraph::V(sub_graph)$weight_factor <- data[taxa, c("vs_trans")]
+    edge_end_vertex <- gsub("^[0-9]+\\|", "", attr(igraph::E(sub_graph), "vnames"))
+    igraph::E(sub_graph)$weight_factor <- data[edge_end_vertex, c("vs_trans")]
+    return(sub_graph)
   }
   data$is_root <- !(data$pid_user %in% data$tid_user)
   data[data$is_root, "pid_user"] <- NA # Needed by split_by_level
@@ -530,7 +534,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 0.03
+    overlap_weight <- 10 / square_side_length
     minimum_weight <- 10
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
@@ -991,54 +995,60 @@ transform_data <- function(func = NULL, data = NULL) {
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
 #' @param graph (\code{igraph}) The graph to generate the layout for.
-#' @param  intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of. 
+#' @param intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of.
+#' @param effort  (\code{numeric} of length 1) The amount of effort to put into layouts. Typically
+#' determines the the number of iterations. 
 #' @param ... (other arguments) Passed to igraph layout function used.
 #' 
 #' @export
-layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, ...) {
+layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, effort = 1, ...) {
   return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
   if (return_names) {
     graph <- igraph::make_ring(1) # Dummy graph so that the list can be defined, but only names used
+    igraph::V(graph)$weight_factor  <- 1
   }
+  v_weight <- igraph::V(graph)$weight_factor
+  e_weight <- igraph::E(graph)$weight_factor
+  e_density <- igraph::edge_density(graph)
   defaults <- list("automatic" = list(),
                    "reingold-tilford" = list(circular = TRUE,
                                              mode = "out"),
                    "davidson-harel" = list(coords = intitial_coords,
-                                           maxiter = 15,
-                                           fineiter = max(15, log2(igraph::vcount(graph))),
-                                           cool.fact = 0.75,
-                                           weight.node.dist = 1,
+                                           maxiter = 15 * effort,
+                                           fineiter = max(10, log2(igraph::vcount(graph))) * effort,
+                                           cool.fact = 0.75 - effort * 0.1,
+                                           weight.node.dist = 1, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
                                            weight.border = 0,
-                                           weight.edge.lengths = 1,
+                                           weight.edge.lengths = 1, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
                                            weight.edge.crossings = 100,
-                                           weight.node.edge.dist = 1),
+                                           weight.node.edge.dist = 1), #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]]), 
                    "gem" = list(coords = intitial_coords,
-                                maxiter = 40 * igraph::vcount(graph)^2,
-                                temp.max = igraph::vcount(graph),
+                                maxiter = 40 * igraph::vcount(graph)^2 * effort,
+                                temp.max = igraph::vcount(graph) * (1 + effort * 0.1),
                                 temp.min = 1/10,
                                 temp.init = sqrt(igraph::vcount(graph))),
-                   "graphopt" =list(start = intitial_coords,
-                                    niter = 500,
-                                    charge = 0.0005,
-                                    mass = 30,
-                                    spring.length = 0,
-                                    spring.constant = 1,
-                                    max.sa.movement = 5),
+                   "graphopt" = list(start = intitial_coords,
+                                     niter = 500 * effort,
+                                     charge = 0.0005,
+                                     mass = 30,
+                                     spring.length = 0,
+                                     spring.constant = 1,
+                                     max.sa.movement = 5),
                    "mds" = list(),
                    "fruchterman-reingold" = list(coords = intitial_coords,
-                                                 niter = 500,
-                                                 start.temp = sqrt(igraph::vcount(graph)),
+                                                 niter = 500 * effort * 5,
+                                                 start.temp = sqrt(igraph::vcount(graph)) * (1 + effort * 0.1) * 3,
                                                  grid = "nogrid",
-                                                 weights = NULL),
+                                                 weights = NULL), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
                    "kamada-kawai" = list(coords = intitial_coords,
-                                         maxiter = 50 * igraph::vcount(graph),
+                                         maxiter = 100 * igraph::vcount(graph),
                                          epsilon = 0,
                                          kkconst = igraph::vcount(graph),
                                          weights = NULL),
-                   "large-graph" = list(maxiter = 150,
+                   "large-graph" = list(maxiter = 200,
                                         maxdelta = igraph::vcount(graph),
                                         area = igraph::vcount(graph)^2,
-                                        coolexp = 1.5,
+                                        coolexp = 1.5 - effort * 0.1,
                                         repulserad = igraph::vcount(graph)^2 * igraph::vcount(graph),
                                         cellsize = sqrt(sqrt(igraph::vcount(graph)^2)),
                                         root = 1),
@@ -1047,7 +1057,7 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                                               matrix(runif(igraph::vcount(graph) * 2), ncol = 2),
                                               intitial_coords),
                                 options = igraph::drl_defaults$default,
-                                weights = igraph::E(graph)$weight,
+                                weights = NULL,
                                 fixed = NULL))
   funcs <- list("automatic" = igraph::nicely,
                 "reingold-tilford" = igraph::as_tree,

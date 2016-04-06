@@ -4,7 +4,8 @@
 \alias{layout_functions}
 \title{Layout functions}
 \usage{
-layout_functions(name = NULL, graph = NULL, intitial_coords = NULL, ...)
+layout_functions(name = NULL, graph = NULL, intitial_coords = NULL,
+  effort = 1, ...)
 }
 \arguments{
 \item{name}{(\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
@@ -13,6 +14,9 @@ see all options.}
 \item{graph}{(\code{igraph}) The graph to generate the layout for.}
 
 \item{intitial_coords}{(\code{matrix}) Initial vertex layout to bawse new layout off of.}
+
+\item{effort}{(\code{numeric} of length 1) The amount of effort to put into layouts. Typically
+determines the the number of iterations.}
 
 \item{...}{(other arguments) Passed to igraph layout function used.}
 }

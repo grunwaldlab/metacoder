@@ -38,16 +38,22 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   if (explicit_color_scale) {
     hide_color = TRUE
   }
+  
+  # If only color is used, set width range to average
+  if (hide_size && !hide_color) {
+    width_range <- rep(mean(width_range), 2)
+  }
 
+    # If size and color are the same, only show color scale
+  if (width_stat_range == color_stat_range && all.equal(width_stat_trans, color_stat_trans)) {
+    hide_size = TRUE
+  }
+  
   # if both scales are hidden then return null
   if (hide_size && hide_color) {
     return(NULL)
   }
   
-  # If size and color are the same, only show color scale
-  if (width_stat_range == color_stat_range && all.equal(width_stat_trans, color_stat_trans)) {
-    hide_size = TRUE
-  }
   
   # if (length(unique(width_range)) == 1) {
   #   size_axis_label = NULL
