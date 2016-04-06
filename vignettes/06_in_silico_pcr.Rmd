@@ -16,6 +16,7 @@ library(metacoder)
 library(knitr)
 library(RCurl)
 library(R.utils)
+library(magrittr)
 opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE, eval = FALSE)
 ```
 
@@ -82,6 +83,7 @@ pcr_results %>%
        vertex_color = count_amplified / item_count,
        vertex_color_range = c("red", "yellow", "green"),
        vertex_label = name,
+       tree_label = name,
        layout = "davidson-harel")
 
 
@@ -90,6 +92,7 @@ pcr_results %>%
   subset(rank > 1) %>%
   plot(vertex_size = item_count - count_amplified,
        vertex_color = count_amplified / item_count,
+       vertex_color_interval = c(0, 1),
        vertex_color_range = c("red", "yellow", "green"),
        vertex_label = name,
        tree_label = name,
