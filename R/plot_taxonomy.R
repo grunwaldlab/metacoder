@@ -253,6 +253,14 @@
 #' or setting logical bounderies (such as \code{c(0,1)} for proportions.
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #'  
+#' @examples 
+#' plot(contaminants,
+#'      vertex_size = item_count,
+#'      vertex_color = item_count,
+#'      vertex_label = name,
+#'      tree_label = name,
+#'      layout = "fruchterman-reingold")
+#' 
 #' @export
 #' @rdname plot_taxonomy
 plot_taxonomy <- function(taxon_id, parent_id, 
@@ -982,8 +990,10 @@ transform_data <- function(func = NULL, data = NULL) {
     return(names(funcs))
   } else if (is.null(data)) {
     return(funcs[[func]])
-  } else {
+  } else if (is.numeric(data)) {
     return(vapply(X = data, FUN = funcs[[func]], FUN.VALUE = numeric(1)))
+  } else {
+    return(data)
   }
 }
 
@@ -992,6 +1002,8 @@ transform_data <- function(func = NULL, data = NULL) {
 #' 
 #' Functions used to determine graph layout.
 #' Calling the function with no parameters returns available function names.
+#' Calling the function with only the name of a function returns that function.
+#' Supplying a name and a \code{\link[igraph]{graph}} object to run the layout function on the graph.
 #' 
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
@@ -1000,6 +1012,19 @@ transform_data <- function(func = NULL, data = NULL) {
 #' @param effort  (\code{numeric} of length 1) The amount of effort to put into layouts. Typically
 #' determines the the number of iterations. 
 #' @param ... (other arguments) Passed to igraph layout function used.
+#' 
+#' @return The name available functions, a layout functions,
+#' or a two-column matrix depending on how arguments are provided.
+#' 
+#' @examples 
+#' # List available function names:
+#' layout_functions()
+#' 
+#' # Get layout function:
+#' layout_functions("davidson-harel")
+#' 
+#' # Execute layout function on graph:
+#' layout_functions("davidson-harel", graph)
 #' 
 #' @export
 layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, effort = 1, ...) {
@@ -1081,7 +1106,12 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
 
 #' The defualt quantative color palette
 #' 
-#' The default color palette for quantative data
+#' Returns the default color palette for quantative data.
+#' 
+#' @return \code{character} of hex color codes
+#' 
+#' @examples
+#' quantative_palette()
 #' 
 #' @export
 quantative_palette <- function() {
@@ -1091,7 +1121,12 @@ quantative_palette <- function() {
 
 #' The defualt qualitative color palette
 #' 
-#' The default color palette for qualitative data
+#' Returns the default color palette for qualitative data
+#' 
+#' @return \code{character} of hex color codes
+#' 
+#' @examples
+#' qualitative_palette()
 #' 
 #' @export
 qualitative_palette <- function() {
@@ -1100,7 +1135,12 @@ qualitative_palette <- function() {
 
 #' The defualt diverging color palette
 #' 
-#' The default color palette for diverging data
+#' Returns the default color palette for diverging data
+#' 
+#' @return \code{character} of hex color codes
+#' 
+#' @examples
+#' diverging_palette()
 #' 
 #' @export
 diverging_palette <- function() {

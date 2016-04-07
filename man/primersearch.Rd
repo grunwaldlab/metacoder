@@ -8,7 +8,7 @@
 \usage{
 primersearch(...)
 
-\method{primersearch}{default}(sequence, forward, reverse, seq_name = NULL,
+\method{primersearch}{default}(input, forward, reverse, seq_name = NULL,
   pair_name = NULL, mismatch = 5, ...)
 
 \method{primersearch}{classified}(classified_data, embed = TRUE, ...)
@@ -16,28 +16,28 @@ primersearch(...)
 \arguments{
 \item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
 
-\item{sequence}{A list of character vectors of DNA sequence or a file path to FASTA file 
-containing sequences.}
+\item{input}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
+or an object of type \code{\link{classified}}}
 
-\item{forward}{A character vector or list of primer sequences. If named and pair_name is not set, 
-the names are used to construct the primer pair names.}
+\item{forward}{(\code{character} of length 1) The forward primer sequence}
 
-\item{reverse}{A character vector or list of primer sequences. If named and pair_name is not set, 
-the names are used to construct the primer pair names.}
+\item{reverse}{(\code{character} of length 1) The reverse primer sequence}
 
-\item{seq_name}{Names of sequences}
+\item{seq_name}{(\code{character}) Names of sequences}
 
-\item{pair_name}{A character vector of names for primer pairs.}
+\item{pair_name}{(\code{character} of length 1) The name of the primer pair.}
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
 
 \item{embed}{If \code{TRUE}, embed output in input object and return}
 }
 \value{
-Output from \code{\link{parse_primersearch}} (A dataframe)
+An object of type \code{\link{classified}}
 }
 \description{
-Use EMBOSS primersearch for in silico PCR
+A pair of primers are aligned against a set of sequences.
+The location of the best hits, quality of match, and predicted amplicons are returned.
+Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 }
 \examples{
 result <- primersearch(rdp_ex_data, 

@@ -87,4 +87,19 @@ with capture groups and an corresponding key.
 An object of type \code{\link{classified}} is returned containing the specifed information.
 Taxa are translated into unique codes if they are not already encoded this way.
 }
+\examples{
+# Extract embedded classifications from UNITE FASTA file offline
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data_3 <- extract_taxonomy(sequences,
+                                    regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
+                                    key = c(name = "item_info", seq_id = "item_info",
+                                            other_id = "item_info", "class_name"),
+                                    database = "none")
+# Look up taxonomic data online using sequence ID
+unite_ex_data <- extract_taxonomy(sequences,
+                                  regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
+                                key = c(name = "taxon_name", seq_id = "item_id",
+                                       other_id = "item_info", tax_string = "item_info"))
+}
 

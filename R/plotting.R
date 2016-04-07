@@ -1,12 +1,18 @@
 #===================================================================================================
 #' Display sequence alignment
 #' 
-#' Make a plot pf a sequence alignment for an overview of alignment structure. 
-#' NOT FINISHED.
+#' Make a plot af a sequence alignment for an overview of alignment structure. 
 #' 
 #' @param alignment (\code{DNAbin}) A matrix representing a sequence alignment. 
 #' 
 #' @references ColorBrewer2 was used for the color palette
+#' 
+#' @return A \code{\link[ggplot2]{ggplot}} object
+#' 
+#' @examples
+#' library(ape)
+#' data(woodmouse)
+#' plot_alignment(woodmouse)
 #' 
 #' @export
 plot_alignment <- function(alignment) {
@@ -17,12 +23,12 @@ plot_alignment <- function(alignment) {
   molten_alignment$base <-  toupper(molten_alignment$base)
   molten_alignment$color <- color_key[molten_alignment$base]
   molten_alignment$color[is.na(molten_alignment$color)] <- "#FFFFFF"
-  ggplot(molten_alignment, aes(x = position, y = name)) +
-    geom_tile(fill = molten_alignment$color) +
-    theme(panel.grid = element_blank(), 
-          panel.background = element_blank(),
-          axis.title = element_blank(),
-          axis.text  =  element_blank(),
-          axis.ticks = element_blank(), 
-          axis.line  = element_blank())
+  ggplot2::ggplot(molten_alignment, ggplot2::aes(x = position, y = name)) +
+    ggplot2::geom_tile(fill = molten_alignment$color) +
+    ggplot2::theme(panel.grid = ggplot2::element_blank(), 
+          panel.background = ggplot2::element_blank(),
+          axis.title = ggplot2::element_blank(),
+          axis.text  = ggplot2::element_blank(),
+          axis.ticks = ggplot2::element_blank(), 
+          axis.line  = ggplot2::element_blank())
 }

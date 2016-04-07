@@ -331,7 +331,21 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{"none"}}{Do not use a database to look up information.}
 #'  } 
 #' @return Returns an object of type \code{classified}
-#'    
+#'
+#' @examples
+#' # Extract embedded classifications from UNITE FASTA file offline
+#' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+#' sequences <- ape::read.FASTA(file_path)
+#' unite_ex_data_3 <- extract_taxonomy(sequences,
+#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                                     key = c(name = "item_info", seq_id = "item_info",
+#'                                             other_id = "item_info", "class_name"),
+#'                                     database = "none")
+#' # Look up taxonomic data online using sequence ID
+#' unite_ex_data <- extract_taxonomy(sequences,
+#'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                                 key = c(name = "taxon_name", seq_id = "item_id",
+#'                                        other_id = "item_info", tax_string = "item_info"))
 #' @export
 #' @rdname extract_taxonomy
 extract_taxonomy <- function(...) {
@@ -687,6 +701,30 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @return Returns an object of type \code{classified}
+#' 
+#' @examples
+#' #Plot data before subsampling
+#' plot(unite_ex_data_3,
+#'      vertex_size = item_count,
+#'      vertex_color = item_count,
+#'      vertex_label = item_count)
+#'      
+#' # Subsampling
+#' subsampled <- taxonomic_sample(unite_ex_data_3,
+#'                                max_counts = c("4" = 20, "7" = 5),
+#'                                min_counts = c("7" = 3))
+#'                                
+#' # Plot data after subsampling
+#' plot(subsampled,
+#'      vertex_size = item_count,
+#'      vertex_color = item_count,
+#'      vertex_label = item_count)
+#'      
+#' # Remove itemless taxa and plot
+#' plot(subset(subsampled, item_count > 0, itemless = FALSE),
+#'      vertex_size = item_count,
+#'      vertex_color = item_count,
+#'      vertex_label = item_count)
 #' 
 #' @export
 taxonomic_sample <- function(classified_data,

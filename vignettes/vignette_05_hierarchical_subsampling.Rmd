@@ -98,9 +98,9 @@ Too few sequences means that the diversity of the taxon cannot be determined and
 For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included.
 
 ```{r}
-index <- taxonomic_sample(root_id = "1", item_ids = items$taxon_id, taxon_ids = taxa$taxon_id,
-                          parent_ids = taxa$parent_id, ranks = taxa$rank, max_counts = c("o" = 20, "s" = 5),
-                          min_counts = c("s" = 3))
+subsampled <- taxonomic_sample(unite_ex_data_3,
+                               max_counts = c("o" = 20, "s" = 5),
+                               min_counts = c("s" = 3))
 sampled_items <- items[index, ] # Subsample sequence metadata
 sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
                                          parents = taxa$parent_id,

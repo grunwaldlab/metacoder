@@ -69,6 +69,5 @@ data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum",
                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
                           min_length = 600, max_length = 10000)
 }
-
 }
 

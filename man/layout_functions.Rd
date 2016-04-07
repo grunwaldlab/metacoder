@@ -20,8 +20,25 @@ determines the the number of iterations.}
 
 \item{...}{(other arguments) Passed to igraph layout function used.}
 }
+\value{
+The name available functions, a layout functions,
+or a two-column matrix depending on how arguments are provided.
+}
 \description{
 Functions used to determine graph layout.
 Calling the function with no parameters returns available function names.
+Calling the function with only the name of a function returns that function.
+Supplying a name and a \code{\link[igraph]{graph}} object to run the layout function on the graph.
+}
+\examples{
+# List available function names:
+layout_functions()
+
+# Get layout function:
+layout_functions("davidson-harel")
+
+# Execute layout function on graph:
+layout_functions("davidson-harel", graph)
+
 }
 

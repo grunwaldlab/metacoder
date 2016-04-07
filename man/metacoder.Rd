@@ -45,6 +45,12 @@ To learn how to use the package and what it can do view the package vignettes by
 \itemize{
   \item \code{\link{plot_taxonomy}}
 }
+
+\strong{In silico PCR:}
+
+\itemize{
+  \item \code{\link{primersearch}}
+}
 }
 \author{
 Zachary Foster
