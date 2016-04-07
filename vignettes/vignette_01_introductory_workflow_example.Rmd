@@ -64,7 +64,8 @@ The function `extract_taxonomy` is used to parse any format containing one or mo
 There is another [vignette](02_extracting_taxonomy_data.html) that covers `extract_taxonomy` in more detail. 
 
 
-#### Get RDP mothur training data set
+
+#### Download RDP data
 
 Lets parse the embedded taxonomic hierarchy from the RDP mothur training data set. 
 R can be used to download files from the internet and decompress them.
@@ -72,18 +73,20 @@ The code below downloads the compressed data to a temporary directory.
 
 ```{r}
 rdp_fasta_url <- "http://mothur.org/w/images/b/b5/Trainset10_082014.rdp.tgz"
-temp_dir_path <- tempdir() # make temporary directory
-local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url)) 
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url))
 download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
 ```
+
+#### Uncompress
 
 Next we will uncompress the archive and identify the fasta file.
 
 ```{r}
-unpacked_file_paths <- untar(local_file_path, list = TRUE) # get contents of archive
-untar(local_file_path, exdir = temp_dir_path) # uncompress the archive
-packed_fasta_path <- unpacked_file_paths[grepl("fasta$", unpacked_file_paths)] # identify the FASTA file
-unpacked_fasta_path <- file.path(temp_dir_path, packed_fasta_path) # uncompress FASTA file
+unpacked_file_paths <- untar(local_file_path, list = TRUE) # get contents
+untar(local_file_path, exdir = temp_dir_path)
+unpacked_fasta_path <- file.path(temp_dir_path, 
+                                  unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
 ```
 
 #### Read FASTA file

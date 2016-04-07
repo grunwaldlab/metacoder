@@ -1,0 +1,12 @@
+---
+output:
+  html_document:
+    keep_md: true
+---
+
+```{r, child="vignettes/index.Rmd"}
+```
+
+### Documentation
+
+Documentation is under construction at http://grunwaldlab.github.io/metacoder.
