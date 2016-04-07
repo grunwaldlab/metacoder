@@ -13,7 +13,9 @@
 #' @param dont_run If TRUE, the command is generated, but not executed. This could be useful if you
 #'   want to execute the command yourself.
 #' @param ... Additional arguments are passed to \code{primersearch}.
+#' 
 #' @return The command generated as a character vector of length 1.
+#' 
 #' @seealso \code{\link{parse_primersearch}}
 #' 
 #' @keywords internal
@@ -83,19 +85,34 @@ parse_primersearch <- function(file_path) {
 
 
 #===================================================================================================
-#' Use EMBOSS primersearch for in silico PCR 
+#' Use EMBOSS primersearch for in silico PCR
 #' 
-#' @param sequence A list of character vectors of DNA sequence or a file path to FASTA file 
-#'   containing sequences.
-#' @param forward A character vector or list of primer sequences. If named and pair_name is not set, 
-#'   the names are used to construct the primer pair names.
-#' @param reverse A character vector or list of primer sequences. If named and pair_name is not set, 
-#'   the names are used to construct the primer pair names.
-#' @param seq_name Names of sequences
-#' @param pair_name A character vector of names for primer pairs.
+#' A pair of primers are aligned against a set of sequences.
+#' The location of the best hits, quality of match, and predicted amplicons are returned.
+#' Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+#' 
+#' @param input A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
+#' or an object of type \code{\link{classified}}
+#' @param forward (\code{character} of length 1) The forward primer sequence
+#' @param reverse (\code{character} of length 1) The reverse primer sequence
+#' @param seq_name (\code{character}) Names of sequences
+#' @param pair_name (\code{character} of length 1) The name of the primer pair.
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
 #' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
-#' @return Output from \code{\link{parse_primersearch}} (A dataframe)
+#' 
+#' @return An object of type \code{\link{classified}}
+#' 
+#' @examples
+#' result <- primersearch(rdp_ex_data, 
+#'                        forward = "CTCCTACGGGAGGCAGCAG",
+#'                        reverse = "GWATTACCGCGGCKGCTG",
+#'                        pair_name = "357F_+_519R",
+#'                        mismatch = 10)
+#' plot(result, 
+#'      vertex_size = item_count,
+#'      vertex_color = prop_amplified,
+#'      vertex_color_range = c("red", "yellow", "green"),
+#'      vertex_color_trans = "linear")
 #' 
 #' @export
 #' @rdname primersearch
@@ -106,27 +123,27 @@ primersearch <- function(...) {
 #' @method primersearch default
 #' @export
 #' @rdname primersearch
-primersearch.default <- function(sequence, forward, reverse,
+primersearch.default <- function(input, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
   # Read input file if supplied --------------------------------------------------------------------
-  if (class(sequence) == "DNAbin") {
-    if (is.null(seq_name)) seq_name <- names(sequence)
-  } else if (is.atomic(sequence) && all(file.exists(sequence))) {
-    if (length(sequence) == 1) {
-      sequence <- as.character(ape::read.dna(sequence, format = "fasta"))
+  if (class(input) == "DNAbin") {
+    if (is.null(seq_name)) seq_name <- names(input)
+  } else if (is.atomic(input) && all(file.exists(input))) {
+    if (length(input) == 1) {
+      input <- as.character(ape::read.dna(input, format = "fasta"))
     } else {
       stop("Only one input file can be used currently.")
     }
   } else {
-    if (is.atomic(sequence)) sequence <- lapply(as.character(sequence), seqinr::s2c)
-    sequence <- ape::as.DNAbin(sequence)
+    if (is.atomic(input)) input <- lapply(as.character(input), seqinr::s2c)
+    input <- ape::as.DNAbin(input)
   }
   # Write temporary fasta file for primersearch input ----------------------------------------------
-  if (!is.null(seq_name)) names(sequence) <- seq_name
-  names(sequence) <- paste(seq_along(sequence), names(sequence))
+  if (!is.null(seq_name)) names(input) <- seq_name
+  names(input) <- paste(seq_along(input), names(input))
   sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
   on.exit(file.remove(sequence_path))
-  ape::write.dna(sequence, sequence_path, format="fasta", nbcol=-1, colsep="")    
+  ape::write.dna(input, sequence_path, format="fasta", nbcol=-1, colsep="")    
   # Write primer file for primersearch input -------------------------------------------------------
   if (is.null(names(forward))) names(forward) <- seq_along(forward)
   if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
@@ -141,13 +158,13 @@ primersearch.default <- function(sequence, forward, reverse,
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch, ...)
   on.exit(file.remove(output_path))
   output <- parse_primersearch(output_path)
-  # Extract amplicon sequence ---------------------------------------------------------------------
+  # Extract amplicon input ---------------------------------------------------------------------
   output$seq_id <- as.numeric(output$seq_id)
   output$amp_start <- output$forward_index + nchar(output$forward_primer)
-  output$amp_end <- vapply(sequence[output$seq_id], length, numeric(1)) -
+  output$amp_end <- vapply(input[output$seq_id], length, numeric(1)) -
     (output$reverse_index + nchar(output$reverse_primer)) + 1
   output$amplicon <- unlist(Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
-                         as.character(sequence[output$seq_id]), output$amp_start, output$amp_end))
+                         as.character(input[output$seq_id]), output$amp_start, output$amp_end))
   return(output)
 }
 
@@ -161,7 +178,7 @@ primersearch.classified <- function(classified_data, embed = TRUE, ...) {
   if (is.null(classified_data$item_data$sequence)) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
   }
-  result <- primersearch(sequence = classified_data$item_data$sequence,
+  result <- primersearch(input = classified_data$item_data$input,
                          seq_name = rownames(classified_data$item_data),
                          ...)
   

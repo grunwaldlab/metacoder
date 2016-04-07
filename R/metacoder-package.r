@@ -39,6 +39,11 @@
 #'   \item \code{\link{plot_taxonomy}}
 #' }
 #'
+#' \strong{In silico PCR:}
+#' 
+#' \itemize{
+#'   \item \code{\link{primersearch}}
+#' }
 #'
 #' @author Zachary Foster
 #' @name metacoder

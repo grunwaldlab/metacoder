@@ -39,4 +39,17 @@ Output from \code{\link{parse_primersearch}} (A dataframe)
 \description{
 Use EMBOSS primersearch for in silico PCR
 }
+\examples{
+result <- primersearch(rdp_ex_data, 
+                       forward = "CTCCTACGGGAGGCAGCAG",
+                       reverse = "GWATTACCGCGGCKGCTG",
+                       pair_name = "357F_+_519R",
+                       mismatch = 10)
+plot(result, 
+     vertex_size = item_count,
+     vertex_color = prop_amplified,
+     vertex_color_range = c("red", "yellow", "green"),
+     vertex_color_trans = "linear")
+
+}
 
