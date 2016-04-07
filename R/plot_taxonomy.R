@@ -982,8 +982,10 @@ transform_data <- function(func = NULL, data = NULL) {
     return(names(funcs))
   } else if (is.null(data)) {
     return(funcs[[func]])
-  } else {
+  } else if (is.numeric(data)) {
     return(vapply(X = data, FUN = funcs[[func]], FUN.VALUE = numeric(1)))
+  } else {
+    return(data)
   }
 }
 
