@@ -6,7 +6,14 @@
 \usage{
 quantative_palette()
 }
+\value{
+\code{character} of hex color codes
+}
 \description{
-The default color palette for quantative data
+Returns the default color palette for quantative data.
+}
+\examples{
+quantative_palette()
+
 }
 

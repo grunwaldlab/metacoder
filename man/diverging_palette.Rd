@@ -6,7 +6,14 @@
 \usage{
 diverging_palette()
 }
+\value{
+\code{character} of hex color codes
+}
 \description{
-The default color palette for diverging data
+Returns the default color palette for diverging data
+}
+\examples{
+diverging_palette()
+
 }
 

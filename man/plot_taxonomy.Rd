@@ -333,4 +333,13 @@ Setting a custom interval is useful for making size/color in multiple graphs cor
 or setting logical bounderies (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 }
+\examples{
+plot(contaminants,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name,
+     tree_label = name,
+     layout = "fruchterman-reingold")
+
+}
 

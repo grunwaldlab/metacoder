@@ -300,6 +300,7 @@
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
 #' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
 #' @param ... Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.
+#' 
 #' @examples
 #' \dontrun{
 #' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
@@ -308,8 +309,6 @@
 #'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
 #'                           min_length = 600, max_length = 10000)
 #' }
-#' 
-#' @export
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,
                               interpolate_min = TRUE, interpolate_max = TRUE,
@@ -469,7 +468,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
 #' 
 #' @return (\code{list} of \code{character})
 #' 
-#' @export
+#' @keywords internal
 ncbi_sequence <- function (ids, batch_size = 100) 
 {
   base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
