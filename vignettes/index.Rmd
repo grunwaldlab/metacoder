@@ -12,7 +12,8 @@ vignette: >
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
-opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning=FALSE, message=FALSE)
+opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE,
+               autodep = TRUE, cache = TRUE)
 ```
 
 ## An R package for planning amplicon metagenomics research and plotting taxonomy-associated information
@@ -38,7 +39,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 Most databases have unique file formats and taxonomic hierarchies/nomenclature.
 Taxonomic data can be extracted from almost any file format using the **extract_taxonomy** function.
 Taxon names/IDs and sequence IDs can be used to get taxonomic data from online databases or embedded data can be parsed offline.
-A regular expression with capture groups and a corresponding key is used to define how to parse the file.
+A regular expression with capture groups and a corresponding key is used to define how files are parsed.
 The example code below parses the 16s RPD training set for Mothur:
 
 ```{r, warning=FALSE, message=FALSE}
@@ -93,7 +94,7 @@ plot(subset(data, name == "Archaea"), vertex_size = item_count,
      vertex_label = name, vertex_color = item_count, layout = "fruchterman-reingold")
 ```
 
-To make the archaea-bacteria division more clear, the root taxa can be removed, causing two trees to be plotted:
+To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, causing two trees to be plotted:
 
 ```{r, echo = FALSE}
 set.seed(2)
@@ -111,7 +112,7 @@ plot(subsetted, vertex_size = item_count, vertex_label = name,
 When calculating statistics for taxa from reference databases the amount of data should be distributed evenly among taxa and there should be enough data per taxon to make reliable estimates.
 Random samples of large reference databases are biased toward culturable taxa with plentiful data.
 The function **taxonomic_sample** is used to create taxonomically balanced random subsamples.
-Taxa with too few sequences or sub-taxa are excluded and taxa with too many are sampled.
+Taxa with too few sequences or sub-taxa are excluded and taxa with too many are subsampled.
 The code below subsamples the data such that rank 6 taxa will have 5 sequences and rank 3 taxa (phyla) will have less than 100. 
 
 ```{r, echo = FALSE}
@@ -128,7 +129,7 @@ set.seed(4)
 ```
 
 ```{r}
-plot(sampled, vertex_size = item_count, vertex_label = item_count, tree_label = name,
+plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoidance = 0.5,
      vertex_color = item_count, layout = "davidson-harel", vertex_label_max = 100)
 ```
 
@@ -157,7 +158,7 @@ plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amp
 ```
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
-We can subset the data to better see what Bacteria did not get amplified:
+The data can then be subset to better see what did not get amplified:
 
 ```{r}
 library(magrittr) # Adds optional %>% operator for chaining commands
@@ -169,8 +170,8 @@ pcr %>%
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
-We can compare the effectiveness of primer pair 357F/519F to 515F/1100R.
-First we do *in silco* PCR with 515F/1100R and combine the results:
+This can be done with multiple primer pairs to compare their effectivness.
+The code below uses *in silco* PCR with 515F/1100R and appends the results to those of 357F/519F:
 
 ```{r}
 pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
@@ -179,7 +180,7 @@ pcr$taxon_data$count_amplified_2 <- taxon_data(pcr_2, "count_amplified")
 pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2, "prop_amplified")
 ```
 
-Then taxa that are not amplified by both pairs can be subsetted and the difference in amplification plotted:
+Then, taxa that are not amplified by both pairs can be subsetted and the difference in amplification plotted:
 
 ```{r}
 pcr %>%
@@ -204,16 +205,3 @@ devtools::install_github("grunwaldlab/metacoder")
 
 We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
 This R package is built upon others, notably taxize, igraph, and ggplot2.
-
-
-### Download the current version
-
-While this project is in development it can be installed through github:
-
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
-    library(metacoder)
-
-If you've built the vignettes, you can browse them with:
-
-    browseVignettes(package="metacoder")
-
