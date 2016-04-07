@@ -192,16 +192,19 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   } 
   
   
-  
-  
-  # Adjust origin coordinates
+  # Set origin to c(0, 0)
+  min_x <- min(c(shape_data$x, label_data$x))
+  if (min_x < 0) {
+    x <- x + abs(min_x)
+  }
+
+  # Transpose ouput
   shape_data$x <- shape_data$x + x
   shape_data$y <- shape_data$y + y
   
   if (!is.null(label_data)) {
     label_data$x <- label_data$x + x
     label_data$y <- label_data$y + y
-    
   }
   
   output <- list(shapes = shape_data,
