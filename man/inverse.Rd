@@ -11,6 +11,9 @@ inverse(f, interval)
 
 \item{interval}{(\code{character} of length 2) The range of the value the inverse function can return.}
 }
+\value{
+(\code{function}) Return the inverse of the function given
+}
 \description{
 http://stackoverflow.com/questions/10081479/solving-for-the-inverse-of-a-function-in-r
 }
