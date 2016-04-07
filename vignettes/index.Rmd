@@ -12,12 +12,12 @@ vignette: >
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE)
+opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning=FALSE, message=FALSE)
 ```
 
 ## An R package for planning amplicon metagenomics research and plotting taxonomy-associated information
 
-Zachary S. L. Foster and Niklaus J. Grünwald
+*Zachary S. L. Foster and Niklaus J. Grünwald*
 
 ### Introduction 
 
