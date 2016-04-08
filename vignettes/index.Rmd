@@ -31,13 +31,14 @@ Metabarcoding is revolutionizing microbial ecology and presenting new challenges
 MetacodeR is an R package that attempts to addresses these issues:
 
 * Sources of taxonomic data can be extracted from any file format. 
-* Community diversity can be visualized by color and size in a tree layout.
+* Community diversity can be visualized by color and size in a tree plot.
 * Primer specificity can be estimated with *In silico* PCR.
 
 ### Extracting taxonomic data
 
 Most databases have a unique file format and taxonomic hierarchy/nomenclature.
-Taxonomic data can be extracted from any file format using the **extract_taxonomy** function, as long as one of the following are present: taxon name, taxon ID, sequence ID or embedded classification. 
+Taxonomic data can be extracted from any file format using the **extract_taxonomy** function.
+Classifications can be paresed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
 The example code below parses the 16s Ribosome Database Project training set for Mothur:
 
@@ -47,27 +48,28 @@ seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta")
 cat(names(seqs)[1]) # print an example of the sequence headers
 data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)", key = c(seq_id = "item_info", "class_name"),
                          class_tax_sep = ";", database = "none")
+```
+
+The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+
+```{r}
 head(taxon_data(data)) # print a few rows of the taxon data
 head(item_data(data)) # print a few rows of the sequence data
 ```
 
-The resulting object contains sequence information associated with an inferred taxonomic hierarchy.
 
 ### Metadiversity plots
 
 The hierarchical nature of taxonomic data makes it difficult to plot effectively.
 Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa or multiple ranks.
-The function plot_taxonomy makes a tree utilizing color and size to display taxonomic data (e.g. sequence abundance) that we call a **Metadiversity plot**:
+MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity plot**:
 
 ```{r}
-plot(data, vertex_size = item_count, 
-     vertex_label = name, vertex_color = item_count)
+plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
 ```
 
-Any statistic can be mapped to tree vertex/edge color and size.
-The size range displayed is optimized for each graph.
-Plotting is flexible enough for pipelines and controlled enough for publication-ready graphics.
-There are many optional arguments to customize the appearance of the graph:
+The size range displayed is optimized for each plot by default but can also be set manually.
+Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r, echo = FALSE}
 set.seed(7)
@@ -81,7 +83,7 @@ plot(data, vertex_size = item_count, vertex_label = name, layout = "davidson-har
 
 ### Subsetting
 
-Taxonomic data can be easily subset using the **subset** function. # do something
+Taxonomic data can be easily subset using the **subset** function.
 The user can choose preserve or remove the subtaxa, supertaxa, and sequence data of the subset.
 For example, **subset** can be used to look at just the Archaea:
 
@@ -137,7 +139,7 @@ plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoid
 
 ### In silico PCR
 
-The function **primersearch** is a wrapper for the EMBOSS tool that implements *in silico* PCR.
+The function **primersearch** is a wrapper for an EMBOSS tool that implements *in silico* PCR.
 The code below estimates the coverage of the universal bacterial primer pair 357F/519F: 
 
 ```{r}
@@ -154,12 +156,12 @@ set.seed(7) # 6, 7 is ok
 
 ```{r}
 plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "#d95f02", "#1b9e77", "#7570b3"),
+     vertex_color_range =  c("red", "cyan"),
      vertex_color_trans = "radius", tree_label = name)
 ```
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
-The data can then be subset to better see what did not get amplified:
+The data can also be subset to better see what did not get amplified:
 
 ```{r}
 library(magrittr) # Adds optional %>% operator for chaining commands
@@ -167,14 +169,14 @@ pcr %>%
   subset(name == "Bacteria") %>%
   subset(count_amplified < item_count, subtaxa = FALSE) %>% 
   plot(vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
-       vertex_color_range =  c("red", "#d95f02", "#1b9e77", "#7570b3"),
+       vertex_color_range =  c("red", "cyan"),
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
 ### Differential metadiversity plots
 
-We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference of their amplification proportions.
-First we do *in silco* PCR with 515F/1100R and combine the results:
+We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
+First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
 
 ```{r}
 pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
@@ -184,7 +186,7 @@ pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2
 ```
 
 Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
-In the graph below, blue means taxa were amplified by 357F/519F but not 515F/1100R; brown means the opposite:
+In the plot below, blue corresponds to taxa amplified by 357F/519F but not 515F/1100R and brown is the opposite:
 
 ```{r}
 pcr %>%
