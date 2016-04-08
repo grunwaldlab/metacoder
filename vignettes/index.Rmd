@@ -16,7 +16,7 @@ opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, mess
                autodep = TRUE, cache = TRUE)
 ```
 
-## An R package for planning amplicon metagenomics research and plotting taxonomy-associated information
+## MetacodeR: an R package for metabarcoding research planning and analysis
 
 *Zachary S. L. Foster and Niklaus J. Grünwald*
 
@@ -30,7 +30,7 @@ Metabarcoding is revolutionizing microbial ecology and presenting new challenges
 
 MetacodeR is an R package that attempts to addresses these issues:
 
-* Sources of taxonomic data can be extracted from any file format. 
+* Sources of taxonomic data can be extracted from any file format and easily subset. 
 * Community diversity can be visualized by color and size in a tree plot.
 * Primer specificity can be estimated with *In silico* PCR.
 
@@ -38,7 +38,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 
 Most databases have a unique file format and taxonomic hierarchy/nomenclature.
 Taxonomic data can be extracted from any file format using the **extract_taxonomy** function.
-Classifications can be paresed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
+Classifications can be parsed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
 The example code below parses the 16s Ribosome Database Project training set for Mothur:
 
@@ -110,7 +110,6 @@ plot(subsetted, vertex_size = item_count, vertex_label = name,
 
 
 ### Taxonomically balanced sampling
-
 
 When calculating statistics for taxa, the amount of data should be balanced among taxa and there should be enough data per taxon to make unbiased estimates.
 Random samples from large reference databases are biased toward overrepresented taxa.
