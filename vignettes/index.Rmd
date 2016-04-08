@@ -64,6 +64,10 @@ The hierarchical nature of taxonomic data makes it difficult to plot effectively
 Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa or multiple ranks.
 MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity plot**:
 
+```{r, echo = FALSE}
+set.seed(1)
+```
+
 ```{r}
 plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
 ```
@@ -123,7 +127,7 @@ set.seed(1)
 
 ```{r}
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- subset(sampled, sitem_count > 0, itemless = FALSE) 
+sampled <- subset(sampled, item_count > 0, itemless = FALSE) 
 ```
 
 ```{r, echo = FALSE}
@@ -150,7 +154,7 @@ head(taxon_data(pcr))
 The proportion of sequences amplified can be represented by color in a metadiversity plot:
 
 ```{r, echo = FALSE}
-set.seed(7) # 6, 7 is ok
+set.seed(1)
 ```
 
 ```{r}
@@ -161,6 +165,10 @@ plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amp
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
 The data can also be subset to better see what did not get amplified:
+
+```{r, echo = FALSE}
+set.seed(7) # 2 4 5
+```
 
 ```{r}
 library(magrittr) # Adds optional %>% operator for chaining commands
@@ -177,6 +185,8 @@ pcr %>%
 We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
 First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
 
+
+
 ```{r}
 pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
                       pair_name = "515F_1100R", mismatch = 10)
@@ -186,6 +196,11 @@ pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2
 
 Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
 In the plot below, blue corresponds to taxa amplified by 357F/519F but not 515F/1100R and brown is the opposite:
+
+
+```{r, echo = FALSE}
+set.seed(2)
+```
 
 ```{r}
 pcr %>%
