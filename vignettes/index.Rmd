@@ -12,6 +12,8 @@ vignette: >
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
+library(ggplot2)
+options(width = 120)
 opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE,
                autodep = TRUE, cache = TRUE)
 ```
@@ -30,7 +32,7 @@ Metabarcoding is revolutionizing microbial ecology and presenting new challenges
 
 MetacodeR is an R package that attempts to addresses these issues:
 
-* Sources of taxonomic data can be extracted from any file format and easily subset. 
+* Sources of taxonomic data can be extracted from any file format and manipulated. 
 * Community diversity can be visualized by color and size in a tree plot.
 * Primer specificity can be estimated with *In silico* PCR.
 
@@ -46,7 +48,8 @@ The example code below parses the 16s Ribosome Database Project training set for
 library(metacoder)
 seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta")
 cat(names(seqs)[1]) # print an example of the sequence headers
-data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)", key = c("item_info", "class_name"),
+data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
+                         key = c("item_info", "class_name"),
                          class_tax_sep = ";", database = "none")
 ```
 
@@ -54,7 +57,6 @@ The resulting object contains sequence information associated with an inferred t
 
 ```{r}
 head(taxon_data(data)) # print a few rows of the taxon data
-head(item_data(data)) # print a few rows of the sequence data
 ```
 
 
@@ -65,14 +67,20 @@ Most often, bar charts, stacked bar charts, or pie graphs are used, but these ar
 MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity plot**:
 
 ```{r, echo = FALSE}
-set.seed(1)
+set.seed(1) #1 4 5(tall)
 ```
 
 ```{r}
 plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
 ```
 
-The size range displayed is optimized for each plot by default but can also be set manually.
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transparent")
+```
+
+
+The default size range displayed is optimized for each plot.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r, echo = FALSE}
@@ -80,10 +88,17 @@ set.seed(7)
 ```
 
 ```{r}
-plot(data, vertex_size = item_count, vertex_label = name, layout = "davidson-harel",
-     vertex_color = item_count, vertex_color_range = c("cyan", "magenta", "green"),
-     edge_color = rank, edge_color_range   = c("#555555", "#EEEEEE"), overlap_avoidance = 0.5)
+plot(data, vertex_size = item_count, edge_color = rank,
+     vertex_label = name, vertex_color = item_count,
+     vertex_color_range = c("cyan", "magenta", "green"),
+     edge_color_range   = c("#555555", "#EEEEEE"),
+     layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
+
+```{r, include = FALSE}
+ggplot2::ggsave(file = "intro_plot_2.svg", plot = the_last_plot, bg = "transparent")
+```
+
 
 ### Subsetting
 
@@ -100,6 +115,12 @@ plot(subset(data, name == "Archaea"), vertex_size = item_count,
      vertex_label = name, vertex_color = item_count, layout = "fruchterman-reingold")
 ```
 
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "subset_1.svg", plot = the_last_plot, bg = "transparent")
+```
+
+
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, causing two trees to be plotted:
 
 ```{r, echo = FALSE}
@@ -109,9 +130,13 @@ set.seed(2)
 ```{r}
 subsetted <- subset(data, rank > 1)
 plot(subsetted, vertex_size = item_count, vertex_label = name,
-     vertex_color = item_count, layout = "davidson-harel", tree_label = name)
+     vertex_color = item_count, tree_label = name, layout = "davidson-harel")
 ```
 
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "subset_2.svg", plot = the_last_plot, bg = "transparent")
+```
 
 ### Taxonomically balanced sampling
 
@@ -136,7 +161,12 @@ set.seed(4)
 
 ```{r}
 plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoidance = 0.5,
-     vertex_color = item_count, layout = "davidson-harel", vertex_label_max = 100)
+     vertex_color = item_count, layout = "davidson-harel")
+```
+
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "subsample.svg", plot = the_last_plot, bg = "transparent")
 ```
 
 
@@ -159,8 +189,12 @@ set.seed(1)
 
 ```{r}
 plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"),
-     vertex_color_trans = "radius", tree_label = name)
+     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
+```
+
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "in_silico_pcr_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
@@ -179,6 +213,12 @@ pcr %>%
        vertex_color_range =  c("red", "cyan"),
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
+
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "in_silico_pcr_2.svg", plot = the_last_plot, bg = "transparent")
+```
+
 
 ### Differential metadiversity plots
 
@@ -210,6 +250,12 @@ pcr %>%
        vertex_color = prop_diff, vertex_color_range = diverging_palette(),
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```
+
+```{r, include = FALSE}
+the_last_plot <- .Last.value
+ggplot2::ggsave(file = "in_silico_pcr_3.svg", plot = the_last_plot, bg = "transparent")
+```
+
 
 ### Conclusions
 

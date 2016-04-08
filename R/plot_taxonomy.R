@@ -751,7 +751,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     color_range = vertex_color_range,
                                     color_stat_range = vertex_color_interval, 
                                     color_stat_trans =  transform_data(func = vertex_color_trans),
-                                    title = "Verticies",
+                                    title = "Vertices",
                                     color_axis_label = vertex_color_axis_label,
                                     size_axis_label = vertex_size_axis_label,
                                     hide_size = missing(vertex_size),
@@ -786,7 +786,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     c(x + spread, x - spread)
   }
   label_y_bounds <- function(y, size, label) {
-    spread <- size / 2
+    spread <- size / 2 * 1.1
     c(y + spread, y - spread)
   }
   
@@ -1042,7 +1042,7 @@ qualitative_palette <- function() {
 #' 
 #' @export
 diverging_palette <- function() {
-  return(c("#8c510a", "#DDDDDD", "#01665e"))
+  return(c("#a6611a", "#DDDDDD", "#018571"))
 }
 
 
