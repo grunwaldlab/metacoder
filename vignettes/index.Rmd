@@ -12,12 +12,13 @@ vignette: >
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE)
+opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE,
+               autodep = TRUE, cache = TRUE)
 ```
 
 ## An R package for planning amplicon metagenomics research and plotting taxonomy-associated information
 
-Zachary S. L. Foster and Niklaus J. Grünwald
+*Zachary S. L. Foster and Niklaus J. Grünwald*
 
 ### Introduction 
 
@@ -108,6 +109,7 @@ plot(subsetted, vertex_size = item_count, vertex_label = name,
 
 ### Taxonomically balanced sampling
 
+
 When calculating statistics for taxa, the amount of data should be balanced among taxa and there should be enough data per taxon to make unbiased estimates.
 Random samples from large reference databases are biased toward overrepresented taxa.
 The function **taxonomic_sample** is used to create taxonomically balanced random samples.
@@ -128,7 +130,7 @@ set.seed(4)
 ```
 
 ```{r}
-plot(sampled, vertex_size = item_count, vertex_label = item_count, tree_label = name,
+plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoidance = 0.5,
      vertex_color = item_count, layout = "davidson-harel", vertex_label_max = 100)
 ```
 
@@ -157,7 +159,7 @@ plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amp
 ```
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
-We can subset the data to better see what Bacteria did not get amplified:
+The data can then be subset to better see what did not get amplified:
 
 ```{r}
 library(magrittr) # Adds optional %>% operator for chaining commands
@@ -169,10 +171,9 @@ pcr %>%
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
-
 ### Differential metadiversity plots
 
-We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference of their amplification proportion.
+We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference of their amplification proportions.
 First we do *in silco* PCR with 515F/1100R and combine the results:
 
 ```{r}
@@ -182,7 +183,7 @@ pcr$taxon_data$count_amplified_2 <- taxon_data(pcr_2, "count_amplified")
 pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2, "prop_amplified")
 ```
 
-Then taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
+Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
 In the graph below, blue means taxa were amplified by 357F/519F but not 515F/1100R; brown means the opposite:
 
 ```{r}
@@ -193,8 +194,6 @@ pcr %>%
        vertex_color = prop_diff, vertex_color_range = diverging_palette(),
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```
-
-
 
 ### Conclusions
 
@@ -211,4 +210,4 @@ devtools::install_github("grunwaldlab/metacoder")
 ### Aknowledgements
 
 We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
-MetacodeR's major dependencies taxize, igraph, and ggplot2.
+MetacodeR's major dependencies are taxize, igraph, and ggplot2.

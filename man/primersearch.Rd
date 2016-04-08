@@ -8,7 +8,7 @@
 \usage{
 primersearch(...)
 
-\method{primersearch}{default}(input, forward, reverse, seq_name = NULL,
+\method{primersearch}{default}(sequence, forward, reverse, seq_name = NULL,
   pair_name = NULL, mismatch = 5, ...)
 
 \method{primersearch}{classified}(classified_data, embed = TRUE, ...)
@@ -16,7 +16,7 @@ primersearch(...)
 \arguments{
 \item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
 
-\item{input}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
+\item{sequence}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
 or an object of type \code{\link{classified}}}
 
 \item{forward}{(\code{character} of length 1) The forward primer sequence}

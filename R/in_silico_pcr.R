@@ -178,7 +178,7 @@ primersearch.classified <- function(classified_data, embed = TRUE, ...) {
   if (is.null(classified_data$item_data$sequence)) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
   }
-  result <- primersearch(input = classified_data$item_data$input,
+  result <- primersearch(input = classified_data$item_data$sequence,
                          seq_name = rownames(classified_data$item_data),
                          ...)
   

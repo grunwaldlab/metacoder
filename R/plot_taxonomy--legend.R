@@ -243,7 +243,7 @@ scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
 #' @param f (\code{function} with one argument) A function to derive and inverse from
 #' @param interval (\code{character} of length 2) The range of the value the inverse function can return.
 #' 
-#' @retrun (\code{function}) Return the inverse of the function given
+#' @return (\code{function}) Return the inverse of the function given
 #' 
 #' @keywords internal
 inverse = function (f, interval) {
