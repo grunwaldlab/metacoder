@@ -3,31 +3,34 @@
 
 
 
-## An R package for planning amplicon metagenomics research and plotting taxonomy-associated information
 
-Zachary S. L. Foster and Niklaus J. Grünwald
+
+
+## MetacodeR: an R package for metabarcoding research planning and analysis
+
+*Zachary S. L. Foster and Niklaus J. Grünwald*
 
 ### Introduction 
 
 Metabarcoding is revolutionizing microbial ecology and presenting new challenges:
 
-* Taxonomic data is stored in numerous database formats making it difficult to parse, combine, and subset.
-* Commonly used stacked bar charts are ineffective for taxonomic data with multiple ranks or treatments.
-* There is much under-explored bias associated with the choice of barcode loci and primers.
+* Numerous database formats make taxonomic data difficult to parse, combine, and subset.
+* Stacked bar charts, commonly used to depict community diversity, lack taxonomic context.
+* Barcode loci and primers are a source of under-explored bias.
 
 MetacodeR is an R package that attempts to addresses these issues:
 
-* Taxonomic data from almost any format can be parsed easily and missing data can be retrieved from online databases.
-* Taxonomic data can be mapped to size and color and graphed on a tree, as in a heat map.
-* *In silico* PCR is used to evaluate primer specificity and functions are being developed to use barcode gap analysis to estimate error rates of barcode loci.
+* Sources of taxonomic data can be extracted from any file format and manipulated. 
+* Community diversity can be visualized by color and size in a tree plot.
+* Primer specificity can be estimated with *In silico* PCR.
 
 ### Extracting taxonomic data
 
-Most databases have unique file formats and taxonomic hierarchies/nomenclature.
-Taxonomic data can be extracted from almost any file format using the **extract_taxonomy** function.
-Taxon names/IDs and sequence IDs can be used to get taxonomic data from online databases or embedded data can be parsed offline.
+Most databases have a unique file format and taxonomic hierarchy/nomenclature.
+Taxonomic data can be extracted from any file format using the **extract_taxonomy** function.
+Classifications can be parsed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
-The example code below parses the 16s RPD training set for Mothur:
+The example code below parses the 16s Ribosome Database Project training set for Mothur:
 
 
 ```r
@@ -41,9 +44,16 @@ cat(names(seqs)[1]) # print an example of the sequence headers
 ```
 
 ```r
-data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)", key = c(seq_id = "item_info", "class_name"),
+data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
+                         key = c("item_info", "class_name"),
                          class_tax_sep = ";", database = "none")
-head(taxon_data(data))
+```
+
+The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+
+
+```r
+head(taxon_data(data)) # print a few rows of the taxon data
 ```
 
 ```
@@ -56,43 +66,49 @@ head(taxon_data(data))
 ## 6        6         5         39    6 Carnobacteriaceae
 ```
 
-The object that results contains sequence information associated with a taxonomic hierarchy.
 
-### Plotting
+### Metadiversity plots
 
 The hierarchical nature of taxonomic data makes it difficult to plot effectively.
-Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa and multiple ranks.
-The function plot_taxonomy makes a tree utilizing color and size to display taxonomic data (e.g. sequence abundance):
-
-
-```r
-plot(data, vertex_size = item_count, 
-     vertex_label = name, vertex_color = item_count)
-```
-
-![](README_files/figure-html/unnamed-chunk-4-1.svg)
-
-Any statistic can be mapped to tree element color and size.
-The size range displayed is optimized for each graph.
-There are many options to customize the appearance of the graph, but all have useful defaults.
-Plotting is flexible enough for pipelines and controlled enough for publications. 
+Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa or multiple ranks.
+MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity plot**:
 
 
 
 
 ```r
-plot(data, vertex_size = item_count, vertex_label = name, layout = "davidson-harel",
-     vertex_color = item_count, vertex_color_range = c("cyan", "magenta", "green"),
-     edge_color = rank, edge_color_range   = c("#555555", "#EEEEEE"), overlap_avoidance = 0.5)
+plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
 ```
 
-![](README_files/figure-html/unnamed-chunk-6-1.svg)
+![](README_files/figure-html/unnamed-chunk-7-1.png)
+
+
+
+
+The default size range displayed is optimized for each plot.
+Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
+
+
+
+
+```r
+plot(data, vertex_size = item_count, edge_color = rank,
+     vertex_label = name, vertex_color = item_count,
+     vertex_color_range = c("cyan", "magenta", "green"),
+     edge_color_range   = c("#555555", "#EEEEEE"),
+     layout = "davidson-harel", overlap_avoidance = 0.5)
+```
+
+![](README_files/figure-html/unnamed-chunk-10-1.png)
+
+
+
 
 ### Subsetting
 
-Taxonomic data can be easily subsetted by any information associated with it using the **subset** function.
-There are options to preserve or discard the children (i.e. subtaxa) and parents (i.e. supertaxa) of selected taxa.
-**subset** can be used to look at just the data for Archaea:
+Taxonomic data can be easily subset using the **subset** function.
+The user can choose preserve or remove the subtaxa, supertaxa, and sequence data of the subset.
+For example, **subset** can be used to look at just the Archaea:
 
 
 
@@ -102,9 +118,12 @@ plot(subset(data, name == "Archaea"), vertex_size = item_count,
      vertex_label = name, vertex_color = item_count, layout = "fruchterman-reingold")
 ```
 
-![](README_files/figure-html/unnamed-chunk-8-1.svg)
+![](README_files/figure-html/unnamed-chunk-13-1.png)
 
-To make the archaea-bacteria division more clear, the root taxa can be removed, causing two trees to be plotted:
+
+
+
+To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, causing two trees to be plotted:
 
 
 
@@ -112,19 +131,20 @@ To make the archaea-bacteria division more clear, the root taxa can be removed, 
 ```r
 subsetted <- subset(data, rank > 1)
 plot(subsetted, vertex_size = item_count, vertex_label = name,
-     vertex_color = item_count, layout = "davidson-harel", tree_label = name)
+     vertex_color = item_count, tree_label = name, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-10-1.svg)
+![](README_files/figure-html/unnamed-chunk-16-1.png)
 
 
-### Subsampling
 
-When calculating statistics for taxa from reference databases the amount of data should be distributed evenly among taxa and there should be enough data per taxon to make reliable estimates.
-Random samples of large reference databases are biased toward culturable taxa with plentiful data.
-The function **taxonomic_sample** is used to create taxonomically balanced random subsamples.
-Taxa with too few sequences or sub-taxa are excluded and taxa with too many are sampled.
-The code below subsamples the data such that rank 6 taxa will have 5 sequences and rank 3 taxa (phyla) will have less than 100. 
+### Taxonomically balanced sampling
+
+When calculating statistics for taxa, the amount of data should be balanced among taxa and there should be enough data per taxon to make unbiased estimates.
+Random samples from large reference databases are biased toward overrepresented taxa.
+The function **taxonomic_sample** is used to create taxonomically balanced random samples.
+The acceptable range of sequence or subtaxa counts can be defined for each taxonomic rank; taxa with too few are excluded and taxa with too many are randomly sampled.
+The code below samples the data such that rank 6 taxa will have 5 sequences and rank 3 taxa (phyla) will have less than 100:
 
 
 
@@ -138,16 +158,18 @@ sampled <- subset(sampled, item_count > 0, itemless = FALSE)
 
 
 ```r
-plot(sampled, vertex_size = item_count, vertex_label = item_count, tree_label = name,
-     vertex_color = item_count, layout = "davidson-harel", vertex_label_max = 100)
+plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoidance = 0.5,
+     vertex_color = item_count, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-14-1.svg)
+![](README_files/figure-html/unnamed-chunk-21-1.png)
+
+
 
 
 ### In silico PCR
 
-The function **primersearch** is a wrapper for the an EMBOSS tool that implements *in silico* PCR.
+The function **primersearch** is a wrapper for an EMBOSS tool that implements *in silico* PCR.
 The code below estimates the coverage of the universal bacterial primer pair 357F/519F: 
 
 
@@ -158,37 +180,33 @@ head(taxon_data(pcr))
 ```
 
 ```
-##   taxon_id parent_id item_count rank count_amplified prop_amplified
-## 2        2      <NA>       1881    1            1658      0.8814460
-## 3        3         2        230    2             221      0.9608696
-## 4        4         3        100    3              97      0.9700000
-## 5        5         4         38    4              37      0.9736842
-## 6        6         5          3    5               3      1.0000000
-## 7        7         6          1    6               1      1.0000000
-##                name
-## 2          Bacteria
-## 3        Firmicutes
-## 4           Bacilli
-## 5   Lactobacillales
-## 6 Carnobacteriaceae
-## 7   Alkalibacterium
+##   taxon_id parent_id item_count rank count_amplified prop_amplified              name
+## 2        2      <NA>       1881    1            1658      0.8814460          Bacteria
+## 3        3         2        230    2             221      0.9608696        Firmicutes
+## 4        4         3        100    3              97      0.9700000           Bacilli
+## 5        5         4         38    4              37      0.9736842   Lactobacillales
+## 6        6         5          3    5               3      1.0000000 Carnobacteriaceae
+## 7        7         6          1    6               1      1.0000000   Alkalibacterium
 ```
 
-The proportion of sequences amplified can be mapped to color in a plot:
+The proportion of sequences amplified can be represented by color in a metadiversity plot:
 
 
 
 
 ```r
 plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "#d95f02", "#1b9e77", "#7570b3"),
-     vertex_color_trans = "radius", tree_label = name)
+     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
 ```
 
-![](README_files/figure-html/unnamed-chunk-17-1.svg)
+![](README_files/figure-html/unnamed-chunk-25-1.png)
+
+
 
 This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
-We can subset the data to better see what Bacteria did not get amplified:
+The data can also be subset to better see what did not get amplified:
+
+
 
 
 ```r
@@ -197,14 +215,21 @@ pcr %>%
   subset(name == "Bacteria") %>%
   subset(count_amplified < item_count, subtaxa = FALSE) %>% 
   plot(vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
-       vertex_color_range =  c("red", "#d95f02", "#1b9e77", "#7570b3"),
+       vertex_color_range =  c("red", "cyan"),
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-18-1.svg)
+![](README_files/figure-html/unnamed-chunk-28-1.png)
 
-We can compare the effectiveness of primer pair 357F/519F to 515F/1100R.
-First we do *in silco* PCR with 515F/1100R and combine the results:
+
+
+
+### Differential metadiversity plots
+
+We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
+First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
+
+
 
 
 ```r
@@ -214,7 +239,11 @@ pcr$taxon_data$count_amplified_2 <- taxon_data(pcr_2, "count_amplified")
 pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2, "prop_amplified")
 ```
 
-Then taxa that are not amplified by both pairs can be subsetted and the difference in amplification plotted:
+Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
+In the plot below, blue corresponds to taxa amplified by 357F/519F but not 515F/1100R and brown is the opposite:
+
+
+
 
 
 ```r
@@ -226,14 +255,17 @@ pcr %>%
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-20-1.svg)
-
-In the above graph, blue means taxa were amplified by 357F/519F but not 515F/1100R; brown means the opposite.
+![](README_files/figure-html/unnamed-chunk-32-1.png)
 
 
-### Conclusions and acknowledgements
 
-The ability to estimate the effectiveness of new primers/barcodes will accelerate the adoption of metabarcoding to understudied groups of organisms and intuitive plotting will reveal subtle patterns in complex data.
+
+### Conclusions
+
+Intuitive plotting will reveal subtle patterns in complex data and the ability to estimate the effectiveness of new primers/barcodes will accelerate the adoption of metabarcoding to understudied groups of organisms.
+
+### Availability
+
 This package is currently being developed and can be installed from GitHub using the following code:
 
 
@@ -241,9 +273,14 @@ This package is currently being developed and can be installed from GitHub using
 devtools::install_github("grunwaldlab/metacoder")
 ```
 
-We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
-This R package is built upon others, notably taxize, igraph, and ggplot2.
+### Aknowledgements
 
+We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
+MetacodeR's major dependencies are taxize, igraph, and ggplot2.
+
+### Documentation
+
+Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 ### Download the current version
 
@@ -255,8 +292,3 @@ While this project is in development it can be installed through github:
 If you've built the vignettes, you can browse them with:
 
     browseVignettes(package="metacoder")
-
-
-### Documentation
-
-Documentation is under construction at http://grunwaldlab.github.io/metacoder.

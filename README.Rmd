@@ -6,6 +6,7 @@ output:
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
+options(width = 120)
 opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE, 
                autodep = TRUE, cache = TRUE)
 ```
