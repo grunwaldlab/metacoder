@@ -8,4 +8,4 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes can be found online.
+Vignettes can be found online at: http://grunwaldlab.github.io/metacoder/
