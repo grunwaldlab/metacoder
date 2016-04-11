@@ -37,13 +37,51 @@
 
 #' Example of UNITE fungal ITS data
 #'
+#' A dataset containing information from 449 sequences from the UNITE reference database.
+#' 
+#' @examples
+#' \dontrun{
+#' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+#' sequences <- ape::read.FASTA(file_path)
+#' unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
+#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                                     key = c(name = "taxon_name",  sequence_id = "item_id",
+#'                                             other_id = "item_info", tax_string = "item_info"))
+#' }
+#'
+#' @format An object of type \code{\link{classified}}
+#' @source \url{https://unite.ut.ee/}
+"unite_ex_data_1"
+
+
+#' Example of UNITE fungal ITS data
+#'
 #' A dataset containing information from 500 sequences from the UNITE reference database.
 #' 
 #' @examples
 #' \dontrun{
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data <- extract_taxonomy(names(sequences),
+#' unite_ex_data_2 <- extract_taxonomy(names(sequences),
+#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                                     key = c(name = "item_info", sequence_id = "item_info",
+#'                                             other_id = "item_info", "class_name"))
+#' }
+#'
+#' @format An object of type \code{\link{classified}}
+#' @source \url{https://unite.ut.ee/}
+"unite_ex_data_2"
+
+
+#' Example of UNITE fungal ITS data
+#'
+#' A dataset containing information from 500 sequences from the UNITE reference database.
+#' 
+#' @examples
+#' \dontrun{
+#' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+#' sequences <- ape::read.FASTA(file_path)
+#' unite_ex_data_3 <- extract_taxonomy(names(sequences),
 #'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
 #'                                   key = c(name = "item_info", seq_id = "item_info",
 #'                                           other_id = "item_info", "class_name"),
@@ -52,7 +90,7 @@
 #'
 #' @format An object of type \code{\link{classified}}
 #' @source \url{https://unite.ut.ee/}
-"unite_ex_data"
+"unite_ex_data_3"
 
 
 
