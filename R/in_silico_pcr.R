@@ -224,5 +224,5 @@ primersearch_is_installed <- function(must_be_installed = TRUE) {
   if (must_be_installed && ! is_installed) {
     stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path.")
   }
-  return(is_installed)
+  return(invisible(is_installed))
 }
