@@ -19,4 +19,5 @@ taxon_apply(obj, func, ...)
 \description{
 Apply  a function to every taxon in an object of type \code{\link{classified}}.
 }
+\keyword{internal}
 

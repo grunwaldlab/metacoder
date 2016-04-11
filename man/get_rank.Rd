@@ -17,4 +17,5 @@ get_rank(obj, taxon)
 \description{
 Get rank of taxon in \code{\link{classified}}
 }
+\keyword{internal}
 

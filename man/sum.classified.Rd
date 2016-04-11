@@ -15,4 +15,5 @@ An object of type \code{\link{classified}}
 \description{
 Combine the contents of multiple objects of type \code{\link{classified}}
 }
+\keyword{internal}
 

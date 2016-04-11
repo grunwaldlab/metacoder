@@ -32,4 +32,5 @@ If \code{simplify = FALSE}, then a list of vectors of item indexes are returned
 Given one or more taxa IDs and the edge list defining the taxonomy, return the items
 (e.g. sequence information) associated with each taxon.
 }
+\keyword{internal}
 

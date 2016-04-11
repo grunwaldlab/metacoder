@@ -17,4 +17,5 @@ count_items(obj, taxon)
 \description{
 Count items in \code{\link{classified}}
 }
+\keyword{internal}
 

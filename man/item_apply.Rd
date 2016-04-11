@@ -17,4 +17,5 @@ item_apply(obj, func)
 \description{
 Apply  a function to every item in an object of type \code{\link{classified}}.
 }
+\keyword{internal}
 

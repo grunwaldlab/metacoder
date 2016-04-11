@@ -409,27 +409,6 @@ split_by_taxon.classified <- function(obj) {
   mapply(process_one, split_sub_taxa, split_super_taxa, split_items, SIMPLIFY = FALSE)
 }
 
-
-
-#' #' (NOT IMPLEMENTED) Split \code{\link{classified}} by item
-#' #'
-#' #' Splits an object of type \code{\link{classified}} into a list  of
-#' #' \code{\link{classified}} objects, one for each item in the input.
-#' #'
-#' #' @param obj (\code{\link{classified}}) The object to split.
-#' #'
-#' #' @return \code{list} of \code{\link{classified}}
-#' #'
-#' #' @export
-#' split_by_item <- function(obj) {
-#'   UseMethod("split_by_item")
-#' }
-#' 
-#' #' @export
-#' split_by_item.classified <- function(obj) {
-#' 
-#' }
-
 #' Count items in \code{\link{classified}}
 #'
 #' Count items in \code{\link{classified}}

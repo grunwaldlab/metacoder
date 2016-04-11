@@ -9,4 +9,5 @@ reserved_col_names()
 \description{
 invalid column names for user data
 }
+\keyword{internal}
 
