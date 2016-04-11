@@ -155,6 +155,9 @@
 #' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
 #' Default: The expression given to \code{edge_size}.
 #' 
+#' @param background_color The background color of the plot.
+#' Default: Transparent
+#' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
@@ -337,6 +340,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           vertex_size_axis_label = NULL,
                           edge_color_axis_label = NULL, 
                           edge_size_axis_label = NULL,
+                          
+                          background_color = "#00000000",
                           
                           ...) {
   #| ### Verify arguments =========================================================================
@@ -803,7 +808,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
   y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
   
-  
+  # theme(panel.background = element_rect(fill = '#00000000', colour = '#00000000'))
   
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),

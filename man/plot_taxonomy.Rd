@@ -34,7 +34,8 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   layout = "reingold-tilford", initial_layout = "fruchterman-reingold",
   make_legend = TRUE, title = NULL, title_size = 0.1,
   vertex_color_axis_label = NULL, vertex_size_axis_label = NULL,
-  edge_color_axis_label = NULL, edge_size_axis_label = NULL, ...)
+  edge_color_axis_label = NULL, edge_size_axis_label = NULL,
+  background_color = "#00000000", ...)
 
 \method{plot}{classified}(x, ...)
 }
@@ -211,6 +212,9 @@ Default: The expression given to \code{edge_color}.}
 
 \item{edge_size_axis_label}{The label on the scale axis corresponding to \code{edge_size}.
 Default: The expression given to \code{edge_size}.}
+
+\item{background_color}{The background color of the plot.
+Default: Transparent}
 
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}
