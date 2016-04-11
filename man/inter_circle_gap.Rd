@@ -18,8 +18,9 @@ Given a set of x, y coordinates and corresponding radii return the gap between e
 combination.
 }
 \examples{
+\dontrun{
 inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
-
+}
 
 }
 \keyword{internal}

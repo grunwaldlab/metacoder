@@ -20,71 +20,11 @@
 #' # List available function names:
 #' layout_functions()
 #' 
-#' # Get layout function:
-#' layout_functions("davidson-harel")
-#' 
 #' # Execute layout function on graph:
-#' layout_functions("davidson-harel", graph)
+#' layout_functions("davidson-harel", igraph::make_ring(5))
 #' 
 #' @export
 layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, effort = 1, ...) {
-  return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
-  if (return_names) {
-    graph <- igraph::make_ring(1) # Dummy graph so that the list can be defined, but only names used
-    igraph::V(graph)$weight_factor  <- 1
-  } 
-  v_weight <- igraph::V(graph)$weight_factor
-  e_weight <- igraph::E(graph)$weight_factor
-  e_density <- igraph::edge_density(graph)
-  defaults <- list("automatic" = list(),
-                   "reingold-tilford" = list(circular = TRUE,
-                                             mode = "out"),
-                   "davidson-harel" = list(coords = intitial_coords,
-                                           maxiter = 20 * effort,
-                                           fineiter = max(15, log2(igraph::vcount(graph))) * effort,
-                                           cool.fact = 0.75 - effort * 0.1,
-                                           weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
-                                           weight.border = 0,
-                                           weight.edge.lengths = 0.5, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
-                                           weight.edge.crossings = 100,
-                                           weight.node.edge.dist = 1), #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]]), 
-                   "gem" = list(coords = intitial_coords,
-                                maxiter = 40 * igraph::vcount(graph)^2 * effort,
-                                temp.max = igraph::vcount(graph) * (1 + effort * 0.1),
-                                temp.min = 1/10,
-                                temp.init = sqrt(igraph::vcount(graph))),
-                   "graphopt" = list(start = intitial_coords,
-                                     niter = 500 * effort,
-                                     charge = 0.0005,
-                                     mass = 30,
-                                     spring.length = 0,
-                                     spring.constant = 1,
-                                     max.sa.movement = 5),
-                   "mds" = list(),
-                   "fruchterman-reingold" = list(coords = intitial_coords,
-                                                 niter = 500 * effort * 5,
-                                                 start.temp = sqrt(igraph::vcount(graph)) * (1 + effort * 0.1) * 3,
-                                                 grid = "nogrid",
-                                                 weights = e_weight), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
-                   "kamada-kawai" = list(coords = intitial_coords,
-                                         maxiter = 100 * igraph::vcount(graph),
-                                         epsilon = 0,
-                                         kkconst = igraph::vcount(graph),
-                                         weights = NULL),
-                   "large-graph" = list(maxiter = 200,
-                                        maxdelta = igraph::vcount(graph),
-                                        area = igraph::vcount(graph)^2,
-                                        coolexp = 1.5 - effort * 0.1,
-                                        repulserad = igraph::vcount(graph)^2 * igraph::vcount(graph),
-                                        cellsize = sqrt(sqrt(igraph::vcount(graph)^2)),
-                                        root = 1),
-                   "drl" = list(use.seed = ! is.null(intitial_coords),
-                                seed = ifelse(is.null(intitial_coords), 
-                                              matrix(runif(igraph::vcount(graph) * 2), ncol = 2),
-                                              intitial_coords),
-                                options = igraph::drl_defaults$default,
-                                weights = NULL,
-                                fixed = NULL))
   funcs <- list("automatic" = igraph::nicely,
                 "reingold-tilford" =  igraph::as_tree,
                 "davidson-harel" = igraph::with_dh,
@@ -95,9 +35,62 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                 "kamada-kawai" = igraph::with_kk,
                 "large-graph" = igraph::with_lgl,
                 "drl" = igraph::with_drl)
+  return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
   if (return_names) {
-    return(names(funcs)) 
+    return(names(funcs))
   } else {
+    v_weight <- igraph::V(graph)$weight_factor
+    e_weight <- igraph::E(graph)$weight_factor
+    e_density <- igraph::edge_density(graph)
+    defaults <- list("automatic" = list(),
+                     "reingold-tilford" = list(circular = TRUE,
+                                               mode = "out"),
+                     "davidson-harel" = list(coords = intitial_coords,
+                                             maxiter = 20 * effort,
+                                             fineiter = max(15, log2(igraph::vcount(graph))) * effort,
+                                             cool.fact = 0.75 - effort * 0.1,
+                                             weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
+                                             weight.border = 0,
+                                             weight.edge.lengths = 0.5, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
+                                             weight.edge.crossings = 100,
+                                             weight.node.edge.dist = 1), #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]]), 
+                     "gem" = list(coords = intitial_coords,
+                                  maxiter = 40 * igraph::vcount(graph)^2 * effort,
+                                  temp.max = igraph::vcount(graph) * (1 + effort * 0.1),
+                                  temp.min = 1/10,
+                                  temp.init = sqrt(igraph::vcount(graph))),
+                     "graphopt" = list(start = intitial_coords,
+                                       niter = 500 * effort,
+                                       charge = 0.0005,
+                                       mass = 30,
+                                       spring.length = 0,
+                                       spring.constant = 1,
+                                       max.sa.movement = 5),
+                     "mds" = list(),
+                     "fruchterman-reingold" = list(coords = intitial_coords,
+                                                   niter = 500 * effort * 5,
+                                                   start.temp = sqrt(igraph::vcount(graph)) * (1 + effort * 0.1) * 3,
+                                                   grid = "nogrid",
+                                                   weights = e_weight), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
+                     "kamada-kawai" = list(coords = intitial_coords,
+                                           maxiter = 100 * igraph::vcount(graph),
+                                           epsilon = 0,
+                                           kkconst = igraph::vcount(graph),
+                                           weights = NULL),
+                     "large-graph" = list(maxiter = 200,
+                                          maxdelta = igraph::vcount(graph),
+                                          area = igraph::vcount(graph)^2,
+                                          coolexp = 1.5 - effort * 0.1,
+                                          repulserad = igraph::vcount(graph)^2 * igraph::vcount(graph),
+                                          cellsize = sqrt(sqrt(igraph::vcount(graph)^2)),
+                                          root = 1),
+                     "drl" = list(use.seed = ! is.null(intitial_coords),
+                                  seed = ifelse(is.null(intitial_coords), 
+                                                matrix(runif(igraph::vcount(graph) * 2), ncol = 2),
+                                                intitial_coords),
+                                  options = igraph::drl_defaults$default,
+                                  weights = NULL,
+                                  fixed = NULL))
     arguments <- modifyList(defaults[[name]], list(...))
     coords <- igraph::layout_(graph = graph, layout = do.call(funcs[[name]], arguments))
     return(coords)

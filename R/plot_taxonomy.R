@@ -57,8 +57,8 @@
 #' Default: \code{"area"}.
 #' @param edge_size_trans See details on transformations. 
 #' Default: same as \code{vertex_size_trans}. 
-#' @param tree_size_trans See details on transformations.
-#' Default: \code{"area"}.
+# #' @param tree_size_trans See details on transformations.
+# #' Default: \code{"area"}.
 #' 
 #' @param vertex_label_size_trans See details on transformations. 
 #' Default: same as \code{vertex_size_trans}.
@@ -270,7 +270,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           vertex_size = 1,
                           edge_size = vertex_size,
-                          tree_size = 1,
+                          # tree_size = 1,
                           
                           vertex_label_size = vertex_size,
                           edge_label_size = edge_size,
@@ -827,14 +827,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
 }
 
 
+#' @param x An object of type \code{\link{classified}}
+#' 
 #' @method plot classified
 #' @export
 #' @rdname plot_taxonomy
-plot.classified <- function(classified_data, ...) {
-  my_taxon_data <- taxa::taxon_data(classified_data)
+plot.classified <- function(x, ...) {
+  my_taxon_data <- taxa::taxon_data(x)
   column_var_name <- colnames(my_taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
-  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
+  unused_result <- lapply(column_var_name, function(y) assign(y, my_taxon_data[[y]], envir = parent.frame(2)))
+  arguments <- c(list(taxon_id = x$taxon_id, parent_id = x$parent_id),
                  eval(substitute(list(...))))
   # Use variable name for scale axis labels
   if (! "vertex_color_axis_label" %in% names(arguments)) {
@@ -1088,8 +1090,9 @@ apply_color_scale <- function(values, color_series, interval = NULL, no_color_in
 #' @return A \code{data.frame}
 #' 
 #' @examples
+#' \dontrun{
 #' molten_dist(x = 1:5, y = 1:5)
-#' 
+#' }
 #' 
 #' @keywords internal
 molten_dist <- function(x, y) {
@@ -1111,8 +1114,9 @@ molten_dist <- function(x, y) {
 #' @param r (\code{numeric} of length 1) The diameter of the circle.
 #' 
 #' @examples
+#' \dontrun{
 #' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
-#' 
+#' }
 #' 
 #' @keywords internal
 inter_circle_gap <- function(x, y, r) {

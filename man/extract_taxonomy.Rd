@@ -6,17 +6,19 @@
 \alias{extract_taxonomy.default}
 \title{Extract taxonomy information from sequence headers}
 \usage{
-extract_taxonomy(...)
+extract_taxonomy(input, ...)
 
 \method{extract_taxonomy}{default}(input, regex, key, class_tax_sep = ";",
   class_rank_sep = "__", class_tax_rev = FALSE, class_rank_rev = FALSE,
-  taxon_in_lineage = TRUE, database = "ncbi", arbitrary_ids = "warn")
+  taxon_in_lineage = TRUE, database = "ncbi", arbitrary_ids = "warn", ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
 \arguments{
 \item{input}{A vector from which to extract taxonomy information or an object of class
 \code{\link{ape}{DNAbin}}.}
+
+\item{...}{Not used.}
 
 \item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
 indicating the locations of relevant information. The identity of the information must
@@ -96,10 +98,13 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
                                     key = c(name = "item_info", seq_id = "item_info",
                                             other_id = "item_info", "class_name"),
                                     database = "none")
+\dontrun{
 # Look up taxonomic data online using sequence ID
 unite_ex_data <- extract_taxonomy(sequences,
                                   regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
                                 key = c(name = "taxon_name", seq_id = "item_id",
                                        other_id = "item_info", tax_string = "item_info"))
+}
+
 }
 

@@ -22,12 +22,14 @@ Generates an n x 2 matrix containing x and y coordinates between 1 and 0 for the
 line with a specified width in cartesian coordinates.
 }
 \examples{
+\dontrun{
+library(ggplot2)
 ggplot(data = line_coords(x1 = 1, y1 = 1, x2 = 2, y2 = 2, width = .1)) + 
   geom_polygon(aes(x = x, y = y, fill = group))
 ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
                           y2 = rnorm(10), width = rnorm(10)/5)) + 
   geom_polygon(aes(x = x, y = y, fill = group))
-
+}
 }
 \keyword{internal}
 

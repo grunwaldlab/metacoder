@@ -103,16 +103,19 @@ parse_primersearch <- function(file_path) {
 #' @return An object of type \code{\link{classified}}
 #' 
 #' @examples
+#' \dontrun{
 #' result <- primersearch(rdp_ex_data, 
 #'                        forward = "CTCCTACGGGAGGCAGCAG",
 #'                        reverse = "GWATTACCGCGGCKGCTG",
 #'                        pair_name = "357F_+_519R",
 #'                        mismatch = 10)
+#'                        
 #' plot(result, 
 #'      vertex_size = item_count,
 #'      vertex_color = prop_amplified,
 #'      vertex_color_range = c("red", "yellow", "green"),
 #'      vertex_color_trans = "linear")
+#' }
 #' 
 #' @export
 #' @rdname primersearch
@@ -174,26 +177,26 @@ primersearch.default <- function(input, forward, reverse,
 #' @method primersearch classified
 #' @export
 #' @rdname primersearch
-primersearch.classified <- function(classified_data, embed = TRUE, ...) {
-  if (is.null(classified_data$item_data$sequence)) {
+primersearch.classified <- function(input, embed = TRUE, ...) {
+  if (is.null(input$item_data$sequence)) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
   }
-  result <- primersearch(input = classified_data$item_data$sequence,
-                         seq_name = rownames(classified_data$item_data),
+  result <- primersearch(input = input$item_data$sequence,
+                         seq_name = rownames(input$item_data),
                          ...)
   
   if (embed) {
-    classified_data$item_data[ , colnames(result)] <- NA
-    classified_data$item_data[result$name, colnames(result)] <- result
-    classified_data$item_data$amplified <- ! is.na(classified_data$item_data$seq_id)
-    classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
+    input$item_data[ , colnames(result)] <- NA
+    input$item_data[result$name, colnames(result)] <- result
+    input$item_data$amplified <- ! is.na(input$item_data$seq_id)
+    input$taxon_funcs <- c(input$taxon_funcs,
                                      count_amplified = function(obj, taxon) {
                                        sum(obj$item_data$amplified, na.rm = TRUE)
                                      },
                                      prop_amplified = function(obj, taxon) {
                                        sum(obj$item_data$amplified, na.rm = TRUE) / nrow(obj$item_data)
                                      })
-    output <- classified_data
+    output <- input
   } else {
     output <- result
   }

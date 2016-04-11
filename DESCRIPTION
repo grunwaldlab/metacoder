@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for metabarcoding experiment planning
-Version: 0.0.413
+Version: 0.0.414
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
@@ -14,12 +14,12 @@ Description: A set of tools for metabarcoding (i.e. amplicon
         distributions of taxon statistics over taxonomic/phylogenetic
         trees.
 Depends: R (>= 3.0.2), taxa
-License: GPL2
+License: GPL-2
 LazyData: true
 Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
-        reshape2, zoo, spider, proxy, traits, taxa
+        reshape2, zoo, traits, RColorBrewer, RCurl, readr, ape, reshape
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Date: 2016-04-09
+Date: 2016-04-10
 Encoding: latin1

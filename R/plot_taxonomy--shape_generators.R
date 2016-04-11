@@ -14,8 +14,11 @@
 #' @param angle (\code{numeric} of length 1) Angle to rotate points around the center of the circle.
 #' 
 #' @examples
+#' \dontrun{
+#' library(ggplot2)
 #' ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
+#' }
 #'   
 #' @keywords internal
 polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
@@ -56,12 +59,14 @@ polygon_coords <- function(n = 5, x = 0, y = 0, radius = 1, angle = 0){
 #' @param width (\code{numeric} of length 1) The width of the line.
 #' 
 #' @examples
+#' \dontrun{
+#' library(ggplot2)
 #' ggplot(data = line_coords(x1 = 1, y1 = 1, x2 = 2, y2 = 2, width = .1)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
 #' ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
 #'                           y2 = rnorm(10), width = rnorm(10)/5)) + 
 #'   geom_polygon(aes(x = x, y = y, fill = group))
-#'
+#' }
 #' @keywords internal
 line_coords <- function(x1, y1, x2, y2, width) {
   # Define function to make points for a single line rect ------------------------------------------

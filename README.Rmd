@@ -11,8 +11,9 @@ opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, mess
                autodep = TRUE, cache = TRUE)
 ```
 
+[![Build Status](https://travis-ci.org/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.org/grunwaldlab/metacoder?branch=master)
 
-```{r, child="vignettes/index.Rmd", cache = TRUE}
+```{r, child="inst/doc/index.Rmd", cache = TRUE}
 ```
 
 ### Documentation

@@ -34,11 +34,8 @@ Supplying a name and a \code{\link[igraph]{graph}} object to run the layout func
 # List available function names:
 layout_functions()
 
-# Get layout function:
-layout_functions("davidson-harel")
-
 # Execute layout function on graph:
-layout_functions("davidson-harel", graph)
+layout_functions("davidson-harel", igraph::make_ring(5))
 
 }
 
