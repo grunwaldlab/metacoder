@@ -19,4 +19,5 @@ split_by_taxon(obj)
 Splits an object of type \code{\link{classified}} into a list  of
 \code{\link{classified}} objects, one for each taxon in the input.
 }
+\keyword{internal}
 
