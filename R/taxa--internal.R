@@ -17,6 +17,8 @@
 #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
 #'   IDs for all \code{target} taxa are returned in a single vector.
+#'   
+#' @keywords internal
 get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE,
                           include_target = FALSE) {
   # Argument validataion ---------------------------------------------------------------------------
@@ -69,7 +71,7 @@ get_supertaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = F
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
 #'   IDs for all \code{target} taxa are returned in a single vector.
 #'
-#' @export
+#' @keywords internal
 get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FALSE) {
   # Argument validataion ---------------------------------------------------------------------------
   if (length(targets) == 0) stop("Argument 'targets' has 0 length")
@@ -139,7 +141,7 @@ get_subtaxa <- function(targets, taxa, parents, recursive = TRUE, simplify = FAL
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
 #'   for all \code{target} taxa are returned in a single vector.
 #'
-#' @export
+#' @keywords internal
 get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, simplify = FALSE) {
   # Argument validataion ---------------------------------------------------------------------------
   if (length(targets) == 0) stop("Argument 'targets' has 0 length")
@@ -200,6 +202,8 @@ get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, sim
 #'   lack of a parent should be coded as \code{NA}.
 #'
 #' @return (\code{logical}) Returns \code{TRUE} if the list is valid.
+#' 
+#' @keywords internal
 validate_edge_list <- function(taxa, parents) {
   if (length(taxa) == 0) stop("'taxa' has 0 length")
   if (length(parents) == 0) stop("'parents' has 0 length")

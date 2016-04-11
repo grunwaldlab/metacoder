@@ -93,6 +93,8 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #' invalid column names for user data
 #'
 #' invalid column names for user data
+#' 
+#' @keywords internal
 reserved_col_names <- function() {
   c("taxon_id", "parent_id", "item_taxon_id")
 }
@@ -325,12 +327,12 @@ item_data.classified <- function(obj,
 #'
 #' @return \code{list} of length equal to the number of taxa in \code{obj}
 #'
-#' @export
+#' @keywords internal
 taxon_apply <- function(obj, func, ...) {
   UseMethod("taxon_apply")
 }
 
-#' @export
+#' @keywords internal
 taxon_apply.classified <- function(obj, func, ...) {
   split_data <- split_by_taxon(obj)
   mapply_args <- c(list(func), list(split_data), list(...))
@@ -347,12 +349,12 @@ taxon_apply.classified <- function(obj, func, ...) {
 #'
 #' @return \code{list} of length equal to the number of items in \code{obj}
 #'
-#' @export
+#' @keywords internal
 item_apply <- function(obj, func) {
   UseMethod("item_apply")
 }
 
-#' @export
+#' @keywords internal
 item_apply.classified <- function(obj, func) {
   unlist(lapply(split_by_item(obj), func), recursive = FALSE)
 }
@@ -409,24 +411,24 @@ split_by_taxon.classified <- function(obj) {
 
 
 
-#' (NOT IMPLEMENTED) Split \code{\link{classified}} by item
-#'
-#' Splits an object of type \code{\link{classified}} into a list  of
-#' \code{\link{classified}} objects, one for each item in the input.
-#'
-#' @param obj (\code{\link{classified}}) The object to split.
-#'
-#' @return \code{list} of \code{\link{classified}}
-#'
-#' @export
-split_by_item <- function(obj) {
-  UseMethod("split_by_item")
-}
-
-#' @export
-split_by_item.classified <- function(obj) {
-
-}
+#' #' (NOT IMPLEMENTED) Split \code{\link{classified}} by item
+#' #'
+#' #' Splits an object of type \code{\link{classified}} into a list  of
+#' #' \code{\link{classified}} objects, one for each item in the input.
+#' #'
+#' #' @param obj (\code{\link{classified}}) The object to split.
+#' #'
+#' #' @return \code{list} of \code{\link{classified}}
+#' #'
+#' #' @export
+#' split_by_item <- function(obj) {
+#'   UseMethod("split_by_item")
+#' }
+#' 
+#' #' @export
+#' split_by_item.classified <- function(obj) {
+#' 
+#' }
 
 #' Count items in \code{\link{classified}}
 #'
@@ -437,7 +439,7 @@ split_by_item.classified <- function(obj) {
 #'
 #' @return \code{numeric} of length 1
 #'
-#' @export
+#' @keywords internal
 count_items <- function(obj, taxon) {
   length(obj$item_taxon_id)
 }
@@ -451,7 +453,7 @@ count_items <- function(obj, taxon) {
 #'
 #' @return \code{numeric} of length 1
 #'
-#' @export
+#' @keywords internal
 get_rank <- function(obj, taxon) {
   super_taxa <- get_supertaxa(targets = taxon,
                               taxa = obj$taxon_id,
@@ -471,7 +473,7 @@ get_rank <- function(obj, taxon) {
 #'
 #' @return An object of type \code{\link{classified}}
 #'
-#' @export
+#' @keywords internal
 sum.classified <- function(...) {
   input <- list(...)
   input <- input[-length(input)] # remove `na.rm` from `sum` generic

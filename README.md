@@ -1,6 +1,7 @@
 
 
 
+[![Build Status](https://travis-ci.org/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.org/grunwaldlab/metacoder?branch=master)
 
 
 
@@ -30,12 +31,34 @@ Most databases have a unique file format and taxonomic hierarchy/nomenclature.
 Taxonomic data can be extracted from any file format using the **extract_taxonomy** function.
 Classifications can be parsed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
-The example code below parses the 16s Ribosome Database Project training set for Mothur:
+The example code below parses the 16s Ribosome Database Project training set for Mothur.
+R can be used to download files from the internet and decompress them.
+The code below downloads the compressed data to a temporary directory:
+
+
+```r
+rdp_fasta_url <- "http://mothur.org/w/images/b/b5/Trainset10_082014.rdp.tgz"
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url))
+download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
+```
+
+Next we will uncompress the archive and identify the fasta file.
+
+
+```r
+unpacked_file_paths <- untar(local_file_path, list = TRUE) # get contents
+untar(local_file_path, exdir = temp_dir_path)
+unpacked_fasta_path <- file.path(temp_dir_path, 
+                                  unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
+```
+
+The file can then be parsed using the `ape` package and the taxonomy data in the headers can be extracted by `extract_taxonomy`:
 
 
 ```r
 library(metacoder)
-seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta")
+seqs <- ape::read.FASTA(unpacked_fasta_path)
 cat(names(seqs)[1]) # print an example of the sequence headers
 ```
 
@@ -80,7 +103,7 @@ MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree co
 plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
 ```
 
-![](README_files/figure-html/unnamed-chunk-7-1.png)
+![](README_files/figure-html/unnamed-chunk-9-1.png)
 
 
 
@@ -99,7 +122,7 @@ plot(data, vertex_size = item_count, edge_color = rank,
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
 
-![](README_files/figure-html/unnamed-chunk-10-1.png)
+![](README_files/figure-html/unnamed-chunk-12-1.png)
 
 
 
@@ -118,7 +141,7 @@ plot(subset(data, name == "Archaea"), vertex_size = item_count,
      vertex_label = name, vertex_color = item_count, layout = "fruchterman-reingold")
 ```
 
-![](README_files/figure-html/unnamed-chunk-13-1.png)
+![](README_files/figure-html/unnamed-chunk-15-1.png)
 
 
 
@@ -134,7 +157,7 @@ plot(subsetted, vertex_size = item_count, vertex_label = name,
      vertex_color = item_count, tree_label = name, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-16-1.png)
+![](README_files/figure-html/unnamed-chunk-18-1.png)
 
 
 
@@ -162,7 +185,7 @@ plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoid
      vertex_color = item_count, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-21-1.png)
+![](README_files/figure-html/unnamed-chunk-23-1.png)
 
 
 
@@ -199,7 +222,7 @@ plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amp
      vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
 ```
 
-![](README_files/figure-html/unnamed-chunk-25-1.png)
+![](README_files/figure-html/unnamed-chunk-27-1.png)
 
 
 
@@ -219,7 +242,7 @@ pcr %>%
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-28-1.png)
+![](README_files/figure-html/unnamed-chunk-30-1.png)
 
 
 
@@ -255,7 +278,7 @@ pcr %>%
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-32-1.png)
+![](README_files/figure-html/unnamed-chunk-34-1.png)
 
 
 
@@ -286,7 +309,7 @@ Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 While this project is in development it can be installed through github:
 
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
+    devtools::install_github(repo="grunwaldlab/metacoder")
     library(metacoder)
 
 If you've built the vignettes, you can browse them with:

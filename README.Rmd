@@ -24,7 +24,7 @@ Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 While this project is in development it can be installed through github:
 
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
+    devtools::install_github(repo="grunwaldlab/metacoder")
     library(metacoder)
 
 If you've built the vignettes, you can browse them with:
