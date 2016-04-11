@@ -2,9 +2,12 @@
 % Please edit documentation in R/taxa--classified_class.R
 \name{item_apply}
 \alias{item_apply}
+\alias{item_apply.classified}
 \title{Apply a function to every item}
 \usage{
 item_apply(obj, func)
+
+\method{item_apply}{classified}(obj, func)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}

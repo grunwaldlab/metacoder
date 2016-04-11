@@ -2,9 +2,12 @@
 % Please edit documentation in R/taxa--classified_class.R
 \name{split_by_taxon}
 \alias{split_by_taxon}
+\alias{split_by_taxon.classified}
 \title{Split \code{\link{classified}} into individual taxa}
 \usage{
 split_by_taxon(obj)
+
+\method{split_by_taxon}{classified}(obj)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}}) The object to split.}

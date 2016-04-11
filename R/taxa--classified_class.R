@@ -328,11 +328,14 @@ item_data.classified <- function(obj,
 #' @return \code{list} of length equal to the number of taxa in \code{obj}
 #'
 #' @keywords internal
+#' @rdname taxon_apply
 taxon_apply <- function(obj, func, ...) {
   UseMethod("taxon_apply")
 }
 
 #' @keywords internal
+#' @rdname taxon_apply
+#' @method taxon_apply classified
 taxon_apply.classified <- function(obj, func, ...) {
   split_data <- split_by_taxon(obj)
   mapply_args <- c(list(func), list(split_data), list(...))
@@ -350,11 +353,14 @@ taxon_apply.classified <- function(obj, func, ...) {
 #' @return \code{list} of length equal to the number of items in \code{obj}
 #'
 #' @keywords internal
+#' @rdname item_apply
 item_apply <- function(obj, func) {
   UseMethod("item_apply")
 }
 
 #' @keywords internal
+#' @rdname item_apply
+#' @method item_apply classified
 item_apply.classified <- function(obj, func) {
   unlist(lapply(split_by_item(obj), func), recursive = FALSE)
 }
@@ -370,11 +376,14 @@ item_apply.classified <- function(obj, func) {
 #' @return \code{list} of \code{\link{classified}}
 #'
 #' @export
+#' @rdname split_by_taxon
 split_by_taxon <- function(obj) {
   UseMethod("split_by_taxon")
 }
 
 #' @export
+#' @rdname split_by_taxon
+#' @method split_by_taxon classified
 split_by_taxon.classified <- function(obj) {
   split_sub_taxa <- get_subtaxa(targets = obj$taxon_id,
                                 taxa = obj$taxon_id,
@@ -453,6 +462,7 @@ get_rank <- function(obj, taxon) {
 #' @return An object of type \code{\link{classified}}
 #'
 #' @keywords internal
+#' @method sum classified
 sum.classified <- function(...) {
   input <- list(...)
   input <- input[-length(input)] # remove `na.rm` from `sum` generic
