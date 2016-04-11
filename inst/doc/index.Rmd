@@ -13,8 +13,7 @@ vignette: >
 library(knitr)
 library(ggplot2)
 options(width = 120)
-opts_chunk$set(dev='png', fig.width = 8, fig.height = 8, warning = FALSE, message = FALSE,
-               autodep = TRUE, cache = TRUE)
+opts_chunk$set(dev='png', fig.width = 7, fig.height = 7, warning = FALSE, message = FALSE)
 ```
 
 ## An R package for metabarcoding research planning and analysis
