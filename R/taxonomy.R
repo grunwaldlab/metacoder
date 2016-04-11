@@ -526,7 +526,7 @@ extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", cla
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)
   # Make 'classified' output class
-  taxa::classified(taxon_id = taxon_data$taxon_id,
+  classified(taxon_id = taxon_data$taxon_id,
                    parent_id = taxon_data$parent_id,
                    item_taxon_id = item_data$taxon_id,
                    taxon_data = taxon_data[ , ! colnames(taxon_data) %in% c("taxon_id", "parent_id"), drop = FALSE],

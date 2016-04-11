@@ -833,7 +833,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
 #' @export
 #' @rdname plot_taxonomy
 plot.classified <- function(x, ...) {
-  my_taxon_data <- taxa::taxon_data(x)
+  my_taxon_data <- taxon_data(x)
   column_var_name <- colnames(my_taxon_data)
   unused_result <- lapply(column_var_name, function(y) assign(y, my_taxon_data[[y]], envir = parent.frame(2)))
   arguments <- c(list(taxon_id = x$taxon_id, parent_id = x$parent_id),
