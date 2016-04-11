@@ -21,6 +21,8 @@
 #' @keywords internal
 run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),
                              program_path = 'primersearch', dont_run = FALSE, ...) {
+  # Check if primersearch is installed...
+  primersearch_is_installed()
   extra_args <- as.list(match.call(expand.dots=F))$...
   if (Sys.info()['sysname'] == "Windows") {
     arguments <- c("-seqall", seq_path,
@@ -201,4 +203,26 @@ primersearch.classified <- function(input, embed = TRUE, ...) {
     output <- result
   }
   return(output)
+}
+
+
+
+#' Test if primersearch is installed
+#' 
+#' Test if primersearch is installed
+#' 
+#' @param must_be_installed (\code{logical} of length 1) If \code{TRUE}, throw an error if
+#' primersearch is not installed.
+#' 
+#' @return \code{logical} of length 1
+#' 
+#' @keywords internal
+primersearch_is_installed <- function(must_be_installed = TRUE) {
+  test_result <- tryCatch(system2("primersearch", "--version", stdout = TRUE, stderr = TRUE),
+                          error = function(e) e)
+  is_installed <- grepl(pattern = "^EMBOSS", test_result)
+  if (must_be_installed && ! is_installed) {
+    stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path.")
+  }
+  return(is_installed)
 }
