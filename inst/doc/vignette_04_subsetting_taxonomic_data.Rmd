@@ -1,0 +1,88 @@
+---
+title: "Subsetting taxonomic data"
+output:
+  rmarkdown::html_vignette:
+    toc: false
+    css: custom.css
+vignette: >
+  %\VignetteIndexEntry{Subsetting taxonomic data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+library(ggplot2)
+opts_chunk$set(dev='svg', warning = FALSE, message = FALSE, fig.show='hold', eval = FALSE)
+```
+
+
+
+
+## Pepare data
+
+```{r eval=FALSE}
+
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data_3 <- extract_taxonomy(names(sequences),
+                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                            key = c(name = "item_info", seq_id = "item_info",
+                                    other_id = "item_info", "class_name"),
+                            database = "none")
+```
+
+```{r}
+plot_taxonomy(taxon_id = unite_ex_data_3$taxa$taxon_id,
+              parent_id = unite_ex_data_3$taxa$parent_id,
+              vertex_size = unite_ex_data_3$taxa$item_count,
+              vertex_color = unite_ex_data_3$taxa$item_count,
+              vertex_label = unite_ex_data_3$taxa$name)
+```
+
+
+##
+
+```{r}
+data <- classified(taxon_id = unite_ex_data_3$taxa$taxon_id,
+                   parent_id = unite_ex_data_3$taxa$parent_id,
+                   item_taxon_id = unite_ex_data_3$items$taxon_id,
+                   taxon_data = data.frame(name =  unite_ex_data_3$taxa$name))
+```
+
+```{r}
+plot(data, 
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
+
+
+```{r}
+plot(data[name == "Ascomycota", ],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
+
+
+```{r}
+plot(data[[item_count > 5]],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name)
+```
+
+
+```{r}
+plot(data[[item_count < 200]],
+     vertex_size = item_count,
+     vertex_color = item_count,
+     vertex_label = name,
+     layout = "fruchterman-reingold")
+```
+
