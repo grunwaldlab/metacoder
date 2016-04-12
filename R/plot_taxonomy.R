@@ -806,7 +806,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   
   the_plot <- ggplot2::ggplot(data = data) +
-    ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = x, y = y, group = group),
+    ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
                           fill = element_data$color) +
     ggplot2::guides(fill = "none") +
     ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +

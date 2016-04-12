@@ -613,7 +613,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
   # Set default get_rank function ------------------------------------------------------------------
   if (is.null(get_rank)) {
     get_rank <- function(id, ...) {
-      return(depth)
+      return(get("depth"))
     }
   }
   # Make max filter function factory ---------------------------------------------------------------

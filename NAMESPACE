@@ -2,7 +2,6 @@
 
 S3method(extract_taxonomy,DNAbin)
 S3method(extract_taxonomy,default)
-S3method(item_apply,classified)
 S3method(item_data,classified)
 S3method(plot,classified)
 S3method(primersearch,classified)
