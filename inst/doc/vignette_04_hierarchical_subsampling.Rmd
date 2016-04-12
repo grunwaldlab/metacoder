@@ -14,7 +14,7 @@ vignette: >
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='svg', fig.width = 7.1, fig.height = 7.1, warning=FALSE, message=FALSE, eval = FALSE)
+opts_chunk$set(dev='png', warning = FALSE, message = FALSE, fig.show='hold', fig.width = 7, fig.height = 7)
 ```
 
 ## Introduction
@@ -56,94 +56,61 @@ They differ in what they are best used for.
 These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
 The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence metadata.
 
-```{r parse_data}
+```{r parse_data, eval = FALSE}
 library(metacoder)
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path) # Reads an example FASTA file
 names(sequences)[1] # Print an example of the sequence header format
 unite_ex_data_3 <- extract_taxonomy(names(sequences), # Parse the sequence headers
                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                                    key = c(name = "item_info", seq_id = "item_info",
+                                    key = c(name = "item_info", sequence_id = "item_info",
                                             other_id = "item_info", "class_name"),
                                     database = "none")
 ```
 
-At this point, the taxonomy information has been extracted from the sequences headers. 
-`items` is a `data.frame` with rows corresponding to sequences. 
-One column in `items` is the taxon id; this is the only column we will use from `items`.
-The other item returned from `extract_taxonomy` is `taxa`.
-`taxa` is a `data.frame` with rows for each unique taxon use in the item classifications. 
-
 If we look at how sequences are distributed throughout the taxonomy, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
 Depending on the goal, this might or might not be a problem.
-The overepresentation of Agaricales is likely a bigger problem. 
+The overrepresentation of Agaricales is likely a bigger problem. 
 
 ```{r all_data}
-plot(data,
+plot(unite_ex_data_3,
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = name)
 ```
 
-Information from both these tables is needed to make a taxonomically balanced subset of `items`.
-The first step is to use the taxonomy tree structure stored in `taxa` (in the form of an adjacency/edge list) to sub-sample `items`.
-Then, `taxa` is sub-sampled using `restrict_taxonomy` to remove any taxa not associated with items in the subset.
-
-To try to reduce the Agaricales overepresentation, we will sub-sample any order with greater than 20 sequences to 20 sequences.
+To try to reduce the Agaricales overrepresentation, we will sub-sample any order with greater than 20 sequences to 20 sequences.
 Similarly, species will be sub-sampled to 5 sequences each to avoid any one species introducing bias.
-The `max_counts = c("o" = 20, "s" = 5)` option is used to implement the sub-sampling limits for each taxonomic rank (encoded by single letters for this specific data set). 
+The `max_counts = c("4" = 20, "7" = 5)` option is used to implement the sub-sampling limits for each taxonomic rank. 
 
 It might also be desirable to not included sequences from underrepresented taxa.
 Too few sequences means that the diversity of the taxon cannot be determined and questionable sequences are not as obvious without others of the same classification to compare them to.
-For this reason, we will use the option `min_counts = c("s" = 3)`, so items from species with less than 3 items will not be included.
+For this reason, we will use the option `min_counts = c("7" = 3)`, so items from species with less than 3 items will not be included.
 
 ```{r}
 subsampled <- taxonomic_sample(unite_ex_data_3,
-                               max_counts = c("o" = 20, "s" = 5),
-                               min_counts = c("s" = 3))
-sampled_items <- items[index, ] # Subsample sequence metadata
-sampled_taxa_index <- restrict_taxonomy(taxa = taxa$taxon_id, # Find which taxa are still used in the subset
-                                         parents = taxa$parent_id,
-                                         subset = sampled_items$taxon_id)
-sampled_taxa <- taxa[sampled_taxa_index, ] # Subsample the taxa to only those in the subset of items 
-sampled_taxa$item_count <- get_taxon_count(sampled_taxa$taxon_id, # Count how many items are in each taxon
-                                           sampled_taxa$parent_id,
-                                           sampled_items$taxon_id)
+                               max_counts = c("4" = 20, "7" = 5),
+                               min_counts = c("7" = 3))
 ```
 
 We can now view the difference between the original and sub-sampled data sets using `plot_taxonomy` again.
 
-```{r subset_1}
-plot(sampled_data,
+```{r}
+plot(subsampled,
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = ifelse(rank %in% c("s", "o"), item_count, NA),
-     edge_label = ifelse(rank == "o", name, NA))
+     vertex_label = ifelse(rank %in% c(7, 4), item_count, NA),
+     edge_label = ifelse(rank == 4, name, NA))
 ```
 
-
-### Using `ncbi_taxon_sample`
-
-Although, downloading a data set, parsing it with `extract_taxonomy`, and sub-sampling with `taxonomic_sample` is the best method for most analyses, it is also possible to download a taxonomically balanced random set of sequences from Genbank without downloading all of the sequences for the group of interest.
-This is done using the function `ncbi_taxon_sample`. 
-Internally, `ncbi_taxon_sample` is very similar to `taxonomic_sample`, except that it queries Genbank for taxonomy and sequence information instead of getting it from parsed data. 
-This function is best used for getting a small number of sequences over diverse taxonomic groups for informal analyses. 
-If it is feasible to download all of the group of interest, it is likely best to use `extract_taxonomy` + `taxonomic_sample` instead of `ncbi_taxon_sample`.
-
-
-```{r, results='hide', eval=FALSE}
-sequence_data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
-                           max_counts = c(phylum = 30), 
-                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
-                           min_length = 600, max_length = 10000)
-ncbi_fungi_sample <- extract_taxonomy(sequence_data$gi_no, regex = "(.*)", key = "item_id")
-```
-
+Note how the taxonomy information for taxa with no items is preserved. 
+This can be removed using `subset`:
 
 ```{r}
-plot(ncbi_fungi_sample,
+plot(subset(subsampled, item_count > 0, subtaxa = FALSE),
      vertex_size = item_count,
      vertex_color = item_count,
-     vertex_label = ifelse(rank == "phylum", name, item_count))
+     vertex_label = ifelse(rank %in% c(7, 4), item_count, NA),
+     edge_label = ifelse(rank == 4, name, NA))
 ```
 

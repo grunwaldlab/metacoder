@@ -6,12 +6,14 @@ output:
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
+options(width = 120)
 opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, message = FALSE, 
                autodep = TRUE, cache = TRUE)
 ```
 
+[![Build Status](https://travis-ci.org/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.org/grunwaldlab/metacoder?branch=master)
 
-```{r, child="vignettes/index.Rmd", cache = TRUE}
+```{r, child="inst/doc/introduction.Rmd", cache = TRUE}
 ```
 
 ### Documentation
@@ -22,7 +24,7 @@ Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 While this project is in development it can be installed through github:
 
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
+    devtools::install_github(repo="grunwaldlab/metacoder")
     library(metacoder)
 
 If you've built the vignettes, you can browse them with:

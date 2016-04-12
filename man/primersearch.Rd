@@ -8,15 +8,15 @@
 \usage{
 primersearch(...)
 
-\method{primersearch}{default}(sequence, forward, reverse, seq_name = NULL,
+\method{primersearch}{default}(input, forward, reverse, seq_name = NULL,
   pair_name = NULL, mismatch = 5, ...)
 
-\method{primersearch}{classified}(classified_data, embed = TRUE, ...)
+\method{primersearch}{classified}(input, embed = TRUE, ...)
 }
 \arguments{
 \item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
 
-\item{sequence}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
+\item{input}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
 or an object of type \code{\link{classified}}}
 
 \item{forward}{(\code{character} of length 1) The forward primer sequence}
@@ -40,16 +40,19 @@ The location of the best hits, quality of match, and predicted amplicons are ret
 Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 }
 \examples{
+\dontrun{
 result <- primersearch(rdp_ex_data, 
                        forward = "CTCCTACGGGAGGCAGCAG",
                        reverse = "GWATTACCGCGGCKGCTG",
                        pair_name = "357F_+_519R",
                        mismatch = 10)
+                       
 plot(result, 
      vertex_size = item_count,
      vertex_color = prop_amplified,
      vertex_color_range = c("red", "yellow", "green"),
      vertex_color_trans = "linear")
+}
 
 }
 

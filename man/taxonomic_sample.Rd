@@ -51,6 +51,8 @@ Returns an object of type \code{classified}
 Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
 }
 \examples{
+
+\dontrun{
 #Plot data before subsampling
 plot(unite_ex_data_3,
      vertex_size = item_count,
@@ -61,18 +63,13 @@ plot(unite_ex_data_3,
 subsampled <- taxonomic_sample(unite_ex_data_3,
                                max_counts = c("4" = 20, "7" = 5),
                                min_counts = c("7" = 3))
-                               
-# Plot data after subsampling
-plot(subsampled,
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = item_count)
      
 # Remove itemless taxa and plot
 plot(subset(subsampled, item_count > 0, itemless = FALSE),
      vertex_size = item_count,
      vertex_color = item_count,
      vertex_label = item_count)
+}
 
 }
 

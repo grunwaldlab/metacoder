@@ -309,6 +309,7 @@
 #'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
 #'                           min_length = 600, max_length = 10000)
 #' }
+#' 
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,
                               interpolate_min = TRUE, interpolate_max = TRUE,

@@ -330,6 +330,8 @@ make_new_ids <- function(count, existing) {
 #'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
 #'    \item{\code{"none"}}{Do not use a database to look up information.}
 #'  } 
+#' @param ... Not used.
+#'  
 #' @return Returns an object of type \code{classified}
 #'
 #' @examples
@@ -341,14 +343,17 @@ make_new_ids <- function(count, existing) {
 #'                                     key = c(name = "item_info", seq_id = "item_info",
 #'                                             other_id = "item_info", "class_name"),
 #'                                     database = "none")
+#' \dontrun{
 #' # Look up taxonomic data online using sequence ID
 #' unite_ex_data <- extract_taxonomy(sequences,
 #'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
 #'                                 key = c(name = "taxon_name", seq_id = "item_id",
 #'                                        other_id = "item_info", tax_string = "item_info"))
+#' }
+#' 
 #' @export
 #' @rdname extract_taxonomy
-extract_taxonomy <- function(...) {
+extract_taxonomy <- function(input, ...) {
   UseMethod("extract_taxonomy")
 }
 
@@ -361,7 +366,7 @@ extract_taxonomy <- function(...) {
 #' @rdname extract_taxonomy
 extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
                              class_tax_rev = FALSE, class_rank_rev = FALSE,
-                             taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn") {
+                             taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn", ...) {
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
@@ -521,7 +526,7 @@ extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", cla
   names(key)[names(key) == ""] <- names(item_data)[seq_along(key) + 1][names(key) == ""] 
   names(item_data)[seq_along(key) + 1] <- names(key)
   # Make 'classified' output class
-  taxa::classified(taxon_id = taxon_data$taxon_id,
+  classified(taxon_id = taxon_data$taxon_id,
                    parent_id = taxon_data$parent_id,
                    item_taxon_id = item_data$taxon_id,
                    taxon_data = taxon_data[ , ! colnames(taxon_data) %in% c("taxon_id", "parent_id"), drop = FALSE],
@@ -703,6 +708,8 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' @return Returns an object of type \code{classified}
 #' 
 #' @examples
+#' 
+#' \dontrun{
 #' #Plot data before subsampling
 #' plot(unite_ex_data_3,
 #'      vertex_size = item_count,
@@ -713,18 +720,13 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
 #' subsampled <- taxonomic_sample(unite_ex_data_3,
 #'                                max_counts = c("4" = 20, "7" = 5),
 #'                                min_counts = c("7" = 3))
-#'                                
-#' # Plot data after subsampling
-#' plot(subsampled,
-#'      vertex_size = item_count,
-#'      vertex_color = item_count,
-#'      vertex_label = item_count)
 #'      
 #' # Remove itemless taxa and plot
 #' plot(subset(subsampled, item_count > 0, itemless = FALSE),
 #'      vertex_size = item_count,
 #'      vertex_color = item_count,
 #'      vertex_label = item_count)
+#' }
 #' 
 #' @export
 taxonomic_sample <- function(classified_data,

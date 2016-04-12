@@ -24,13 +24,15 @@
 #' @param size_axis_label (\code{character} of length 1) The label for the size axis
 #' @param hide_size (\code{logical} of length 1) If \code{TRUE} hide size axis
 #' @param hide_color (\code{logical} of length 1) If \code{TRUE} hide color axis
+#' @param axis_label_size (\code{numeric} of length 1) 
 #' @keywords internal 
 make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_prefix,
                              tick_size = .007, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 8, title = NULL, label_size = 0.035, title_size = 0.04,
+                             divisions = 100, label_count = 8, title = NULL, label_size = 0.05,
+                             title_size = 0.05, axis_label_size = 0.05,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
   # if the color is defined explicitly, do not print color scale labels
@@ -80,8 +82,8 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   scale_data <- lapply(1:(divisions - 1), 
                        function(i) scale_bar_coords(x1 = point_data$x[i + 1],
                                                     x2 = point_data$x[i],
-                                                    y1 = point_data$y[i + 1],
-                                                    y2 = point_data$y[i],
+                                                    y1 = point_data$y[i + 1] + length * 0.001,
+                                                    y2 = point_data$y[i] - length * 0.001,
                                                     color = seq_color[i],
                                                     group = paste0("scale-", group_prefix, i)))
   scale_data <- do.call(rbind, scale_data)
@@ -148,8 +150,8 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   
   # Add color axis title ---------------------------------------------------------------------------
   y_range <- range(point_data$y)
-  axis_label_size <- length * 0.04
-  spacer <- length * 0.03
+  axis_label_size <- length * axis_label_size
+  spacer <- length * 0.05
   if (!hide_color && !is.null(color_axis_label)) {
     label_x_min <- min(label_data$x - text_grob_length(label_data$label) * label_data$size - axis_label_size/2)
     label_data <- rbind(label_data, 

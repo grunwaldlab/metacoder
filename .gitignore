@@ -4,7 +4,6 @@
 .RData
 *_cache
 vignettes/*_files*/
-inst/doc*/
 vignettes/.build.timestamp
 trainset10_082014.rdp.fasta
 **.html

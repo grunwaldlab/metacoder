@@ -21,6 +21,8 @@
 #' @keywords internal
 run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),
                              program_path = 'primersearch', dont_run = FALSE, ...) {
+  # Check if primersearch is installed...
+  primersearch_is_installed()
   extra_args <- as.list(match.call(expand.dots=F))$...
   if (Sys.info()['sysname'] == "Windows") {
     arguments <- c("-seqall", seq_path,
@@ -103,16 +105,19 @@ parse_primersearch <- function(file_path) {
 #' @return An object of type \code{\link{classified}}
 #' 
 #' @examples
+#' \dontrun{
 #' result <- primersearch(rdp_ex_data, 
 #'                        forward = "CTCCTACGGGAGGCAGCAG",
 #'                        reverse = "GWATTACCGCGGCKGCTG",
 #'                        pair_name = "357F_+_519R",
 #'                        mismatch = 10)
+#'                        
 #' plot(result, 
 #'      vertex_size = item_count,
 #'      vertex_color = prop_amplified,
 #'      vertex_color_range = c("red", "yellow", "green"),
 #'      vertex_color_trans = "linear")
+#' }
 #' 
 #' @export
 #' @rdname primersearch
@@ -174,28 +179,50 @@ primersearch.default <- function(input, forward, reverse,
 #' @method primersearch classified
 #' @export
 #' @rdname primersearch
-primersearch.classified <- function(classified_data, embed = TRUE, ...) {
-  if (is.null(classified_data$item_data$sequence)) {
+primersearch.classified <- function(input, embed = TRUE, ...) {
+  if (is.null(input$item_data$sequence)) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
   }
-  result <- primersearch(input = classified_data$item_data$sequence,
-                         seq_name = rownames(classified_data$item_data),
+  result <- primersearch(input = input$item_data$sequence,
+                         seq_name = rownames(input$item_data),
                          ...)
   
   if (embed) {
-    classified_data$item_data[ , colnames(result)] <- NA
-    classified_data$item_data[result$name, colnames(result)] <- result
-    classified_data$item_data$amplified <- ! is.na(classified_data$item_data$seq_id)
-    classified_data$taxon_funcs <- c(classified_data$taxon_funcs,
+    input$item_data[ , colnames(result)] <- NA
+    input$item_data[result$name, colnames(result)] <- result
+    input$item_data$amplified <- ! is.na(input$item_data$seq_id)
+    input$taxon_funcs <- c(input$taxon_funcs,
                                      count_amplified = function(obj, taxon) {
                                        sum(obj$item_data$amplified, na.rm = TRUE)
                                      },
                                      prop_amplified = function(obj, taxon) {
                                        sum(obj$item_data$amplified, na.rm = TRUE) / nrow(obj$item_data)
                                      })
-    output <- classified_data
+    output <- input
   } else {
     output <- result
   }
   return(output)
+}
+
+
+
+#' Test if primersearch is installed
+#' 
+#' Test if primersearch is installed
+#' 
+#' @param must_be_installed (\code{logical} of length 1) If \code{TRUE}, throw an error if
+#' primersearch is not installed.
+#' 
+#' @return \code{logical} of length 1
+#' 
+#' @keywords internal
+primersearch_is_installed <- function(must_be_installed = TRUE) {
+  test_result <- tryCatch(system2("primersearch", "--version", stdout = TRUE, stderr = TRUE),
+                          error = function(e) e)
+  is_installed <- grepl(pattern = "^EMBOSS", test_result)
+  if (must_be_installed && ! is_installed) {
+    stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path.")
+  }
+  return(invisible(is_installed))
 }

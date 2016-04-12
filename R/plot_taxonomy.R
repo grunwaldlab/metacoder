@@ -57,8 +57,8 @@
 #' Default: \code{"area"}.
 #' @param edge_size_trans See details on transformations. 
 #' Default: same as \code{vertex_size_trans}. 
-#' @param tree_size_trans See details on transformations.
-#' Default: \code{"area"}.
+# #' @param tree_size_trans See details on transformations.
+# #' Default: \code{"area"}.
 #' 
 #' @param vertex_label_size_trans See details on transformations. 
 #' Default: same as \code{vertex_size_trans}.
@@ -270,7 +270,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           vertex_size = 1,
                           edge_size = vertex_size,
-                          tree_size = 1,
+                          # tree_size = 1,
                           
                           vertex_label_size = vertex_size,
                           edge_label_size = edge_size,
@@ -451,6 +451,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
+      # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
+      if (layout == "reingold-tilford") { 
+        edgelist <- edgelist[sample(1:nrow(edgelist)), ]
+      }
       sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
     igraph::V(sub_graph)$weight_factor <- data[taxa, c("vs_trans")]
@@ -468,18 +472,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
   get_sub_layouts <- function(graph, backup_layout = 'fruchterman-reingold') {
     # Calculate an initial layout if specified
     if (! is.null(initial_layout) && layout != initial_layout) {
-      intitial_coords <- igraph::layout_(graph, layout_functions(initial_layout, graph))
+      intitial_coords <- layout_functions(initial_layout, graph)
       intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
     } else {
       intitial_coords <- NULL
     }
     # Calculate the primary layout 
-    coords <- igraph::layout_(graph, layout_functions(layout, graph = graph,
-                                                      intitial_coords = intitial_coords, 
-                                                      ...))
+    coords <- layout_functions(layout, graph, intitial_coords = intitial_coords, ...)
     # Calculate backup layout if primary one does not work
     if (any(is.na(coords) | is.nan(unlist(coords)))) {
-      coords <- igraph::layout_(graph, layout_functions(backup_layout, graph = graph))
+      coords <- layout_functions(backup_layout, graph)
       warning(paste0("Could not apply layout '", layout,
                      "' to subgraph. Using 'fruchterman-reingold' instead."))
     }
@@ -749,7 +751,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     color_range = vertex_color_range,
                                     color_stat_range = vertex_color_interval, 
                                     color_stat_trans =  transform_data(func = vertex_color_trans),
-                                    title = "Verticies",
+                                    title = "Vertices",
                                     color_axis_label = vertex_color_axis_label,
                                     size_axis_label = vertex_size_axis_label,
                                     hide_size = missing(vertex_size),
@@ -784,7 +786,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     c(x + spread, x - spread)
   }
   label_y_bounds <- function(y, size, label) {
-    spread <- size / 2
+    spread <- size / 2 * 1.1
     c(y + spread, y - spread)
   }
   
@@ -825,14 +827,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
 }
 
 
+#' @param x An object of type \code{\link{classified}}
+#' 
 #' @method plot classified
 #' @export
 #' @rdname plot_taxonomy
-plot.classified <- function(classified_data, ...) {
-  my_taxon_data <- taxa::taxon_data(classified_data)
+plot.classified <- function(x, ...) {
+  my_taxon_data <- taxon_data(x)
   column_var_name <- colnames(my_taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
-  arguments <- c(list(taxon_id = classified_data$taxon_id, parent_id = classified_data$parent_id),
+  unused_result <- lapply(column_var_name, function(y) assign(y, my_taxon_data[[y]], envir = parent.frame(2)))
+  arguments <- c(list(taxon_id = x$taxon_id, parent_id = x$parent_id),
                  eval(substitute(list(...))))
   # Use variable name for scale axis labels
   if (! "vertex_color_axis_label" %in% names(arguments)) {
@@ -998,110 +1002,6 @@ transform_data <- function(func = NULL, data = NULL) {
 }
 
 
-#' Layout functions
-#' 
-#' Functions used to determine graph layout.
-#' Calling the function with no parameters returns available function names.
-#' Calling the function with only the name of a function returns that function.
-#' Supplying a name and a \code{\link[igraph]{graph}} object to run the layout function on the graph.
-#' 
-#' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
-#' see all options. 
-#' @param graph (\code{igraph}) The graph to generate the layout for.
-#' @param intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of.
-#' @param effort  (\code{numeric} of length 1) The amount of effort to put into layouts. Typically
-#' determines the the number of iterations. 
-#' @param ... (other arguments) Passed to igraph layout function used.
-#' 
-#' @return The name available functions, a layout functions,
-#' or a two-column matrix depending on how arguments are provided.
-#' 
-#' @examples 
-#' # List available function names:
-#' layout_functions()
-#' 
-#' # Get layout function:
-#' layout_functions("davidson-harel")
-#' 
-#' # Execute layout function on graph:
-#' layout_functions("davidson-harel", graph)
-#' 
-#' @export
-layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, effort = 1, ...) {
-  return_names <- is.null(name) && is.null(graph) && is.null(intitial_coords)
-  if (return_names) {
-    graph <- igraph::make_ring(1) # Dummy graph so that the list can be defined, but only names used
-    igraph::V(graph)$weight_factor  <- 1
-  }
-  v_weight <- igraph::V(graph)$weight_factor
-  e_weight <- igraph::E(graph)$weight_factor
-  e_density <- igraph::edge_density(graph)
-  defaults <- list("automatic" = list(),
-                   "reingold-tilford" = list(circular = TRUE,
-                                             mode = "out"),
-                   "davidson-harel" = list(coords = intitial_coords,
-                                           maxiter = 20 * effort,
-                                           fineiter = max(15, log2(igraph::vcount(graph))) * effort,
-                                           cool.fact = 0.75 - effort * 0.1,
-                                           weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
-                                           weight.border = 0,
-                                           weight.edge.lengths = 0.5, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
-                                           weight.edge.crossings = 100,
-                                           weight.node.edge.dist = 1), #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]]), 
-                   "gem" = list(coords = intitial_coords,
-                                maxiter = 40 * igraph::vcount(graph)^2 * effort,
-                                temp.max = igraph::vcount(graph) * (1 + effort * 0.1),
-                                temp.min = 1/10,
-                                temp.init = sqrt(igraph::vcount(graph))),
-                   "graphopt" = list(start = intitial_coords,
-                                     niter = 500 * effort,
-                                     charge = 0.0005,
-                                     mass = 30,
-                                     spring.length = 0,
-                                     spring.constant = 1,
-                                     max.sa.movement = 5),
-                   "mds" = list(),
-                   "fruchterman-reingold" = list(coords = intitial_coords,
-                                                 niter = 500 * effort * 5,
-                                                 start.temp = sqrt(igraph::vcount(graph)) * (1 + effort * 0.1) * 3,
-                                                 grid = "nogrid",
-                                                 weights = e_weight), #ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(1, 10))))[[1]]^4), #edge weights
-                   "kamada-kawai" = list(coords = intitial_coords,
-                                         maxiter = 100 * igraph::vcount(graph),
-                                         epsilon = 0,
-                                         kkconst = igraph::vcount(graph),
-                                         weights = NULL),
-                   "large-graph" = list(maxiter = 200,
-                                        maxdelta = igraph::vcount(graph),
-                                        area = igraph::vcount(graph)^2,
-                                        coolexp = 1.5 - effort * 0.1,
-                                        repulserad = igraph::vcount(graph)^2 * igraph::vcount(graph),
-                                        cellsize = sqrt(sqrt(igraph::vcount(graph)^2)),
-                                        root = 1),
-                   "drl" = list(use.seed = ! is.null(intitial_coords),
-                                seed = ifelse(is.null(intitial_coords), 
-                                              matrix(runif(igraph::vcount(graph) * 2), ncol = 2),
-                                              intitial_coords),
-                                options = igraph::drl_defaults$default,
-                                weights = NULL,
-                                fixed = NULL))
-  funcs <- list("automatic" = igraph::nicely,
-                "reingold-tilford" = igraph::as_tree,
-                "davidson-harel" = igraph::with_dh,
-                "gem" = igraph::with_gem,
-                "graphopt" = igraph::with_graphopt,
-                "mds" = igraph::with_mds(),
-                "fruchterman-reingold" = igraph::with_fr,
-                "kamada-kawai" = igraph::with_kk,
-                "large-graph" = igraph::with_lgl,
-                "drl" = igraph::with_drl)
-  if (return_names) {
-    return(names(funcs)) 
-  } else {
-    arguments <- modifyList(defaults[[name]], list(...))
-    return(do.call(funcs[[name]], arguments))
-  }
-}
 
 
 #' The defualt quantative color palette
@@ -1144,7 +1044,7 @@ qualitative_palette <- function() {
 #' 
 #' @export
 diverging_palette <- function() {
-  return(c("#8c510a", "#DDDDDD", "#01665e"))
+  return(c("#a6611a", "#DDDDDD", "#018571"))
 }
 
 
@@ -1190,8 +1090,9 @@ apply_color_scale <- function(values, color_series, interval = NULL, no_color_in
 #' @return A \code{data.frame}
 #' 
 #' @examples
+#' \dontrun{
 #' molten_dist(x = 1:5, y = 1:5)
-#' 
+#' }
 #' 
 #' @keywords internal
 molten_dist <- function(x, y) {
@@ -1213,8 +1114,9 @@ molten_dist <- function(x, y) {
 #' @param r (\code{numeric} of length 1) The diameter of the circle.
 #' 
 #' @examples
+#' \dontrun{
 #' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
-#' 
+#' }
 #' 
 #' @keywords internal
 inter_circle_gap <- function(x, y, r) {

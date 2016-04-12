@@ -7,9 +7,9 @@
 \usage{
 plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   tree_label = NA, vertex_size = 1, edge_size = vertex_size,
-  tree_size = 1, vertex_label_size = vertex_size,
-  edge_label_size = edge_size, tree_label_size = as.numeric(NA),
-  vertex_color = "#999999", edge_color = vertex_color, tree_color = NA,
+  vertex_label_size = vertex_size, edge_label_size = edge_size,
+  tree_label_size = as.numeric(NA), vertex_color = "#999999",
+  edge_color = vertex_color, tree_color = NA,
   vertex_label_color = "#000000", edge_label_color = "#000000",
   tree_label_color = "#000000", vertex_size_trans = "area",
   edge_size_trans = vertex_size_trans,
@@ -36,7 +36,7 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   vertex_color_axis_label = NULL, vertex_size_axis_label = NULL,
   edge_color_axis_label = NULL, edge_size_axis_label = NULL, ...)
 
-\method{plot}{classified}(classified_data, ...)
+\method{plot}{classified}(x, ...)
 }
 \arguments{
 \item{taxon_id}{The unique ids of taxa.}
@@ -215,8 +215,7 @@ Default: The expression given to \code{edge_size}.}
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}
 
-\item{tree_size_trans}{See details on transformations.
-Default: \code{"area"}.}
+\item{x}{An object of type \code{\link{classified}}}
 }
 \description{
 Plots the distribution of values associated with a taxonomic classification.
