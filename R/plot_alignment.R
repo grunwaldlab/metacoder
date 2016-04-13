@@ -23,7 +23,7 @@ plot_alignment <- function(alignment) {
   molten_alignment$base <-  toupper(molten_alignment$base)
   molten_alignment$color <- color_key[molten_alignment$base]
   molten_alignment$color[is.na(molten_alignment$color)] <- "#FFFFFF"
-  ggplot2::ggplot(molten_alignment, ggplot2::aes(x = position, y = name)) +
+  ggplot2::ggplot(molten_alignment, ggplot2::aes_string(x = "position", y = "name")) +
     ggplot2::geom_tile(fill = molten_alignment$color) +
     ggplot2::theme(panel.grid = ggplot2::element_blank(), 
           panel.background = ggplot2::element_blank(),

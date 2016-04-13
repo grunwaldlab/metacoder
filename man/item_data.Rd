@@ -8,7 +8,7 @@
 item_data(...)
 
 \method{item_data}{classified}(obj, subset = item_data_colnames(obj),
-  calculated_cols = TRUE, drop = TRUE, ...)
+  drop = TRUE, ...)
 }
 \arguments{
 \item{...}{Passed to \code{taxon_data.classified}}
@@ -17,9 +17,6 @@ item_data(...)
 
 \item{subset}{(\code{character}) The names of columns, either user defined or generated using \code{item_funcs}.
 Default: All columns.}
-
-\item{calculated_cols}{(\code{logical} of length 1) If \code{TRUE}, return calculated columns using
-\code{\link{classified}$item_funcs}.}
 
 \item{drop}{(\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
 name, then a \code{vector} is returned instead of a \code{data.frame}}

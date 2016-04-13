@@ -1,13 +1,9 @@
 ---
 title: "Extracting taxonomy information from metadata"
 output:
-  rmarkdown::html_vignette:
+  html_document:
     toc: false
     css: custom.css
-vignette: >
-  %\VignetteIndexEntry{Extracting taxonomy information from metadata}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}

@@ -1,13 +1,9 @@
 ---
 title: "Subsetting taxonomic data"
 output:
-  rmarkdown::html_vignette:
+  html_document:
     toc: false
     css: custom.css
-vignette: >
-  %\VignetteIndexEntry{Subsetting taxonomic data}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}

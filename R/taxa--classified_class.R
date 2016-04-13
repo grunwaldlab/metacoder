@@ -208,7 +208,7 @@ taxon_data_colnames <- function(obj) {
 #'
 #' @export
 item_data_colnames <- function(obj) {
-  c("taxon_id", names(obj$item_funcs), colnames(obj$item_data))
+  c("taxon_id", colnames(obj$item_data))
 }
 
 
@@ -271,8 +271,6 @@ taxon_data.classified <- function(obj,
 #' \code{\link{classified}}.
 #'
 #' @param obj (\code{\link{classified}})
-#' @param calculated_cols (\code{logical} of length 1) If \code{TRUE}, return calculated columns using
-#' \code{\link{classified}$item_funcs}.
 #' @param subset (\code{character}) The names of columns, either user defined or generated using \code{item_funcs}.
 #' Default: All columns.
 #' @param drop (\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
@@ -292,12 +290,12 @@ item_data <- function(...) {
 #' @rdname item_data
 item_data.classified <- function(obj,
                                  subset = item_data_colnames(obj),
-                                 calculated_cols = TRUE,
+                                 # calculated_cols = TRUE,
                                  drop = TRUE, ...) {
   # Check that the user is making sense
-  if (calculated_cols == FALSE && any(subset %in% names(obj$item_funcs))) {
-    stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
-  }
+#   if (calculated_cols == FALSE && any(subset %in% names(obj$item_funcs))) {
+#     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
+#   }
   # Combine taxon id information and arbitrary user-defined data
   data <- cbind(data.frame(taxon_id = obj$item_taxon_id, stringsAsFactors = FALSE),
                 obj$item_data)
@@ -306,11 +304,11 @@ item_data.classified <- function(obj,
   # Check if any of the column-generating functions are needed
   functions <- obj$item_funcs[names(obj$item_funcs) %in% subset]
   # Apply column-generating functions and append to output
-  if (calculated_cols && length(functions) > 0) {
-    calculated_data <- lapply(functions, item_apply, obj = obj, item = obj$item_taxon_id)
-    names(calculated_data) <- names(functions)
-    data <- cbind(data, as.data.frame(calculated_data))
-  }
+#   if (calculated_cols && length(functions) > 0) {
+#     calculated_data <- lapply(functions, item_apply, obj = obj, item = obj$item_taxon_id)
+#     names(calculated_data) <- names(functions)
+#     data <- cbind(data, as.data.frame(calculated_data))
+#   }
   # Reorder output to match order of subset
   data <- data[ , subset, drop = drop]
   return(data)
@@ -342,28 +340,6 @@ taxon_apply.classified <- function(obj, func, ...) {
   unlist(do.call(mapply, mapply_args), recursive = FALSE)
 }
 
-
-#' Apply a function to every item
-#'
-#' Apply  a function to every item in an object of type \code{\link{classified}}.
-#'
-#' @param obj (\code{\link{classified}})
-#' @param func (\code{function}) A function that accepts an object of type \code{\link{classified}}.
-#'
-#' @return \code{list} of length equal to the number of items in \code{obj}
-#'
-#' @keywords internal
-#' @rdname item_apply
-item_apply <- function(obj, func) {
-  UseMethod("item_apply")
-}
-
-#' @export
-#' @rdname item_apply
-#' @method item_apply classified
-item_apply.classified <- function(obj, func) {
-  unlist(lapply(split_by_item(obj), func), recursive = FALSE)
-}
 
 
 #' Split \code{\link{classified}} into individual taxa

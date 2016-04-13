@@ -13,7 +13,7 @@ opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, mess
 
 [![Build Status](https://travis-ci.org/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.org/grunwaldlab/metacoder?branch=master)
 
-```{r, child="inst/doc/introduction.Rmd", cache = TRUE}
+```{r, child="inst/doc/website_source/introduction.Rmd", cache = TRUE}
 ```
 
 ### Documentation
