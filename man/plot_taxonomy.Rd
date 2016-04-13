@@ -35,7 +35,7 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   make_legend = TRUE, title = NULL, title_size = 0.1,
   vertex_color_axis_label = NULL, vertex_size_axis_label = NULL,
   edge_color_axis_label = NULL, edge_size_axis_label = NULL,
-  background_color = "#00000000", ...)
+  background_color = "#FFFFFF00", output_file = NULL, ...)
 
 \method{plot}{classified}(x, ...)
 }
@@ -215,6 +215,10 @@ Default: The expression given to \code{edge_size}.}
 
 \item{background_color}{The background color of the plot.
 Default: Transparent}
+
+\item{output_file}{The path to a file to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+The type of the file will be determined by the extension given.
+Default: Do not save plot.}
 
 \item{...}{(other named arguments)
 Passed to the \code{\link{igraph}} layout function used.}

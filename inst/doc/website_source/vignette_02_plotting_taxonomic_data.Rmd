@@ -193,6 +193,36 @@ plot(unite_ex_data_3,
 ```
 
 
+### Background color
+
+The default background color is transparent in order to make formatting posters and slideshows as flexible as possible.
+Other background colors can be specified using the `background_color` option:
+
+```{r}
+plot(unite_ex_data_3,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     background_color = "grey")
+```
+
+
+Plots can be saved using `ggsave` from the `ggplot2` package or using the `output_file` option:
+
+```{r, eval = FALSE}
+my_plot <- plot(unite_ex_data_3,
+                vertex_size = item_count,
+                vertex_color = item_count)
+ggplot2::ggsave("path/to/my/output.png", myplot, bg = "transparent")
+```
+
+```{r, eval = FALSE}
+plot(unite_ex_data_3,
+     vertex_size = item_count,
+     vertex_color = item_count,
+     output_file = "path/to/my/output.png")
+```
+
+
 ## Usage examples
 
 

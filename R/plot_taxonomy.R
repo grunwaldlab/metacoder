@@ -157,6 +157,9 @@
 #' 
 #' @param background_color The background color of the plot.
 #' Default: Transparent
+#' @param output_file The path to a file to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+#' The type of the file will be determined by the extension given.
+#' Default: Do not save plot.
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -341,7 +344,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           edge_color_axis_label = NULL, 
                           edge_size_axis_label = NULL,
                           
-                          background_color = "#00000000",
+                          background_color = "#FFFFFF00",
+                          output_file = NULL,
                           
                           ...) {
   #| ### Verify arguments =========================================================================
@@ -813,18 +817,28 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           fill = element_data$color) +
     ggplot2::guides(fill = "none") +
     ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +
-    ggplot2::scale_y_continuous(expand = c(0,0)) + ggplot2::scale_x_continuous(expand = c(0,0)) +
+    ggplot2::scale_y_continuous(expand = c(0,0), limits = y_range) +
+    ggplot2::scale_x_continuous(expand = c(0,0), limits = x_range) +
     ggplot2::theme(panel.grid = ggplot2::element_blank(), 
-                   panel.background = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
+                   plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                    axis.title = ggplot2::element_blank(),
                    axis.text  = ggplot2::element_blank(),
                    axis.ticks = ggplot2::element_blank(), 
-                   axis.line  = ggplot2::element_blank())
+                   axis.line  = ggplot2::element_blank(),
+                   plot.margin = grid::unit(c(0,0,0,0) , "in"))
   if (!is.null(text_data)) {
     text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
     for (a_grob in text_grobs) {
       the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
     }
+  }
+  
+  #| ### Save output file
+  if (!is.null(output_file)) {
+    img_width <- diff(x_range)
+    img_height <- diff(y_range)
+    ggplot2::ggsave(output_file, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
   }
   return(the_plot)
 }
