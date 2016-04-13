@@ -372,11 +372,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
     stop("Argument 'margin_size' must be a numeric of length 2.")
   }
-  if (! layout %in% layout_functions()) {
-    stop("Argument 'layout' must be an output of layout_functions().")
-  }
-  if (!is.null(initial_layout) && ! initial_layout %in% layout_functions()) {
-    stop("Argument 'initial_layout' must be an output of layout_functions().")
+  layout <- match.arg(layout, layout_functions())
+  if (!is.null(initial_layout)) {
+    initial_layout <- match.arg(initial_layout, layout_functions())
   }
   
   #| ### Parse arguments
