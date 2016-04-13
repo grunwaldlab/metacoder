@@ -107,16 +107,19 @@ parse_primersearch <- function(file_path) {
 #' @examples
 #' \dontrun{
 #' result <- primersearch(rdp_ex_data, 
-#'                        forward = "CTCCTACGGGAGGCAGCAG",
-#'                        reverse = "GWATTACCGCGGCKGCTG",
-#'                        pair_name = "357F_+_519R",
+#'                        forward = "CAGYMGCCRCGGKAAHACC",
+#'                        reverse = "GGACTACNSGGGTMTCTAAT",
+#'                        pair_name = "U519F_Arch806R",
 #'                        mismatch = 10)
 #'                        
 #' plot(result, 
 #'      vertex_size = item_count,
+#'      vertex_label = name,
 #'      vertex_color = prop_amplified,
 #'      vertex_color_range = c("red", "yellow", "green"),
-#'      vertex_color_trans = "linear")
+#'      vertex_color_trans = "radius",
+#'      vertex_color_interval = c(0, 1),
+#'      layout = "fruchterman-reingold")
 #' }
 #' 
 #' @export

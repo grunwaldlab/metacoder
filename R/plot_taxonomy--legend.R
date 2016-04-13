@@ -249,6 +249,7 @@ scale_bar_coords <- function(x1, x2, y1, y2, color, group) {
 #' 
 #' @keywords internal
 inverse = function (f, interval) {
+  interval <- c(interval[1] - .001, interval[2] + .001) # ensures that min < max
   function (y) {
     process_one <- function(one_y) {
       uniroot((function (x) f(x) - one_y), interval = interval, extendInt = "yes")[1]
