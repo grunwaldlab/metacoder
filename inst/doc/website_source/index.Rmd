@@ -28,6 +28,21 @@ MetacodeR is an R package that attempts to addresses these issues:
 * Community diversity can be visualized by color and size in a tree plot.
 * Primer specificity can be estimated with *In silico* PCR.
 
+### Documentation
+
+Documentation is under construction at http://grunwaldlab.github.io/metacoder.
+
+### Download the current version
+
+While this project is in development it can be installed through github:
+
+    devtools::install_github(repo="grunwaldlab/metacoder")
+    library(metacoder)
+
+If you've built the vignettes, you can browse them with:
+
+    browseVignettes(package="metacoder")
+
 ### Extracting taxonomic data
 
 Most databases have a unique file format and taxonomic hierarchy/nomenclature.
@@ -65,7 +80,7 @@ data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
                          class_tax_sep = ";", database = "none")
 ```
 
-The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+Note, that this command will take a while to process. The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
 
 ```{r}
 head(taxon_data(data)) # print a few rows of the taxon data
@@ -285,3 +300,7 @@ devtools::install_github("grunwaldlab/metacoder")
 
 We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
 MetacodeR's major dependencies are taxize, igraph, and ggplot2.
+
+To build the vignettes, execute:
+
+    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
