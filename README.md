@@ -87,7 +87,7 @@ data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
                          class_tax_sep = ";", database = "none")
 ```
 
-Not, that this command will take a while to process. The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+Note, that this command will take a while to process. The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
 
 
 ```r
@@ -330,3 +330,7 @@ While this project is in development it can be installed through github:
 If you've built the vignettes, you can browse them with:
 
     browseVignettes(package="metacoder")
+
+To build the vignettes, execute:
+
+   devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
