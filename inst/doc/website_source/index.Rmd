@@ -251,10 +251,13 @@ ggplot2::ggsave(file = "in_silico_pcr_2.svg", plot = the_last_plot, bg = "transp
 
 ### Differential metadiversity plots
 
-We can compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
+We can use **Differential Metadiversity plots** to contrast either:
+
+* display relative abudnace in two pair-wise communities
+* primers for coverage of the tree of life
+
+Here, we  compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
 First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
-
-
 
 ```{r}
 pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
@@ -265,7 +268,6 @@ pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2
 
 Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
 In the plot below, blue corresponds to taxa amplified by 357F/519F but not 515F/1100R and brown is the opposite:
-
 
 ```{r, echo = FALSE}
 set.seed(2)
