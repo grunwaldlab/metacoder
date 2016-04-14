@@ -25,6 +25,21 @@ MetacodeR is an R package that attempts to addresses these issues:
 * Community diversity can be visualized by color and size in a tree plot we call a **Metadiversity plot**.
 * Primer specificity can be estimated with *In silico* PCR.
 
+### Documentation
+
+Documentation is under construction at http://grunwaldlab.github.io/metacoder.
+
+### Download the current version
+
+While this project is in development it can be installed through github:
+
+    devtools::install_github(repo="grunwaldlab/metacoder")
+    library(metacoder)
+
+If you've built the vignettes, you can browse them with:
+
+    browseVignettes(package="metacoder")
+    
 ### Extracting taxonomic data
 
 Most databases have a unique file format and taxonomic hierarchy/nomenclature.
