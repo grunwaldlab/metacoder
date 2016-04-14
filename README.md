@@ -28,7 +28,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 ### Extracting taxonomic data
 
 Most databases have a unique file format and taxonomic hierarchy/nomenclature.
-Taxonomic data can be extracted from any file format using the 'extract_taxonomy' function.
+Taxonomic data can be extracted from any file format using the **extract_taxonomy** function.
 Classifications can be parsed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
 The example code below parses the 16s Ribosome Database Project training set for Mothur.
