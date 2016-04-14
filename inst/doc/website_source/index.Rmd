@@ -149,7 +149,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subset_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, causing two trees to be plotted:
+To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ```{r, echo = FALSE}
 set.seed(2)
