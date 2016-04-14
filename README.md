@@ -72,7 +72,7 @@ data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
                          class_tax_sep = ";", database = "none")
 ```
 
-The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+Not, that this command will take a while to process. The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
 
 
 ```r
