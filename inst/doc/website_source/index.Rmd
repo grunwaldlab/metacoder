@@ -168,10 +168,10 @@ ggplot2::ggsave(file = "subset_2.svg", plot = the_last_plot, bg = "transparent")
 
 ### Taxonomically balanced sampling
 
-When calculating statistics for taxa, the amount of data should be balanced among taxa and there should be enough data per taxon to make unbiased estimates.
-Random samples from large reference databases are biased toward overrepresented taxa.
+When calculating statistics for taxa, the amount of data should be balanced across taxa and there should be enough data per taxon to provide unbiased estimates.
+Random samples from large reference databases are biased towards overrepresented taxa.
 The function **taxonomic_sample** is used to create taxonomically balanced random samples.
-The acceptable range of sequence or subtaxa counts can be defined for each taxonomic rank; taxa with too few are excluded and taxa with too many are randomly sampled.
+The acceptable range of sequence or subtaxa counts can be defined for each taxonomic rank; taxa with too few are excluded and taxa with too many are randomly subsampled.
 The code below samples the data such that rank 6 taxa will have 5 sequences and rank 3 taxa (phyla) will have less than 100:
 
 ```{r, echo = FALSE}
