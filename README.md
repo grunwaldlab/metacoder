@@ -333,4 +333,4 @@ If you've built the vignettes, you can browse them with:
 
 To build the vignettes, execute:
 
-   devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
+    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
