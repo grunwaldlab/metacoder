@@ -108,6 +108,7 @@ ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transpare
 
 Note, that this command will take a while to process. 
 The default size range displayed is optimized for each plot.
+The legend shows the total number of OTUs in the data and a color gradient from abundant to rare for each vertices.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r, echo = FALSE}
