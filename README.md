@@ -22,7 +22,7 @@ Metabarcoding is revolutionizing microbial ecology and presenting new challenges
 MetacodeR is an R package that attempts to addresses these issues:
 
 * Sources of taxonomic data can be extracted from any file format and manipulated. 
-* Community diversity can be visualized by color and size in a tree plot.
+* Community diversity can be visualized by color and size in a tree plot we call a **Metadiversity plot**.
 * Primer specificity can be estimated with *In silico* PCR.
 
 ### Extracting taxonomic data
