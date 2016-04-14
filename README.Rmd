@@ -30,3 +30,7 @@ While this project is in development it can be installed through github:
 If you've built the vignettes, you can browse them with:
 
     browseVignettes(package="metacoder")
+
+To build the vignettes execute:
+
+    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
