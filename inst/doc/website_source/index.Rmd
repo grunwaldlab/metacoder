@@ -197,7 +197,6 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subsample.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-
 ### In silico PCR
 
 The function **primersearch** is a wrapper for an EMBOSS tool that implements *in silico* PCR.
@@ -285,10 +284,6 @@ pcr %>%
 the_last_plot <- .Last.value
 ggplot2::ggsave(file = "in_silico_pcr_3.svg", plot = the_last_plot, bg = "transparent")
 ```
-
-### Conclusions
-
-Intuitive plotting will reveal subtle patterns in complex data and the ability to estimate the effectiveness of new primers/barcodes will accelerate the adoption of metabarcoding to understudied groups of organisms.
 
 ### Availability
 
