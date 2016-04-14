@@ -108,7 +108,7 @@ ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transpare
 
 Note, that this command will take a while to process. 
 The default size range displayed is optimized for each plot.
-The legend shows the total number of OTUs in the data and a color gradient from abundant to rare for vertices.
+The legend represents the number of sequences for each taxon level corresponds as both a color gradient and size of vertices.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r, echo = FALSE}
@@ -245,7 +245,6 @@ pcr %>%
 the_last_plot <- .Last.value
 ggplot2::ggsave(file = "in_silico_pcr_2.svg", plot = the_last_plot, bg = "transparent")
 ```
-
 
 ### Differential Metadiversity Plots
 
