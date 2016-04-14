@@ -91,7 +91,7 @@ head(taxon_data(data)) # print a few rows of the taxon data
 
 The hierarchical nature of taxonomic data makes it difficult to plot effectively.
 Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa or multiple ranks.
-MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity plot**:
+MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity Plot**:
 
 ```{r, echo = FALSE}
 set.seed(5) #1 4 5(tall)
@@ -148,7 +148,6 @@ plot(subset(data, name == "Archaea"), vertex_size = item_count,
 the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subset_1.svg", plot = the_last_plot, bg = "transparent")
 ```
-
 
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, causing two trees to be plotted:
 
@@ -249,12 +248,12 @@ ggplot2::ggsave(file = "in_silico_pcr_2.svg", plot = the_last_plot, bg = "transp
 ```
 
 
-### Differential metadiversity plots
+### Differential Metadiversity Plots
 
-We can use **Differential Metadiversity plots** to contrast either:
+We can use **Differential Metadiversity Plots** to contrast either:
 
-* display relative abudnace in two pair-wise communities
-* primers for coverage of the tree of life
+* relative abundance of taxa in two pair-wise communities
+* two primer pairs for coverage of the tree of life
 
 Here, we  compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
 First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
@@ -286,7 +285,6 @@ pcr %>%
 the_last_plot <- .Last.value
 ggplot2::ggsave(file = "in_silico_pcr_3.svg", plot = the_last_plot, bg = "transparent")
 ```
-
 
 ### Conclusions
 
