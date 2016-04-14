@@ -80,12 +80,12 @@ data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
                          class_tax_sep = ";", database = "none")
 ```
 
-Note, that this command will take a while to process. The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+Note, that this command will take a while to process. 
+The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
 
 ```{r}
 head(taxon_data(data)) # print a few rows of the taxon data
 ```
-
 
 ### Metadiversity plots
 
@@ -106,7 +106,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-
+Note, that this command will take a while to process. 
 The default size range displayed is optimized for each plot.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
@@ -122,10 +122,11 @@ plot(data, vertex_size = item_count, edge_color = rank,
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
 
+Again, note, that this command will take a while to process. 
+
 ```{r, include = FALSE, eval = FALSE}
 ggplot2::ggsave(file = "intro_plot_2.svg", plot = the_last_plot, bg = "transparent")
 ```
-
 
 ### Subsetting
 
