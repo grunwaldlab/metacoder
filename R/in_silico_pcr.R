@@ -14,6 +14,7 @@
 #'   want to execute the command yourself.
 #' @param ... Additional arguments are passed to \code{primersearch}.
 #' 
+#' 
 #' @return The command generated as a character vector of length 1.
 #' 
 #' @seealso \code{\link{parse_primersearch}}
@@ -103,6 +104,34 @@ parse_primersearch <- function(file_path) {
 #' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
 #' 
 #' @return An object of type \code{\link{classified}}
+#' 
+#' @section Installing EMBOSS:
+#' 
+#' The command-line tool "primersearch" from the EMBOSS tool kit is needed to use this function.
+#' How you install EMBOSS will depend on your operating system:
+#' 
+#' \strong{Linux:}
+#' 
+#' Open up a terminal and type:
+#' 
+#' \code{sudo apt-get install emboss}
+#' 
+#' \strong{Mac OSX:}
+#' 
+#' The easiest way to install EMBOSS on OSX is to use \href{http://brew.sh/}{homebrew}.
+#' After installing homebrew, open up a terminal and type:
+#' 
+#' \code{brew install homebrew/science/emboss}
+#' 
+#' NOTE: This has not been tested by us yet.
+#' 
+#' \strong{Windows:}
+#' 
+#' There is an installer for Windows here:
+#' 
+#' ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
+#' 
+#' NOTE: This has not been tested by us yet.
 #' 
 #' @examples
 #' \dontrun{
@@ -225,7 +254,7 @@ primersearch_is_installed <- function(must_be_installed = TRUE) {
                           error = function(e) e)
   is_installed <- grepl(pattern = "^EMBOSS", test_result)
   if (must_be_installed && ! is_installed) {
-    stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path.")
+    stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path. Type '?primersearch' for information on installing EMBOSS.")
   }
   return(invisible(is_installed))
 }

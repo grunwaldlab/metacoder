@@ -42,6 +42,12 @@ While this project is in development it can be installed through github:
 If you've built the vignettes, you can browse them with:
 
     browseVignettes(package="metacoder")
+    
+### Dependencies
+
+The function that runs *in silico* PCR requires `primersearch` from the EMBOSS tool kit to be installed. 
+This is not an R package, so it is not automatically installed.
+Type `?primersearch` after installing and loading MetcodeR for installation instructions.
 
 ### Extracting taxonomic data
 

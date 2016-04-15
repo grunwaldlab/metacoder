@@ -39,6 +39,35 @@ A pair of primers are aligned against a set of sequences.
 The location of the best hits, quality of match, and predicted amplicons are returned.
 Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 }
+\section{Installing EMBOSS}{
+
+
+The command-line tool "primersearch" from the EMBOSS tool kit is needed to use this function.
+How you install EMBOSS will depend on your operating system:
+
+\strong{Linux:}
+
+Open up a terminal and type:
+
+\code{sudo apt-get install emboss}
+
+\strong{Mac OSX:}
+
+The easiest way to install EMBOSS on OSX is to use \href{http://brew.sh/}{homebrew}.
+After installing homebrew, open up a terminal and type:
+
+\code{brew install homebrew/science/emboss}
+
+NOTE: This has not been tested by us yet.
+
+\strong{Windows:}
+
+There is an installer for Windows here:
+
+ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
+
+NOTE: This has not been tested by us yet.
+}
 \examples{
 \dontrun{
 result <- primersearch(rdp_ex_data, 
