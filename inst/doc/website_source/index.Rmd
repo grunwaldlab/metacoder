@@ -26,7 +26,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 
 * Sources of taxonomic data can be extracted from any file format and manipulated. 
 * Community diversity can be visualized by color and size in a tree plot.
-* Primer specificity can be estimated with *In silico* PCR.
+* Primer specificity can be estimated with *in silico* PCR.
 
 ### Documentation
 
