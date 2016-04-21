@@ -109,6 +109,28 @@ extract_taxonomy.default <- function(input, key,
                                      arbitrary_ids = "warn",
                                      ...) {
   # Validate and standardize input ----------------------------------------------------------------
+  # input
+  input <- as.character(input)
+  # regex and key
+  key_options <- c("taxon_id", "taxon_name", "taxon_info", "class", "item_id", "item_info")
+  key <- validate_regex_key_pair(regex, key, key_options)
+  # classification regex and key
+  class_key_options <- c("taxon_id", "taxon_name", "taxon_info")
+  class_key <- validate_regex_key_pair(class_regex, class_key, class_key_options)
+  # classification sep
+  if (class(class_sep) != "character" | length(class_sep) != 1) {
+    stop('"class_sep" must be a character vector of length 1')
+  }
+  # classification order
+  if (class(class_rev) != "logical" | length(class_rev) != 1) {
+    stop('"class_rev" must be a logical (aka boolean) vector of length 1')
+  }
+  # database
+  database <- match.arg(tolower(database), choices = valid_databases)
+  # arbitrary ID handling
+  valid_arb_id_opts <- c("allow", "warn", "error", "na")
+  arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
+  
   # Parse input -----------------------------------------------------------------------------------
   # Assign item IDs -------------------------------------------------------------------------------
   # Consolidate item data -------------------------------------------------------------------------
@@ -129,8 +151,8 @@ extract_taxonomy.default <- function(input, key,
   
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
-  valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
-                  "item_id", "item_name", "item_info")
+#   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
+#                   "item_id", "item_name", "item_info")
   valid_arb_id_opts <- c("allow", "warn", "error", "na")
   database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
@@ -140,7 +162,7 @@ extract_taxonomy.default <- function(input, key,
   taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid, none = NA)
   taxon_in_lineage = TRUE
   # Argument validation ----------------------------------------------------------------------------
-  if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
+  # if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
   database <- match.arg(tolower(database), choices = valid_databases)
   arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
   # Apply option default ---------------------------------------------------------------------------
@@ -303,3 +325,8 @@ extract_taxonomy.DNAbin <- function(input, ...) {
                                              function(x) paste0(x, collapse = "")))
   return(output)
 }
+
+
+
+
+
