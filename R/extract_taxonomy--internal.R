@@ -48,42 +48,68 @@ validate_regex_match <- function(input, regex, mismatch_action = "error", max_pr
 #' and that the key consists of valid options.
 #' Uses non-standard evaluation to get the name of input variables.
 #'
-#' @param regex A regex with capture groups
-#' @param key A key corresponding to \code{regex}
-#' @param key_options Values \code{key} can take on.
+#' @param regex (\code{character})
+#' A regex with capture groups
+#' @param key (\code{character})
+#' A key corresponding to \code{regex}
+#' @param key_options (\code{character})
+#' Values \code{key} can take on.
+#' @param multiple_allowed (\code{character})
+#' Values of \code{key_options} that can appear more than once.
 #' 
 #' @return Returns the result of \code{\link{match.arg}} on the key.
 #' 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair_ <- function(regex, key, key_options) {
+validate_regex_key_pair_ <- function(regex, key, key_options, multiple_allowed = key_options) {
+  key_exp <- deparse(key$expr)
+  key_value <- lazyeval::lazy_eval(key)
+  regex_exp <- deparse(regex$expr)
+  regex_value <- lazyeval::lazy_eval(regex)
   
   # Check key length
-  regex_capture_group_count <- count_capture_groups(lazyeval::lazy_eval(regex))
-  key_length <- length(lazyeval::lazy_eval(key))
+  regex_capture_group_count <- count_capture_groups(regex_value)
+  key_length <- length(key_value)
   if (key_length != regex_capture_group_count) {
     stop(paste0(collapse = "",
-                'The number of capture groups in "', regex$expr, '"and the length of "', 
-                key$expr, '" do not match.\n',
+                'The number of capture groups in `', regex_exp, '` and the length of "', 
+                key_exp, '" do not match.\n',
                 'The key has ', key_length, ' term(s) and the regex has ', regex_capture_group_count))
   }
   
   # Check that key values are correct
-  output_key <- match.arg(lazyeval::lazy_eval(key), key_options, several.ok = TRUE)
+  output_key <- match.arg(key_value, key_options, several.ok = TRUE)
+  
+  # Check that only names in `multiple_allowed` appear more than once
+  counts <- table(key_value)
+  duplicated_keys <- names(counts[counts > 1])
+  if (! all(duplicated_keys %in% multiple_allowed)) {
+    stop(paste0(collapse = "",
+                'The following values in `', key_exp, '` have been used more than once:\n',
+                paste0(collapse ="", "    ", duplicated_keys, "\n"),
+                '  Only the following keys can be duplicated:\n',
+                paste0(collapse ="", "    ", multiple_allowed, "\n")))
+  }
   
   # Apply key name defaults
-  key_names <- names(lazyeval::lazy_eval(key))
-  if (is.null(key_names)) { key_names <- rep("", length(lazyeval::lazy_eval(key))) }
+  key_names <- names(key_value)
+  if (is.null(key_names)) { key_names <- rep("", length(key_value)) }
   key_names[key_names == ""] <- output_key[key_names == ""]
-  names(output_key) <- key_names
   
+  # Number key names that appear more than once
+  for (a_key in duplicated_keys) {
+    key_names[key_names == a_key] <- paste0(key_names[key_names == a_key], "_",
+                                            seq_along(key_names[key_names == a_key]))
+  }
+  
+  names(output_key) <- key_names
   return(output_key)
 }
 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair <- function(regex, key, key_options) {
-  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), key_options)
+validate_regex_key_pair <- function(regex, key, key_options, multiple_allowed = key_options) {
+  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), key_options, multiple_allowed)
 }
 
 

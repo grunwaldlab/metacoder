@@ -12,6 +12,7 @@
 #' @param key (\code{character}) The identity of the capturing groups defined using \code{regex}.
 #'  The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
 #'  Any names added to the terms will be used as column names in the output.
+#'  Only \code{"taxon_info"} and \code{"item_info"} can be used multiple times.
 #'  Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
@@ -36,7 +37,8 @@
 #' The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 #' Any names added to the terms will be used as column names in the output.
 #' At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
-#' The following values are possible:
+#' Only \code{"taxon_info"} can be used multiple times.
+#' Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
@@ -123,8 +125,8 @@ extract_taxonomy.default <- function(input, key,
   input <- validate_regex_match(input, regex)
   # regex and key
   key_options <- c("taxon_id", "taxon_name", "taxon_info", "class", "item_id", "item_info")
-  key <- validate_regex_key_pair(regex, key, key_options)
-  if (is.null(names(key))) { names(key) <- key }
+  key <- validate_regex_key_pair(regex, key, key_options,
+                                 multiple_allowed = c("taxon_info", "item_info"))
   # classification regex and key
   class_key_options <- c("taxon_id", "taxon_name", "taxon_info")
   class_key <- validate_regex_key_pair(class_regex, class_key, class_key_options)

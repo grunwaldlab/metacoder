@@ -45,6 +45,18 @@ test_that("default naming of keys works", {
   expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = test_key, key_options = test_options)) == test_key))
   expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = c(x = "taxon_name", "taxon_id"), key_options = test_options)) == c("x", "taxon_id")))
 })
+test_that("only specified keys can be duplicated", {
+  expect_error(validate_regex_key_pair(regex = test_regex,
+                                       key = c("taxon_name", "taxon_name"),
+                                       key_options = test_options,
+                                       multiple_allowed = c("taxon_info", "item_info")),
+               "have been used more than once:")
+  expect_equal(validate_regex_key_pair(regex = test_regex,
+                                       key = c("taxon_info", "taxon_info"),
+                                       key_options = test_options,
+                                       multiple_allowed = c("taxon_info", "item_info")),
+               c(taxon_info_1 = "taxon_info", taxon_info_2 = "taxon_info"))
+})
 
 #|
 

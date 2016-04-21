@@ -5,16 +5,24 @@
 \alias{validate_regex_key_pair_}
 \title{Check a regex-key pair}
 \usage{
-validate_regex_key_pair_(regex, key, key_options)
+validate_regex_key_pair_(regex, key, key_options,
+  multiple_allowed = key_options)
 
-validate_regex_key_pair(regex, key, key_options)
+validate_regex_key_pair(regex, key, key_options,
+  multiple_allowed = key_options)
 }
 \arguments{
-\item{regex}{A regex with capture groups}
+\item{regex}{(\code{character})
+A regex with capture groups}
 
-\item{key}{A key corresponding to \code{regex}}
+\item{key}{(\code{character})
+A key corresponding to \code{regex}}
 
-\item{key_options}{Values \code{key} can take on.}
+\item{key_options}{(\code{character})
+Values \code{key} can take on.}
+
+\item{multiple_allowed}{(\code{character})
+Values of \code{key_options} that can appear more than once.}
 }
 \value{
 Returns the result of \code{\link{match.arg}} on the key.
