@@ -108,6 +108,25 @@ extract_taxonomy.default <- function(input, key,
                                      database = "ncbi",
                                      arbitrary_ids = "warn",
                                      ...) {
+  # Validate and standardize input ----------------------------------------------------------------
+  # Parse input -----------------------------------------------------------------------------------
+  # Assign item IDs -------------------------------------------------------------------------------
+  # Consolidate item data -------------------------------------------------------------------------
+  # Determine item classifications ----------------------------------------------------------------
+  # Infer taxonomy structure ----------------------------------------------------------------------
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
