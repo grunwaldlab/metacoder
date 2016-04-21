@@ -73,6 +73,7 @@
 #' @return Returns an object of type \code{classified}
 #'
 #' @examples
+#' \dontrun{
 #' # Extract embedded classifications from UNITE FASTA file offline
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
@@ -81,7 +82,6 @@
 #'                                     key = c(name = "item_info", seq_id = "item_info",
 #'                                             other_id = "item_info", "class_name"),
 #'                                     database = "none")
-#' \dontrun{
 #' # Look up taxonomic data online using sequence ID
 #' unite_ex_data <- extract_taxonomy(sequences,
 #'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
@@ -108,12 +108,23 @@ extract_taxonomy.default <- function(input, key,
                                      database = "ncbi",
                                      arbitrary_ids = "warn",
                                      ...) {
+  # Constants -------------------------------------------------------------------------------------
+  id_from_name_funcs <- list(ncbi = taxize::get_uid,
+                             itis = taxize::get_tsn,
+                             eol = taxize::get_eolid,
+                             col = taxize::get_colid,
+                             tropicos = taxize::get_tpsid,
+                             nbn = taxize::get_nbnid, 
+                             none = NA)
+  taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid,
+                                 none = NA)
   # Validate and standardize input ----------------------------------------------------------------
   # input
-  input <- as.character(input)
+  input <- validate_regex_match(input, regex)
   # regex and key
   key_options <- c("taxon_id", "taxon_name", "taxon_info", "class", "item_id", "item_info")
   key <- validate_regex_key_pair(regex, key, key_options)
+  if (is.null(names(key))) { names(key) <- key }
   # classification regex and key
   class_key_options <- c("taxon_id", "taxon_name", "taxon_info")
   class_key <- validate_regex_key_pair(class_regex, class_key, class_key_options)
@@ -126,12 +137,15 @@ extract_taxonomy.default <- function(input, key,
     stop('"class_rev" must be a logical (aka boolean) vector of length 1')
   }
   # database
-  database <- match.arg(tolower(database), choices = valid_databases)
+  database <- match.arg(tolower(database), choices = names(id_from_name_funcs))
   # arbitrary ID handling
   valid_arb_id_opts <- c("allow", "warn", "error", "na")
   arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
   
   # Parse input -----------------------------------------------------------------------------------
+  item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
+  names(item_data) <- c("input", key)
+  
   # Assign item IDs -------------------------------------------------------------------------------
   # Consolidate item data -------------------------------------------------------------------------
   # Determine item classifications ----------------------------------------------------------------
@@ -150,21 +164,21 @@ extract_taxonomy.default <- function(input, key,
   
   
   # Constants --------------------------------------------------------------------------------------
-  valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
+#   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
 #   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
 #                   "item_id", "item_name", "item_info")
-  valid_arb_id_opts <- c("allow", "warn", "error", "na")
+  # valid_arb_id_opts <- c("allow", "warn", "error", "na")
   database_id_classes <- c(ncbi = "uid", itis = "tsn", eol = "eolid", col = "colid",
                            tropicos = "tpsid", nbn = "nbnid")
   id_from_name_funcs <- list(ncbi = taxize::get_uid, itis = taxize::get_tsn, eol = taxize::get_eolid,
                              col = taxize::get_colid, tropicos = taxize::get_tpsid, nbn = taxize::get_nbnid, 
                              none = NA)
   taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid, none = NA)
-  taxon_in_lineage = TRUE
+  # taxon_in_lineage = TRUE
   # Argument validation ----------------------------------------------------------------------------
   # if (!all(key %in% valid_keys)) stop("Invalid key term. Look at documentation for valid terms.")
-  database <- match.arg(tolower(database), choices = valid_databases)
-  arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
+  # database <- match.arg(tolower(database), choices = valid_databases)
+  # arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
   # Apply option default ---------------------------------------------------------------------------
   if (is.null(names(key))) names(key) <- key
   # Parse arguments --------------------------------------------------------------------------------

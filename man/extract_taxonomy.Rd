@@ -8,9 +8,9 @@
 \usage{
 extract_taxonomy(input, ...)
 
-\method{extract_taxonomy}{default}(input, regex, key, class_tax_sep = ";",
-  class_rank_sep = "__", class_tax_rev = FALSE, class_rank_rev = FALSE,
-  taxon_in_lineage = TRUE, database = "ncbi", arbitrary_ids = "warn", ...)
+\method{extract_taxonomy}{default}(input, key, regex = "(.*)",
+  class_key = "taxon_name", class_regex = "(.*)", class_sep = ";",
+  class_rev = FALSE, database = "ncbi", arbitrary_ids = "warn", ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
@@ -20,63 +20,69 @@ extract_taxonomy(input, ...)
 
 \item{...}{Not used.}
 
-\item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
-indicating the locations of relevant information. The identity of the information must
-be specified using the \code{key} argument.}
-
 \item{key}{(\code{character}) The identity of the capturing groups defined using \code{regex}.
 The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
 Any names added to the terms will be used as column names in the output.
 Each term must be one of those decribed below:
 \describe{
-  \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database}}
-  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are specific (i.e. interpretable)
-  to a particular \code{database}.}
+  \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
+        Requires an internet connection.}
+  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+        by a particular \code{database}. Requires an internet connection.}
   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-  \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
-from broad to specific (see \code{class_tax_rev}) for a particular \code{database}. Individual taxa
-are separated by the \code{class_tax_sep} argument and the taxon-rank group is separated by the
-\code{class_rank_sep} argument.}
-  \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic
-classification from broad to specific. Same usage as \code{class_id}.
-Individual names are not necessarily unique, but are specific (i.e. interperable)
-to a particular \code{database}.}
-  \item{\code{item_id}}{An unique item (e.g. sequence) identifier. The taxonomy information will be
-looked up if available. Requires an internet connection.}
-  \item{\code{item_name}}{An item (e.g. sequence) name. Not necessarily unique.}
+  \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
+        from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
+        are separated by the \code{class_sep} argument and the information is parsed by the
+        \code{class_regex} and \code{class_key} arguments.}
+  \item{\code{item_id}}{An unique item (e.g. sequence) identifier for a particular \code{database}.
+        Requires an internet connection.}
   \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 }}
 
-\item{class_tax_sep}{(\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
-argument. The characters used to separate individual taxa within a lineage.}
+\item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
+indicating the locations of relevant information. The identity of the information must
+be specified using the \code{key} argument.}
 
-\item{class_rank_sep}{(\code{character; length == 1}) Used with the \code{class_name} term in the \code{key}
-argument when a lineage contiains both taxon and rank information. This is the characters used to separate
-th rank and the taxon name within an individual taxa in a lineage.}
+\item{class_key}{(\code{character} of length 1)
+The identity of the capturing groups defined using \code{class_iregex}.
+The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
+Any names added to the terms will be used as column names in the output.
+At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+The following values are possible:
+ \describe{
+   \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
+         Requires an internet connection.}
+   \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+         by a particular \code{database}. Requires an internet connection.}
+   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
+ }}
 
-\item{class_tax_rev}{Used with the \code{class_name} term in the \code{key} argument.
-If TRUE, the rank order of taxa read in a lineage is reversed to be specific to broad.}
+\item{class_regex}{(\code{character} of length 1)
+A regular expression with capturing groups indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument.
+The identity of the information must be specified using the \code{class_key} argument.}
 
-\item{class_rank_rev}{Used with the \code{class_name} term in the \code{key} argument  when a lineage
-contiains both taxon and rank information. If TRUE, the rank information come after the taxon information.}
+\item{class_sep}{(\code{character} of length 1)
+Used with the \code{class} term in the \code{key} argument.
+The character(s) used to separate individual taxa within a classification.}
 
-\item{taxon_in_lineage}{If \code{TRUE}, the lineage string included the taxon itself as its most specific
-classification.}
+\item{class_rev}{(\code{logical} of length 1)
+Used with the \code{class} term in the \code{key} argument.
+If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.}
 
-\item{database}{(\code{character; length == 1}): The name of the database that patterns given in 
+\item{database}{(\code{character} of length 1): The name of the database that patterns given in 
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
-internet.}
+internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 
 \item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary IDs is
-handled. Possible options are:
+handled. Arbitrary ids can result from failed online queries or not using the internet. 
+Possible options are:
 \describe{
   \item{\code{"allow"}}{Arbitrary IDs are automatically generated if needed. These can occur intermixed
   with offical database IDs in the case of failed database lookups.}
   \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary IDs are used.}
   \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
   \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
-  \item{\code{"none"}}{Do not use a database to look up information.}
 }}
 }
 \value{
@@ -90,6 +96,7 @@ An object of type \code{\link{classified}} is returned containing the specifed i
 Taxa are translated into unique codes if they are not already encoded this way.
 }
 \examples{
+\dontrun{
 # Extract embedded classifications from UNITE FASTA file offline
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
@@ -98,7 +105,6 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
                                     key = c(name = "item_info", seq_id = "item_info",
                                             other_id = "item_info", "class_name"),
                                     database = "none")
-\dontrun{
 # Look up taxonomic data online using sequence ID
 unite_ex_data <- extract_taxonomy(sequences,
                                   regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
