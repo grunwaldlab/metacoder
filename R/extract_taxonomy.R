@@ -110,9 +110,18 @@ extract_taxonomy <- function(input, ...) {
 #' @method extract_taxonomy default
 #' @export
 #' @rdname extract_taxonomy
-extract_taxonomy.default <- function(input, regex, key, class_tax_sep = ";", class_rank_sep = "__", 
-                                     class_tax_rev = FALSE, class_rank_rev = FALSE,
-                                     taxon_in_lineage = TRUE, database = 'ncbi', arbitrary_ids = "warn", ...) {
+extract_taxonomy.default <- function(input, regex, key,
+                                     class_id_rev = FALSE,
+                                     class_id_sep = ";",
+                                     class_id_regex = "(.*)",
+                                     class_id_key = "class_id",
+                                     class_name_rev = FALSE,
+                                     class_name_sep = ";",
+                                     class_name_regex = "(.*)",
+                                     class_name_key = "class_name",
+                                     database = "ncbi",
+                                     arbitrary_ids = "warn",
+                                     ...) {
   # Constants --------------------------------------------------------------------------------------
   valid_databases <- c("ncbi", "itis", "eol", "col", "tropicos", "nbn", "none")
   valid_keys <- c("taxon_id", "taxon_name", "taxon_info", "class_id", "class_name", 
