@@ -9,9 +9,6 @@
 #' 
 #' @param input A vector from which to extract taxonomy information or an object of class
 #' \code{\link{ape}{DNAbin}}. 
-#' @param regex (\code{character; length == 1}) A regular expression with capturing groups
-#'  indicating the locations of relevant information. The identity of the information must
-#'  be specified using the \code{key} argument.
 #' @param key (\code{character}) The identity of the capturing groups defined using \code{regex}.
 #'  The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
 #'  Any names added to the terms will be used as column names in the output.
@@ -22,49 +19,41 @@
 #'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
-#'    \item{\code{class_id}}{A list of taxa unique IDs that consitute the full taxonomic classification
-#'          from broad to specific (see \code{class_id_rev}) for a particular \code{database}. Individual taxa
-#'          are separated by the \code{class_id_sep} argument and the taxon-rank group is parsed by the
-#'          \code{class_id_regex} and \code{class_id_key} arguments.}
-#'    \item{\code{class_name}}{A list of taxa names that consitute the full taxonomic classification
-#'          from broad to specific (see \code{class_name_rev}) for a particular \code{database}.
-#'          Individual names are not necessarily unique, but are specific are interperable
-#'          by a particular \code{database}. Individual taxa
-#'          are separated by the \code{class_name_sep} argument and the taxon-rank group is parsed by the
-#'          \code{class_name_regex} and \code{class_name_key} arguments.}
+#'    \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
+#'          from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
+#'          are separated by the \code{class_sep} argument and the information is parsed by the
+#'          \code{class_regex} and \code{class_key} arguments.}
 #'    \item{\code{item_id}}{An unique item (e.g. sequence) identifier for a particular \code{database}.
 #'          Requires an internet connection.}
 #'    \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 #'  }
+#' @param regex (\code{character; length == 1}) A regular expression with capturing groups
+#'  indicating the locations of relevant information. The identity of the information must
+#'  be specified using the \code{key} argument.
 #'  
-#' @param class_id_rev (\code{logical} of length 1) Used with the \code{class_id} term in the \code{key} argument.
-#' If \code{TRUE}, the rank order of taxa read in a lineage is reversed to be specific to broad.
-#' @param class_id_sep (\code{character} of length 1) Used with the \code{class_id} term in the \code{key}
-#' argument. The character(s) used to separate individual taxa within a lineage.
-#' @param class_id_regex (\code{character} of length 1) A regular expression with capturing groups
-#' indicating the locations of relevant information in the \code{class_id} term in the \code{key} argument.
-#' The identity of the information must be specified using the \code{class_id_key} argument.
-#' At least \code{"class_id"} must be specified.
-#' @param class_id_key (\code{character} of length 1)
-#' The identity of the capturing groups defined using \code{class_id_regex}.
-#' The length of \code{class_id_key} must be equal to the number of capturing groups specified in \code{class_id_regex}.
+#' @param class_key (\code{character} of length 1)
+#' The identity of the capturing groups defined using \code{class_iregex}.
+#' The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 #' Any names added to the terms will be used as column names in the output.
-#' At least \code{"class_id"} must be specified.
+#' At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+#' The following values are possible:
+#'  \describe{
+#'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
+#'          Requires an internet connection.}
+#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'          by a particular \code{database}. Requires an internet connection.}
+#'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
+#'  }
+#' @param class_regex (\code{character} of length 1)
+#' A regular expression with capturing groups indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument.
+#' The identity of the information must be specified using the \code{class_key} argument.
+#' @param class_sep (\code{character} of length 1)
+#' Used with the \code{class} term in the \code{key} argument.
+#' The character(s) used to separate individual taxa within a classification.
+#' @param class_rev (\code{logical} of length 1)
+#' Used with the \code{class} term in the \code{key} argument.
+#' If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.
 #' 
-#' @param class_name_rev (\code{logical} of length 1) Used with the \code{class_name} term in the \code{key} argument.
-#' If \code{TRUE}, the rank order of taxa read in a lineage is reversed to be specific to broad.
-#' @param class_name_sep (\code{character} of length 1) Used with the \code{class_name} term in the \code{key}
-#' argument. The character(s) used to separate individual taxa within a lineage.
-#' @param class_name_regex (\code{character} of length 1) A regular expression with capturing groups
-#' indicating the locations of relevant information in the \code{class_name} term in the \code{key} argument.
-#' The identity of the information must be specified using the \code{class_name_key} argument.
-#' At least \code{"class_name"} must be specified.
-#' @param class_name_key (\code{character} of length 1)
-#' The identity of the capturing groups defined using \code{class_name_regex}.
-#' The length of \code{class_name_key} must be equal to the number of capturing groups specified in \code{class_name_regex}.
-#' Any names added to the terms will be used as column names in the output.
-#' At least \code{"class_name"} must be specified.
-#'  
 #' @param database (\code{character} of length 1): The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
@@ -110,15 +99,12 @@ extract_taxonomy <- function(input, ...) {
 #' @method extract_taxonomy default
 #' @export
 #' @rdname extract_taxonomy
-extract_taxonomy.default <- function(input, regex, key,
-                                     class_id_rev = FALSE,
-                                     class_id_sep = ";",
-                                     class_id_regex = "(.*)",
-                                     class_id_key = "class_id",
-                                     class_name_rev = FALSE,
-                                     class_name_sep = ";",
-                                     class_name_regex = "(.*)",
-                                     class_name_key = "class_name",
+extract_taxonomy.default <- function(input, key,
+                                     regex = "(.*)",
+                                     class_key = "taxon_name",
+                                     class_regex = "(.*)",
+                                     class_sep = ";",
+                                     class_rev = FALSE,
                                      database = "ncbi",
                                      arbitrary_ids = "warn",
                                      ...) {
