@@ -145,8 +145,8 @@ extract_taxonomy.default <- function(input, key,
   arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
   
   # Parse input -----------------------------------------------------------------------------------
-  item_data <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
-  names(item_data) <- c("input", key)
+  parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
+  names(parsed_input) <- c("input", names(key))
   
   # Assign item IDs -------------------------------------------------------------------------------
   # Consolidate item data -------------------------------------------------------------------------
