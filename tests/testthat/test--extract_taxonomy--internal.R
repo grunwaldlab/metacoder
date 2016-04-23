@@ -13,11 +13,11 @@ test_input <- c("matching", "not", "also a match")
 test_that("Input validation works", {
   expect_equal(validate_regex_match(test_input[1], test_regex),
                test_input[1])
-  expect_error(validate_regex_match(test_input, test_regex),
+  expect_error(validate_regex_match(test_input, test_regex, vigilance = "error"),
                "could not be matched by the regex ")
-  expect_warning(validate_regex_match(test_input, test_regex, mismatch_action = "warn"),
-                 "They will be excluded.")
-  expect_equal(validate_regex_match(test_input, test_regex, mismatch_action = "allow"),
+  expect_warning(validate_regex_match(test_input, test_regex, vigilance = "warning"),
+                 "could not be matched by the regex ")
+  expect_equal(validate_regex_match(test_input, test_regex, vigilance = "none"),
                test_input[c(1, 3)])
 })
 #|
@@ -27,7 +27,6 @@ test_that("Input validation works", {
 #| #### Create test data
 test_regex = "z fsasdfasfsfad f other(.*)random(.*)stuff sdf f \n sdff"
 test_key = c("taxon_name", "taxon_id")
-test_options <- c("taxon_id", "taxon_name", "taxon_info", "class", "item_id", "item_info")
 #| 
 #| #### Test capture group counting
 test_that("capture group counting works", {
@@ -37,23 +36,21 @@ test_that("capture group counting works", {
 #| 
 #| #### Test validation
 test_that("validating regex-key pairs works", {
-  expect_equal(validate_regex_key_pair(regex = test_regex, key = test_key, key_options = test_options),
+  expect_equal(validate_regex_key_pair(regex = test_regex, key = test_key, multiple_allowed = c("taxon_info", "item_info")),
                setNames(test_key, test_key))
-  expect_error(validate_regex_key_pair(regex = "", key = test_key, key_options = test_options))
+  expect_error(validate_regex_key_pair(regex = "", key = test_key, multiple_allowed = c("taxon_info", "item_info")))
 })
 test_that("default naming of keys works", {
-  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = test_key, key_options = test_options)) == test_key))
-  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = c(x = "taxon_name", "taxon_id"), key_options = test_options)) == c("x", "taxon_id")))
+  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = test_key, multiple_allowed = c("taxon_info", "item_info"))) == test_key))
+  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = c(x = "taxon_name", "taxon_id"), multiple_allowed = c("taxon_info", "item_info"))) == c("x", "taxon_id")))
 })
 test_that("only specified keys can be duplicated", {
   expect_error(validate_regex_key_pair(regex = test_regex,
                                        key = c("taxon_name", "taxon_name"),
-                                       key_options = test_options,
                                        multiple_allowed = c("taxon_info", "item_info")),
                "have been used more than once:")
   expect_equal(validate_regex_key_pair(regex = test_regex,
                                        key = c("taxon_info", "taxon_info"),
-                                       key_options = test_options,
                                        multiple_allowed = c("taxon_info", "item_info")),
                c(taxon_info_1 = "taxon_info", taxon_info_2 = "taxon_info"))
 })

@@ -5,11 +5,9 @@
 \alias{validate_regex_key_pair_}
 \title{Check a regex-key pair}
 \usage{
-validate_regex_key_pair_(regex, key, key_options,
-  multiple_allowed = key_options)
+validate_regex_key_pair_(regex, key, multiple_allowed)
 
-validate_regex_key_pair(regex, key, key_options,
-  multiple_allowed = key_options)
+validate_regex_key_pair(regex, key, multiple_allowed)
 }
 \arguments{
 \item{regex}{(\code{character})
@@ -18,9 +16,6 @@ A regex with capture groups}
 \item{key}{(\code{character})
 A key corresponding to \code{regex}}
 
-\item{key_options}{(\code{character})
-Values \code{key} can take on.}
-
 \item{multiple_allowed}{(\code{character})
 Values of \code{key_options} that can appear more than once.}
 }
@@ -28,8 +23,9 @@ Values of \code{key_options} that can appear more than once.}
 Returns the result of \code{\link{match.arg}} on the key.
 }
 \description{
-Check that the number of capture groups in the regex matches the length of the key
-and that the key consists of valid options.
+Checks that the number of capture groups in the regex matches the length of the key.
+Checks that only certian values of \code{key} can appear more that once.
+Adds names to keys that will be used for column names in the output of \code{extract_taxonomy}.
 Uses non-standard evaluation to get the name of input variables.
 }
 \keyword{internal}

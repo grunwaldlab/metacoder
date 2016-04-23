@@ -1,3 +1,30 @@
+#' Report a error/warning if needed
+#' 
+#' Report a error/warning if needed
+#' 
+#' @param text The error to report
+#' @param vigilance (\code{character} of length 1) Controls the reporting of possible problems.
+#' The following values are possible: 
+#'  \describe{
+#'    \item{\code{"none"}}{No warnings or errors are generated if the function can complete.}
+#'    \item{\code{"message"}}{A message is generated when atypical events occur.}
+#'    \item{\code{"warning"}}{Warnings are generated when atypical events occur.}
+#'    \item{\code{"error"}}{Errors are generated when atypical events occur, stopping the completion of the function.}
+#'  } 
+#' 
+#' @return \code{NULL}
+#' 
+#' @keywords internal
+vigilant_report <- function(text, vigilance = c("error", "none", "message", "warning")) {
+  vigilance <- match.arg(vigilance)
+  text <- paste0(text, "\n",
+                "To avoid this ", vigilance, ", change the setting of the `vigilance` option")
+  response <- list("error" = stop, "warning" = warning, "message" = message,
+                   "none" = function(text) invisible(NULL))
+  response[[vigilance]](text)
+}
+
+
 #' Check that all match input
 #' 
 #' Ensure that all of a character vector matches a regex.
@@ -5,37 +32,30 @@
 #' 
 #' @param input (\code{character})
 #' @param regex (\code{character} of length 1)
-#' @param mismatch_action (\code{character} of length 1)
-#' What to do if the regex does not match one or more of input.
-#'  \describe{
-#'    \item{\code{"allow"}}{Silently exclude mismatches.}
-#'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning.}
-#'    \item{\code{"error"}}{Throw an error if mismatches are found.}
-#'  }
 #' @param max_print  (\code{numeric} of length 1)
 #' The maximum number of lines to print in error/warning messages.
+#' @param ... passed to \code{\link{vigilant_report}}
 #'  
 #' @return \code{character} Parts of \code{input} matching \code{regex}
 #' 
 #' @keywords internal
-validate_regex_match <- function(input, regex, mismatch_action = "error", max_print = 10) {
-  mismatch_action <- match.arg(mismatch_action, c("allow", "warn", "error"))
+validate_regex_match <- function(input, regex, max_print = 10, ...) {
+  # check which input values match
   input <- as.character(input)
   not_matching <- ! grepl(pattern = regex, x = input)
+  # complain about those that dont
   if (sum(not_matching) > 0) {
     invalid_list <- paste("   ", which(not_matching), ": ", input[not_matching], "\n")
     if (length(invalid_list) > max_print) {
       invalid_list <- c(invalid_list[1:max_print], "    ...")
     }
-    error_text <- paste0(collapse = "",
-                         c("The following ", sum(not_matching), " of ", length(input),
-                           " input(s) could not be matched by the regex supplied:\n",
-                           invalid_list))
-    if (mismatch_action == "error") { stop(error_text) }
-    if (mismatch_action == "warn") { warning(paste(sep = "\n", 
-                                                   error_text, 
-                                                   "They will be excluded.")) }
+    vigilant_report(...,
+                    paste0(collapse = "",
+                           c("The following ", sum(not_matching), " of ", length(input),
+                             " input(s) could not be matched by the regex supplied:\n",
+                             invalid_list)))
   }
+  # return matching inputs
   return(input[! not_matching])
 }
 
@@ -44,16 +64,15 @@ validate_regex_match <- function(input, regex, mismatch_action = "error", max_pr
 
 #' Check a regex-key pair
 #' 
-#' Check that the number of capture groups in the regex matches the length of the key
-#' and that the key consists of valid options.
+#' Checks that the number of capture groups in the regex matches the length of the key.
+#' Checks that only certian values of \code{key} can appear more that once.
+#' Adds names to keys that will be used for column names in the output of \code{extract_taxonomy}.
 #' Uses non-standard evaluation to get the name of input variables.
 #'
 #' @param regex (\code{character})
 #' A regex with capture groups
 #' @param key (\code{character})
 #' A key corresponding to \code{regex}
-#' @param key_options (\code{character})
-#' Values \code{key} can take on.
 #' @param multiple_allowed (\code{character})
 #' Values of \code{key_options} that can appear more than once.
 #' 
@@ -61,7 +80,7 @@ validate_regex_match <- function(input, regex, mismatch_action = "error", max_pr
 #' 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair_ <- function(regex, key, key_options, multiple_allowed = key_options) {
+validate_regex_key_pair_ <- function(regex, key, multiple_allowed) {
   key_exp <- deparse(key$expr)
   key_value <- lazyeval::lazy_eval(key)
   regex_exp <- deparse(regex$expr)
@@ -77,9 +96,6 @@ validate_regex_key_pair_ <- function(regex, key, key_options, multiple_allowed =
                 'The key has ', key_length, ' term(s) and the regex has ', regex_capture_group_count))
   }
   
-  # Check that key values are correct
-  output_key <- match.arg(key_value, key_options, several.ok = TRUE)
-  
   # Check that only names in `multiple_allowed` appear more than once
   counts <- table(key_value)
   duplicated_keys <- names(counts[counts > 1])
@@ -94,7 +110,7 @@ validate_regex_key_pair_ <- function(regex, key, key_options, multiple_allowed =
   # Apply key name defaults
   key_names <- names(key_value)
   if (is.null(key_names)) { key_names <- rep("", length(key_value)) }
-  key_names[key_names == ""] <- output_key[key_names == ""]
+  key_names[key_names == ""] <- key_value[key_names == ""]
   
   # Number key names that appear more than once
   for (a_key in duplicated_keys) {
@@ -102,14 +118,14 @@ validate_regex_key_pair_ <- function(regex, key, key_options, multiple_allowed =
                                             seq_along(key_names[key_names == a_key]))
   }
   
-  names(output_key) <- key_names
-  return(output_key)
+  names(key_value) <- key_names
+  return(key_value)
 }
 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair <- function(regex, key, key_options, multiple_allowed = key_options) {
-  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), key_options, multiple_allowed)
+validate_regex_key_pair <- function(regex, key, multiple_allowed) {
+  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), multiple_allowed)
 }
 
 

@@ -8,9 +8,13 @@
 \usage{
 extract_taxonomy(input, ...)
 
-\method{extract_taxonomy}{default}(input, key, regex = "(.*)",
-  class_key = "taxon_name", class_regex = "(.*)", class_sep = ";",
-  class_rev = FALSE, database = "ncbi", arbitrary_ids = "warn", ...)
+\method{extract_taxonomy}{default}(input, key = c("class", "taxon_id",
+  "taxon_name", "taxon_info", "item_id", "item_info"), regex = "(.*)",
+  class_key = c("taxon_name", "taxon_id", "taxon_info"),
+  class_regex = "(.*)", class_sep = ";", class_rev = FALSE,
+  database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
+  allow_na = TRUE, vigilance = c("error", "warning", "message", "none"),
+  return_match = FALSE, return_input = TRUE, ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
@@ -71,21 +75,29 @@ The character(s) used to separate individual taxa within a classification.}
 Used with the \code{class} term in the \code{key} argument.
 If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.}
 
-\item{database}{(\code{character} of length 1): The name of the database that patterns given in 
+\item{database}{(\code{character} of length 1) The name of the database that patterns given in 
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
 internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 
-\item{arbitrary_ids}{(\code{character} of length 1) Determines how the generation of arbitrary IDs is
-handled. Arbitrary ids can result from failed online queries or not using the internet. 
-Possible options are:
-\describe{
-  \item{\code{"allow"}}{Arbitrary IDs are automatically generated if needed. These can occur intermixed
-  with offical database IDs in the case of failed database lookups.}
-  \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary IDs are used.}
-  \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
-  \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
-}}
+\item{allow_na}{(\code{logical} of length 1) If \code{TRUE}, any missing data will be represented as \code{NA}s
+in the output. This preserves the correspondance between the input and output values.
+Missing data can be generated if the regex does not match the input or online queries fail.}
+
+\item{vigilance}{(\code{character} of length 1) Controls the reporting of possible problems, such
+as missing data and failed online queries (see \code{allow_na}).
+The following values are possible: 
+ \describe{
+   \item{\code{"none"}}{No warnings or errors are generated if the function can complete.}
+   \item{\code{"message"}}{A message is generated when atypical events occur.}
+   \item{\code{"warning"}}{Warnings are generated when atypical events occur.}
+   \item{\code{"error"}}{Errors are generated when atypical events occur, stopping the completion of the function.}
+ }}
+
+\item{return_match}{(\code{logical} of length 1)
+If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.}
+
+\item{return_input}{(\code{logical} of length 1) If \code{TRUE}, include the input in the output object.}
 }
 \value{
 Returns an object of type \code{classified}

@@ -4,24 +4,17 @@
 \alias{validate_regex_match}
 \title{Check that all match input}
 \usage{
-validate_regex_match(input, regex, mismatch_action = "error",
-  max_print = 10)
+validate_regex_match(input, regex, max_print = 10, ...)
 }
 \arguments{
 \item{input}{(\code{character})}
 
 \item{regex}{(\code{character} of length 1)}
 
-\item{mismatch_action}{(\code{character} of length 1)
-What to do if the regex does not match one or more of input.
- \describe{
-   \item{\code{"allow"}}{Silently exclude mismatches.}
-   \item{\code{"warn"}}{Like \code{"allow"} but issue a warning.}
-   \item{\code{"error"}}{Throw an error if mismatches are found.}
- }}
-
 \item{max_print}{(\code{numeric} of length 1)
 The maximum number of lines to print in error/warning messages.}
+
+\item{...}{passed to \code{\link{vigilant_report}}}
 }
 \value{
 \code{character} Parts of \code{input} matching \code{regex}

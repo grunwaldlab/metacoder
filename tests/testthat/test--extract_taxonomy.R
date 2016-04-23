@@ -15,6 +15,6 @@ test_regex <- "item_id: (.*) - taxon_name: (.*) - taxon_id: (.*) - class_name: (
 #| ### 
 test_that("Exracting by item_id works", {
   expect_true(TRUE)
-  extract_taxonomy(test_data, key = "taxon_id", regex = "item_id: (.*?) -")
+  extract_taxonomy(test_data, key = "item_id", regex = "item_id: (.*?) -")
 })
 

@@ -60,15 +60,17 @@
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
 #'  internet. NOTE: Only \code{"ncbi"} has been tested so far.
-#' @param arbitrary_ids (\code{character} of length 1) Determines how the generation of arbitrary IDs is
-#'  handled. Arbitrary ids can result from failed online queries or not using the internet. 
-#'  Possible options are:
+#' @param allow_na (\code{logical} of length 1) If \code{TRUE}, any missing data will be represented as \code{NA}s
+#' in the output. This preserves the correspondance between the input and output values.
+#' Missing data can be generated if the regex does not match the input or online queries fail.
+#' @param vigilance (\code{character} of length 1) Controls the reporting of possible problems, such
+#' as missing data and failed online queries (see \code{allow_na}).
+#' The following values are possible: 
 #'  \describe{
-#'    \item{\code{"allow"}}{Arbitrary IDs are automatically generated if needed. These can occur intermixed
-#'    with offical database IDs in the case of failed database lookups.}
-#'    \item{\code{"warn"}}{Like \code{"allow"} but issue a warning when arbitrary IDs are used.}
-#'    \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
-#'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
+#'    \item{\code{"none"}}{No warnings or errors are generated if the function can complete.}
+#'    \item{\code{"message"}}{A message is generated when atypical events occur.}
+#'    \item{\code{"warning"}}{Warnings are generated when atypical events occur.}
+#'    \item{\code{"error"}}{Errors are generated when atypical events occur, stopping the completion of the function.}
 #'  } 
 #' @param return_match (\code{logical} of length 1)
 #' If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.
@@ -104,14 +106,16 @@ extract_taxonomy <- function(input, ...) {
 #' @method extract_taxonomy default
 #' @export
 #' @rdname extract_taxonomy
-extract_taxonomy.default <- function(input, key,
+extract_taxonomy.default <- function(input,
+                                     key = c("class", "taxon_id", "taxon_name", "taxon_info", "item_id", "item_info"),
                                      regex = "(.*)",
-                                     class_key = "taxon_name",
+                                     class_key = c("taxon_name", "taxon_id", "taxon_info"),
                                      class_regex = "(.*)",
                                      class_sep = ";",
                                      class_rev = FALSE,
-                                     database = "ncbi",
-                                     arbitrary_ids = "warn",
+                                     database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
+                                     allow_na = TRUE,
+                                     vigilance = c("error", "warning", "message", "none"),
                                      return_match = FALSE,
                                      return_input = TRUE,
                                      ...) {
@@ -126,15 +130,16 @@ extract_taxonomy.default <- function(input, key,
   taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid,
                                  none = NA)
   # Validate and standardize input ----------------------------------------------------------------
+  # vigilance 
+  vigilance <- match.arg(vigilance)
   # input
-  input <- validate_regex_match(input, regex)
+  input <- validate_regex_match(input, regex, vigilance = vigilance)
   # regex and key
-  key_options <- c("taxon_id", "taxon_name", "taxon_info", "class", "item_id", "item_info")
-  key <- validate_regex_key_pair(regex, key, key_options,
-                                 multiple_allowed = c("taxon_info", "item_info"))
+  key <- match.arg(key, several.ok = ! missing(key))
+  key <- validate_regex_key_pair(regex, key, multiple_allowed = c("taxon_info", "item_info"))
   # classification regex and key
-  class_key_options <- c("taxon_id", "taxon_name", "taxon_info")
-  class_key <- validate_regex_key_pair(class_regex, class_key, class_key_options)
+  class_key <- match.arg(class_key, several.ok = ! missing(class_key))
+  class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = c("taxon_info"))
   # classification sep
   if (class(class_sep) != "character" | length(class_sep) != 1) {
     stop('"class_sep" must be a character vector of length 1')
@@ -144,16 +149,13 @@ extract_taxonomy.default <- function(input, key,
     stop('"class_rev" must be a logical (aka boolean) vector of length 1')
   }
   # database
-  database <- match.arg(tolower(database), choices = names(id_from_name_funcs))
-  # arbitrary ID handling
-  valid_arb_id_opts <- c("allow", "warn", "error", "na")
-  arbitrary_ids <- match.arg(tolower(arbitrary_ids), choices = valid_arb_id_opts)
-  
+  database <- match.arg(database)
+
   # Parse input -----------------------------------------------------------------------------------
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
-  names(parsed_input) <- c("match", names(key))
-  if (! return_match) { parsed_input <- parsed_input[-1, ] }
-  if (return_input) { parsed_input <- rbind(data.frame(input = input), parsed_input) }
+  colnames(parsed_input) <- c("match", names(key))
+  if (! return_match) { parsed_input <- parsed_input[, -1, drop = FALSE] }
+  if (return_input) { parsed_input <- cbind(data.frame(input = input), parsed_input) }
   
   # Assign item IDs -------------------------------------------------------------------------------
   # Consolidate item data -------------------------------------------------------------------------
