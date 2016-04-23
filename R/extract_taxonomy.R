@@ -56,7 +56,7 @@
 #' Used with the \code{class} term in the \code{key} argument.
 #' If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.
 #' 
-#' @param database (\code{character} of length 1): The name of the database that patterns given in 
+#' @param database (\code{character} of length 1) The name of the database that patterns given in 
 #'  \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
 #'  "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
 #'  internet. NOTE: Only \code{"ncbi"} has been tested so far.
@@ -70,6 +70,9 @@
 #'    \item{\code{"error"}}{Cause an error if arbitrary IDs are needed.}
 #'    \item{\code{"na"}}{Put \code{NA}s where arbitrary are needed.}
 #'  } 
+#' @param return_match (\code{logical} of length 1)
+#' If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.
+#' @param return_input (\code{logical} of length 1) If \code{TRUE}, include the input in the output object.
 #' @param ... Not used.
 #'  
 #' @return Returns an object of type \code{classified}
@@ -109,6 +112,8 @@ extract_taxonomy.default <- function(input, key,
                                      class_rev = FALSE,
                                      database = "ncbi",
                                      arbitrary_ids = "warn",
+                                     return_match = FALSE,
+                                     return_input = TRUE,
                                      ...) {
   # Constants -------------------------------------------------------------------------------------
   id_from_name_funcs <- list(ncbi = taxize::get_uid,
@@ -146,7 +151,9 @@ extract_taxonomy.default <- function(input, key,
   
   # Parse input -----------------------------------------------------------------------------------
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
-  names(parsed_input) <- c("input", names(key))
+  names(parsed_input) <- c("match", names(key))
+  if (! return_match) { parsed_input <- parsed_input[-1, ] }
+  if (return_input) { parsed_input <- rbind(data.frame(input = input), parsed_input) }
   
   # Assign item IDs -------------------------------------------------------------------------------
   # Consolidate item data -------------------------------------------------------------------------
