@@ -127,6 +127,11 @@ extract_taxonomy.default <- function(input,
                                      return_input = TRUE,
                                      verbosity = c("low", "none", "high"),
                                      ...) {
+  my_print <- function(text, level = "low") {
+    options <- c("none", "low", "high")
+    level <- factor(level, ordered = TRUE, levels = options)
+    if (level <= verbosity) { message(text) }
+  }
   # Constants -------------------------------------------------------------------------------------
   id_from_name_funcs <- list(ncbi = taxize::get_uid,
                              itis = taxize::get_tsn,
