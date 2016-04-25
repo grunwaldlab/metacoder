@@ -25,9 +25,8 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
     rep(NA, length(item_id))
   }
   
-  database_funcs <- mget(paste0("using_", database))
   database <- match.arg(database)
-  map_unique(input = item_id, func = database_funcs[[database]])
+  map_unique(item_id, get(paste0("using_", database)))
 }
 
 # id_from_name_funcs <- list(ncbi = taxize::get_uid,
