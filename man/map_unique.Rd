@@ -2,12 +2,19 @@
 % Please edit documentation in R/internal.R
 \name{map_unique}
 \alias{map_unique}
-\title{run a function on unique values of a iterable}
+\title{Run a function on unique values of a iterable}
 \usage{
 map_unique(input, func, ...)
 }
+\arguments{
+\item{input}{What to pass to \code{func}}
+
+\item{func}{(\code{function})}
+
+\item{...}{passend to \code{func}}
+}
 \description{
-run a function on unique values of a iterable
+Run a function on unique values of a iterable
 }
 \keyword{internal}
 

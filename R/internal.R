@@ -245,12 +245,16 @@ unique_mapping <- function(input) {
 
 
 #===================================================================================================
-#' run a function on unique values of a iterable 
+#' Run a function on unique values of a iterable 
+#' 
+#' @param input What to pass to \code{func}
+#' @param func (\code{function})
+#' @param ... passend to \code{func}
 #' 
 #' @keywords internal
 map_unique <- function(input, func, ...) {
   input_class <- class(input)
-  unique_input = unique(input)
+  unique_input <- unique(input)
   class(unique_input) <- input_class
   func(unique_input, ...)[unique_mapping(input)]
 }

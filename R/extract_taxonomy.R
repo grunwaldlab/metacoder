@@ -132,16 +132,6 @@ extract_taxonomy.default <- function(input,
     level <- factor(level, ordered = TRUE, levels = options)
     if (level <= verbosity) { message(text) }
   }
-  # Constants -------------------------------------------------------------------------------------
-  id_from_name_funcs <- list(ncbi = taxize::get_uid,
-                             itis = taxize::get_tsn,
-                             eol = taxize::get_eolid,
-                             col = taxize::get_colid,
-                             tropicos = taxize::get_tpsid,
-                             nbn = taxize::get_nbnid, 
-                             none = NA)
-  taxid_from_seqid_funcs <- list(ncbi = taxize::genbank2uid,
-                                 none = NA)
   # Validate and standardize input ----------------------------------------------------------------
   # vigilance 
   vigilance <- match.arg(vigilance)
