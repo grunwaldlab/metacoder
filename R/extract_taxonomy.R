@@ -75,6 +75,13 @@
 #' @param return_match (\code{logical} of length 1)
 #' If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.
 #' @param return_input (\code{logical} of length 1) If \code{TRUE}, include the input in the output object.
+#' @param verbosity (\code{character} of length 1) Controls the printing of progress updates.
+#' The following values are possible: 
+#'  \describe{
+#'    \item{\code{"none"}}{No progress reports are printed}
+#'    \item{\code{"low"}}{Minimal progress reports of a fixed length are printed.}
+#'    \item{\code{"high"}}{Lots of information is printed depending on the amount of the input.}
+#'  } 
 #' @param ... Not used.
 #'  
 #' @return Returns an object of type \code{classified}
@@ -118,6 +125,7 @@ extract_taxonomy.default <- function(input,
                                      vigilance = c("error", "warning", "message", "none"),
                                      return_match = FALSE,
                                      return_input = TRUE,
+                                     verbosity = c("low", "none", "high"),
                                      ...) {
   # Constants -------------------------------------------------------------------------------------
   id_from_name_funcs <- list(ncbi = taxize::get_uid,
@@ -132,6 +140,8 @@ extract_taxonomy.default <- function(input,
   # Validate and standardize input ----------------------------------------------------------------
   # vigilance 
   vigilance <- match.arg(vigilance)
+  # verbosity
+  verbosity <- match.arg(verbosity)
   # input
   input <- validate_regex_match(input, regex, vigilance = vigilance)
   # regex and key
