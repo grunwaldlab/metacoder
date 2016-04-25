@@ -14,7 +14,8 @@ extract_taxonomy(input, ...)
   class_regex = "(.*)", class_sep = ";", class_rev = FALSE,
   database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
   allow_na = TRUE, vigilance = c("error", "warning", "message", "none"),
-  return_match = FALSE, return_input = TRUE, ...)
+  return_match = FALSE, return_input = TRUE, verbosity = c("low", "none",
+  "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
@@ -98,6 +99,14 @@ The following values are possible:
 If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.}
 
 \item{return_input}{(\code{logical} of length 1) If \code{TRUE}, include the input in the output object.}
+
+\item{verbosity}{(\code{character} of length 1) Controls the printing of progress updates.
+The following values are possible: 
+ \describe{
+   \item{\code{"none"}}{No progress reports are printed}
+   \item{\code{"low"}}{Minimal progress reports of a fixed length are printed.}
+   \item{\code{"high"}}{Lots of information is printed depending on the amount of the input.}
+ }}
 }
 \value{
 Returns an object of type \code{classified}

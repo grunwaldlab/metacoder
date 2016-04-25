@@ -168,13 +168,23 @@ extract_taxonomy.default <- function(input,
 
   # Parse input -----------------------------------------------------------------------------------
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
-  colnames(parsed_input) <- c("match", names(key))
-  if (! return_match) { parsed_input <- parsed_input[, -1, drop = FALSE] }
-  if (return_input) { parsed_input <- cbind(data.frame(input = input), parsed_input) }
-  
-  # Assign item IDs -------------------------------------------------------------------------------
-  # Consolidate item data -------------------------------------------------------------------------
+  colnames(parsed_input) <- c("match", key)
+  # Consolidate item data
+  item_data <- parsed_input
+  colnames(item_data) <- c("match", names(key))
+  item_data <- item_data[ , c(TRUE, key %in% c("item_id", "item_info")), drop = FALSE]
+  if (! return_match) { item_data <- item_data[, -1, drop = FALSE] }
+  if (return_input) { item_data <- cbind(data.frame(input = input), item_data) }
+
   # Determine item classifications ----------------------------------------------------------------
+  precedence <- c("class", "taxon_id", "item_id", "taxon_name")
+  classification_data <- parsed_input[ , precedence[precedence %in% key], drop = FALSE] # extract and order data that can be used to get classifications
+  classification_func <- get(paste0("class_from_", colnames(classification_data)[1]))
+  current_arg_values <- mget(names(formals(extract_taxonomy.default)))
+  current_arg_values <- current_arg_values[! names(current_arg_values) %in% c( "input", "...")]
+  item_classifications <- do.call(classification_func, c(classification_data, current_arg_values))
+  
+  
   # Infer taxonomy structure ----------------------------------------------------------------------
   
   
