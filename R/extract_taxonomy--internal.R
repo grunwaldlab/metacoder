@@ -144,3 +144,30 @@ count_capture_groups <- function(regex) {
   new_regex <- paste0(regex, "|") # Allow the regex to match nothing
   ncol(stringr::str_match(string = "", pattern = new_regex)) - 1
 }
+
+
+
+#' List of classifications to taxonomy tree
+#' 
+#' Convert a list of classifications to a taxonomic tree structure.
+#' Columns in the input not used to create the taxonomy are preserved in the output.
+#' Unique IDs can be assigned if the column used to create the taxonomy does not
+#' have unique values for place in the hierarchy (e.g. same species epithet in different phlya.)
+#' Missing data does not effect the taxonomy, but its positon is preserved in the item output. 
+#' 
+#' @param classifications (\code{list} of \code{data.frame}) 
+#' The classifications of a set of items.
+#' Not necessarily unique.
+#' Rows should correspond to taxa and columns to information associated with those taxa.
+#' @param id_column (\code{character} of length 1)
+#' The name of the column present in each \code{data.frame} in \code{classifications} that will
+#' be used to infer the taxonomic tree structure.
+#' @param make_ids (\code{logical} of length 1) If \code{TRUE}, make unique IDs based off of the
+#' contents of \code{id_column}.
+#' 
+#' @return An object of type \code{classified}
+#' 
+#' @keywords internal
+class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
+  
+}
