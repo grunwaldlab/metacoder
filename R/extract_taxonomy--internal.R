@@ -170,4 +170,54 @@ count_capture_groups <- function(regex) {
 #' @keywords internal
 class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
   
+  recursive_part <- function(group, level = 1, parent = NA) {
+    # Split list of classifications based on level
+    split_group <- split_class_list(group, level, id_column)
+    # Make rows for current taxon-parent relationships
+    taxon_rows <- lapply(split_group, function(x) c(x[[1]][level, ], my_parent_ = parent))
+    # Add taxon index to output
+    taxon_index <- row_count + seq_along(taxon_rows)
+    taxon_rows <- mapply(function(my_row, index) c(my_row, my_taxon_id_ = index),
+                         SIMPLIFY = FALSE, taxon_rows, taxon_index)
+    # Increment the number of rows in the output
+    row_count <<- row_count + length(taxon_index)
+    # Run this function on each of the subgroups
+    child_taxa <- mapply(recursive_part, SIMPLIFY = FALSE,
+                         group = child_groups, level = level + 1, parent = taxon_index)
+    # Return the result of this instance of the function and the ones it makes
+    return(c(taxon_row, child_taxa))
+  }
+  
+  # make index counter to be used inside the recursive part
+  row_count <- 0
+  
+  # Run recursive part of the function
+  taxonomy <- do.call(rbind, recursive_part(classifications))
+  
+  # Format the output into a classified object
+  
+}
+
+
+
+#' Split a list of classifications by a row/column value
+#' 
+#' Split a list of classifications into a list of list by unique values of a
+#' specific row/column.
+#' 
+#' @param classifications (\code{list} of \code{data.frame}) 
+#' The classifications of a set of items.
+#' Not necessarily unique.
+#' Rows should correspond to taxa and columns to information associated with those taxa.
+#' @param row_index
+#' The row in each \code{data.frame}
+#' @param col_index
+#' The column in each \code{data.frame}
+#' 
+#' @return \code{list} of \code{list} of \code{data.frame}
+#' 
+#' @keywords internal 
+split_class_list <- function(classifications, row_index, col_index)  {
+  split_by_values <- unlist(lapply(classifications, function(x) x[row_index, col_index]))
+  split(classifications, split_by_values)
 }
