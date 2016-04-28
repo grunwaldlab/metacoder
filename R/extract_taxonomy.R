@@ -178,7 +178,12 @@ extract_taxonomy.default <- function(input,
   item_classifications <- do.call(classification_func, c(classification_data, current_arg_values))
   
   # Infer taxonomy structure ----------------------------------------------------------------------
-  taxonomy <- class_to_taxonomy(item_classifications) # returns an `classified` object with no item data
+  if ("taxon_id" %in% colnames(item_classifications[[1]])) {
+    class_source <- "taxon_id"
+  } else {
+    class_source <- "taxon_name"
+  }
+  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source) # returns an `classified` object with no item data
 }
 
 

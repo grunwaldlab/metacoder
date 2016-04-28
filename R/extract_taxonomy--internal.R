@@ -171,21 +171,28 @@ count_capture_groups <- function(regex) {
 class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
   
   recursive_part <- function(group, level = 1, parent = NA) {
+    # Remove taxa that do not have inforamtion for the current level
+    group <- group[vapply(group, nrow, numeric(1)) >= level]
     # Split list of classifications based on level
     split_group <- split_class_list(group, level, id_column)
     # Make rows for current taxon-parent relationships
-    taxon_rows <- lapply(split_group, function(x) c(x[[1]][level, ], my_parent_ = parent))
+    taxon_rows <- lapply(split_group, function(x) cbind(x[[1]][level, , drop = FALSE], my_parent_ = parent))
     # Add taxon index to output
     taxon_index <- row_count + seq_along(taxon_rows)
-    taxon_rows <- mapply(function(my_row, index) c(my_row, my_taxon_id_ = index),
+    taxon_rows <- mapply(function(my_row, index) cbind(my_row, my_taxon_id_ = index),
                          SIMPLIFY = FALSE, taxon_rows, taxon_index)
     # Increment the number of rows in the output
     row_count <<- row_count + length(taxon_index)
     # Run this function on each of the subgroups
-    child_taxa <- mapply(recursive_part, SIMPLIFY = FALSE,
-                         group = child_groups, level = level + 1, parent = taxon_index)
+    if (length(split_group) > 0) {
+      child_taxa <- mapply(recursive_part, SIMPLIFY = FALSE,
+                           group = split_group, level = level + 1, parent = taxon_index)
+    } else {
+      child_taxa <- NULL
+      
+    }
     # Return the result of this instance of the function and the ones it makes
-    return(c(taxon_row, child_taxa))
+    return(c(taxon_rows, unlist(child_taxa, recursive = FALSE)))
   }
   
   # make index counter to be used inside the recursive part
