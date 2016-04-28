@@ -18,3 +18,11 @@ test_that("Exracting by item_id works", {
   extract_taxonomy(test_data, key = "item_id", regex = "item_id: (.*?) -", database = "ncbi")
 })
 
+#|
+#| ### 
+test_that("Exracting by embedded classification names works", {
+  expect_true(TRUE)
+  extract_taxonomy(test_data, key = "class", regex = "class_name: (.*?) -", database = "ncbi",
+                   class_key = "taxon_name", class_regex = "(.*)", class_sep = ";")
+})
+

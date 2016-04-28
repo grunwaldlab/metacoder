@@ -26,7 +26,9 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
   }
   
   database <- match.arg(database)
-  map_unique(item_id, get(paste0("using_", database)))
+  result <- map_unique(item_id, get(paste0("using_", database)))
+  result <- lapply(result, function(x) setNames(x, c("taxon_name", "rank", "taxon_id")))
+  return(result)
 }
 
 
@@ -68,15 +70,75 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
 #' @return \code{list} of \code{data.frame}
 #' 
 #' @keywords internal
-class_from_class <- function(class, class_key, class_regex, class_sep, class_rev, ...) {
+class_from_class <- function(class, class_key, class_regex, class_sep, class_rev, database, ...) {
+  # Split each lineage by the separation character
+  split_input <- strsplit(class, class_sep)
+  # Reverse the order if needed
+  if (class_rev) {
+    split_input <- lapply(split_input, rev)
+  }
+  # Extract regex capture groups
+  result <- lapply(split_input,
+                   function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
+  # Name columns in each classification according to the key
+  result <- lapply(result, function(x) setNames(x, class_key))
+  
+  # Add taxon_id column if missing
+  if (! "taxon_id" %in% class_key && "taxon_name" %in% class_key && database != "none") {
+    unique_taxon_names <- unique(unlist(lapply(result, function(x) x$taxon_name)))
+    name_id_key <- get_id_from_name(unique_taxon_names, database)
+    result <- lapply(result, function(x) {x$taxon_id = name_id_key[x$taxon_name]; x})
+  }
+  
+  # Add taxon_name column if missing
+  if (! "taxon_name" %in% class_key && "taxon_id" %in% class_key && database != "none") {
+    unique_taxon_ids <- unique(unlist(lapply(result, function(x) x$taxon_id)))
+    id_name_key <- get_name_from_id(unique_taxon_ids, database)
+    result <- lapply(result, function(x) {x$taxon_name = id_name_key[x$taxon_id]; x})
+  }
+  
+  return(result)
 }
 
 
 
-# id_from_name_funcs <- list(ncbi = taxize::get_uid,
-#                            itis = taxize::get_tsn,
-#                            eol = taxize::get_eolid,
-#                            col = taxize::get_colid,
-#                            tropicos = taxize::get_tpsid,
-#                            nbn = taxize::get_nbnid, 
-#                            none = NA)
+
+#' Get taxon ID from name
+#' 
+#' Get a taxon's ID from its name
+#' 
+#' @param name (\code{character})
+#' Names to look up IDs for
+#' @param database (\code{character} of length 1)
+#' Database to use to look up id.
+#' 
+#' @return 
+get_id_from_name <- function(name, database) {
+  id_from_name_funcs <- list(ncbi = taxize::get_uid,
+                             itis = taxize::get_tsn,
+                             eol = taxize::get_eolid,
+                             col = taxize::get_colid,
+                             tropicos = taxize::get_tpsid,
+                             nbn = taxize::get_nbnid, 
+                             none = NA)
+  ids <- map_unique(name, id_from_name_funcs[[database]], ask = FALSE, rows = 1)
+  names(ids) <- name
+  return(ids)
+}
+
+#' Get taxon name from ID
+#' 
+#' Get a taxon's name from its ID
+#' 
+#' @param id (\code{character})
+#' Id to look up names for
+#' @param database (\code{character} of length 1)
+#' Database to use to look up id.
+#' 
+#' @return 
+get_name_from_id <- function(id, database) {
+  classifications <- map_unique(id, taxize::classification, db = database)
+  name_key <- unlist(lapply(classifications, function(x) x[nrow(x), "name"]))
+  names(name_key) <- id
+  return(name_key)
+}
