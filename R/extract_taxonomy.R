@@ -17,7 +17,7 @@
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'    \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
@@ -36,13 +36,13 @@
 #' The identity of the capturing groups defined using \code{class_iregex}.
 #' The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 #' Any names added to the terms will be used as column names in the output.
-#' At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+#' At least \code{"taxon_id"} or \code{"name"} must be specified.
 #' Only \code{"taxon_info"} can be used multiple times.
 #' Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'  }
@@ -99,7 +99,7 @@
 #' # Look up taxonomic data online using sequence ID
 #' unite_ex_data <- extract_taxonomy(sequences,
 #'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                 key = c(name = "taxon_name", seq_id = "item_id",
+#'                                 key = c(name = "name", seq_id = "item_id",
 #'                                        other_id = "item_info", tax_string = "item_info"))
 #' }
 #' 
@@ -114,9 +114,9 @@ extract_taxonomy <- function(input, ...) {
 #' @export
 #' @rdname extract_taxonomy
 extract_taxonomy.default <- function(input,
-                                     key = c("class", "taxon_id", "taxon_name", "taxon_info", "item_id", "item_info"),
+                                     key = c("class", "taxon_id", "name", "taxon_info", "item_id", "item_info"),
                                      regex = "(.*)",
-                                     class_key = c("taxon_name", "taxon_id", "taxon_info"),
+                                     class_key = c("name", "taxon_id", "taxon_info"),
                                      class_regex = "(.*)",
                                      class_sep = ";",
                                      class_rev = FALSE,
@@ -155,6 +155,9 @@ extract_taxonomy.default <- function(input,
   }
   # database
   database <- match.arg(database)
+  if (database == "none" && ! "class" %in% key) {
+    stop("Cannot look up data without a `database` specified.")
+  }
 
   # Parse input -----------------------------------------------------------------------------------
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
@@ -170,7 +173,7 @@ extract_taxonomy.default <- function(input,
   # This step produces a list of dataframes corresponding the in input values.
   # The rows of each data.frame in the list correspond to taxa in a classification.
   # Columns correspond to information for each taxon.
-  precedence <- c("class", "taxon_id", "item_id", "taxon_name")
+  precedence <- c("class", "taxon_id", "item_id", "name")
   classification_data <- parsed_input[ , precedence[precedence %in% key], drop = FALSE] # extract and order data that can be used to get classifications
   classification_func <- get(paste0("class_from_", colnames(classification_data)[1]))
   current_arg_values <- mget(names(formals(extract_taxonomy.default)))
@@ -181,9 +184,9 @@ extract_taxonomy.default <- function(input,
   if ("taxon_id" %in% colnames(item_classifications[[1]])) {
     class_source <- "taxon_id"
   } else {
-    class_source <- "taxon_name"
+    class_source <- "name"
   }
-  class_to_taxonomy(item_classifications, id_column = class_source) # returns an `classified` object with no item data
+  class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
 }
 
 

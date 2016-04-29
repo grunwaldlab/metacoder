@@ -8,14 +8,13 @@
 \usage{
 extract_taxonomy(input, ...)
 
-\method{extract_taxonomy}{default}(input, key = c("class", "taxon_id",
-  "taxon_name", "taxon_info", "item_id", "item_info"), regex = "(.*)",
-  class_key = c("taxon_name", "taxon_id", "taxon_info"),
-  class_regex = "(.*)", class_sep = ";", class_rev = FALSE,
-  database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
-  allow_na = TRUE, vigilance = c("error", "warning", "message", "none"),
-  return_match = FALSE, return_input = TRUE, verbosity = c("low", "none",
-  "high"), ...)
+\method{extract_taxonomy}{default}(input, key = c("class", "taxon_id", "name",
+  "taxon_info", "item_id", "item_info"), regex = "(.*)",
+  class_key = c("name", "taxon_id", "taxon_info"), class_regex = "(.*)",
+  class_sep = ";", class_rev = FALSE, database = c("none", "ncbi", "itis",
+  "eol", "col", "tropicos", "nbn"), allow_na = TRUE, vigilance = c("error",
+  "warning", "message", "none"), return_match = FALSE, return_input = TRUE,
+  verbosity = c("low", "none", "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
@@ -33,7 +32,7 @@ Each term must be one of those decribed below:
 \describe{
   \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
         Requires an internet connection.}
-  \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+  \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
         by a particular \code{database}. Requires an internet connection.}
   \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
   \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
@@ -53,13 +52,13 @@ be specified using the \code{key} argument.}
 The identity of the capturing groups defined using \code{class_iregex}.
 The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 Any names added to the terms will be used as column names in the output.
-At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+At least \code{"taxon_id"} or \code{"name"} must be specified.
 Only \code{"taxon_info"} can be used multiple times.
 Each term must be one of those decribed below:
  \describe{
    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
          Requires an internet connection.}
-   \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+   \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
          by a particular \code{database}. Requires an internet connection.}
    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
  }}
@@ -131,7 +130,7 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
 # Look up taxonomic data online using sequence ID
 unite_ex_data <- extract_taxonomy(sequences,
                                   regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                key = c(name = "taxon_name", seq_id = "item_id",
+                                key = c(name = "name", seq_id = "item_id",
                                        other_id = "item_info", tax_string = "item_info"))
 }
 

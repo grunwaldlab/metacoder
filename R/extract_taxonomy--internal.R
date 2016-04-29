@@ -162,13 +162,13 @@ count_capture_groups <- function(regex) {
 #' @param id_column (\code{character} of length 1)
 #' The name of the column present in each \code{data.frame} in \code{classifications} that will
 #' be used to infer the taxonomic tree structure.
-#' @param make_ids (\code{logical} of length 1) If \code{TRUE}, make unique IDs based off of the
-#' contents of \code{id_column}.
+#' @param item_data (\code{data.frame}) 
+#' Data associated with the \code{classifications}.
 #' 
 #' @return An object of type \code{classified}
 #' 
 #' @keywords internal
-class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
+class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   
   recursive_part <- function(group, level = 1, parent = NA) {
     # Remove taxa that do not have inforamtion for the current level
@@ -210,14 +210,18 @@ class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
   # Format the output into a classified object
   if ("taxon_id" %in% colnames(taxonomy)) {
     taxon_id <- taxonomy$taxon_id
+    parent_id <- taxon_id[taxonomy$my_parent_]
+    item_id <- taxon_id[item_index]
   } else {
-    taxon_id <- 1:nrow(taxonomy)
+    taxon_id <- 1:nrow(taxonomy) 
+    parent_id <- taxonomy$my_parent_
+    item_id <- unname(item_index)
   }
-  classified(taxon_id = unname(taxon_id),
-             parent_id = unname(taxonomy$my_parent_),
-             item_taxon_id = unname(item_index),
-             taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
-             item_data = NULL)
+  classified(taxon_id = taxon_id,
+             parent_id = parent_id,
+             item_taxon_id = item_id,
+             taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_", "taxon_id"), drop = FALSE],
+             item_data = item_data)
 }
 
 

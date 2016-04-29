@@ -1,28 +1,66 @@
 #| ## Testing `extract_taxonomy`
 #|
 library(metacoder)
+library(magrittr)
 context("Extracting taxonomic information")
 #|
 #| ### Create dummy data
 #|
 #| This data has every kind of field that `extract_taxonomy` can interprete, but only one field will be used in each test.
 #|
-test_data = c("item_id: FJ712037.1 - taxon_name: Panthera leo - taxon_id: 9689 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
-              "item_id: KC879292.1 - taxon_name: Panthera tigris - taxon_id: 9694 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
-              "item_id: HW243304.1 - taxon_name: Ursus americanus - taxon_id: 9643 - class_name: Carnivora;Caniformia;Ursidae;Ursus - class_id: 33554;379584;9632;9639") # oh my!
-test_regex <- "item_id: (.*) - taxon_name: (.*) - taxon_id: (.*) - class_name: (.*) - class_id: (.*)"
+test_data = c("item_id: FJ712037.1 - name: Panthera leo - taxon_id: 9689 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+              "item_id: KC879292.1 - name: Panthera tigris - taxon_id: 9694 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+              "item_id: HW243304.1 - name: Ursus americanus - taxon_id: 9643 - class_name: Carnivora;Caniformia;Ursidae;Ursus - class_id: 33554;379584;9632;9639") # oh my!
+test_regex <- "item_id: (.*) - name: (.*) - taxon_id: (.*) - class_name: (.*) - class_id: (.*)"
+
+check_for_internet <- function() {
+  if (! is.character(RCurl::getURL("www.google.com"))) {
+    skip("Internet not available")
+  }
+}
+
 #|
-#| ### 
+#| ### Exracting by item_id
 test_that("Exracting by item_id works", {
-  expect_true(TRUE)
-  extract_taxonomy(test_data, key = "item_id", regex = "item_id: (.*?) -", database = "ncbi")
+  check_for_internet()
+  result <- extract_taxonomy(test_data, key = "item_id", regex = "item_id: (.*?) -", database = "ncbi")
+  expect_s3_class(result, "classified")
+  expect_true("Eukaryota" %in% result$taxon_data$name)
 })
 
 #|
-#| ### 
-test_that("Exracting by embedded classification names works", {
-  expect_true(TRUE)
-  extract_taxonomy(test_data, key = "class", regex = "class_name: (.*?) -", #database = "ncbi",
-                   class_key = "taxon_name", class_regex = "(.*)", class_sep = ";")
+#| ### Exracting by classification names
+test_that("Exracting by classification names works", {
+  result <- extract_taxonomy(test_data, key = "class", regex = "class_name: (.*?) -", 
+                             class_key = "name", class_regex = "(.*)", class_sep = ";")
+  expect_s3_class(result, "classified")
+  expect_true("Caniformia" %in% result$taxon_data$name)
 })
 
+#|
+#| ### Exracting by classification IDs
+test_that("Exracting by classification IDs works", {
+  check_for_internet()
+  result <- extract_taxonomy(test_data, key = "class", regex = "class_id: (.*?)$", 
+                             class_key = "taxon_id", class_regex = "(.*)", class_sep = ";")
+  expect_s3_class(result, "classified")
+  expect_true("379583" %in% result$taxon_id)
+})
+
+#|
+#| ### Exracting by taxon name
+test_that("Exracting by taxon name works", {
+  check_for_internet()
+  result <- extract_taxonomy(test_data, key = "name", regex = "name: (.*?) - ", database = "ncbi")
+  expect_s3_class(result, "classified")
+  expect_true("379583" %in% result$taxon_id)
+})
+
+#|
+#| ### Exracting by taxon ID
+test_that("Exracting by taxon ID works", {
+  check_for_internet()
+  result <- extract_taxonomy(test_data, key = "taxon_id", regex = "taxon_id: (.*?) - ", database = "ncbi")
+  expect_s3_class(result, "classified")
+  expect_true("Eukaryota" %in% result$taxon_data$name)
+})

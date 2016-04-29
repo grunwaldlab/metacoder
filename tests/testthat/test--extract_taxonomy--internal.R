@@ -26,7 +26,7 @@ test_that("Input validation works", {
 #|
 #| #### Create test data
 test_regex = "z fsasdfasfsfad f other(.*)random(.*)stuff sdf f \n sdff"
-test_key = c("taxon_name", "taxon_id")
+test_key = c("name", "taxon_id")
 #| 
 #| #### Test capture group counting
 test_that("capture group counting works", {
@@ -42,11 +42,11 @@ test_that("validating regex-key pairs works", {
 })
 test_that("default naming of keys works", {
   expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = test_key, multiple_allowed = c("taxon_info", "item_info"))) == test_key))
-  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = c(x = "taxon_name", "taxon_id"), multiple_allowed = c("taxon_info", "item_info"))) == c("x", "taxon_id")))
+  expect_true(all(names(validate_regex_key_pair(regex = test_regex, key = c(x = "name", "taxon_id"), multiple_allowed = c("taxon_info", "item_info"))) == c("x", "taxon_id")))
 })
 test_that("only specified keys can be duplicated", {
   expect_error(validate_regex_key_pair(regex = test_regex,
-                                       key = c("taxon_name", "taxon_name"),
+                                       key = c("name", "name"),
                                        multiple_allowed = c("taxon_info", "item_info")),
                "have been used more than once:")
   expect_equal(validate_regex_key_pair(regex = test_regex,
