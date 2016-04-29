@@ -172,37 +172,52 @@ class_to_taxonomy <- function(classifications, id_column, make_ids = FALSE) {
   
   recursive_part <- function(group, level = 1, parent = NA) {
     # Remove taxa that do not have inforamtion for the current level
-    group <- group[vapply(group, nrow, numeric(1)) >= level]
+    finished <- vapply(group, nrow, numeric(1)) < level
+    group <- group[! finished]
+    # Assign items to tip taxa
+    item_taxa <- setNames(rep(parent, sum(finished)), names(finished[finished]))
     # Split list of classifications based on level
     split_group <- split_class_list(group, level, id_column)
     # Make rows for current taxon-parent relationships
     taxon_rows <- lapply(split_group, function(x) cbind(x[[1]][level, , drop = FALSE], my_parent_ = parent))
-    # Add taxon index to output
+    # Get taxon index of parent
     taxon_index <- row_count + seq_along(taxon_rows)
-    taxon_rows <- mapply(function(my_row, index) cbind(my_row, my_taxon_id_ = index),
-                         SIMPLIFY = FALSE, taxon_rows, taxon_index)
-    # Increment the number of rows in the output
     row_count <<- row_count + length(taxon_index)
     # Run this function on each of the subgroups
     if (length(split_group) > 0) {
-      child_taxa <- mapply(recursive_part, SIMPLIFY = FALSE,
+      child_results <- mapply(recursive_part, SIMPLIFY = FALSE,
                            group = split_group, level = level + 1, parent = taxon_index)
+      child_taxa <- unlist(lapply(child_results, function(x) x$taxon_data), recursive = FALSE, use.names = FALSE)
+      child_items <- unlist(setNames(lapply(child_results, function(x) x$item_data), NULL))
     } else {
       child_taxa <- NULL
-      
+      child_items <- NULL
     }
     # Return the result of this instance of the function and the ones it makes
-    return(c(taxon_rows, unlist(child_taxa, recursive = FALSE)))
+    return(list(taxon_data = c(taxon_rows, child_taxa), item_data = c(item_taxa, child_items)))
   }
   
   # make index counter to be used inside the recursive part
   row_count <- 0
   
   # Run recursive part of the function
-  taxonomy <- do.call(rbind, recursive_part(classifications))
+  names(classifications) <- seq_along(classifications)
+  data <- recursive_part(classifications)
+  taxonomy <- do.call(rbind, data$taxon_data)
+  row.names(taxonomy) <- NULL
+  item_index <- data$item_data[order(as.numeric(names(data$item_data)))]
   
   # Format the output into a classified object
-  
+  if ("taxon_id" %in% colnames(taxonomy)) {
+    taxon_id <- taxonomy$taxon_id
+  } else {
+    taxon_id <- 1:nrow(taxonomy)
+  }
+  classified(taxon_id = unname(taxon_id),
+             parent_id = unname(taxonomy$my_parent_),
+             item_taxon_id = unname(item_index),
+             taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
+             item_data = NULL)
 }
 
 

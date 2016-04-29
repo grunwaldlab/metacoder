@@ -183,7 +183,7 @@ extract_taxonomy.default <- function(input,
   } else {
     class_source <- "taxon_name"
   }
-  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source) # returns an `classified` object with no item data
+  class_to_taxonomy(item_classifications, id_column = class_source) # returns an `classified` object with no item data
 }
 
 

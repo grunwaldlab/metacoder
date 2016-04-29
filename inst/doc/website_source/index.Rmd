@@ -82,8 +82,8 @@ library(metacoder)
 seqs <- ape::read.FASTA(unpacked_fasta_path)
 cat(names(seqs)[1]) # print an example of the sequence headers
 data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
-                         key = c("item_info", "class_name"),
-                         class_tax_sep = ";", database = "none")
+                         key = c("item_info", "class"),
+                         class_sep = ";")
 ```
 
 Note, that this command will take a while to process. 
