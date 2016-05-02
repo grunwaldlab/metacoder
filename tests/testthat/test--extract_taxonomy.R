@@ -88,7 +88,8 @@ test_that("Taxon info columns from class are added", {
   expect_true(all(c("taxon_info", "my_custom_name") %in% colnames(result$taxon_data)))
   expect_equal(result$taxon_data$taxon_info, c("a", "a", "b", "c", "b"))
 })
-
+test_that("Taxon info columns from both key and class are added", {
+})
 
 #|
 #| ### Only the most appropriate source is used
