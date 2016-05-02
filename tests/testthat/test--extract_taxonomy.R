@@ -74,8 +74,8 @@ test_that("Taxon info columns from key are added", {
                              regex = "taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
                              class_key = "name", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "classified")
-  expect_true(all(c("taxon_info_1", "my_custom_name") %in% colnames(result$taxon_data)))
-  expect_equal(result$taxon_data$taxon_info_1, c(NA, NA, NA, "9639", "9688"))
+  expect_true(all(c("taxon_info", "my_custom_name") %in% colnames(result$taxon_data)))
+  expect_equal(result$taxon_data$taxon_info, c(NA, NA, NA, "9639", "9688"))
 })
 
 

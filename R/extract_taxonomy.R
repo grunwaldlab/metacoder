@@ -209,6 +209,10 @@ extract_taxonomy.default <- function(input,
     taxonomy$taxon_data <- cbind(taxonomy$taxon_data, new_columns, stringsAsFactors = FALSE) 
   }
   
+  # Rename duplicated column names
+  colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
+  colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))
+  
   # Return output
   return(taxonomy)
   }

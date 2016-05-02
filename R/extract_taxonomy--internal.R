@@ -115,12 +115,6 @@ validate_regex_key_pair_ <- function(regex, key, key_names, multiple_allowed) {
   if (is.null(key_names)) { key_names <- rep("", length(key_value)) }
   key_names[key_names == ""] <- key_value[key_names == ""]
   
-  # Number key names that appear more than once
-#   for (a_key in duplicated_keys) {
-#     key_names[key_names == a_key] <- paste0(key_names[key_names == a_key], "_",
-#                                             seq_along(key_names[key_names == a_key]))
-#   }
-  
   names(key_value) <- key_names
   return(key_value)
 }
@@ -250,3 +244,25 @@ split_class_list <- function(classifications, row_index, col_index)  {
   split_by_values <- unlist(lapply(classifications, function(x) x[row_index, col_index]))
   split(classifications, split_by_values)
 }
+
+
+#' Number duplicated names
+#' 
+#' Add a number to any character values that appear more that once.
+#' 
+#' @param my_names (\code{character})
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal 
+rename_duplicated <- function(my_names) {
+  counts <- table(my_names)
+  duplicated <- names(counts[counts > 1])
+  for (x in duplicated) {
+    my_names[my_names == x] <- paste0(my_names[my_names == x], "_",
+                                              seq_along(my_names[my_names == x]))
+  }
+  return(my_names)
+}
+
+
