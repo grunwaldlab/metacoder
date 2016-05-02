@@ -5,9 +5,9 @@
 \alias{validate_regex_key_pair_}
 \title{Check a regex-key pair}
 \usage{
-validate_regex_key_pair_(regex, key, multiple_allowed)
+validate_regex_key_pair_(regex, key, key_names, multiple_allowed)
 
-validate_regex_key_pair(regex, key, multiple_allowed)
+validate_regex_key_pair(regex, key, key_names, multiple_allowed)
 }
 \arguments{
 \item{regex}{(\code{character})
@@ -15,6 +15,9 @@ A regex with capture groups}
 
 \item{key}{(\code{character})
 A key corresponding to \code{regex}}
+
+\item{key_names}{(\code{character})
+Names of key values}
 
 \item{multiple_allowed}{(\code{character})
 Values of \code{key_options} that can appear more than once.}

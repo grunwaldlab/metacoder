@@ -1,7 +1,6 @@
 #| ## Testing `extract_taxonomy`
 #|
 library(metacoder)
-library(magrittr)
 context("Extracting taxonomic information")
 #|
 #| ### Create dummy data
@@ -63,4 +62,24 @@ test_that("Exracting by taxon ID works", {
   result <- extract_taxonomy(test_data, key = "taxon_id", regex = "taxon_id: (.*?) - ", database = "ncbi")
   expect_s3_class(result, "classified")
   expect_true("Eukaryota" %in% result$taxon_data$name)
+})
+
+#|
+#| ### Taxon info columns
+test_that("Taxon info columns from key are added", {
+  result <- extract_taxonomy(c("taxon_id: 9688 - class_name: Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+                               "taxon_id: 9688 - class_name: Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+                               "taxon_id: 9639 - class_name: Caniformia;Ursidae;Ursus - class_id: 33554;379584;9632;9639"), 
+                             key = c("taxon_info", "class", my_custom_name = "taxon_info"), 
+                             regex = "taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                             class_key = "name", class_regex = "(.*)", class_sep = ";")
+  expect_s3_class(result, "classified")
+  expect_true(all(c("taxon_info_1", "my_custom_name") %in% colnames(result$taxon_data)))
+  expect_equal(result$taxon_data$taxon_info_1, c(NA, NA, NA, "9639", "9688"))
+})
+
+
+#|
+#| ### Only the most appropriate source is used
+test_that("Only the most appropriate source is used", {
 })

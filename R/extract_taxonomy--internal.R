@@ -73,6 +73,8 @@ validate_regex_match <- function(input, regex, max_print = 10, ...) {
 #' A regex with capture groups
 #' @param key (\code{character})
 #' A key corresponding to \code{regex}
+#' @param key_names (\code{character})
+#' Names of key values
 #' @param multiple_allowed (\code{character})
 #' Values of \code{key_options} that can appear more than once.
 #' 
@@ -80,7 +82,9 @@ validate_regex_match <- function(input, regex, max_print = 10, ...) {
 #' 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair_ <- function(regex, key, multiple_allowed) {
+validate_regex_key_pair_ <- function(regex, key, key_names, multiple_allowed) {
+  
+  # Non-standard evaluation
   key_exp <- deparse(key$expr)
   key_value <- lazyeval::lazy_eval(key)
   regex_exp <- deparse(regex$expr)
@@ -108,15 +112,14 @@ validate_regex_key_pair_ <- function(regex, key, multiple_allowed) {
   }
   
   # Apply key name defaults
-  key_names <- names(key_value)
   if (is.null(key_names)) { key_names <- rep("", length(key_value)) }
   key_names[key_names == ""] <- key_value[key_names == ""]
   
   # Number key names that appear more than once
-  for (a_key in duplicated_keys) {
-    key_names[key_names == a_key] <- paste0(key_names[key_names == a_key], "_",
-                                            seq_along(key_names[key_names == a_key]))
-  }
+#   for (a_key in duplicated_keys) {
+#     key_names[key_names == a_key] <- paste0(key_names[key_names == a_key], "_",
+#                                             seq_along(key_names[key_names == a_key]))
+#   }
   
   names(key_value) <- key_names
   return(key_value)
@@ -124,8 +127,8 @@ validate_regex_key_pair_ <- function(regex, key, multiple_allowed) {
 
 #' @keywords internal
 #' @rdname validate_regex_key_pair
-validate_regex_key_pair <- function(regex, key, multiple_allowed) {
-  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), multiple_allowed)
+validate_regex_key_pair <- function(regex, key, key_names, multiple_allowed) {
+  validate_regex_key_pair_(lazyeval::lazy(regex), lazyeval::lazy(key), key_names, multiple_allowed)
 }
 
 

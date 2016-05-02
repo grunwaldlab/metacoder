@@ -140,11 +140,15 @@ extract_taxonomy.default <- function(input,
   # input
   input <- validate_regex_match(input, regex, vigilance = vigilance)
   # regex and key
+  key_names <- names(key)
   key <- match.arg(key, several.ok = ! missing(key))
-  key <- validate_regex_key_pair(regex, key, multiple_allowed = c("taxon_info", "item_info"))
+  key <- validate_regex_key_pair(regex, key, key_names,
+                                 multiple_allowed = c("taxon_info", "item_info"))
   # classification regex and key
+  class_key_names <- names(class_key)
   class_key <- match.arg(class_key, several.ok = ! missing(class_key))
-  class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = c("taxon_info"))
+  class_key <- validate_regex_key_pair(class_regex, class_key, class_key_names,
+                                       multiple_allowed = c("taxon_info"))
   # classification sep
   if (class(class_sep) != "character" | length(class_sep) != 1) {
     stop('"class_sep" must be a character vector of length 1')
@@ -186,8 +190,30 @@ extract_taxonomy.default <- function(input,
   } else {
     class_source <- "name"
   }
-  class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
-}
+  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
+  
+  # Add taxon info columns to taxon_data ----------------------------------------------------------
+  taxon_info_column <- function(content, col_name) {
+    taxon_values <- lapply(split(content, taxonomy$item_taxon_id), unique)
+    if (any(lapply(taxon_values, length) > 1)) {
+      stop(paste0('Values for "', col_name, '" are not consistent with the inferred taxonomy (More than one unique value found for at least one taxon). Perhaps a "item_info" key value would be more appropriate?'))
+    }
+    unlist(taxon_values)[taxonomy$taxon_id]
+  }
+  if ("taxon_info" %in% key) {
+    taxon_info_col_names <- names(key)[key == "taxon_info"]
+    taxon_info_source_cols <- setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
+                                       taxon_info_col_names)
+    new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
+                          SIMPLIFY = FALSE)
+    taxonomy$taxon_data <- cbind(taxonomy$taxon_data, new_columns, stringsAsFactors = FALSE) 
+  }
+  
+  # Return output
+  return(taxonomy)
+  }
+
+
 
 
 #' @method extract_taxonomy DNAbin
