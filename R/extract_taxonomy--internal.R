@@ -251,11 +251,19 @@ split_class_list <- function(classifications, row_index, col_index)  {
 #' Add a number to any character values that appear more that once.
 #' 
 #' @param my_names (\code{character})
+#' @param replace_auto (\code{logical} of length 1)
+#' If \code{TRUE}, undo the automated 'name.#' dataframe numbering
 #' 
 #' @return \code{character}
 #' 
 #' @keywords internal 
-rename_duplicated <- function(my_names) {
+rename_duplicated <- function(my_names, replace_auto = TRUE) {
+  # Undo automated numbering
+  if (replace_auto) {
+    my_names <- gsub(my_names, pattern = "\\.[0-9]+$", replacement = "")
+  }
+  
+  # Number duplicates
   counts <- table(my_names)
   duplicated <- names(counts[counts > 1])
   for (x in duplicated) {

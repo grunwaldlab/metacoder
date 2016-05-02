@@ -4,10 +4,13 @@
 \alias{rename_duplicated}
 \title{Number duplicated names}
 \usage{
-rename_duplicated(my_names)
+rename_duplicated(my_names, replace_auto = TRUE)
 }
 \arguments{
 \item{my_names}{(\code{character})}
+
+\item{replace_auto}{(\code{logical} of length 1)
+If \code{TRUE}, undo the automated 'name.#' dataframe numbering}
 }
 \value{
 \code{character}

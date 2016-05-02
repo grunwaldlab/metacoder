@@ -85,7 +85,7 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
   result <- lapply(split_input,
                    function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
   # Name columns in each classification according to the key
-  result <- lapply(result, function(x) setNames(x, class_key))
+  result <- lapply(result, function(x) setNames(x, names(class_key)))
   
   # Add taxon_id column if missing
   if (! "taxon_id" %in% class_key && "name" %in% class_key && database != "none") {
