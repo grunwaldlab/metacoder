@@ -13,11 +13,14 @@ test_input <- c("matching", "not", "also a match")
 test_that("Input validation works", {
   expect_equal(validate_regex_match(test_input[1], test_regex),
                test_input[1])
-  expect_error(validate_regex_match(test_input, test_regex, vigilance = "error"),
+  vigilance = "error"
+  expect_error(validate_regex_match(test_input, test_regex),
                "could not be matched by the regex ")
-  expect_warning(validate_regex_match(test_input, test_regex, vigilance = "warning"),
+  vigilance = "warning"
+  expect_warning(validate_regex_match(test_input, test_regex),
                  "could not be matched by the regex ")
-  expect_equal(validate_regex_match(test_input, test_regex, vigilance = "none"),
+  vigilance = "none"
+  expect_equal(validate_regex_match(test_input, test_regex),
                test_input[c(1, 3)])
 })
 #|

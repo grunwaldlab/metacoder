@@ -139,7 +139,7 @@ extract_taxonomy.default <- function(input,
   # verbosity
   verbosity <- match.arg(verbosity)
   # input
-  input <- validate_regex_match(input, regex, vigilance = vigilance)
+  input <- validate_regex_match(input, regex)
   # regex and key
   key_names <- names(key)
   key <- match.arg(key, several.ok = ! missing(key))

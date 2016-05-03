@@ -26,6 +26,13 @@ test_that("Exracting by item_id works", {
   expect_s3_class(result, "classified")
   expect_true("Eukaryota" %in% result$taxon_data$name)
 })
+test_that("Invalid IDs cause understandable errors", {
+  check_for_internet()
+  expect_error(extract_taxonomy(c("FJ712037.1", "notvalid", "HW243304.1"),
+                                key = "item_id", regex = "(.*)", database = "ncbi",
+                                vigilance = "error"),
+               "3 item IDs failed to return classifications")
+})
 
 #|
 #| ### Exracting by classification names
@@ -113,6 +120,7 @@ test_that("Item info columns are added", {
   expect_equal(result$item_data$my_custom_name, c("9689", "9694", "9643"))
   expect_equal(result$item_data$item_info_1, c("FJ712037.1", "KC879292.1", "HW243304.1"))
 })
+
 
 #|
 #| ### Only the most appropriate source is used

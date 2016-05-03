@@ -75,8 +75,9 @@ The GenBank id is being used to look up the taxonomy information (hence `"item_i
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
-                            regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-                            key = c("item_id", acc_no = "item_info", desc = "item_info"))
+                                    regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
+                                    key = c("item_id", acc_no = "item_info", desc = "item_info"),
+                                    database = "ncbi")
 ```
 
 The sequence headers have the format:

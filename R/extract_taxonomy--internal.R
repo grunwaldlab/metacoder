@@ -1,22 +1,15 @@
 #' Report a error/warning if needed
 #' 
 #' Report a error/warning if needed
+#' NOTE: This function is unusual in that it looks for a varaible names `vigilance` in a parent namespace.
 #' 
 #' @param text The error to report
-#' @param vigilance (\code{character} of length 1) Controls the reporting of possible problems.
-#' The following values are possible: 
-#'  \describe{
-#'    \item{\code{"none"}}{No warnings or errors are generated if the function can complete.}
-#'    \item{\code{"message"}}{A message is generated when atypical events occur.}
-#'    \item{\code{"warning"}}{Warnings are generated when atypical events occur.}
-#'    \item{\code{"error"}}{Errors are generated when atypical events occur, stopping the completion of the function.}
-#'  } 
 #' 
 #' @return \code{NULL}
 #' 
 #' @keywords internal
-vigilant_report <- function(text, vigilance = c("error", "none", "message", "warning")) {
-  vigilance <- match.arg(vigilance)
+vigilant_report <- function(text) {
+  vigilance <- dynGet("vigilance", ifnotfound = "error")
   text <- paste0(text, "\n",
                 "To avoid this ", vigilance, ", change the setting of the `vigilance` option")
   response <- list("error" = stop, "warning" = warning, "message" = message,
@@ -34,12 +27,11 @@ vigilant_report <- function(text, vigilance = c("error", "none", "message", "war
 #' @param regex (\code{character} of length 1)
 #' @param max_print  (\code{numeric} of length 1)
 #' The maximum number of lines to print in error/warning messages.
-#' @param ... passed to \code{\link{vigilant_report}}
 #'  
 #' @return \code{character} Parts of \code{input} matching \code{regex}
 #' 
 #' @keywords internal
-validate_regex_match <- function(input, regex, max_print = 10, ...) {
+validate_regex_match <- function(input, regex, max_print = 10) {
   # check which input values match
   input <- as.character(input)
   not_matching <- ! grepl(pattern = regex, x = input)
@@ -49,8 +41,7 @@ validate_regex_match <- function(input, regex, max_print = 10, ...) {
     if (length(invalid_list) > max_print) {
       invalid_list <- c(invalid_list[1:max_print], "    ...")
     }
-    vigilant_report(...,
-                    paste0(collapse = "",
+    vigilant_report(paste0(collapse = "",
                            c("The following ", sum(not_matching), " of ", length(input),
                              " input(s) could not be matched by the regex supplied:\n",
                              invalid_list)))

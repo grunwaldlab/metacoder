@@ -25,9 +25,22 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
     rep(NA, length(item_id))
   }
   
+  # Look up classifications
   database <- match.arg(database)
-  result <- map_unique(item_id, get(paste0("using_", database)))
-  result <- lapply(result, function(x) setNames(x, c("name", "rank", "taxon_id")))
+  result <- suppressWarnings(map_unique(item_id, get(paste0("using_", database))))
+  # Check for errors
+  error_indexes <- is.na(result)
+  if (sum(error_indexes) > 0) {
+    invalid_list <- paste("   ", which(error_indexes), ": ", item_id[error_indexes], "\n")
+    if (length(invalid_list) > 10) { invalid_list <- c(invalid_list[1:10], "    ...") }
+    vigilant_report(paste0(collapse = "",
+                           c("The queries to '", database, "' for the following ", sum(error_indexes),
+                             " of ", length(item_id), " item IDs failed to return classifications:\n",
+                             invalid_list)))
+  }
+  # Format result
+  result[!error_indexes] <- lapply(result[!error_indexes],
+                                   function(x) setNames(x, c("name", "rank", "taxon_id")))
   return(result)
 }
 
