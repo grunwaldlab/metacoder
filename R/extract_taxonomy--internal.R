@@ -188,6 +188,9 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   # make index counter to be used inside the recursive part
   row_count <- 0
   
+  # Remove invalid classifications
+  classifications <- classifications[!is.na(classifications)]
+  
   # Run recursive part of the function
   names(classifications) <- seq_along(classifications)
   data <- recursive_part(classifications)
@@ -200,6 +203,10 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
     taxon_id <- taxonomy$taxon_id
     parent_id <- taxon_id[taxonomy$my_parent_]
     item_id <- taxon_id[item_index]
+  } else if (is.null(taxonomy))  {
+    taxon_id <- character(0)
+    parent_id <- integer(0)
+    item_id <- rep(NA, nrow(item_data))
   } else {
     taxon_id <- 1:nrow(taxonomy) 
     parent_id <- taxonomy$my_parent_
