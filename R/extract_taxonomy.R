@@ -130,9 +130,10 @@ extract_taxonomy.default <- function(input,
   my_print <- function(text, level = "low") {
     options <- c("none", "low", "high")
     level <- factor(level, ordered = TRUE, levels = options)
-    if (level <= verbosity) { message(text) }
+    if (level <= verbosity[1]) { message(text) }
   }
   # Validate and standardize input ----------------------------------------------------------------
+  my_print(level = "high", "Validating input ----------------------------------")
   # vigilance 
   vigilance <- match.arg(vigilance)
   # verbosity
@@ -164,6 +165,7 @@ extract_taxonomy.default <- function(input,
   }
 
   # Parse input -----------------------------------------------------------------------------------
+  my_print(level = "high", "Parsing input -------------------------------------")
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
   colnames(parsed_input) <- c("match", key)
   # Consolidate item data
@@ -177,22 +179,25 @@ extract_taxonomy.default <- function(input,
   # This step produces a list of dataframes corresponding the in input values.
   # The rows of each data.frame in the list correspond to taxa in a classification.
   # Columns correspond to information for each taxon.
+  my_print(level = "high", "Getting item classifications ----------------------")
   precedence <- c("class", "taxon_id", "item_id", "name")
   classification_data <- parsed_input[ , precedence[precedence %in% key], drop = FALSE] # extract and order data that can be used to get classifications
   classification_func <- get(paste0("class_from_", colnames(classification_data)[1]))
   current_arg_values <- mget(names(formals(extract_taxonomy.default)))
   current_arg_values <- current_arg_values[! names(current_arg_values) %in% c( "input", "...")]
   item_classifications <- do.call(classification_func, c(classification_data, current_arg_values))
-  
+
   # Infer taxonomy structure ----------------------------------------------------------------------
+  my_print(level = "high", "Inferring taxonomic structure ---------------------")
   if ("taxon_id" %in% colnames(item_classifications[[1]])) {
     class_source <- "taxon_id"
   } else {
     class_source <- "name"
   }
   taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
-  
+
   # Add taxon info columns to taxon_data ----------------------------------------------------------
+  my_print(level = "high", "Formatting output ---------------------------------")
   taxon_info_column <- function(content, col_name) {
     taxon_values <- lapply(split(content, taxonomy$item_taxon_id), unique)
     if (any(lapply(taxon_values, length) > 1)) {
@@ -212,8 +217,11 @@ extract_taxonomy.default <- function(input,
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
   colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))
-  
+
   # Return output
+  my_print(level = "low",
+           paste0(length(input), " inputs used to classify ", nrow(taxonomy$item_data),
+                  " items by ", length(taxonomy$taxon_id), " taxa."))
   return(taxonomy)
   }
 
