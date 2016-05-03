@@ -39,7 +39,6 @@ test_that("Exracting by classification names works", {
 #|
 #| ### Exracting by classification IDs
 test_that("Exracting by classification IDs works", {
-  check_for_internet()
   result <- extract_taxonomy(test_data, key = "class", regex = "class_id: (.*?)$", 
                              class_key = "taxon_id", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "classified")
@@ -101,6 +100,18 @@ test_that("Taxon info columns from both key and class are added", {
   expect_true(all(c("taxon_info_1", "my_custom_name_1", "taxon_info_2", "my_custom_name_2") %in% colnames(result$taxon_data)))
   expect_equal(result$taxon_data$taxon_info_1, c("a", "a", "b", "c", "b"))
   expect_equal(result$taxon_data$taxon_info_2, c(NA, NA, NA, "9639", "9688"))
+})
+
+#|
+#| ### Item info columns
+test_that("Item info columns are added", {
+  result <- extract_taxonomy(test_data,
+                             key = c("item_info", my_custom_name = "item_info", "class", "item_info"),
+                             regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                             class_key = "name", class_regex = "(.*)", class_sep = ";")
+  expect_s3_class(result, "classified")
+  expect_equal(result$item_data$my_custom_name, c("9689", "9694", "9643"))
+  expect_equal(result$item_data$item_info_1, c("FJ712037.1", "KC879292.1", "HW243304.1"))
 })
 
 #|
