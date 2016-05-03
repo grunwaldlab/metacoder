@@ -83,12 +83,24 @@ test_that("Taxon info columns from class are added", {
                                "taxon_id: 9639 - class_name: Caniformia-a-1;Ursidae-b-2;Ursus-c-3 - class_id: 33554;379584;9632;9639"), 
                              key = "class", 
                              regex = "- class_name: (.*) -", 
-                             class_key = c("name", "taxon_info", my_custom_name = "taxon_info"), class_regex = "^(.*)-(.*)-(.*)$", class_sep = ";")
+                             class_key = c("name", "taxon_info", my_custom_name = "taxon_info"),
+                             class_regex = "^(.*)-(.*)-(.*)$", class_sep = ";")
   expect_s3_class(result, "classified")
   expect_true(all(c("taxon_info", "my_custom_name") %in% colnames(result$taxon_data)))
   expect_equal(result$taxon_data$taxon_info, c("a", "a", "b", "c", "b"))
 })
 test_that("Taxon info columns from both key and class are added", {
+  result <- extract_taxonomy(c("taxon_id: 9688 - class_name: Pantherinae-a-1;Panthera-b-2 - class_id: 33554;379583;9681;338153;9688",
+                               "taxon_id: 9688 - class_name: Pantherinae-a-1;Panthera-b-2 - class_id: 33554;379583;9681;338153;9688",
+                               "taxon_id: 9639 - class_name: Caniformia-a-1;Ursidae-b-2;Ursus-c-3 - class_id: 33554;379584;9632;9639"), 
+                             key = c("taxon_info", "class", my_custom_name = "taxon_info"), 
+                             regex = "taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                             class_key = c("name", "taxon_info", my_custom_name = "taxon_info"),
+                             class_regex = "^(.*)-(.*)-(.*)$", class_sep = ";")
+  expect_s3_class(result, "classified")
+  expect_true(all(c("taxon_info_1", "my_custom_name_1", "taxon_info_2", "my_custom_name_2") %in% colnames(result$taxon_data)))
+  expect_equal(result$taxon_data$taxon_info_1, c("a", "a", "b", "c", "b"))
+  expect_equal(result$taxon_data$taxon_info_2, c(NA, NA, NA, "9639", "9688"))
 })
 
 #|
