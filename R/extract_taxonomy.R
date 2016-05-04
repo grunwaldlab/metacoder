@@ -49,9 +49,14 @@
 #' @param class_regex (\code{character} of length 1)
 #' A regular expression with capturing groups indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument.
 #' The identity of the information must be specified using the \code{class_key} argument.
+#' The \code{class_sep} option can be used to split the classification into data for each taxon before matching.
+#' If \code{class_sep} is \code{NULL}, each match of \code{class_regex} defines a taxon in the classification. 
 #' @param class_sep (\code{character} of length 1)
 #' Used with the \code{class} term in the \code{key} argument.
 #' The character(s) used to separate individual taxa within a classification.
+#' After the string defined by the \code{class} capture group in \code{regex} is split by \code{class_sep},
+#' its capture groups are extracted by \code{class_regex} and defined by \code{class_key}.
+#' If \code{NULL}, every match of \code{class_regex} is used instead with first splitting by \code{class_sep}.
 #' @param class_rev (\code{logical} of length 1)
 #' Used with the \code{class} term in the \code{key} argument.
 #' If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.
@@ -118,7 +123,7 @@ extract_taxonomy.default <- function(input,
                                      regex = "(.*)",
                                      class_key = c("name", "taxon_id", "taxon_info"),
                                      class_regex = "(.*)",
-                                     class_sep = ";",
+                                     class_sep = NULL,
                                      class_rev = FALSE,
                                      database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
                                      allow_na = TRUE,
@@ -147,8 +152,8 @@ extract_taxonomy.default <- function(input,
   if (missing(class_key)) { class_key <- class_key[1] }
   class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = c("taxon_info"))
   # classification sep
-  if (class(class_sep) != "character" | length(class_sep) != 1) {
-    stop('"class_sep" must be a character vector of length 1')
+  if (!is.null(class_sep) && (class(class_sep) != "character" | length(class_sep) != 1)) {
+    stop('"class_sep" must be a character vector of length 1 or NULL')
   }
   # classification order
   if (class(class_rev) != "logical" | length(class_rev) != 1) {

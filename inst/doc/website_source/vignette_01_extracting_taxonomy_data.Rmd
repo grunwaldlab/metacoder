@@ -150,6 +150,7 @@ unite_ex_data_2 <- extract_taxonomy(sequences,
                                             other_id = "item_info", "class"),
                                     class_regex = "^(.*)__(.*)$",
                                     class_key = c(unite_rank = "taxon_info", "name"),
+                                    class_sep = ";",
                                     database = "ncbi")
 ```
 
@@ -178,7 +179,8 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
                                     key = c(name = "item_info", sequence_id = "item_info",
                                             other_id = "item_info", "class"),
                                     class_regex = "^(.*)__(.*)$",
-                                    class_key = c(unite_rank = "taxon_info", "name"))
+                                    class_key = c(unite_rank = "taxon_info", "name"),
+                                    class_sep = ";")
 ```
 
 ```{r}
@@ -228,7 +230,7 @@ sequences <- ape::read.FASTA(file_path)
 pr2_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*\\..*?)\\|(.*)$",
                                 key = c("item_id", "class"),
-                                class_sep = "|")
+                                class_sep = "\\|")
 ```
 
 The sequence headers have the format:
@@ -257,9 +259,9 @@ file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package 
 sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
-                                key = c(id = "item_info", description = "item_info", "class_name"),
-                                class_regex = 
-                                class_rev = TRUE)
+                                key = c(id = "item_info", description = "item_info", "class"),
+                                class_regex = "(.+?);(.*?);",
+                                class_key = c("name", "taxon_info"))
 ```
 
 ```{r, echo=FALSE, comment=NA}

@@ -11,10 +11,11 @@ extract_taxonomy(input, ...)
 \method{extract_taxonomy}{default}(input, key = c("class", "taxon_id", "name",
   "taxon_info", "item_id", "item_info"), regex = "(.*)",
   class_key = c("name", "taxon_id", "taxon_info"), class_regex = "(.*)",
-  class_sep = ";", class_rev = FALSE, database = c("none", "ncbi", "itis",
-  "eol", "col", "tropicos", "nbn"), allow_na = TRUE, vigilance = c("error",
-  "warning", "message", "none"), return_match = FALSE, return_input = TRUE,
-  verbosity = c("low", "none", "high"), ...)
+  class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
+  "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
+  vigilance = c("error", "warning", "message", "none"),
+  return_match = FALSE, return_input = TRUE, verbosity = c("low", "none",
+  "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }

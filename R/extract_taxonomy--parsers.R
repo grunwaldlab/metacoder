@@ -91,15 +91,25 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
   if (all(class == "")) {
     stop("All classifications are empty strings. Check that the regex supplied matches the entire classification.")
   }
-  # Split each lineage by the separation character
-  split_input <- strsplit(class, class_sep, fixed = TRUE)
+  
+  # Extract each capture group 
+  if (! is.null(class_sep)) {
+    split_input <- strsplit(class, class_sep, fixed = FALSE)
+    result <- lapply(split_input,
+                     function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
+  } else {
+    result <- lapply(stringr::str_match_all(class, class_regex), function(x) data.frame(x[, -1, drop = FALSE], stringsAsFactors = FALSE))
+  }
+  
   # Reverse the order if needed
   if (class_rev) {
-    split_input <- lapply(split_input, rev)
+    result <- lapply(result, function(x) {
+      x <- x[rev(1:nrow(x)), ]
+      row.names(x) <- NULL
+      x
+    })
   }
-  # Extract regex capture groups
-  result <- lapply(split_input,
-                   function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
+  
   # Name columns in each classification according to the key
   result <- lapply(result, function(x) setNames(x, names(class_key)))
   
