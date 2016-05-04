@@ -116,7 +116,8 @@ sequences <- ape::read.FASTA(file_path)
 unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                             key = c(name = "name",  sequence_id = "item_id",
-                                    other_id = "item_info", tax_string = "item_info"))
+                                    other_id = "item_info", tax_string = "item_info"),
+                            database = "ncbi")
 ```
 
 The sequence headers have the format:
@@ -134,17 +135,22 @@ plot(unite_ex_data_1,
 
 #### Using included classification names to look up the taxon id
 
-If you want to use the structure and names of the classification provided in the header, but still look up the official taxon id, you can provide `"class_name"` as the only key with taxonomic information.
-This is typically not as efficient or accurate and using `"item_id"` or `"taxon_id"`, so `"class_name"` has no effect if these more reliable fields (or others) are present. 
+If you want to use the structure and names of the classification provided in the header, but still look up the official taxon id, you can provide `"class"` as the only key with taxonomic information.
+Since the UNITE classification also included the rank for each taxon, we will have to specify how to parse each taxon string using the `class_regex` and `class_key` options.
+These work the same as `regex` and `key`, except they apply to each element in a classification.
+This is typically not as efficient or accurate and using `"item_id"` or `"taxon_id"`, so `"class"` has no effect if these more reliable fields (or others) are present and a database is used. 
 However, you can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use `"item_id"` or `"taxon_id"`.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-unite_ex_data_2 <- extract_taxonomy(names(sequences),
-                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                            key = c(name = "item_info", sequence_id = "item_info",
-                                    other_id = "item_info", "class_name"))
+unite_ex_data_2 <- extract_taxonomy(sequences,
+                                    regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                                    key = c(name = "item_info", sequence_id = "item_info",
+                                            other_id = "item_info", "class"),
+                                    class_regex = "^(.*)__(.*)$",
+                                    class_key = c(unite_rank = "taxon_info", "name"),
+                                    database = "ncbi")
 ```
 
 ```{r}
@@ -160,18 +166,19 @@ The unique taxon id for each taxon encountered will be looked up and taxa not fo
 
 #### Using the included classifications to generate arbitrary ids
 
-It is also possible to build a custom taxonomy encoding using the taxonomy in the sequence headers without looking up the unique taxon ids of each taxon.
+It is also possible to build a custom taxonomy encoding using the taxonomy in the sequence headers without looking up the official taxon ids of each taxon.
 Taxa will be assigned arbitrary taxon ids that will be specific to the current analysis.
-To do this, set the `database` option to `"none"` to prevent `extract_taxonomy` from trying to look up the taxon id, causing all taxa to be assigned arbitrary unique ids.
+To do this, leave off the `database` option from the previous example.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_3 <- extract_taxonomy(sequences,
-                            regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                            key = c(name = "item_info", sequence_id = "item_info",
-                                    other_id = "item_info", "class_name"),
-                            database = "none")
+                                    regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                                    key = c(name = "item_info", sequence_id = "item_info",
+                                            other_id = "item_info", "class"),
+                                    class_regex = "^(.*)__(.*)$",
+                                    class_key = c(unite_rank = "taxon_info", "name"))
 ```
 
 ```{r}
@@ -190,9 +197,10 @@ In the example below, both the `"item_id"` and `"taxon_id"` keys are provided, b
 file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 its1_ex_data <- extract_taxonomy(sequences,
-                         regex = "^(.*)\\|(.*)\\|tax_id:(.*)\\|(.*)$",
-                         key = c("item_id", taxon_name = "taxon_info",
-                                 "taxon_id", description = "item_info"))
+                                 regex = "^(.*)\\|(.*)\\|tax_id:(.*)\\|(.*)$",
+                                 key = c("item_id", taxon_name = "taxon_info",
+                                         "taxon_id", description = "item_info"),
+                                 database = "ncbi")
 ```
 
 The sequence headers have the format:
@@ -218,10 +226,9 @@ Note that there is no rank information available.
 file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 pr2_ex_data <- extract_taxonomy(sequences,
-                        regex = "^(.*\\..*?)\\|(.*)$",
-                        key = c("item_id", "class_name"),
-                        class_tax_sep = "|",
-                        database = "none")
+                                regex = "^(.*\\..*?)\\|(.*)$",
+                                key = c("item_id", "class"),
+                                class_sep = "|")
 ```
 
 The sequence headers have the format:
@@ -251,10 +258,8 @@ sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
                                 key = c(id = "item_info", description = "item_info", "class_name"),
-                                class_tax_sep = ";",
-                                class_rank_sep = ";", 
-                                class_rank_rev = TRUE,
-                                database = "none")
+                                class_regex = 
+                                class_rev = TRUE)
 ```
 
 ```{r, echo=FALSE, comment=NA}

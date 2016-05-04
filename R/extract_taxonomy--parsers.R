@@ -92,7 +92,7 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
     stop("All classifications are empty strings. Check that the regex supplied matches the entire classification.")
   }
   # Split each lineage by the separation character
-  split_input <- strsplit(class, class_sep)
+  split_input <- strsplit(class, class_sep, fixed = TRUE)
   # Reverse the order if needed
   if (class_rev) {
     split_input <- lapply(split_input, rev)
