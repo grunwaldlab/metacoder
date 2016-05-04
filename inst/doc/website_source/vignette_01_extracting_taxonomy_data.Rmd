@@ -76,7 +76,7 @@ file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "meta
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
                                     regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-                                    key = c("item_id", acc_no = "item_info", desc = "item_info"),
+                                    key = c(gi_no = "item_info", "item_id", desc = "item_info"),
                                     database = "ncbi")
 ```
 
@@ -115,7 +115,7 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                            key = c(name = "taxon_name",  sequence_id = "item_id",
+                            key = c(name = "name",  sequence_id = "item_id",
                                     other_id = "item_info", tax_string = "item_info"))
 ```
 

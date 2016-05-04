@@ -12,11 +12,11 @@
 genbank_ex_data
 }
 \description{
-A dataset containing information for 605 sequences obtained form NCBI using the following query:
+A dataset containing information for 299 sequences obtained form NCBI using the following query:
 }
 \details{
 \code{
-(18s[All Fields] AND 28s[All Fields]) AND "basidiomycetes"[porgn] AND (refseq[filter] AND ("1"[SLEN] : "1000"[SLEN]))
+(18s[All Fields] AND 28s[All Fields]) AND "basidiomycetes"[porgn] AND (refseq[filter] AND ("700"[SLEN] : "800"[SLEN]))
 }
 }
 \examples{
@@ -25,7 +25,8 @@ file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "meta
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
                                     regex = "^.*\\\\|(.*)\\\\|.*\\\\|(.*)\\\\|(.*)$",
-                                    key = c("item_id", acc_no = "item_info", desc = "item_info"))
+                                    key = c(gi_no = "item_info", "item_id", desc = "item_info"),
+                                    database = "ncbi")
 }
 
 }

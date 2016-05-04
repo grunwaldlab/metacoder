@@ -123,6 +123,22 @@ test_that("Item info columns are added", {
 
 
 #|
-#| ### Only the most appropriate source is used
-test_that("Only the most appropriate source is used", {
+#| ### Invalid keys give warnings
+test_that("Invalid keys give warnings", {
+  expect_error(extract_taxonomy(test_data,
+                                 key = c("item_info", "invalid", "class", "item_info"),
+                                 regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                                 class_key = "name", class_regex = "(.*)", class_sep = ";"),
+               'Invalid key value "invalid" given.')
+  
 })
+#|
+#| ### Only specified keys can be duplicated
+test_that("Only specified keys can be duplicated", {
+  expect_error(extract_taxonomy(test_data,
+                                key = c("item_info", "class", "class", "item_info"),
+                                regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                                class_key = "name", class_regex = "(.*)", class_sep = ";"),
+               "have been used more than once:")
+})
+

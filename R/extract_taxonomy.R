@@ -141,15 +141,11 @@ extract_taxonomy.default <- function(input,
   # input
   input <- validate_regex_match(input, regex)
   # regex and key
-  key_names <- names(key)
-  key <- match.arg(key, several.ok = ! missing(key))
-  key <- validate_regex_key_pair(regex, key, key_names,
-                                 multiple_allowed = c("taxon_info", "item_info"))
+  if (missing(key)) { key <- key[1] }
+  key <- validate_regex_key_pair(regex, key, multiple_allowed = c("taxon_info", "item_info"))
   # classification regex and key
-  class_key_names <- names(class_key)
-  class_key <- match.arg(class_key, several.ok = ! missing(class_key))
-  class_key <- validate_regex_key_pair(class_regex, class_key, class_key_names,
-                                       multiple_allowed = c("taxon_info"))
+  if (missing(class_key)) { class_key <- class_key[1] }
+  class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = c("taxon_info"))
   # classification sep
   if (class(class_sep) != "character" | length(class_sep) != 1) {
     stop('"class_sep" must be a character vector of length 1')

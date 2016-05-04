@@ -36,7 +36,10 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
     vigilant_report(paste0(collapse = "",
                            c("The queries to '", database, "' for the following ", sum(error_indexes),
                              " of ", length(item_id), " item IDs failed to return classifications:\n",
-                             invalid_list)))
+                             invalid_list,
+                             "NOTE: The function that get classifications from IDs works in batches. ",
+                             "If any of the IDs in a batch is invalid, the whole batch fails. ",
+                             "Therefore, not all the IDs listed are necessarily invalid.")))
   }
   # Format result
   result[!error_indexes] <- lapply(result[!error_indexes],

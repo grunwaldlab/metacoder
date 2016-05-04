@@ -36,32 +36,3 @@ test_that("capture group counting works", {
   expect_equal(count_capture_groups(test_regex), 2)
   expect_equal(count_capture_groups(""), 0)
 })
-#| 
-#| #### Test validation
-test_that("validating regex-key pairs works", {
-  expect_equal(validate_regex_key_pair(regex = test_regex,
-                                       key = test_key,
-                                       key_names = names(test_key),
-                                       multiple_allowed = c("taxon_info", "item_info")),
-               setNames(test_key, test_key))
-  expect_error(validate_regex_key_pair(regex = "", key = test_key, multiple_allowed = c("taxon_info", "item_info")))
-})
-test_that("default naming of keys works", {
-  expect_true(all(names(validate_regex_key_pair(regex = test_regex,
-                                                key = test_key,
-                                                key_names = names(test_key),
-                                                multiple_allowed = c("taxon_info", "item_info"))) == test_key))
-  expect_true(all(names(validate_regex_key_pair(regex = test_regex,
-                                                key = c("name", "taxon_id"),
-                                                key_names = c("x", ""),
-                                                multiple_allowed = c("taxon_info", "item_info"))) == c("x", "taxon_id")))
-})
-test_that("only specified keys can be duplicated", {
-  expect_error(validate_regex_key_pair(regex = test_regex,
-                                       key = c("name", "name"),
-                                       key_names = names(test_regex),
-                                       multiple_allowed = c("taxon_info", "item_info")),
-               "have been used more than once:")
-})
-
-#|
