@@ -537,7 +537,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     all_pairwise <- all_pairwise[order(all_pairwise$importance, decreasing = TRUE), ]
     pair_subset <- c(order(all_pairwise$importance, decreasing = TRUE)[1:max_important_pairs],
                      order(all_pairwise$size_sum, decreasing = TRUE)[1:max_biggest_pairs],
-                     order(all_pairwise$distance)[1:distance])
+                     order(all_pairwise$distance)[1:max_closest_pairs])
     all_pairwise <- all_pairwise[pair_subset, ]
   }
   # Define search space for potential vertex size ranges  - - - - - - - - - - - - - - - - - - - - -
