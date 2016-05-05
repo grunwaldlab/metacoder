@@ -4,25 +4,17 @@
 \alias{vigilant_report}
 \title{Report a error/warning if needed}
 \usage{
-vigilant_report(text, vigilance = c("error", "none", "message", "warning"))
+vigilant_report(text)
 }
 \arguments{
 \item{text}{The error to report}
-
-\item{vigilance}{(\code{character} of length 1) Controls the reporting of possible problems.
-The following values are possible: 
- \describe{
-   \item{\code{"none"}}{No warnings or errors are generated if the function can complete.}
-   \item{\code{"message"}}{A message is generated when atypical events occur.}
-   \item{\code{"warning"}}{Warnings are generated when atypical events occur.}
-   \item{\code{"error"}}{Errors are generated when atypical events occur, stopping the completion of the function.}
- }}
 }
 \value{
 \code{NULL}
 }
 \description{
 Report a error/warning if needed
+NOTE: This function is unusual in that it looks for a varaible names `vigilance` in a parent namespace.
 }
 \keyword{internal}
 

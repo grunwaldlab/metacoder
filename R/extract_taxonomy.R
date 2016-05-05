@@ -17,7 +17,7 @@
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'    \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
@@ -36,22 +36,27 @@
 #' The identity of the capturing groups defined using \code{class_iregex}.
 #' The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 #' Any names added to the terms will be used as column names in the output.
-#' At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+#' At least \code{"taxon_id"} or \code{"name"} must be specified.
 #' Only \code{"taxon_info"} can be used multiple times.
 #' Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'  }
 #' @param class_regex (\code{character} of length 1)
 #' A regular expression with capturing groups indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument.
 #' The identity of the information must be specified using the \code{class_key} argument.
+#' The \code{class_sep} option can be used to split the classification into data for each taxon before matching.
+#' If \code{class_sep} is \code{NULL}, each match of \code{class_regex} defines a taxon in the classification. 
 #' @param class_sep (\code{character} of length 1)
 #' Used with the \code{class} term in the \code{key} argument.
 #' The character(s) used to separate individual taxa within a classification.
+#' After the string defined by the \code{class} capture group in \code{regex} is split by \code{class_sep},
+#' its capture groups are extracted by \code{class_regex} and defined by \code{class_key}.
+#' If \code{NULL}, every match of \code{class_regex} is used instead with first splitting by \code{class_sep}.
 #' @param class_rev (\code{logical} of length 1)
 #' Used with the \code{class} term in the \code{key} argument.
 #' If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.
@@ -99,7 +104,7 @@
 #' # Look up taxonomic data online using sequence ID
 #' unite_ex_data <- extract_taxonomy(sequences,
 #'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                 key = c(name = "taxon_name", seq_id = "item_id",
+#'                                 key = c(name = "name", seq_id = "item_id",
 #'                                        other_id = "item_info", tax_string = "item_info"))
 #' }
 #' 
@@ -114,11 +119,11 @@ extract_taxonomy <- function(input, ...) {
 #' @export
 #' @rdname extract_taxonomy
 extract_taxonomy.default <- function(input,
-                                     key = c("class", "taxon_id", "taxon_name", "taxon_info", "item_id", "item_info"),
+                                     key = c("class", "taxon_id", "name", "taxon_info", "item_id", "item_info"),
                                      regex = "(.*)",
-                                     class_key = c("taxon_name", "taxon_id", "taxon_info"),
+                                     class_key = c("name", "taxon_id", "taxon_info"),
                                      class_regex = "(.*)",
-                                     class_sep = ";",
+                                     class_sep = NULL,
                                      class_rev = FALSE,
                                      database = c("none", "ncbi", "itis", "eol", "col", "tropicos", "nbn"),
                                      allow_na = TRUE,
@@ -130,24 +135,25 @@ extract_taxonomy.default <- function(input,
   my_print <- function(text, level = "low") {
     options <- c("none", "low", "high")
     level <- factor(level, ordered = TRUE, levels = options)
-    if (level <= verbosity) { message(text) }
+    if (level <= verbosity[1]) { message(text) }
   }
   # Validate and standardize input ----------------------------------------------------------------
+  my_print(level = "high", "Validating input ----------------------------------")
   # vigilance 
   vigilance <- match.arg(vigilance)
   # verbosity
   verbosity <- match.arg(verbosity)
   # input
-  input <- validate_regex_match(input, regex, vigilance = vigilance)
+  input <- validate_regex_match(input, regex)
   # regex and key
-  key <- match.arg(key, several.ok = ! missing(key))
+  if (missing(key)) { key <- key[1] }
   key <- validate_regex_key_pair(regex, key, multiple_allowed = c("taxon_info", "item_info"))
   # classification regex and key
-  class_key <- match.arg(class_key, several.ok = ! missing(class_key))
+  if (missing(class_key)) { class_key <- class_key[1] }
   class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = c("taxon_info"))
   # classification sep
-  if (class(class_sep) != "character" | length(class_sep) != 1) {
-    stop('"class_sep" must be a character vector of length 1')
+  if (!is.null(class_sep) && (class(class_sep) != "character" | length(class_sep) != 1)) {
+    stop('"class_sep" must be a character vector of length 1 or NULL')
   }
   # classification order
   if (class(class_rev) != "logical" | length(class_rev) != 1) {
@@ -155,8 +161,12 @@ extract_taxonomy.default <- function(input,
   }
   # database
   database <- match.arg(database)
+  if (database == "none" && ! "class" %in% key) {
+    stop("Cannot look up data without a `database` specified.")
+  }
 
   # Parse input -----------------------------------------------------------------------------------
+  my_print(level = "high", "Parsing input -------------------------------------")
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
   colnames(parsed_input) <- c("match", key)
   # Consolidate item data
@@ -170,16 +180,53 @@ extract_taxonomy.default <- function(input,
   # This step produces a list of dataframes corresponding the in input values.
   # The rows of each data.frame in the list correspond to taxa in a classification.
   # Columns correspond to information for each taxon.
-  precedence <- c("class", "taxon_id", "item_id", "taxon_name")
+  my_print(level = "high", "Getting item classifications ----------------------")
+  precedence <- c("class", "taxon_id", "item_id", "name")
   classification_data <- parsed_input[ , precedence[precedence %in% key], drop = FALSE] # extract and order data that can be used to get classifications
   classification_func <- get(paste0("class_from_", colnames(classification_data)[1]))
   current_arg_values <- mget(names(formals(extract_taxonomy.default)))
   current_arg_values <- current_arg_values[! names(current_arg_values) %in% c( "input", "...")]
   item_classifications <- do.call(classification_func, c(classification_data, current_arg_values))
-  
+
   # Infer taxonomy structure ----------------------------------------------------------------------
-  taxonomy <- class_to_taxonomy(item_classifications) # returns an `classified` object with no item data
-}
+  my_print(level = "high", "Inferring taxonomic structure ---------------------")
+  if ("taxon_id" %in% colnames(item_classifications[[1]])) {
+    class_source <- "taxon_id"
+  } else {
+    class_source <- "name"
+  }
+  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
+
+  # Add taxon info columns to taxon_data ----------------------------------------------------------
+  my_print(level = "high", "Formatting output ---------------------------------")
+  taxon_info_column <- function(content, col_name) {
+    taxon_values <- lapply(split(content, taxonomy$item_taxon_id), unique)
+    if (any(lapply(taxon_values, length) > 1)) {
+      stop(paste0('Values for "', col_name, '" are not consistent with the inferred taxonomy (More than one unique value found for at least one taxon). Perhaps a "item_info" key value would be more appropriate?'))
+    }
+    unlist(taxon_values)[taxonomy$taxon_id]
+  }
+  if ("taxon_info" %in% key) {
+    taxon_info_col_names <- names(key)[key == "taxon_info"]
+    taxon_info_source_cols <- setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
+                                       taxon_info_col_names)
+    new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
+                          SIMPLIFY = FALSE)
+    taxonomy$taxon_data <- cbind(taxonomy$taxon_data, new_columns, stringsAsFactors = FALSE) 
+  }
+  
+  # Rename duplicated column names
+  colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
+  colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))
+
+  # Return output
+  my_print(level = "low",
+           paste0(length(input), " inputs used to classify ", nrow(taxonomy$item_data),
+                  " items by ", length(taxonomy$taxon_id), " taxa."))
+  return(taxonomy)
+  }
+
+
 
 
 #' @method extract_taxonomy DNAbin

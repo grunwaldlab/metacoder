@@ -56,7 +56,7 @@ inter_circle_gap <- function(x, y, r) {
 #===================================================================================================
 #' Find optimal range
 #' 
-#' Finds optimal max and min value useing an optimality criterion.
+#' Finds optimal max and min value using an optimality criterion.
 #' 
 #' @param max_range (\code{numeric} of length 2) The min and max boundries to the search space for
 #' the optimal maximum value.

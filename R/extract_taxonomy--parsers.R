@@ -25,9 +25,25 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
     rep(NA, length(item_id))
   }
   
+  # Look up classifications
   database <- match.arg(database)
-  result <- map_unique(item_id, get(paste0("using_", database)))
-  result <- lapply(result, function(x) setNames(x, c("taxon_name", "rank", "taxon_id")))
+  result <- suppressWarnings(map_unique(item_id, get(paste0("using_", database))))
+  # Check for errors
+  error_indexes <- is.na(result)
+  if (sum(error_indexes) > 0) {
+    invalid_list <- paste("   ", which(error_indexes), ": ", item_id[error_indexes], "\n")
+    if (length(invalid_list) > 10) { invalid_list <- c(invalid_list[1:10], "    ...") }
+    vigilant_report(paste0(collapse = "",
+                           c("The queries to '", database, "' for the following ", sum(error_indexes),
+                             " of ", length(item_id), " item IDs failed to return classifications:\n",
+                             invalid_list,
+                             "NOTE: The function that get classifications from IDs works in batches. ",
+                             "If any of the IDs in a batch is invalid, the whole batch fails. ",
+                             "Therefore, not all the IDs listed are necessarily invalid.")))
+  }
+  # Format result
+  result[!error_indexes] <- lapply(result[!error_indexes],
+                                   function(x) setNames(x, c("name", "rank", "taxon_id")))
   return(result)
 }
 
@@ -42,13 +58,13 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
 #' The identity of the capturing groups defined using \code{class_iregex}.
 #' The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 #' Any names added to the terms will be used as column names in the output.
-#' At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+#' At least \code{"taxon_id"} or \code{"name"} must be specified.
 #' Only \code{"taxon_info"} can be used multiple times.
 #' Each term must be one of those decribed below:
 #'  \describe{
 #'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
 #'          Requires an internet connection.}
-#'    \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
 #'          by a particular \code{database}. Requires an internet connection.}
 #'    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
 #'  }
@@ -71,30 +87,44 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
 #' 
 #' @keywords internal
 class_from_class <- function(class, class_key, class_regex, class_sep, class_rev, database, ...) {
-  # Split each lineage by the separation character
-  split_input <- strsplit(class, class_sep)
+  # Check input
+  if (all(class == "")) {
+    stop("All classifications are empty strings. Check that the regex supplied matches the entire classification.")
+  }
+  
+  # Extract each capture group 
+  if (! is.null(class_sep)) {
+    split_input <- strsplit(class, class_sep, fixed = FALSE)
+    result <- lapply(split_input,
+                     function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
+  } else {
+    result <- lapply(stringr::str_match_all(class, class_regex), function(x) data.frame(x[, -1, drop = FALSE], stringsAsFactors = FALSE))
+  }
+  
   # Reverse the order if needed
   if (class_rev) {
-    split_input <- lapply(split_input, rev)
+    result <- lapply(result, function(x) {
+      x <- x[rev(1:nrow(x)), ]
+      row.names(x) <- NULL
+      x
+    })
   }
-  # Extract regex capture groups
-  result <- lapply(split_input,
-                   function(x) data.frame(stringr::str_match(x, class_regex), stringsAsFactors = FALSE)[, -1, drop = FALSE])
+  
   # Name columns in each classification according to the key
-  result <- lapply(result, function(x) setNames(x, class_key))
+  result <- lapply(result, function(x) setNames(x, names(class_key)))
   
   # Add taxon_id column if missing
-  if (! "taxon_id" %in% class_key && "taxon_name" %in% class_key && database != "none") {
-    unique_taxon_names <- unique(unlist(lapply(result, function(x) x$taxon_name)))
+  if (! "taxon_id" %in% class_key && "name" %in% class_key && database != "none") {
+    unique_taxon_names <- unique(unlist(lapply(result, function(x) x$name)))
     name_id_key <- get_id_from_name(unique_taxon_names, database)
-    result <- lapply(result, function(x) {x$taxon_id = name_id_key[x$taxon_name]; x})
+    result <- lapply(result, function(x) {x$taxon_id = name_id_key[x$name]; x})
   }
   
-  # Add taxon_name column if missing
-  if (! "taxon_name" %in% class_key && "taxon_id" %in% class_key && database != "none") {
+  # Add name column if missing
+  if (! "name" %in% class_key && "taxon_id" %in% class_key && database != "none") {
     unique_taxon_ids <- unique(unlist(lapply(result, function(x) x$taxon_id)))
     id_name_key <- get_name_from_id(unique_taxon_ids, database)
-    result <- lapply(result, function(x) {x$taxon_name = id_name_key[x$taxon_id]; x})
+    result <- lapply(result, function(x) {x$name = id_name_key[x$taxon_id]; x})
   }
   
   return(result)
@@ -142,3 +172,53 @@ get_name_from_id <- function(id, database) {
   names(name_key) <- id
   return(name_key)
 }
+
+
+#' Retrieve classifications from taxon names
+#' 
+#' Retrieve taxonomic classifications from taxon names using a specified database.
+#' 
+#' @param name (\code{character})
+#' The name of a taxon. Not necessarily unique, but are interpretable by a particular \code{database}.
+#' Requires an internet connection.
+#' @param database (\code{character} of length 1)
+#' The name of the database that patterns given in  \code{parser} will apply to.
+#' Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
+#' "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
+#' internet. NOTE: Only \code{"ncbi"} has been tested so far.
+#' @param ... Not used
+#' 
+#' @return \code{list} of \code{data.frame}
+#' 
+#' @keywords internal
+class_from_name <- function(name, database, ...) {
+  result <- map_unique(name, taxize::classification, ask = FALSE, rows = 1, db = database)
+  result <- lapply(result, function(x) setNames(x, c("name", "rank", "taxon_id")))
+  return(result)
+}
+
+
+#' Retrieve classifications from taxon IDs
+#' 
+#' Retrieve taxonomic classifications from taxon IDs using a specified database.
+#' 
+#' @param name (\code{character})
+#' The name of a taxon. Not necessarily unique, but are interpretable by a particular \code{database}.
+#' Requires an internet connection.
+#' @param database (\code{character} of length 1)
+#' The name of the database that patterns given in  \code{parser} will apply to.
+#' Valid databases include "ncbi", "itis", "eol", "col", "tropicos",
+#' "nbn", and "none". \code{"none"} will cause no database to be quired; use this if you want to not use the
+#' internet. NOTE: Only \code{"ncbi"} has been tested so far.
+#' @param ... Not used
+#' 
+#' @return \code{list} of \code{data.frame}
+#' 
+#' @keywords internal
+class_from_taxon_id <- function(taxon_id, database, ...) {
+  result <- map_unique(taxon_id, taxize::classification, ask = FALSE, rows = 1, db = database)
+  result <- lapply(result, function(x) setNames(x, c("name", "rank", "taxon_id")))
+  return(result)
+}
+
+
