@@ -459,3 +459,117 @@ sum.classified <- function(...) {
              taxon_data = new_taxon_data,
              item_data = new_item_data)
 }
+
+
+#' Count items in \code{\link{classified}}
+#'
+#' Count items in \code{\link{classified}}
+#'
+#' @param obj (\code{\link{classified}})
+#' @param subset (\code{character}) The \code{taxon_id}s to get counts for.
+#'
+#' @return \code{numeric} of length 1
+#'
+#' @keywords internal
+item_count <- function(obj, subset = taxon_ids(obj)) {
+  recursive_part <- function(taxon) {
+    
+  }
+  
+  # Get parents of target taxa
+  parents <- supertaxa(obj, subset = subset)
+  # Find starting points for recursive search/count (trim the tree)
+  subroots(obj, )
+  # Recursivly count taxa in starting points
+  
+  # ? Filter out non-target counts ?
+  
+}
+
+
+#' Get all supertaxa of a taxon
+#'
+#' Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
+#' object of type \code{classified}
+#'
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
+#' @param subset (\code{character})
+#' Taxon IDs for which supertaxa will be returned.
+#' Default: All taxon in \code{obj} will be used.
+#' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
+#'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.
+#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#'   vector of unique taxon IDs
+#' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
+#'
+#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
+#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
+#'   IDs for all \code{target} taxa are returned in a single vector.
+#'   
+#' @keywords internal
+supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE, include_target = FALSE) {
+  get_supertaxa(targets = subset, taxa = obj$taxon_id, parents = obj$parent_id,
+                recursive = recursive, simplify = simplify, include_target = include_target)
+}
+
+
+#' Get root taxa
+#' 
+#' Return the root taxa for a \code{\link{classified}} object.
+#' Can also be used to get the roots of a subset of taxa.
+#' 
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
+#' @param subset (\code{character})
+#' Taxon IDs for which supertaxa will be returned.
+#' Default: All taxon in \code{obj} will be used.
+#' 
+#' @return \code{character}
+#'  
+#' @keywords internal
+roots <- function(obj, subset = taxon_ids(obj)) {
+  parents <- supertaxa(obj, subset = subset, include_target = TRUE)
+  is_global_root <- vapply(parents, function(x)length(x) == 1, logical(1))
+  if (missing(subset)) {
+    is_root <- is_global_root
+  } else {
+    is_root <- is_global_root | vapply(parents, function(x) ! any(x[-1] %in% subset), logical(1))
+  }
+  subset[is_root]
+}
+
+
+#' Get taxon IDs
+#' 
+#' Return the taxon IDs for a \code{\link{classified}} object.
+#' 
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal
+taxon_ids <- function(obj) {
+  unname(obj$taxon_id)
+}
+
+
+#' Get parent taxon IDs
+#' 
+#' Return the taxon IDs for a parents of taxon IDs in an \code{\link{classified}} object.
+#' 
+#' @param obj (\code{classified})
+#' The \code{classified} object containing taxon information to be queried.
+#' @param subset (\code{character})
+#' Taxon IDs for which parents will be returned.
+#' Default: All taxon in \code{obj} will be used.
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal
+parent_ids <- function(obj, subset = taxon_ids(obj)) {
+  if (missing(subset)) {
+    parents <- obj$parent_id
+  } else {
+    parents <- obj$parent_id[subset]
+  }
+  unname(parents)
+}
