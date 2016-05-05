@@ -66,11 +66,16 @@ Each term must be one of those decribed below:
 
 \item{class_regex}{(\code{character} of length 1)
 A regular expression with capturing groups indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument.
-The identity of the information must be specified using the \code{class_key} argument.}
+The identity of the information must be specified using the \code{class_key} argument.
+The \code{class_sep} option can be used to split the classification into data for each taxon before matching.
+If \code{class_sep} is \code{NULL}, each match of \code{class_regex} defines a taxon in the classification.}
 
 \item{class_sep}{(\code{character} of length 1)
 Used with the \code{class} term in the \code{key} argument.
-The character(s) used to separate individual taxa within a classification.}
+The character(s) used to separate individual taxa within a classification.
+After the string defined by the \code{class} capture group in \code{regex} is split by \code{class_sep},
+its capture groups are extracted by \code{class_regex} and defined by \code{class_key}.
+If \code{NULL}, every match of \code{class_regex} is used instead with first splitting by \code{class_sep}.}
 
 \item{class_rev}{(\code{logical} of length 1)
 Used with the \code{class} term in the \code{key} argument.

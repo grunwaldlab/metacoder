@@ -198,11 +198,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   item_index <- data$item_data[order(as.numeric(names(data$item_data)))]
   
   # Format the output into a classified object
-  if ("taxon_id" %in% colnames(taxonomy)) {
-    taxon_id <- taxonomy$taxon_id
-    parent_id <- taxon_id[taxonomy$my_parent_]
-    item_id <- taxon_id[item_index]
-  } else if (is.null(taxonomy))  {
+  if (is.null(taxonomy))  {
     taxon_id <- character(0)
     parent_id <- integer(0)
     item_id <- rep(NA, nrow(item_data))
