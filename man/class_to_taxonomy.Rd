@@ -4,7 +4,7 @@
 \alias{class_to_taxonomy}
 \title{List of classifications to taxonomy tree}
 \usage{
-class_to_taxonomy(classifications, id_column, make_ids = FALSE)
+class_to_taxonomy(classifications, id_column, item_data = NULL)
 }
 \arguments{
 \item{classifications}{(\code{list} of \code{data.frame}) 
@@ -16,8 +16,8 @@ Rows should correspond to taxa and columns to information associated with those 
 The name of the column present in each \code{data.frame} in \code{classifications} that will
 be used to infer the taxonomic tree structure.}
 
-\item{make_ids}{(\code{logical} of length 1) If \code{TRUE}, make unique IDs based off of the
-contents of \code{id_column}.}
+\item{item_data}{(\code{data.frame}) 
+Data associated with the \code{classifications}.}
 }
 \value{
 An object of type \code{classified}

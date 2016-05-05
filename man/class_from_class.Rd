@@ -15,13 +15,13 @@ The unparsed class information.}
 The identity of the capturing groups defined using \code{class_iregex}.
 The length of \code{class_key} must be equal to the number of capturing groups specified in \code{class_regex}.
 Any names added to the terms will be used as column names in the output.
-At least \code{"taxon_id"} or \code{"taxon_name"} must be specified.
+At least \code{"taxon_id"} or \code{"name"} must be specified.
 Only \code{"taxon_info"} can be used multiple times.
 Each term must be one of those decribed below:
  \describe{
    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
          Requires an internet connection.}
-   \item{\code{taxon_name}}{The name of a taxon. Not necessarily unique, but are interpretable
+   \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
          by a particular \code{database}. Requires an internet connection.}
    \item{\code{taxon_info}}{Arbitrary taxon info you want included in the output. Can be used more than once.}
  }}

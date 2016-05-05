@@ -190,11 +190,8 @@ extract_taxonomy.default <- function(input,
 
   # Infer taxonomy structure ----------------------------------------------------------------------
   my_print(level = "high", "Inferring taxonomic structure ---------------------")
-  if ("taxon_id" %in% colnames(item_classifications[[1]])) {
-    class_source <- "taxon_id"
-  } else {
-    class_source <- "name"
-  }
+  class_precedence <- c("taxon_id", "name")
+  class_source <- class_precedence[class_precedence %in% class_key][1]
   taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
 
   # Add taxon info columns to taxon_data ----------------------------------------------------------

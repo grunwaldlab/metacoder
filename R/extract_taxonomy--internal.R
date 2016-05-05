@@ -210,7 +210,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   classified(taxon_id = taxon_id,
              parent_id = parent_id,
              item_taxon_id = item_id,
-             taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_", "taxon_id"), drop = FALSE],
+             taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
              item_data = item_data)
 }
 

@@ -42,6 +42,24 @@ test_that("Exracting by classification names works", {
   expect_s3_class(result, "classified")
   expect_true("Caniformia" %in% result$taxon_data$name)
 })
+test_that("Looking up IDs for classification names works", {
+  check_for_internet()
+  result <- extract_taxonomy(c("Ascomycota_sp|AY773457|SH189849.06FU|reps|k__Fungi;p__Ascomycota;c__unidentified;o__unidentified;f__unidentified;g__unidentified;s__Ascomycota_sp", 
+                               "Myrmecridium_schulzeri|EU041774|SH189850.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_schulzeri", 
+                               "Myrmecridium_sp|JX156014|SH189851.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_sp"),
+                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                             key = c(name = "item_info", sequence_id = "item_info",
+                                     other_id = "item_info", "class"),
+                             class_regex = "^(.*)__(.*)$",
+                             class_key = c(unite_rank = "taxon_info", "name"),
+                             class_sep = ";",
+                             database = "ncbi")
+  expect_s3_class(result, "classified")
+  expect_equal(result$taxon_data$ncbi_id[1], "4751")
+})
+
+
+
 
 #|
 #| ### Exracting by classification IDs
@@ -49,7 +67,7 @@ test_that("Exracting by classification IDs works", {
   result <- extract_taxonomy(test_data, key = "class", regex = "class_id: (.*?)$", 
                              class_key = "taxon_id", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "classified")
-  expect_true("379583" %in% result$taxon_id)
+  expect_true("379583" %in% result$taxon_data$taxon_id)
 })
 
 #|
@@ -58,7 +76,7 @@ test_that("Exracting by taxon name works", {
   check_for_internet()
   result <- extract_taxonomy(test_data, key = "name", regex = "name: (.*?) - ", database = "ncbi")
   expect_s3_class(result, "classified")
-  expect_true("379583" %in% result$taxon_id)
+  expect_true("379583" %in% result$taxon_data$ncbi_id)
 })
 
 #|

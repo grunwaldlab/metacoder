@@ -43,7 +43,7 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
   }
   # Format result
   result[!error_indexes] <- lapply(result[!error_indexes],
-                                   function(x) setNames(x, c("name", "rank", "taxon_id")))
+                                   function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 
@@ -117,7 +117,8 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
   if (! "taxon_id" %in% class_key && "name" %in% class_key && database != "none") {
     unique_taxon_names <- unique(unlist(lapply(result, function(x) x$name)))
     name_id_key <- get_id_from_name(unique_taxon_names, database)
-    result <- lapply(result, function(x) {x$taxon_id = name_id_key[x$name]; x})
+    col_name <- paste0(database, "_id")
+    result <- lapply(result, function(x) {x[col_name] = name_id_key[x$name]; x})
   }
   
   # Add name column if missing
@@ -193,7 +194,7 @@ get_name_from_id <- function(id, database) {
 #' @keywords internal
 class_from_name <- function(name, database, ...) {
   result <- map_unique(name, taxize::classification, ask = FALSE, rows = 1, db = database)
-  result <- lapply(result, function(x) setNames(x, c("name", "rank", "taxon_id")))
+  result <- lapply(result, function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 
@@ -217,7 +218,7 @@ class_from_name <- function(name, database, ...) {
 #' @keywords internal
 class_from_taxon_id <- function(taxon_id, database, ...) {
   result <- map_unique(taxon_id, taxize::classification, ask = FALSE, rows = 1, db = database)
-  result <- lapply(result, function(x) setNames(x, c("name", "rank", "taxon_id")))
+  result <- lapply(result, function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 

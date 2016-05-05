@@ -55,10 +55,10 @@ classified <- function(taxon_id, parent_id, item_taxon_id,
 #     stop("'taxon_data' and 'item_data' may not share column names")
 #   }
 
-  if ( any(colnames(taxon_data) %in% reserved_col_names()) ) {
-    stop(paste("Column names cannot be one of the following:",
-               paste0(reserved_col_names(), collapse = ", ")))
-  }
+#   if ( any(colnames(taxon_data) %in% reserved_col_names()) ) {
+#     stop(paste("Column names cannot be one of the following:",
+#                paste0(reserved_col_names(), collapse = ", ")))
+#   }
 
   # Check column functions
   is_named <- function(x) {
