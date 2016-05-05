@@ -476,11 +476,11 @@ item_count <- function(obj, subset = taxon_ids(obj)) {
     
   }
   
-  # Get parents of target taxa
-  parents <- supertaxa(obj, subset = subset)
   # Find starting points for recursive search/count (trim the tree)
-  subroots(obj, )
+  subroots <- roots(obj, subset)
+  
   # Recursivly count taxa in starting points
+  unlist(lapply(subroots, recursive_part), recursive = FALSE)
   
   # ? Filter out non-target counts ?
   
@@ -528,7 +528,7 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify =
 #' @keywords internal
 roots <- function(obj, subset = taxon_ids(obj)) {
   parents <- supertaxa(obj, subset = subset, include_target = TRUE)
-  is_global_root <- vapply(parents, function(x)length(x) == 1, logical(1))
+  is_global_root <- vapply(parents, function(x) length(x) == 1, logical(1))
   if (missing(subset)) {
     is_root <- is_global_root
   } else {
