@@ -461,8 +461,24 @@ item_counts <- function(obj, subset = taxon_ids(obj)) {
 #'   
 #' @keywords internal
 supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE, include_target = FALSE) {
-  get_supertaxa(targets = subset, taxa = obj$taxon_id, parents = obj$parent_id,
-                recursive = recursive, simplify = simplify, include_target = include_target)
+  recursive_part <- function(taxon) {
+    supertaxon <- obj$parent_id[taxon]
+    if (recursive) {
+      if (is.na(supertaxon)) {
+        output <- taxon
+      } else {
+        output <- c(taxon, recursive_part(supertaxon))
+      }
+    } else {
+      output <- c(taxon, supertaxon)
+    }
+    return(unname(output))
+  }
+  
+  supertaxa <- setNames(lapply(subset, recursive_part), subset)
+  if (!include_target) supertaxa <- lapply(supertaxa, `[`, -1)
+  if (simplify) supertaxa <- unlist(supertaxa)
+  return(supertaxa)
 }
 
 
@@ -487,8 +503,12 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify =
 #'
 #' @keywords internal
 subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
+  get_children <- function(taxon) {
+    unname(obj$taxon_id[obj$parent_id == taxon & ! is.na(obj$parent_id)])
+  }
+  
   recursive_part <- function(taxon) {
-    children <- obj$taxon_id[obj$parent_id == taxon & ! is.na(obj$parent_id)]
+    children <- get_children(taxon)
     if (length(children) == 0) {
       output <- list(character(0))
       names(output) <- taxon
@@ -500,8 +520,16 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = F
     return(output)
   }
   
-  starting_taxa <- roots(obj, subset)
-  unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
+  if (recursive) {
+    starting_taxa <- roots(obj, subset)
+    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
+  } else {
+    output <- setNames(lapply(subset, get_children), subset)
+  }
+  if (simplify) {
+    output <- unique(unlist(output))
+  }
+  return(output)
 }
 
 
@@ -525,8 +553,13 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = F
 #'
 #' @keywords internal
 items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
-  get_taxon_items(targets = subset, taxa = obj$taxon_id, parents = obj$parent_id, 
-                  items = obj$item_taxon_id, recursive = recursive, simplify = simplify) 
+  my_subtaxa <- subtaxa(obj, subset, recursive = recursive)
+  item_key <- setNames(lapply(subset, function(x) which(x == obj$item_taxon_id)), subset)
+  output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[x])))
+  if (simplify) {
+    output <- unique(unlist(output))
+  }
+  return(output)
 }
 
 
