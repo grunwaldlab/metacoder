@@ -159,7 +159,7 @@ subset.classified <- function(x, taxon, item, subtaxa = TRUE, supertaxa = FALSE,
                                 parents = x$parent_id,
                                 recursive = TRUE,
                                 simplify = TRUE,
-                                include_target = FALSE))
+                                include_input = FALSE))
   }
   new_taxa <- unique(new_taxa)
 
@@ -374,7 +374,7 @@ split_by_taxon.classified <- function(obj) {
   }
 
   mapply(process_one,
-         subtaxa(obj), supertaxa(obj, include_target = TRUE), items(obj),
+         subtaxa(obj), supertaxa(obj, include_input = TRUE), items(obj),
          SIMPLIFY = FALSE)
 }
 
@@ -421,7 +421,7 @@ sum.classified <- function(...) {
 #'
 #' @keywords internal
 taxon_ranks <- function(obj, subset = taxon_ids(obj)) {
-  vapply(supertaxa(obj, subset, include_target = TRUE), length, numeric(1))
+  vapply(supertaxa(obj, subset, include_input = TRUE), length, numeric(1))
 }
 
 
@@ -445,22 +445,27 @@ item_counts <- function(obj, subset = taxon_ids(obj)) {
 #' Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
 #' object of type \code{classified}
 #'
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
+#' @param obj (\code{classified})
+#' The \code{classified} object containing taxon information to be queried.
 #' @param subset (\code{character})
 #' Taxon IDs for which supertaxa will be returned.
 #' Default: All taxon in \code{obj} will be used.
-#' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
+#' @param recursive (\code{logical})
+#' If \code{FALSE}, only return the supertaxa one level above the
 #'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.
-#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
+#' @param simplify (\code{logical})
+#' If \code{TRUE}, then combine all the results into a single
 #'   vector of unique taxon IDs
-#' @param include_target (\code{logical}) If \code{TRUE}, the target taxa are included in the output
+#' @param include_input (\code{logical})
+#' If \code{TRUE}, the input taxa are included in the output
 #'
 #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
 #'   IDs for all \code{target} taxa are returned in a single vector.
 #'   
 #' @keywords internal
-supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE, include_target = FALSE) {
+supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
+                      simplify = FALSE, include_input = FALSE) {
   recursive_part <- function(taxon) {
     supertaxon <- obj$parent_id[taxon]
     if (recursive) {
@@ -476,7 +481,7 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify =
   }
   
   supertaxa <- setNames(lapply(subset, recursive_part), subset)
-  if (!include_target) supertaxa <- lapply(supertaxa, `[`, -1)
+  if (!include_input) supertaxa <- lapply(supertaxa, `[`, -1)
   if (simplify) supertaxa <- unlist(supertaxa)
   return(supertaxa)
 }
@@ -496,27 +501,39 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify =
 #' @param simplify (\code{logical})
 #' If \code{TRUE}, then combine all the results into a single
 #'   vector of unique taxon IDs
+#' @param include_input (\code{logical})
+#' If \code{TRUE}, the input taxa are included in the output
 #'
 #' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
 #'   IDs for all \code{target} taxa are returned in a single vector.
 #'
 #' @keywords internal
-subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
+subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
+                    simplify = FALSE, include_input = FALSE) {
   get_children <- function(taxon) {
     unname(obj$taxon_id[obj$parent_id == taxon & ! is.na(obj$parent_id)])
   }
   
   recursive_part <- function(taxon) {
+    # Get immediate children of current taxon
     children <- get_children(taxon)
-    if (length(children) == 0) {
-      output <- list(character(0))
-      names(output) <- taxon
+    # Run this function on them to get their output
+    child_output <- lapply(children, recursive_part)
+    child_output <- setNames(unlist(child_output, recursive = FALSE),
+                             unlist(lapply(child_output, names)))
+    # Get all subtaxa from the names of the child output
+    if (include_input) {
+      child_taxa <- c(taxon, names(child_output))
     } else {
-      child_output <- lapply(children, recursive_part)
-      child_output <- setNames(unlist(child_output, recursive = FALSE), unlist(lapply(child_output, names)))
-      output <- setNames(c(list(names(child_output)), child_output), c(taxon, names(child_output)))
+      child_taxa <- names(child_output)
+      if (is.null(child_taxa)) {
+        child_taxa <- character(0)
+      }
     }
+    # Combine the child output with the subtaxa for the current taxon
+    output <- setNames(c(list(child_taxa), child_output),
+                       c(taxon, names(child_output)))
     return(output)
   }
   
@@ -525,6 +542,9 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = F
     output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
   } else {
     output <- setNames(lapply(subset, get_children), subset)
+    if (include_input) {
+      output <- mapply(function(x, n) c(n, x), output, names(output), SIMPLIFY = FALSE)
+    }
   }
   if (simplify) {
     output <- unique(unlist(output))
@@ -542,8 +562,9 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = F
 #' The \code{classified} object containing taxon information to be queried.
 #' @param subset (\code{character})
 #' Taxon IDs for which items will be returned.
-#' @param recursive (\code{logical}) If \code{FALSE}, only return the item assigned to the specified
-#'   target taxa, not its subtaxa. If \code{TRUE}, return all the items of every subtaxa, etc.
+#' @param recursive (\code{logical})
+#' If \code{FALSE}, only return the item assigned to the specified input taxa, not subtaxa.
+#' If \code{TRUE}, return all the items of every subtaxa, etc.
 #' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
 #'   vector of unique item indexes.
 #'
@@ -553,7 +574,7 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = F
 #'
 #' @keywords internal
 items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
-  my_subtaxa <- subtaxa(obj, subset, recursive = recursive)
+  my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
   item_key <- setNames(lapply(subset, function(x) which(x == obj$item_taxon_id)), subset)
   output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[x])))
   if (simplify) {
@@ -577,7 +598,7 @@ items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FAL
 #'  
 #' @keywords internal
 roots <- function(obj, subset = taxon_ids(obj)) {
-  parents <- supertaxa(obj, subset = subset, include_target = TRUE)
+  parents <- supertaxa(obj, subset = subset, include_input = TRUE)
   is_global_root <- vapply(parents, function(x) length(x) == 1, logical(1))
   if (missing(subset)) {
     is_root <- is_global_root

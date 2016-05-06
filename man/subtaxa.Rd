@@ -4,7 +4,8 @@
 \alias{subtaxa}
 \title{Get all subtaxa of a taxon}
 \usage{
-subtaxa(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE)
+subtaxa(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE,
+  include_input = FALSE)
 }
 \arguments{
 \item{obj}{(\code{classified})
@@ -20,6 +21,9 @@ If \code{FALSE}, only return the subtaxa one level above the
 \item{simplify}{(\code{logical})
 If \code{TRUE}, then combine all the results into a single
   vector of unique taxon IDs}
+
+\item{include_input}{(\code{logical})
+If \code{TRUE}, the input taxa are included in the output}
 }
 \value{
 If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned

@@ -13,8 +13,9 @@ The \code{classified} object containing taxon information to be queried.}
 \item{subset}{(\code{character})
 Taxon IDs for which items will be returned.}
 
-\item{recursive}{(\code{logical}) If \code{FALSE}, only return the item assigned to the specified
-target taxa, not its subtaxa. If \code{TRUE}, return all the items of every subtaxa, etc.}
+\item{recursive}{(\code{logical})
+If \code{FALSE}, only return the item assigned to the specified input taxa, not subtaxa.
+If \code{TRUE}, return all the items of every subtaxa, etc.}
 
 \item{simplify}{(\code{logical}) If \code{TRUE}, then combine all the results into a single
 vector of unique item indexes.}

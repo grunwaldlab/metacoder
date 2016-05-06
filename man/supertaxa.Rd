@@ -5,22 +5,26 @@
 \title{Get all supertaxa of a taxon}
 \usage{
 supertaxa(obj, subset = taxon_ids(obj), recursive = TRUE,
-  simplify = FALSE, include_target = FALSE)
+  simplify = FALSE, include_input = FALSE)
 }
 \arguments{
-\item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be queried.}
+\item{obj}{(\code{classified})
+The \code{classified} object containing taxon information to be queried.}
 
 \item{subset}{(\code{character})
 Taxon IDs for which supertaxa will be returned.
 Default: All taxon in \code{obj} will be used.}
 
-\item{recursive}{(\code{logical}) If \code{FALSE}, only return the supertaxa one level above the
-target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.}
+\item{recursive}{(\code{logical})
+If \code{FALSE}, only return the supertaxa one level above the
+  target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.}
 
-\item{simplify}{(\code{logical}) If \code{TRUE}, then combine all the results into a single
-vector of unique taxon IDs}
+\item{simplify}{(\code{logical})
+If \code{TRUE}, then combine all the results into a single
+  vector of unique taxon IDs}
 
-\item{include_target}{(\code{logical}) If \code{TRUE}, the target taxa are included in the output}
+\item{include_input}{(\code{logical})
+If \code{TRUE}, the input taxa are included in the output}
 }
 \value{
 If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
