@@ -487,8 +487,21 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify =
 #'
 #' @keywords internal
 subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
-  get_subtaxa(targets = subset, taxa = obj$taxon_id, parents = obj$parent_id, 
-              recursive = recursive, simplify = simplify)
+  recursive_part <- function(taxon) {
+    children <- obj$taxon_id[obj$parent_id == taxon & ! is.na(obj$parent_id)]
+    if (length(children) == 0) {
+      output <- list(character(0))
+      names(output) <- taxon
+    } else {
+      child_output <- lapply(children, recursive_part)
+      child_output <- setNames(unlist(child_output, recursive = FALSE), unlist(lapply(child_output, names)))
+      output <- setNames(c(list(names(child_output)), child_output), c(taxon, names(child_output)))
+    }
+    return(output)
+  }
+  
+  starting_taxa <- roots(obj, subset)
+  unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
 }
 
 
