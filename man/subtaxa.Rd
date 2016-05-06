@@ -33,5 +33,4 @@ If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
 \description{
 Return the taxon IDs of all subtaxa in an object of type \code{classified}
 }
-\keyword{internal}
 

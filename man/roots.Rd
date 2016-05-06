@@ -20,5 +20,4 @@ Default: All taxon in \code{obj} will be used.}
 Return the root taxa for a \code{\link{classified}} object.
 Can also be used to get the roots of a subset of taxa.
 }
-\keyword{internal}
 

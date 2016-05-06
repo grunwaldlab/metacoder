@@ -104,7 +104,7 @@ set.seed(5) #1 4 5(tall)
 ```
 
 ```{r}
-plot(data, vertex_size = item_count, vertex_label = name, vertex_color = item_count)
+plot(data, vertex_size = item_counts, vertex_label = name, vertex_color = item_counts)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -122,8 +122,8 @@ set.seed(7)
 ```
 
 ```{r}
-plot(data, vertex_size = item_count, edge_color = rank,
-     vertex_label = name, vertex_color = item_count,
+plot(data, vertex_size = item_counts, edge_color = rank,
+     vertex_label = name, vertex_color = item_counts,
      vertex_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
      layout = "davidson-harel", overlap_avoidance = 0.5)
@@ -146,8 +146,8 @@ set.seed(1)
 ```
 
 ```{r}
-plot(subset(data, name == "Archaea"), vertex_size = item_count, 
-     vertex_label = name, vertex_color = item_count, layout = "fruchterman-reingold")
+plot(subset(data, name == "Archaea"), vertex_size = item_counts, 
+     vertex_label = name, vertex_color = item_counts, layout = "fruchterman-reingold")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -163,8 +163,8 @@ set.seed(2)
 
 ```{r}
 subsetted <- subset(data, rank > 1)
-plot(subsetted, vertex_size = item_count, vertex_label = name,
-     vertex_color = item_count, tree_label = name, layout = "davidson-harel")
+plot(subsetted, vertex_size = item_counts, vertex_label = name,
+     vertex_color = item_counts, tree_label = name, layout = "davidson-harel")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -186,7 +186,7 @@ set.seed(1)
 
 ```{r}
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- subset(sampled, item_count > 0, itemless = FALSE) 
+sampled <- subset(sampled, item_counts > 0, itemless = FALSE) 
 ```
 
 ```{r, echo = FALSE}
@@ -194,8 +194,8 @@ set.seed(4)
 ```
 
 ```{r}
-plot(sampled, vertex_size = item_count, vertex_label = item_count, overlap_avoidance = 0.5,
-     vertex_color = item_count, layout = "davidson-harel")
+plot(sampled, vertex_size = item_counts, vertex_label = item_counts, overlap_avoidance = 0.5,
+     vertex_color = item_counts, layout = "davidson-harel")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -221,7 +221,7 @@ set.seed(1)
 ```
 
 ```{r}
-plot(pcr, vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
+plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
      vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
 ```
 
@@ -241,8 +241,8 @@ set.seed(7) # 2 4 5
 library(magrittr) # Adds optional %>% operator for chaining commands
 pcr %>%
   subset(name == "Bacteria") %>%
-  subset(count_amplified < item_count, subtaxa = FALSE) %>% 
-  plot(vertex_size = item_count, vertex_label = name, vertex_color = prop_amplified,
+  subset(count_amplified < item_counts, subtaxa = FALSE) %>% 
+  plot(vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
        vertex_color_range =  c("red", "cyan"),
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
@@ -279,8 +279,8 @@ set.seed(2)
 ```{r}
 pcr %>%
   subset(name == "Bacteria") %>%
-  subset(count_amplified < item_count | count_amplified_2 < item_count, subtaxa = FALSE) %>%
-  plot(vertex_size = item_count, vertex_label = name,
+  subset(count_amplified < item_counts | count_amplified_2 < item_counts, subtaxa = FALSE) %>%
+  plot(vertex_size = item_counts, vertex_label = name,
        vertex_color = prop_diff, vertex_color_range = diverging_palette(),
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```

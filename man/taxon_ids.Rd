@@ -15,5 +15,4 @@ taxon_ids(obj)
 \description{
 Return the taxon IDs for a \code{\link{classified}} object.
 }
-\keyword{internal}
 

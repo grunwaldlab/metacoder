@@ -528,13 +528,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
     max_range <- c(vertex_size_range[2], 2) * square_side_length
   }
   # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  max_important_pairs <- 1000 # Takes into account both size and distance
-  max_biggest_pairs <- 1000
-  max_closest_pairs <- 1000
+  max_important_pairs <- 2000 # Takes into account both size and distance
+  max_biggest_pairs <- 2000
+  max_closest_pairs <- 2000
   if (nrow(all_pairwise) > sum(max_important_pairs, max_biggest_pairs, max_closest_pairs)) {
     all_pairwise$size_sum <- data$vs_trans[all_pairwise$index_1] + data$vs_trans[all_pairwise$index_2]
     all_pairwise$importance <- all_pairwise$size_sum / all_pairwise$distance
-    all_pairwise <- all_pairwise[order(all_pairwise$importance, decreasing = TRUE), ]
+    # all_pairwise <- all_pairwise[order(all_pairwise$importance, decreasing = TRUE), ]
     pair_subset <- c(order(all_pairwise$importance, decreasing = TRUE)[1:max_important_pairs],
                      order(all_pairwise$size_sum, decreasing = TRUE)[1:max_biggest_pairs],
                      order(all_pairwise$distance)[1:max_closest_pairs])
@@ -549,7 +549,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                         max = rep(max_breaks, length(min_breaks)))
     space[space$min <= space$max, ]
   }
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 20)
+  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 30)
   search_space$range_size <- search_space$max - search_space$min
   # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
   find_overlap <- function(a_min, a_max, distance) {
@@ -641,7 +641,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| These shapes must be added to the graph in a specific order.
   #| A list of vertexes is sorted by first vertex depth in the heirarchy and then by vertex size.
   taxon_elements <- function(tid) {
-    circle_resolution <- 50
+    circle_resolution <- 25
     edge_data <- line_coords(x1 = data[tid, 'vx_plot'],
                              y1 = data[tid, 'vy_plot'],
                              x2 = data[data[tid, 'pid_user'], "vx_plot"],

@@ -2,26 +2,29 @@
 % Please edit documentation in R/taxa--classified_class.R
 \name{taxon_data}
 \alias{taxon_data}
-\alias{taxon_data.classified}
 \title{Return taxon data from \code{\link{classified}}}
 \usage{
-taxon_data(...)
-
-\method{taxon_data}{classified}(obj, subset = taxon_data_colnames(obj),
-  calculated_cols = TRUE, drop = TRUE, ...)
+taxon_data(obj, col_subset = taxon_data_colnames(obj),
+  row_subset = taxon_ids(obj), calculated_cols = TRUE, drop = TRUE)
 }
 \arguments{
-\item{...}{Passed to \code{taxon_data.classified}}
-
 \item{obj}{(\code{\link{classified}})}
 
-\item{subset}{(\code{character}) The names of columns, either user defined or generated using \code{taxon_funcs}.
+\item{col_subset}{(\code{character})
+The names of columns, either user defined or generated using \code{taxon_funcs}.
 Default: All columns.}
 
-\item{calculated_cols}{(\code{logical} of length 1) If \code{TRUE}, return calculated columns using
-\code{\link{classified}$taxon_funcs}.}
+\item{row_subset}{(\code{character})
+The taxon_ids of a subset of \code{obj}.
+Default: All rows.}
 
-\item{drop}{(\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
+\item{calculated_cols}{(\code{logical} of length 1)
+If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$taxon_funcs}.
+These values are calculated each time \code{taxon_data} is called since their values can change if 
+the data is subset.}
+
+\item{drop}{(\code{logical} of length 1)
+If \code{TRUE}, if \code{subset} is a single column
 name, then a \code{vector} is returned instead of a \code{data.frame}}
 }
 \value{

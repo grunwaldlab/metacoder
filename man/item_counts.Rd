@@ -9,7 +9,7 @@ item_counts(obj, subset = taxon_ids(obj))
 \arguments{
 \item{obj}{(\code{\link{classified}})}
 
-\item{subset}{(\code{character}) The \code{taxon_id}s to get counts for.}
+\item{subset}{(\code{character}) The \code{taxon_ids}s to get counts for.}
 }
 \value{
 \code{numeric}
@@ -17,5 +17,4 @@ item_counts(obj, subset = taxon_ids(obj))
 \description{
 Count items in \code{\link{classified}}
 }
-\keyword{internal}
 

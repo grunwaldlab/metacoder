@@ -4,20 +4,20 @@
 \alias{classified}
 \title{Create an instance of \code{classified}}
 \usage{
-classified(taxon_id, parent_id, item_taxon_id, taxon_data = NULL,
-  item_data = NULL, taxon_funcs = list(item_count = count_items, rank =
-  get_rank), item_funcs = list())
+classified(taxon_ids, parent_ids, item_taxon_ids, taxon_data = NULL,
+  item_data = NULL, taxon_funcs = list(item_counts = item_counts,
+  taxon_ranks = taxon_ranks), item_funcs = list())
 }
 \arguments{
-\item{taxon_id}{Unique taxon ids}
+\item{taxon_ids}{Unique taxon ids}
 
-\item{parent_id}{Taxon ids of parent taxa of \code{taxon_id}}
+\item{parent_ids}{Taxon ids of parent taxa of \code{taxon_ids}}
 
-\item{item_taxon_id}{Taxon ids of items}
+\item{item_taxon_ids}{Taxon ids of items}
 
-\item{taxon_data}{A \code{data.frame} with rows pretaining to \code{taxon_id}}
+\item{taxon_data}{A \code{data.frame} with rows pretaining to \code{taxon_ids}}
 
-\item{item_data}{A \code{data.frame} with rows pretaining to \code{item_taxon_id}}
+\item{item_data}{A \code{data.frame} with rows pretaining to \code{item_taxon_ids}}
 
 \item{taxon_funcs}{A function that accepts a subset of this object containing information for a single taxa.
 A single value must be returned derived from that information.

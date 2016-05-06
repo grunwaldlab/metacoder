@@ -35,5 +35,4 @@ If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
 Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
 object of type \code{classified}
 }
-\keyword{internal}
 

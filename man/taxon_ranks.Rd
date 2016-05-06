@@ -9,7 +9,7 @@ taxon_ranks(obj, subset = taxon_ids(obj))
 \arguments{
 \item{obj}{(\code{\link{classified}})}
 
-\item{subset}{(\code{character}) The \code{taxon_id}s to get ranks for.}
+\item{subset}{(\code{character}) The \code{taxon_ids}s to get ranks for.}
 }
 \value{
 \code{numeric}
@@ -17,5 +17,4 @@ taxon_ranks(obj, subset = taxon_ids(obj))
 \description{
 Get rank of taxa in an object of type \code{\link{classified}}
 }
-\keyword{internal}
 
