@@ -189,26 +189,3 @@ get_taxon_items <- function(targets, taxa, parents, items, recursive = TRUE, sim
 
   return(output)
 }
-
-
-
-#===================================================================================================
-#' Validate a taxon edge list
-#'
-#' Validate a taxon edge list for use in other functions
-#'
-#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
-#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon. The
-#'   lack of a parent should be coded as \code{NA}.
-#'
-#' @return (\code{logical}) Returns \code{TRUE} if the list is valid.
-#' 
-#' @keywords internal
-validate_edge_list <- function(taxa, parents) {
-  if (length(taxa) == 0) stop("'taxa' has 0 length")
-  if (length(parents) == 0) stop("'parents' has 0 length")
-  if (length(taxa) != length(parents)) stop("'taxa' and 'parents' are of unequal length")
-  if (!all(parents %in% c(taxa, NA))) stop("All 'parent' taxon IDs not found in 'taxa' taxon IDs")
-  if (length(unique(taxa)) != length(taxa)) stop("All 'taxa' not unique.")
-}
-
