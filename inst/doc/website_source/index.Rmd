@@ -90,7 +90,7 @@ Note, that this command will take a while to process.
 The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
 
 ```{r}
-head(taxon_data(data)) # print a few rows of the taxon data
+taxon_data(data, row_subset = 1:10) # print a few rows of the taxon data
 ```
 
 ### Metadiversity Plots
@@ -122,7 +122,7 @@ set.seed(7)
 ```
 
 ```{r}
-plot(data, vertex_size = item_counts, edge_color = rank,
+plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
      vertex_label = name, vertex_color = item_counts,
      vertex_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
@@ -162,7 +162,7 @@ set.seed(2)
 ```
 
 ```{r}
-subsetted <- subset(data, rank > 1)
+subsetted <- subset(data, taxon_ranks > 1)
 plot(subsetted, vertex_size = item_counts, vertex_label = name,
      vertex_color = item_counts, tree_label = name, layout = "davidson-harel")
 ```
