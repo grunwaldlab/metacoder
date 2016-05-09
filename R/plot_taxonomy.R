@@ -261,8 +261,8 @@
 #'  
 #' @examples 
 #' plot(contaminants,
-#'      vertex_size = item_count,
-#'      vertex_color = item_count,
+#'      vertex_size = item_counts,
+#'      vertex_color = item_counts,
 #'      vertex_label = name,
 #'      tree_label = name,
 #'      layout = "fruchterman-reingold")

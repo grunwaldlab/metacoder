@@ -16,4 +16,5 @@ Database to use to look up id.}
 \description{
 Get a taxon's name from its ID
 }
+\keyword{internal}
 

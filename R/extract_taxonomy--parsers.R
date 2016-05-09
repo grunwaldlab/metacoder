@@ -143,7 +143,7 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
 #' @param database (\code{character} of length 1)
 #' Database to use to look up id.
 #' 
-#' @return 
+#' @keywords internal 
 get_id_from_name <- function(name, database) {
   id_from_name_funcs <- list(ncbi = taxize::get_uid,
                              itis = taxize::get_tsn,
@@ -166,7 +166,7 @@ get_id_from_name <- function(name, database) {
 #' @param database (\code{character} of length 1)
 #' Database to use to look up id.
 #' 
-#' @return 
+#' @keywords internal 
 get_name_from_id <- function(id, database) {
   classifications <- map_unique(id, taxize::classification, db = database)
   name_key <- unlist(lapply(classifications, function(x) x[nrow(x), "name"]))
