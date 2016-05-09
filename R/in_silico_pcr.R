@@ -178,16 +178,16 @@ primersearch.default <- function(input, forward, reverse,
   # Write temporary fasta file for primersearch input ----------------------------------------------
   if (!is.null(seq_name)) names(input) <- seq_name
   names(input) <- paste(seq_along(input), names(input))
-  sequence_path <- tempfile("primersearch_sequence_input_", fileext=".fasta")
+  sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
   on.exit(file.remove(sequence_path))
-  ape::write.dna(input, sequence_path, format="fasta", nbcol=-1, colsep="")    
+  ape::write.dna(input, sequence_path, format = "fasta", nbcol = -1, colsep = "")    
   # Write primer file for primersearch input -------------------------------------------------------
   if (is.null(names(forward))) names(forward) <- seq_along(forward)
   if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
-  if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep="__and__")
+  if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep = "__and__")
   forward <- unlist(lapply(forward, paste, collapse = ""))
   reverse <- unlist(lapply(reverse, paste, collapse = ""))
-  primer_path <- tempfile("primersearch_primer_input_", fileext=".txt")
+  primer_path <- tempfile("primersearch_primer_input_", fileext = ".txt")
   on.exit(file.remove(primer_path))
   write.table(cbind(pair_name, forward, reverse), primer_path,
               quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
@@ -220,16 +220,21 @@ primersearch.classified <- function(input, embed = TRUE, ...) {
                          ...)
   
   if (embed) {
+    overwritten_cols <-  colnames(input$item_data)[colnames(input$item_data) %in% colnames(result)]
+    if (length(overwritten_cols) > 0) {
+      warning(paste0('The following item_data columns will be overwritten by primersearch:\n',
+                     paste0(collapse = "\n", "    ", overwritten_cols)))
+    }
     input$item_data[ , colnames(result)] <- NA
     input$item_data[result$name, colnames(result)] <- result
-    input$item_data$amplified <- ! is.na(input$item_data$seq_id)
+    input$item_data$amplified <- ! is.na(input$item_data$length)
     input$taxon_funcs <- c(input$taxon_funcs,
-                                     count_amplified = function(obj, taxon) {
-                                       sum(obj$item_data$amplified, na.rm = TRUE)
-                                     },
-                                     prop_amplified = function(obj, taxon) {
-                                       sum(obj$item_data$amplified, na.rm = TRUE) / nrow(obj$item_data)
-                                     })
+                           count_amplified = function(obj, subset = taxon_ids(obj)) {
+                             vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]), numeric(1))
+                           },
+                           prop_amplified = function(obj, subset = taxon_ids(obj)) {
+                             vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]) / length(x), numeric(1))
+                           })
     output <- input
   } else {
     output <- result
