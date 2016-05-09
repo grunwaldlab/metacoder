@@ -16,22 +16,3 @@ opts_chunk$set(dev='png', fig.width = 10, fig.height = 10, warning = FALSE, mess
 
 ```{r, child="inst/doc/website_source/index.Rmd", cache = TRUE}
 ```
-
-### Documentation
-
-Documentation is under construction at http://grunwaldlab.github.io/metacoder.
-
-### Download the current version
-
-While this project is in development it can be installed through github:
-
-    devtools::install_github(repo="grunwaldlab/metacoder")
-    library(metacoder)
-
-If you've built the vignettes, you can browse them with:
-
-    browseVignettes(package="metacoder")
-
-To build the vignettes execute:
-
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
