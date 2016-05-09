@@ -657,7 +657,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     vertex_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
     output <- rbind(edge_data, vertex_data)
     # output$tid_user <- tid
-    return(output[complete.cases(output),])
+    return(output[stats::complete.cases(output),])
   }
   data$level = edge_list_depth(data$tid_user, data$pid_user)
   element_order <- data$tid_user[order(data$level, 1 / data$vs_plot, decreasing = TRUE)]

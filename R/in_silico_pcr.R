@@ -189,7 +189,7 @@ primersearch.default <- function(input, forward, reverse,
   reverse <- unlist(lapply(reverse, paste, collapse = ""))
   primer_path <- tempfile("primersearch_primer_input_", fileext = ".txt")
   on.exit(file.remove(primer_path))
-  write.table(cbind(pair_name, forward, reverse), primer_path,
+  utils::write.table(cbind(pair_name, forward, reverse), primer_path,
               quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
   # Run and parse primersearch ---------------------------------------------------------------------
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch, ...)

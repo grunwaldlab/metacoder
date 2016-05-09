@@ -10,7 +10,7 @@ output:
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='png', warning = FALSE, message = FALSE, fig.show='hold', fig.width = 7, fig.height = 7)
+source("knitr_settings.R")
 ```
 
 ## Introduction
@@ -55,13 +55,14 @@ The example below uses `extract_taxonomy` to get this information; the use of th
 ```{r parse_data, eval = FALSE}
 library(metacoder)
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
-sequences <- ape::read.FASTA(file_path) # Reads an example FASTA file
-names(sequences)[1] # Print an example of the sequence header format
-unite_ex_data_3 <- extract_taxonomy(names(sequences), # Parse the sequence headers
+sequences <- ape::read.FASTA(file_path)
+unite_ex_data_3 <- extract_taxonomy(sequences,
                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
                                     key = c(name = "item_info", sequence_id = "item_info",
-                                            other_id = "item_info", "class_name"),
-                                    database = "none")
+                                            other_id = "item_info", "class"),
+                                    class_regex = "^(.*)__(.*)$",
+                                    class_key = c(unite_rank = "taxon_info", "name"),
+                                    class_sep = ";")
 ```
 
 If we look at how sequences are distributed throughout the taxonomy, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
@@ -70,8 +71,8 @@ The overrepresentation of Agaricales is likely a bigger problem.
 
 ```{r all_data}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -93,20 +94,20 @@ We can now view the difference between the original and sub-sampled data sets us
 
 ```{r}
 plot(subsampled,
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = ifelse(rank %in% c(7, 4), item_count, NA),
-     edge_label = ifelse(rank == 4, name, NA))
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
+     edge_label = ifelse(taxon_ranks == 4, name, NA))
 ```
 
 Note how the taxonomy information for taxa with no items is preserved. 
 This can be removed using `subset`:
 
 ```{r}
-plot(subset(subsampled, item_count > 0, subtaxa = FALSE),
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = ifelse(rank %in% c(7, 4), item_count, NA),
-     edge_label = ifelse(rank == 4, name, NA))
+plot(subset(subsampled, item_counts > 0, subtaxa = FALSE),
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
+     edge_label = ifelse(taxon_ranks == 4, name, NA))
 ```
 

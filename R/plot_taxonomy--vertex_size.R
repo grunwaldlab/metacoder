@@ -15,7 +15,7 @@
 #' 
 #' @keywords internal
 molten_dist <- function(x, y) {
-  data <- as.matrix(dist(cbind(x, y)))
+  data <- as.matrix(stats::dist(cbind(x, y)))
   data[!lower.tri(data)] <- NA
   data <- reshape2::melt(data)
   names(data) <- c("index_1", "index_2", "distance")

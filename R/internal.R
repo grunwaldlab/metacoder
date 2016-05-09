@@ -81,8 +81,8 @@ remove_all_na_rows <- function(input) {
 #' 
 #' @keywords internal
 remove_outliers <- function(x, na.rm = TRUE, ...) {
-  qnt <- quantile(x, probs=c(.01, .99), na.rm = na.rm, ...)
-  H <- 1.5 * IQR(x, na.rm = na.rm)
+  qnt <- stats::quantile(x, probs=c(.01, .99), na.rm = na.rm, ...)
+  H <- 1.5 * stats::IQR(x, na.rm = na.rm)
   y <- x
   y[x < (qnt[1] - H)] <- NA
   y[x > (qnt[2] + H)] <- NA
@@ -95,7 +95,7 @@ remove_outliers <- function(x, na.rm = TRUE, ...) {
 #' 
 #' 
 #' @keywords internal
-which_median <- function(x) which.min(abs(x - median(x)))
+which_median <- function(x) which.min(abs(x - stats::median(x)))
 
 
 #===================================================================================================
@@ -198,10 +198,9 @@ delete_vetices_and_children <- function(graph, vertices) {
 #' add_alpha
 #' 
 #' @keywords internal
-add_alpha <- function(col, alpha=1){
-  apply(sapply(col, col2rgb)/255, 2,
-        function(x)
-          rgb(x[1], x[2], x[3], alpha=alpha))
+add_alpha <- function(col, alpha = 1){
+  apply(sapply(col, grDevices::col2rgb) / 255, 2,
+        function(x) grDevices::rgb(x[1], x[2], x[3], alpha = alpha))
 }
 
 

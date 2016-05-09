@@ -12,7 +12,7 @@ library(metacoder)
 library(knitr)
 library(ggplot2)
 library(magrittr)
-opts_chunk$set(dev='png', warning = FALSE, message = FALSE, fig.show='hold', fig.width = 7, fig.height = 7)
+source("knitr_settings.R")
 ```
 
 
@@ -29,25 +29,25 @@ Often, there are many shared ranks in the taxonomic hierarchy that can prevent e
 
 ```{r}
 plot(genbank_ex_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
 `subset` can easily remove these taxa by filtering by rank or selecting the root taxon by name:
 
 ```{r}
-subset(genbank_ex_data, rank > 5) %>%
-  plot(vertex_size = item_count,
-       vertex_color = item_count,
+subset(genbank_ex_data, taxon_ranks > 5) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
        vertex_label = name)
 subset(genbank_ex_data, name == "Basidiomycota") %>%
-  plot(vertex_size = item_count,
-       vertex_color = item_count,
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
        vertex_label = name)
 ```
 
-This works because super taxa of filtered taxa are not preserved by `subset` by default.
+This works because supertaxa of filtered taxa are not preserved by `subset` by default.
 
 
 ### Spltting a taxonomy into multiple trees
@@ -56,8 +56,8 @@ You can also take a taxonomy with a single root and display it by splitting it a
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name,
      tree_label = name)
 ```
@@ -66,8 +66,8 @@ We can use `subset` to look at just a single taxon:
 
 ```{r}
 subset(unite_ex_data_3, name == "Ascomycota") %>%
-  plot(vertex_size = item_count,
-       vertex_color = item_count,
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
        vertex_label = name,
        tree_label = name)
 ```
@@ -75,14 +75,14 @@ subset(unite_ex_data_3, name == "Ascomycota") %>%
 Or we can remove taxa at the root of the tree by filtering by `rank`:
 
 ```{r}
-subset(unite_ex_data_3, rank > 1) %>%
-  plot(vertex_size = item_count,
-       vertex_color = item_count,
+subset(unite_ex_data_3, taxon_ranks > 1) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
        vertex_label = name,
        tree_label = name)
-subset(unite_ex_data_3, rank > 3) %>%
-  plot(vertex_size = item_count,
-       vertex_color = item_count,
+subset(unite_ex_data_3, taxon_ranks > 3) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
        vertex_label = name,
        tree_label = name)
 ```

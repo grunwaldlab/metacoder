@@ -12,7 +12,7 @@ library(metacoder)
 library(magrittr)
 library(knitr)
 library(ggplot2)
-opts_chunk$set(dev='png', warning = FALSE, message = FALSE, fig.show='hold', fig.width = 7, fig.height = 7)
+source("knitr_settings.R")
 ```
 
 ## Introduction
@@ -27,13 +27,13 @@ First, we will use a bar chart to display abundance of taxa at each rank:
 
 ```{r, echo = FALSE}
 data <- taxon_data(unite_ex_data_3)
-data$name <- factor(data$name, levels = unique(data$name[order(data$item_count, decreasing = TRUE)]), ordered = TRUE)
-data$rank <- factor(data$rank, levels = unique(data$rank),
+data$name <- factor(data$name, levels = unique(data$name[order(data$item_counts, decreasing = TRUE)]), ordered = TRUE)
+data$unite_rank <- factor(data$unite_rank, levels = unique(data$unite_rank),
                     labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
                     ordered = TRUE)
-ggplot(data[!data$rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
-  geom_bar(aes(x = name, y = item_count), stat = "identity") +
-  facet_wrap(~ rank, scales = "free") +
+ggplot(data[!data$unite_rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
+  geom_bar(aes(x = name, y = item_counts), stat = "identity") +
+  facet_wrap(~ unite_rank, scales = "free") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1), 
@@ -47,8 +47,8 @@ These details are typically important for the interpretation of results.
 Pie charts are also commonly used for this purpose, but they are just a less effective version of a bar chart.
 
 ```{r, echo = FALSE}
-ggplot(data[data$rank == "Phylum", ]) + 
-  geom_bar(aes(x = factor(1), y = item_count, fill = name), stat = "identity") +
+ggplot(data[data$unite_rank == "Phylum", ]) + 
+  geom_bar(aes(x = factor(1), y = item_counts, fill = name), stat = "identity") +
   coord_polar(theta = "y") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
@@ -64,8 +64,8 @@ ggplot(data[data$rank == "Phylum", ]) +
 
 ```{r, echo=FALSE}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -92,7 +92,7 @@ Below, the number of sequences for each taxon is used to determine vertex size.
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count)
+     vertex_size = item_counts)
 ```
 
 Note that it was not necessary to specify the absolute vertex size; the range of absolute vertex sizes is optimized for each graph so as to minimize overlap of vertices and maximize the ranges of sizes.
@@ -103,10 +103,10 @@ Too low of an `overlap_avoidance` can make the graph hard to read.
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
+     vertex_size = item_counts,
      overlap_avoidance = 10)
 plot(unite_ex_data_3,
-     vertex_size = item_count,
+     vertex_size = item_counts,
      overlap_avoidance = 0.1)
 ```
 
@@ -121,12 +121,12 @@ This argument take a list of colors in the form of names, hex color codes, or in
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count)
+     vertex_size = item_counts,
+     vertex_color = item_counts)
 
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_color_range = c("#FFFFFF", "darkorange3", "#4e567d", "gold"))
 ```
 
@@ -137,14 +137,14 @@ To only color vertices, you can set the lines to be a constant color or vise-ver
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      edge_color = "grey")
 
 plot(unite_ex_data_3,
-     vertex_size = item_count,
+     vertex_size = item_counts,
      vertex_color = "grey",
-     edge_color = item_count)
+     edge_color = item_counts)
 ```
 
 You can also set the color palette used for the lines in the same way as you set it for the vertex using the argument `edge_color_range`. 
@@ -155,8 +155,8 @@ Labels can be added to vertices using the `vertex_label` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -166,14 +166,14 @@ The maximum number of labels that will be printed is controlled by the `vertex_l
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name,
      vertex_label_max = 5)
 
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name,
      vertex_label_max = 200)
 ```
@@ -187,8 +187,8 @@ Lines can be labeled as well using the `edge_label` option, which works similarl
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      edge_label = name)
 ```
 
@@ -200,8 +200,8 @@ Other background colors can be specified using the `background_color` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      background_color = "grey")
 ```
 
@@ -210,9 +210,9 @@ Plots can be saved using `ggsave` from the `ggplot2` package or using the `outpu
 
 ```{r, eval = FALSE}
 my_plot <- plot(unite_ex_data_3,
-                vertex_size = item_count,
-                vertex_color = item_count)
-ggplot2::ggsave("path/to/my/output.png", myplot, bg = "transparent")
+                vertex_size = item_counts,
+                vertex_color = item_counts)
+ggplot2::ggsave("path/to/my/output.png", my_plot, bg = "transparent")
 ```
 
 ```{r, eval = FALSE}
@@ -224,7 +224,6 @@ plot(unite_ex_data_3,
 
 
 ## Usage examples
-
 
 ### Plotting with multiple taxonomy roots
 
@@ -249,10 +248,17 @@ The code below will use the included data set if the code above is not run (you 
 
 ```{r}
 plot(contaminants,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name,
      tree_label = name,
      layout = "fruchterman-reingold")
 ```
+
+
+### More information
+
+Note that `plot` is a generic R function that works differently depending on what it is given to it
+MetacodeR supplies the function **plot_taxonomy**, which is used when plot is given the type of data outputted by `extract_taxonomy`.
+To see the long list of available plotting options, type `?plot_taxonomy`.
 

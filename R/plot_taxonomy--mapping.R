@@ -37,7 +37,7 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #' @keywords internal
 apply_color_scale <- function(values, color_series, interval = NULL, no_color_in_palette = 1000) {
   if (is.numeric(values)) { ## Not factors, characters, or hex codes
-    palette <- colorRampPalette(color_series)(no_color_in_palette)
+    palette <- grDevices::colorRampPalette(color_series)(no_color_in_palette)
     if (is.null(interval)) {
       interval <- range(values, na.rm = TRUE, finite = TRUE)
     }

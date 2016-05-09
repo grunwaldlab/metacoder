@@ -86,12 +86,12 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                                           root = 1),
                      "drl" = list(use.seed = ! is.null(intitial_coords),
                                   seed = ifelse(is.null(intitial_coords), 
-                                                matrix(runif(igraph::vcount(graph) * 2), ncol = 2),
+                                                matrix(stats::runif(igraph::vcount(graph) * 2), ncol = 2),
                                                 intitial_coords),
                                   options = igraph::drl_defaults$default,
                                   weights = NULL,
                                   fixed = NULL))
-    arguments <- modifyList(defaults[[name]], list(...))
+    arguments <- utils::modifyList(defaults[[name]], list(...))
     coords <- igraph::layout_(graph = graph, layout = do.call(funcs[[name]], arguments))
     return(coords)
   }

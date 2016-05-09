@@ -10,7 +10,7 @@ output:
 library(ape)
 library(metacoder)
 library(knitr)
-opts_chunk$set(dev='png', warning = FALSE, message = FALSE, fig.show='hold', fig.width = 7, fig.height = 7)
+source("knitr_settings.R")
 ```
 
 ## Introduction
@@ -31,7 +31,7 @@ Database                                        | locus         | Taxon
 
 ## Parsing taxonomy data with `extract_taxonomy`
 
-There are an unnecessarily large number of sequence header/metadata formats and most of them are specific to a particular database.
+There are a large number of sequence header/metadata formats and most of them are specific to a particular database.
 This makes it difficult to compare and combine data from diverse sources. 
 Rather than exacerbating the syntactic pollution with another custom format or creating a parser for every database-specific format, the function `extract_taxonomy` parses taxonomy information from arbitrary characters strings (e.g. sequence headers) identified by a regex expression.
 Although the motivation for creating `extract_taxonomy` is to parse FASTA sequence headers, the function is not specific to FASTA or even to sequence information, so I will use the word "item" instead of "sequence header" from now on.
@@ -39,7 +39,7 @@ Any list of strings that contain identity and taxonomy information of a set of "
 
 The function communicates with online databases (principally implemented using `taxize`) to infer missing information from information supplied.
 For example, if a GenBank accession number was the only information available, the taxon id and classification would be retrieved from the NCBI databases.
-The output of `extract_taxonomy` consists of at least unique item identifiers, unique taxon identifiers, and the tree structure of the taxonomy shared by all sequences.
+At the minimum, the output of `extract_taxonomy` consists of unique taxon identifiers, and the tree structure of the taxonomy shared by all sequences.
 This is all the information needed to fully characterize the taxonomic classification of a set of sequences.
 
 
@@ -51,7 +51,7 @@ There are three important arguments that will usually be relevant: `regex`, `key
 * The `key` argument defines what kind of information is in each capture group, determining how it will be parsed.
 The elements of `key` has a defined set of possible values; see the `extract_taxonomy` help page for options. 
 * The `database` argument determines the online taxonomy database that will be queried when necessary.
-Usually, this is ncbi, but others databases are possible, but less tested; see the `extract_taxonomy` help page for options.
+Usually, this is ncbi, but others databases are possible (although not as well tested yet); see the `extract_taxonomy` help page for options.
 
 Other arguments are important in special cases.
 Some will be explained in the examples below.
@@ -61,15 +61,14 @@ Some will be explained in the examples below.
 An object of type `classified` is returned.
 See `?classified` for more details.
 
-
 ## Common usage examples
 
 ### Genbank FASTA headers
 
 FASTA files downloaded from GenBank custom queries contain the GenBank id and the accession number/version to identify sequences.
 Taxonomic information can be retrieved using either of these identifiers. 
-The following shows how to extract the GenBank id, accession id, and description from the headers. 
-The GenBank id is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the accession id and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
+The following shows how to extract the GI numbers, accession id, and description from the headers. 
+The GenBank accession number is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the GI numbers and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
@@ -90,8 +89,8 @@ We can plot the result using `plot`:
 
 ```{r}
 plot(genbank_ex_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -105,8 +104,7 @@ Alternatively, the classifications specified in the header can be used to make a
 #### Using the sequence identifier
 
 The GenBank accession number in the second entry of UNITE sequence headers can be used to look up the taxon assigned to each sequence by GenBank. 
-This is better than using the classification from the sequence header since the GenBank unique taxon ids (uids) will be used to identify taxa instead of arbitrary ids. 
-Also, looking up the taxon assignment using the sequence accession number means changes in sequence taxonomy since the UNITE FASTA file was downloaded will be included. 
+Looking up the taxon assignment using the sequence accession number means changes in sequence taxonomy since the UNITE FASTA file was downloaded will be included. 
 Therefore, the taxonomy returned by GenBank could be different than the one in the header.
 However, some of the sequences in the UNITE database do not have a GenBank accession number; these IDs start with `UDB` and should be filtered out:
 
@@ -115,7 +113,7 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                            key = c(name = "name",  sequence_id = "item_id",
+                            key = c(name = "item_info", "item_id",
                                     other_id = "item_info", tax_string = "item_info"),
                             database = "ncbi")
 ```
@@ -128,8 +126,8 @@ head(item_data(unite_ex_data_1, "input"))
 
 ```{r}
 plot(unite_ex_data_1,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -138,8 +136,7 @@ plot(unite_ex_data_1,
 If you want to use the structure and names of the classification provided in the header, but still look up the official taxon id, you can provide `"class"` as the only key with taxonomic information.
 Since the UNITE classification also included the rank for each taxon, we will have to specify how to parse each taxon string using the `class_regex` and `class_key` options.
 These work the same as `regex` and `key`, except they apply to each element in a classification.
-This is typically not as efficient or accurate and using `"item_id"` or `"taxon_id"`, so `"class"` has no effect if these more reliable fields (or others) are present and a database is used. 
-However, you can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use `"item_id"` or `"taxon_id"`.
+You can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use `"item_id"` or `"taxon_id"`.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
@@ -156,14 +153,14 @@ unite_ex_data_2 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_2,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
 This means that only the classification string (e.g. `k__Fungi;p__Ascomycota;c__Leotiomycetes`) will be interpreted as having taxonomic information, but the other information will also be included in the output in columns named `name` and `sequence_id`.
-The unique taxon id for each taxon encountered will be looked up and taxa not found will be given arbitrary ids, unless the `allow_arb_ids` option is set to `FALSE`, in which case ...
+The unique taxon id for each taxon encountered will be looked up and taxa not found will be encoded as `NA`.
 
 #### Using the included classifications to generate arbitrary ids
 
@@ -185,8 +182,8 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -213,9 +210,10 @@ head(item_data(its1_ex_data, "input"))
 
 ```{r}
 plot(its1_ex_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = name)
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = name,
+     layout = "fruchterman-reingold")
 ```
 
 ### PR2 FASTA headers
@@ -241,8 +239,8 @@ head(item_data(pr2_ex_data, "input"))
 
 ```{r}
 plot(pr2_ex_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name)
 ```
 
@@ -250,9 +248,7 @@ plot(pr2_ex_data,
 
 This RDP FASTA file does not contain any references to taxon or sequence ids that could be used to look up more information.
 Instead, we will parse the taxonomy information included in the sequence headers.
-In this case both the rank and taxon name are supplied. 
-Note that the rank comes after the taxon name in each pair, which is not what `extract_taxonomy` expects. 
-Therefore, option `class_rank_rev` is set to `TRUE`. 
+In this case both the rank and taxon name are supplied.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package = "metacoder")
@@ -268,10 +264,15 @@ rdp_ex_data <- extract_taxonomy(sequences,
 head(item_data(rdp_ex_data, "input"))
 ```
 
+Note that the same character ( `;` ) is used to delineate different ranks and taxa.
+This makes it the `class_sep` option inappropriate.
+If the `class_sep` option is not defined, each match of `class_regex` is considered to be a different taxa.
+Therefore, we can use a `class_regex` that matches two `;` to correctly parse this awkward format.
+
 ```{r}
 plot(rdp_ex_data,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
      vertex_label = name,
      layout = "fruchterman-reingold")
 ```

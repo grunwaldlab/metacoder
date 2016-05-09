@@ -24,5 +24,5 @@ parse_summary_seqs <- function(text = NULL, file = NULL) {
   # Add missing tab onto 'mean' line
   text[length(text)] <- paste0(text[length(text)], "\t")
   # Parse into a data.frame
-  read.table(text = text, sep = "\t", header = TRUE, row.names = 1)
+  utils::read.table(text = text, sep = "\t", header = TRUE, row.names = 1)
 }

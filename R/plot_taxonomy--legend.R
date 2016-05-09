@@ -252,7 +252,7 @@ inverse = function (f, interval) {
   interval <- c(interval[1] - .001, interval[2] + .001) # ensures that min < max
   function (y) {
     process_one <- function(one_y) {
-      uniroot((function (x) f(x) - one_y), interval = interval, extendInt = "yes")[1]
+      stats::uniroot((function (x) f(x) - one_y), interval = interval, extendInt = "yes")[1]
     }
     unname(unlist(lapply(y, process_one)))
   }
