@@ -147,21 +147,19 @@ subset.classified <- function(x, taxon, item, subtaxa = TRUE, supertaxa = FALSE,
 
   if (subtaxa) {
     new_taxa <- c(new_taxa,
-                  get_subtaxa(targets = taxon_ids,
-                              taxa = x$taxon_ids,
-                              parents = x$parent_ids,
-                              recursive = TRUE,
-                              simplify = TRUE))
+                  subtaxa(x,
+                          subset = taxon_ids,
+                          recursive = TRUE,
+                          simplify = TRUE))
   }
 
   if (supertaxa) {
     new_taxa <- c(new_taxa,
-                  get_supertaxa(targets = taxon_ids,
-                                taxa = x$taxon_ids,
-                                parents = x$parent_ids,
-                                recursive = TRUE,
-                                simplify = TRUE,
-                                include_input = FALSE))
+                  supertaxa(x,
+                            subset = taxon_ids,
+                            recursive = TRUE,
+                            simplify = TRUE,
+                            include_input = FALSE))
   }
   new_taxa <- unique(new_taxa)
 
@@ -180,7 +178,7 @@ subset.classified <- function(x, taxon, item, subtaxa = TRUE, supertaxa = FALSE,
 
   # Remove taxa with no items
   if (! itemless) {
-    taxa_with_items <- taxon_data(output, "item_count") > 0
+    taxa_with_items <- item_counts(output) > 0
     output$taxon_ids <- output$taxon_ids[taxa_with_items]
     output$parent_ids <- output$parent_ids[taxa_with_items]
     output$taxon_data <- output$taxon_data[taxa_with_items, , drop = FALSE]
@@ -244,6 +242,7 @@ taxon_data <- function(obj,
                        row_subset = taxon_ids(obj),
                        calculated_cols = TRUE,
                        drop = TRUE) {
+  row_subset <- format_taxon_subset(obj, row_subset)
   # Check that the user is making sense
   if (calculated_cols == FALSE && any(col_subset %in% names(obj$taxon_funcs))) {
     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
@@ -480,11 +479,8 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
     }
     return(unname(output))
   }
-  
-  # If an index is supplied instead of a taxon ID, then convert to taxon ID
-  if (is.numeric(subset)) {
-    subset <- taxon_ids(obj)[subset]
-  }
+
+  subset <- format_taxon_subset(obj, subset)
   supertaxa <- setNames(lapply(subset, recursive_part), subset)
   if (!include_input) {
     supertaxa <- lapply(supertaxa, `[`, -1)
@@ -547,11 +543,8 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
     return(output)
   }
   
-  # If an index is supplied instead of a taxon ID, then convert to taxon ID
-  if (is.numeric(subset)) {
-    subset <- taxon_ids(obj)[subset]
-  }
-  # Get output content
+  
+  subset <- format_taxon_subset(obj, subset)  # Get output content
   if (recursive) {
     starting_taxa <- roots(obj, subset)
     output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
@@ -590,10 +583,6 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
 #'
 #' @export
 items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FALSE) {
-  # If an index is supplied instead of a taxon ID, then convert to taxon ID
-  if (is.numeric(subset)) {
-    subset <- taxon_ids(obj)[subset]
-  }
   # Get output content
   my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
@@ -621,15 +610,12 @@ items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FAL
 #'  
 #' @export
 roots <- function(obj, subset = taxon_ids(obj)) {
-  # If an index is supplied instead of a taxon ID, then convert to taxon ID
-  if (is.numeric(subset)) {
-    subset <- taxon_ids(obj)[subset]
-  }
   parents <- supertaxa(obj, subset = subset, include_input = TRUE)
   is_global_root <- vapply(parents, function(x) length(x) == 1, logical(1))
   if (missing(subset)) {
     is_root <- is_global_root
   } else {
+    subset <- format_taxon_subset(obj, subset)
     is_root <- is_global_root | vapply(parents, function(x) ! any(x[-1] %in% subset), logical(1))
   }
   subset[is_root]
@@ -640,11 +626,32 @@ roots <- function(obj, subset = taxon_ids(obj)) {
 #' 
 #' Return the taxon IDs for a \code{\link{classified}} object.
 #' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
+#' @param obj (\code{classified})
+#' The \code{classified} object containing taxon information to be queried.
 #' 
 #' @return \code{character}
 #' 
 #' @export
 taxon_ids <- function(obj) {
   unname(obj$taxon_ids)
+}
+
+#' Format taxon subset value
+#' 
+#' Format an input to a \code{subset} option on functions like \code{subset}.
+#' Converts logical and numeric vectors into taxon ids
+#' 
+#' @param obj (\code{classified})
+#' The \code{classified} object containing taxon information to be queried.
+#' @param index
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal
+format_taxon_subset <- function(obj, index) {
+  if (is.logical(index) || is.numeric(index)) {
+    index <- taxon_ids(obj)[index]
+  }
+  index <- unname(index)
+  return(index)
 }

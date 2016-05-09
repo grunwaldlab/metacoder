@@ -60,12 +60,12 @@ taxonomic_sample <- function(classified_data,
                              stop_conditions = list(), ...) {
   process_one_tree <- function(root_taxon) {
     # subset for just tree with root
-    tree <- subset(classified_data, root_taxon)
+    # tree <- subset(classified_data, root_taxon)
     # extract information from `classified` (This is a retrofit to use `classfied` objects)
-    taxon_ids <- taxon_data(classified_data, "taxon_id")
-    parent_ids <- taxon_data(classified_data, "parent_id")
-    item_ids <- item_data(classified_data, "taxon_id")
-    ranks <- taxon_data(classified_data, "rank")
+    taxon_ids <- classified_data$taxon_ids
+    parent_ids <- classified_data$parent_ids
+    item_ids <- classified_data$item_taxon_ids
+    ranks <- taxon_ranks(classified_data)
     # Define functions to interact with the taxonomic information ------------------------------------
     get_items_func <- function(id, ...) which(item_ids == id)
     get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(parent_ids) & parent_ids == id]
@@ -78,7 +78,7 @@ taxonomic_sample <- function(classified_data,
                      stop_conditions = stop_conditions)
   }
   
-  root_taxa <- classified_data$taxon_id[is.na(classified_data$parent_id)]
+  root_taxa <- classified_data$taxon_ids[is.na(classified_data$parent_ids)]
   item_indexes <- unlist(lapply(root_taxa, process_one_tree))
   subset(classified_data, item = item_indexes)
 }
