@@ -7,7 +7,8 @@
 taxon_ids(obj)
 }
 \arguments{
-\item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be queried.}
+\item{obj}{(\code{classified})
+The \code{classified} object containing taxon information to be queried.}
 }
 \value{
 \code{character}

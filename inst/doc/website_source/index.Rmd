@@ -8,13 +8,10 @@ output: html_document
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
 library(ggplot2)
-options(width = 120)
-opts_chunk$set(dev='png', fig.width = 7, fig.height = 7, warning = FALSE, message = FALSE)
+source("knitr_settings.R")
 ```
 
 ## An R package for metabarcoding research planning and analysis
-
-### Introduction 
 
 Metabarcoding is revolutionizing microbial ecology and presenting new challenges:
 
@@ -36,7 +33,7 @@ Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 While this project is in development it can be installed through github:
 
-    devtools::install_github(repo="grunwaldlab/metacoder")
+    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes = TRUE)
     library(metacoder)
 
 If you've built the vignettes, you can browse them with:
@@ -48,6 +45,7 @@ If you've built the vignettes, you can browse them with:
 The function that runs *in silico* PCR requires `primersearch` from the EMBOSS tool kit to be installed. 
 This is not an R package, so it is not automatically installed.
 Type `?primersearch` after installing and loading MetcodeR for installation instructions.
+
 
 ### Extracting taxonomic data
 
@@ -69,8 +67,11 @@ download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
 Next we will uncompress the archive and identify the fasta file.
 
 ```{r}
-unpacked_file_paths <- untar(local_file_path, list = TRUE) # get contents
+# Get contents of tar archive
+unpacked_file_paths <- untar(local_file_path, list = TRUE)
+# Uncompress archive
 untar(local_file_path, exdir = temp_dir_path)
+# Identify the Mothur RDP training set
 unpacked_fasta_path <- file.path(temp_dir_path, 
                                   unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
 ```
@@ -78,20 +79,28 @@ unpacked_fasta_path <- file.path(temp_dir_path,
 The file can then be parsed using the `ape` package and the taxonomy data in the headers can be extracted by `extract_taxonomy`:
 
 ```{r, warning=FALSE, message=FALSE}
+# Load the package
 library(metacoder)
+# Load the input FASTA file
 seqs <- ape::read.FASTA(unpacked_fasta_path)
-cat(names(seqs)[1]) # print an example of the sequence headers
+# Print an example of the sequence headers
+cat(names(seqs)[1])
+# Extract the taxonomic information of the sequences
 data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
-                         key = c("item_info", "class"),
+                         key = c(seq_id = "item_info", "class"),
                          class_sep = ";")
 ```
 
 Note, that this command will take a while to process. 
-The resulting object contains sequence information associated with an inferred taxonomic hierarchy:
+The resulting object contains sequence information associated with an inferred taxonomic hierarchy.
+The information associated with each taxon can be accessed using the **taxon_data** function:
 
 ```{r}
-taxon_data(data, row_subset = 1:10) # print a few rows of the taxon data
+# Print a few rows of the taxon data
+taxon_data(data, row_subset = 1:10) 
 ```
+
+Columns such as "item_counts" and "taxon_ranks" are calculated each time the function is by default, ensuring that are consistent with any changes made to the taxonomy. 
 
 ### Metadiversity Plots
 
@@ -112,7 +121,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Note, that this command will take a while to process. 
+Note, that this command can take a few minutes. 
 The default size range displayed is optimized for each plot.
 The legend represents the number of sequences for each taxon as both a color gradient and width of vertices.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
@@ -129,17 +138,21 @@ plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
 
-Again, note, that this command will take a while to process. 
+The above command can take several minutes.
 
 ```{r, include = FALSE, eval = FALSE}
 ggplot2::ggsave(file = "intro_plot_2.svg", plot = the_last_plot, bg = "transparent")
 ```
 
+Note that `plot` is a generic R function that works differently depending on what it is given to it
+MetacodeR supplies the function **plot_taxonomy**, which is used when plot is given the type of data outputted by `extract_taxonomy`.
+To see the long list of available plotting options, type `?plot_taxonomy`.
+
 ### Subsetting
 
 Taxonomic data can be easily subset using the **subset** function.
 The user can choose preserve or remove the subtaxa, supertaxa, and sequence data of the subset.
-For example, **subset** can be used to look at just the Archaea:
+For example, `subset` can be used to look at just the Archaea:
 
 ```{r, echo = FALSE}
 set.seed(1)
@@ -155,6 +168,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subset_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
+Any column displayed by `taxon_data` can be used with `subset` as if it were a variable on its own.
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ```{r, echo = FALSE}
@@ -211,7 +225,7 @@ The code below estimates the coverage of the universal bacterial primer pair 357
 ```{r}
 pcr <- primersearch(sampled, forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
                     pair_name = "357F_519R",  mismatch = 10)
-head(taxon_data(pcr))
+taxon_data(pcr, row_subset = 1:10)
 ```
 
 The proportion of sequences amplified can be represented by color in a metadiversity plot:
@@ -254,12 +268,12 @@ ggplot2::ggsave(file = "in_silico_pcr_2.svg", plot = the_last_plot, bg = "transp
 
 ### Differential Metadiversity Plots
 
-We can use **Differential Metadiversity Plots** to contrast either:
+We can use what we call **Differential Metadiversity Plots** to compare the values of treatments such as:
 
-* relative abundance of taxa in two pair-wise communities
-* two primer pairs for coverage of the tree of life
+* the relative abundance of taxa in two communities
+* the coverages of different primer pairs
 
-Here, we  compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
+Here, we compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
 First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
 
 ```{r}
@@ -290,19 +304,25 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "in_silico_pcr_3.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-### Availability
+### Plans for future development
 
-This package is currently being developed and can be installed from GitHub using the following code:
+MetacodeR is under active development and many new features are planned.
+Some improvements that are being worked on include:
 
-```{r, eval = FALSE}
-devtools::install_github("grunwaldlab/metacoder")
-```
+* Increases in function speed
+* Plotting functions for pairwise comparison of treatments
+* Barcoding gap analysis and associated plotting functions
+* A function to aid in retrieving appropriate sequence data from NCBI for *in silico* PCR from whole genome sequences.
+
+To see the details of what is being worked on, check out the [issues](https://github.com/grunwaldlab/metacoder/issues) tab of the MetacodeR [Github site](https://github.com/grunwaldlab).
+
+### Error reports, comments, and contributions
+
+We would like to hear about users' thoughts on the package and any errors they run into.
+Please report bugs and comments on the [issues](https://github.com/grunwaldlab/metacoder/issues) tab of the MetacodeR [Github site](https://github.com/grunwaldlab).
+We also welcome contributions via a Github [pull request](https://help.github.com/articles/using-pull-requests/).
 
 ### Aknowledgements
 
 We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
 MetacodeR's major dependencies are taxize, igraph, and ggplot2.
-
-To build the vignettes, execute:
-
-    devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes=TRUE)
