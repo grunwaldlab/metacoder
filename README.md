@@ -137,7 +137,7 @@ MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree co
 plot(data, vertex_size = item_counts, vertex_label = name, vertex_color = item_counts)
 ```
 
-![](README_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-9-1.png)
 
 
 
@@ -157,7 +157,7 @@ plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
 
-![](README_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-12-1.png)
 
 The above command can take several minutes.
 
@@ -181,7 +181,7 @@ plot(subset(data, name == "Archaea"), vertex_size = item_counts,
      vertex_label = name, vertex_color = item_counts, layout = "fruchterman-reingold")
 ```
 
-![](README_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-15-1.png)
 
 
 
@@ -197,7 +197,7 @@ plot(subsetted, vertex_size = item_counts, vertex_label = name,
      vertex_color = item_counts, tree_label = name, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-18-1.png)
 
 
 
@@ -225,7 +225,7 @@ plot(sampled, vertex_size = item_counts, vertex_label = item_counts, overlap_avo
      vertex_color = item_counts, layout = "davidson-harel")
 ```
 
-![](README_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-23-1.png)
 
 
 
@@ -265,7 +265,7 @@ plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_am
      vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
 ```
 
-![](README_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-27-1.png)
 
 
 
@@ -285,7 +285,7 @@ pcr %>%
        vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-30-1.png)
 
 
 
@@ -322,7 +322,7 @@ pcr %>%
        vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
 ```
 
-![](README_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](README_files/figure-html/unnamed-chunk-34-1.png)
 
 
 
