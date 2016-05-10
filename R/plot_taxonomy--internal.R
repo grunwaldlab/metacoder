@@ -45,7 +45,7 @@ verify_trans <- function(args) {
 verify_size <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
-    if (! is.numeric(value)) {
+    if (any(!is.na(value) & is.na(as.numeric(value)))) {
       stop(paste0("Argument '", arg, "' is not numeric."))
     }
   }

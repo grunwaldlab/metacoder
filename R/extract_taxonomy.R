@@ -212,6 +212,15 @@ extract_taxonomy.default <- function(input,
     taxonomy$taxon_data <- cbind(taxonomy$taxon_data, new_columns, stringsAsFactors = FALSE) 
   }
   
+  # Convert columns to numberic if appropriate
+  convert_numeric <- function(data) {
+    if (all(! is.na(suppressWarnings(as.numeric(data))))) {
+      data <- as.numeric(data)
+    }
+    return(data)
+  }
+  taxonomy$taxon_data[ , ] <- lapply(taxonomy$taxon_data, convert_numeric)
+  
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
   colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))
