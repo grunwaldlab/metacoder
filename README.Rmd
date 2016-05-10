@@ -1,7 +1,7 @@
 ---
 output:
-  html_document:
-    keep_md: true
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
