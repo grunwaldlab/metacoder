@@ -127,7 +127,7 @@ The legend represents the number of sequences for each taxon as both a color gra
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r, echo = FALSE}
-set.seed(7)
+set.seed(8)
 ```
 
 ```{r}
