@@ -863,11 +863,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
 #' @export
 #' @rdname plot_taxonomy
 plot.classified <- function(x, ...) {
-  my_taxon_data <- taxon_data(x)
-  column_var_name <- colnames(my_taxon_data)
-  unused_result <- lapply(column_var_name, function(y) assign(y, my_taxon_data[[y]], envir = parent.frame(2)))
+  # Non-standard argument evaluation
   arguments <- c(list(taxon_id = x$taxon_id, parent_id = x$parent_id),
-                 eval(substitute(list(...))))
+                 lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(x)))
+  
   # Use variable name for scale axis labels
   if (! "vertex_color_axis_label" %in% names(arguments)) {
     arguments$vertex_color_axis_label <- deparse(as.list(match.call())$vertex_color)
@@ -882,6 +881,6 @@ plot.classified <- function(x, ...) {
     arguments$edge_size_axis_label <- deparse(as.list(match.call())$edge_size)
   }
   
-  
+  # Call plot_taxonomy
   do.call(plot_taxonomy, arguments)
 }
