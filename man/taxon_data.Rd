@@ -5,7 +5,7 @@
 \title{Return taxon data from \code{\link{classified}}}
 \usage{
 taxon_data(obj, col_subset = taxon_data_colnames(obj),
-  row_subset = taxon_ids(obj), calculated_cols = TRUE, drop = TRUE)
+  row_subset = taxon_ids(obj), calculated_cols = TRUE, drop = FALSE)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}

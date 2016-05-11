@@ -16,5 +16,4 @@ The file path to the input file.}
 \description{
 Parse mothur classification summary file
 }
-\keyword{internal}
 

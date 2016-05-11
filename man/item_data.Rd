@@ -8,7 +8,7 @@
 item_data(...)
 
 \method{item_data}{classified}(obj, subset = item_data_colnames(obj),
-  drop = TRUE, ...)
+  drop = FALSE, ...)
 }
 \arguments{
 \item{...}{Passed to \code{taxon_data.classified}}

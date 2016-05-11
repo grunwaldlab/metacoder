@@ -4,8 +4,9 @@
 \alias{subset.classified}
 \title{Create a inclusive subset of \code{\link{classified}}}
 \usage{
-\method{subset}{classified}(x, taxon, item, subtaxa = TRUE,
-  supertaxa = FALSE, itemless = TRUE, ...)
+\method{subset}{classified}(x, taxon = taxon_ids(x),
+  item = seq_along(x$item_taxon_ids), subtaxa = TRUE, supertaxa = FALSE,
+  itemless = TRUE, ...)
 }
 \arguments{
 \item{x}{\code{\link{classified}}}

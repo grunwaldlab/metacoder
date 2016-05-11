@@ -117,55 +117,32 @@ reserved_col_names <- function() {
 #' @return \code{\link{classified}}
 #'
 #' @export
-subset.classified <- function(x, taxon, item, subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, ...) {
+subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_taxon_ids), subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, ...) {
   # non-standard argument evaluation
-  my_taxon_data <- taxon_data(x)
-  column_var_name <- colnames(my_taxon_data)
-  unused_result <- lapply(column_var_name, function(x) assign(x, my_taxon_data[[x]], envir = parent.frame(2)))
-
-  # Defaults
-#   if (missing(taxon) && missing(item)) {
-#     return(x)
-#   }
-  if (missing(taxon)) {
-    taxon_ids <- x$taxon_ids
-  } else {
-    parsed_taxon <- tryCatch(suppressWarnings(eval(taxon)), error = function(x) NULL)
-    if (is.null(parsed_taxon)) { parsed_taxon <- eval(substitute(taxon)) }
-    taxon_ids <- x$taxon_ids[parsed_taxon]
-  }
-  parent_ids <- x$parent_ids[taxon_ids]
-  if (missing(item)) {
-    item_id <- seq_along(x$item_taxon_ids)
-  } else {
-    parsed_item_id <- tryCatch(suppressWarnings(eval(item)), error = function(x) NULL)
-    if (is.null(parsed_item_id)) { parsed_item_id <- eval(substitute(item)) }
-    item_id <- parsed_item_id
-  }
-
-  new_taxa <- taxon_ids
-
+  parsed_taxon <- lazyeval::lazy_eval(lazyeval::lazy(taxon), data = taxon_data(x))
+  parsed_item <- lazyeval::lazy_eval(lazyeval::lazy(item), data = item_data(x))
+  
+  # Get taxa of subset
+  new_taxa <- x$taxon_ids[parsed_taxon]
   if (subtaxa) {
     new_taxa <- c(new_taxa,
                   subtaxa(x,
-                          subset = taxon_ids,
+                          subset = parsed_taxon,
                           recursive = TRUE,
                           simplify = TRUE))
   }
-
   if (supertaxa) {
     new_taxa <- c(new_taxa,
                   supertaxa(x,
-                            subset = taxon_ids,
+                            subset = parsed_taxon,
                             recursive = TRUE,
                             simplify = TRUE,
                             include_input = FALSE))
   }
   new_taxa <- unique(new_taxa)
-
-  inluded_items <- item_id[x$item_taxon_ids[item_id] %in% new_taxa]
-
-
+  
+  # Get items of subset
+  inluded_items <- x$item_taxon_ids[parsed_item] %in% new_taxa
 
   # Make output
   output <- classified(taxon_ids = new_taxa,
@@ -241,7 +218,7 @@ taxon_data <- function(obj,
                        col_subset = taxon_data_colnames(obj),
                        row_subset = taxon_ids(obj),
                        calculated_cols = TRUE,
-                       drop = TRUE) {
+                       drop = FALSE) {
   row_subset <- format_taxon_subset(obj, row_subset)
   # Check that the user is making sense
   if (calculated_cols == FALSE && any(col_subset %in% names(obj$taxon_funcs))) {
@@ -291,7 +268,7 @@ item_data <- function(...) {
 item_data.classified <- function(obj,
                                  subset = item_data_colnames(obj),
                                  # calculated_cols = TRUE,
-                                 drop = TRUE, ...) {
+                                 drop = FALSE, ...) {
   # Check that the user is making sense
 #   if (calculated_cols == FALSE && any(subset %in% names(obj$item_funcs))) {
 #     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")

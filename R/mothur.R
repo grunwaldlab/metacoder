@@ -39,7 +39,7 @@ parse_summary_seqs <- function(text = NULL, file = NULL) {
 #' 
 #' @return \code{\link{classified}}
 #' 
-#' @keywords internal
+#' @export
 parse_mothur_summary <- function(file_path, unclassified = FALSE) {
   
   # Read file
@@ -63,11 +63,21 @@ parse_mothur_summary <- function(file_path, unclassified = FALSE) {
   }
   
   # Extract taxonomic data
-  extract_taxonomy(content[-1],
-                   key = key,
-                   regex = regex,
-                   class_key = "name",
-                   class_sep = "\\.",
-                   return_input = FALSE,
-                   return_match = FALSE)
+  result <- extract_taxonomy(content[-1],
+                             key = key,
+                             regex = regex,
+                             class_key = "name",
+                             class_sep = "\\.",
+                             return_input = FALSE,
+                             return_match = FALSE)
+  
+  # Add 'all' calculated column
+  result$taxon_funcs <- c(result$taxon_funcs,
+                          list(all = function(obj, subset = taxon_ids(obj)) {
+                            sample_cols <- header[6:length(header)]
+                            sample_cols <- sample_cols[sample_cols %in% colnames(obj$taxon_data)]
+                            apply(obj$taxon_data[subset, sample_cols], MARGIN = 1, sum)
+                          }))
+  
+  return(result)
 }
