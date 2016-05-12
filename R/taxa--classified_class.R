@@ -230,11 +230,11 @@ taxon_data <- function(obj,
     if (sort_by %in% colnames(data)) {
       sort_by_col <- data[ , sort_by]
     } else if (is.function(sort_by)) {
-      sort_by_col <- sort_by(obj, subset)
+      sort_by_col <- sort_by(obj, row_subset)
     } else if (sort_by %in% names(obj$taxon_funcs)) {
-      sort_by_col <- obj$taxon_funcs[[sort_by]](obj, subset)
+      sort_by_col <- obj$taxon_funcs[[sort_by]](obj, row_subset)
     } else {
-      sort_by_col <- get(sort_by)(obj, subset)
+      sort_by_col <- get(sort_by)(obj, row_subset)
     }
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }
