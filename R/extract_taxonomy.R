@@ -80,6 +80,9 @@
 #' @param return_match (\code{logical} of length 1)
 #' If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.
 #' @param return_input (\code{logical} of length 1) If \code{TRUE}, include the input in the output object.
+#' @param redundant_names (\code{logical} of length 1)
+#' If \code{TRUE}, remove any occurrence of the a parent taxon's name at the start of the taxon name.
+#' This is useful for removing the redundant genus information in species binomials.
 #' @param verbosity (\code{character} of length 1) Controls the printing of progress updates.
 #' The following values are possible: 
 #'  \describe{
@@ -130,6 +133,7 @@ extract_taxonomy.default <- function(input,
                                      vigilance = c("error", "warning", "message", "none"),
                                      return_match = FALSE,
                                      return_input = TRUE,
+                                     redundant_names = FALSE,
                                      verbosity = c("low", "none", "high"),
                                      ...) {
   my_print <- function(text, level = "low") {
@@ -194,6 +198,11 @@ extract_taxonomy.default <- function(input,
   class_source <- class_precedence[class_precedence %in% class_key][1]
   taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
 
+  # Remove redundant taxon names ------------------------------------------------------------------
+  if (! redundant_names && "name" %in% colnames(taxonomy$taxon_data)) {
+    taxonomy <- remove_redundant_names(taxonomy, "name")
+  }  
+  
   # Add taxon info columns to taxon_data ----------------------------------------------------------
   my_print(level = "high", "Formatting output ---------------------------------")
   taxon_info_column <- function(content, col_name) {

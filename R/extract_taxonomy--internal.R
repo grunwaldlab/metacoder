@@ -265,5 +265,3 @@ rename_duplicated <- function(my_names, replace_auto = TRUE) {
   }
   return(my_names)
 }
-
-

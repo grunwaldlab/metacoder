@@ -14,8 +14,8 @@ extract_taxonomy(input, ...)
   class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
   "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
   vigilance = c("error", "warning", "message", "none"),
-  return_match = FALSE, return_input = TRUE, verbosity = c("low", "none",
-  "high"), ...)
+  return_match = FALSE, return_input = TRUE, redundant_names = FALSE,
+  verbosity = c("low", "none", "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 }
@@ -104,6 +104,10 @@ The following values are possible:
 If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.}
 
 \item{return_input}{(\code{logical} of length 1) If \code{TRUE}, include the input in the output object.}
+
+\item{redundant_names}{(\code{logical} of length 1)
+If \code{TRUE}, remove any occurrence of the a parent taxon's name at the start of the taxon name.
+This is useful for removing the redundant genus information in species binomials.}
 
 \item{verbosity}{(\code{character} of length 1) Controls the printing of progress updates.
 The following values are possible: 
