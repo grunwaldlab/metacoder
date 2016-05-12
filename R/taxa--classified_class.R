@@ -270,21 +270,12 @@ item_data <- function(obj,
 #'
 #' @return \code{list} of length equal to the number of taxa in \code{obj}
 #'
-#' @rdname taxon_apply
-#' @keywords internal
-taxon_apply <- function(obj, func, ...) {
-  UseMethod("taxon_apply")
-}
-
-#' @method taxon_apply classified
-#' @rdname taxon_apply
 #' @export
-taxon_apply.classified <- function(obj, func, ...) {
+taxon_apply <- function(obj, func, ...) {
   split_data <- split_by_taxon(obj)
   mapply_args <- c(list(func), list(split_data), list(...))
   unlist(do.call(mapply, mapply_args), recursive = FALSE)
 }
-
 
 
 #' Split \code{\link{classified}} into individual taxa
@@ -296,16 +287,8 @@ taxon_apply.classified <- function(obj, func, ...) {
 #'
 #' @return \code{list} of \code{\link{classified}}
 #'
-#' @keywords internal
-#' @rdname split_by_taxon
-split_by_taxon <- function(obj) {
-  UseMethod("split_by_taxon")
-}
-
 #' @export
-#' @rdname split_by_taxon
-#' @method split_by_taxon classified
-split_by_taxon.classified <- function(obj) {
+split_by_taxon <- function(obj) {
   process_one <- function(sub_taxa_ids, super_taxa_ids, taxon_item_ids) {
     new_taxa_id <- c(sub_taxa_ids, super_taxa_ids)
     new_item_id <- obj$item_taxon_ids[taxon_item_ids]
@@ -322,6 +305,7 @@ split_by_taxon.classified <- function(obj) {
          subtaxa(obj), supertaxa(obj, include_input = TRUE), items(obj))
 }
 
+
 #' Combine classified data
 #'
 #' Combine the contents of multiple objects of type \code{\link{classified}}
@@ -330,7 +314,6 @@ split_by_taxon.classified <- function(obj) {
 #'
 #' @return An object of type \code{\link{classified}}
 #'
-#' @keywords internal
 #' @method sum classified
 #' @keywords internal
 sum.classified <- function(...) {
@@ -579,6 +562,7 @@ roots <- function(obj, subset = taxon_ids(obj)) {
 taxon_ids <- function(obj) {
   unname(obj$taxon_ids)
 }
+
 
 #' Format taxon subset value
 #' 
