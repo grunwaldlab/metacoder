@@ -36,6 +36,8 @@ parse_summary_seqs <- function(text = NULL, file = NULL) {
 #' 
 #' @param file_path (\code{character} of length 1)
 #' The file path to the input file.
+#' @param unclassified (\code{logical} of length 1)
+#' If \code{TRUE}, remove "unclassified" placeholder taxa.
 #' 
 #' @return \code{\link{classified}}
 #' 

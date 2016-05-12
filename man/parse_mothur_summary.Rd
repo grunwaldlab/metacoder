@@ -9,6 +9,9 @@ parse_mothur_summary(file_path, unclassified = FALSE)
 \arguments{
 \item{file_path}{(\code{character} of length 1)
 The file path to the input file.}
+
+\item{unclassified}{(\code{logical} of length 1)
+If \code{TRUE}, remove "unclassified" placeholder taxa.}
 }
 \value{
 \code{\link{classified}}

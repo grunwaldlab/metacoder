@@ -2,12 +2,9 @@
 % Please edit documentation in R/taxa--classified_class.R
 \name{taxon_apply}
 \alias{taxon_apply}
-\alias{taxon_apply.classified}
 \title{Apply a function to every taxon}
 \usage{
 taxon_apply(obj, func, ...)
-
-\method{taxon_apply}{classified}(obj, func, ...)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}
@@ -22,5 +19,4 @@ taxon_apply(obj, func, ...)
 \description{
 Apply  a function to every taxon in an object of type \code{\link{classified}}.
 }
-\keyword{internal}
 

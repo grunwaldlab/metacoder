@@ -2,17 +2,11 @@
 % Please edit documentation in R/taxa--classified_class.R
 \name{item_data}
 \alias{item_data}
-\alias{item_data.classified}
 \title{Return item data from \code{\link{classified}}}
 \usage{
-item_data(...)
-
-\method{item_data}{classified}(obj, subset = item_data_colnames(obj),
-  drop = FALSE, ...)
+item_data(obj, subset = item_data_colnames(obj), drop = FALSE)
 }
 \arguments{
-\item{...}{Passed to \code{taxon_data.classified}}
-
 \item{obj}{(\code{\link{classified}})}
 
 \item{subset}{(\code{character}) The names of columns, either user defined or generated using \code{item_funcs}.

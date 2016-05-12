@@ -306,37 +306,6 @@ split_by_taxon <- function(obj) {
 }
 
 
-#' Combine classified data
-#'
-#' Combine the contents of multiple objects of type \code{\link{classified}}
-#'
-#' @param ... (\code{\link{classified}}) One or more objects of type \code{\link{classified}}
-#'
-#' @return An object of type \code{\link{classified}}
-#'
-#' @method sum classified
-#' @keywords internal
-sum.classified <- function(...) {
-  input <- list(...)
-  input <- input[-length(input)] # remove `na.rm` from `sum` generic
-  # Check that all inputs are of correct class
-  if (! all(vapply(input, class, character(1)) == "classified")) {
-    stop("All inputs must be of type `classified`")
-  }
-
-  # Make output object
-  new_taxon_data <- do.call(rbind, lapply(input, taxon_data, drop = FALSE))
-  new_taxon_data <- new_taxon_data[ , ! colnames(new_taxon_data) %in% reserved_col_names()]
-  new_item_data <- do.call(rbind, lapply(input, item_data, drop = FALSE))
-  new_item_data <- new_item_data[ , ! colnames(new_item_data) %in% reserved_col_names()]
-  classified(taxon_ids = unlist(lapply(input, taxon_data, subset = "taxon_ids")),
-             parent_ids = unlist(lapply(input, taxon_data, subset = "parent_ids")),
-             item_taxon_ids = unlist(lapply(input, item_data, subset = "taxon_ids")),
-             taxon_data = new_taxon_data,
-             item_data = new_item_data)
-}
-
-
 #' Get rank of taxa 
 #'
 #' Get rank of taxa in an object of type \code{\link{classified}}
