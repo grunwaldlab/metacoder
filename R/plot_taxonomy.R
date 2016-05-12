@@ -866,7 +866,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
 #' @rdname plot_taxonomy
 plot.classified <- function(x, ...) {
   # Non-standard argument evaluation
-  data <- taxon_data(x)
+  data <- taxon_data(x, sort_by = classifications)
   arguments <- c(list(taxon_id = data$taxon_id, parent_id = data$parent_id),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   

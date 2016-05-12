@@ -200,7 +200,7 @@ taxon_data <- function(obj,
                        col_subset = taxon_data_colnames(obj),
                        row_subset = taxon_ids(obj),
                        calculated_cols = TRUE,
-                       sort_by = "classifications",
+                       sort_by = NULL,
                        decreasing = FALSE,
                        drop = FALSE) {
   row_subset <- format_taxon_subset(obj, row_subset)
@@ -227,14 +227,14 @@ taxon_data <- function(obj,
   
   # Reorder output rows according to `sort_by`
   if (! is.null(sort_by)) {
-    if (sort_by %in% colnames(data)) {
+    if (is.character(sort_by) && sort_by %in% colnames(data)) {
       sort_by_col <- data[ , sort_by]
-    } else if (is.function(sort_by)) {
+    } else if (is.function(sort_by) && all(c("obj", "subset") %in% names(formals(sort_by)))) {
       sort_by_col <- sort_by(obj, row_subset)
     } else if (sort_by %in% names(obj$taxon_funcs)) {
       sort_by_col <- obj$taxon_funcs[[sort_by]](obj, row_subset)
     } else {
-      sort_by_col <- get(sort_by)(obj, row_subset)
+      stop("Could not identify `sort_by` value. It must be a column displayed by `taxon_data`, a function to has `obj` and `subset` arguments, or a function in `obj$taxon_funcs`.")
     }
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }
