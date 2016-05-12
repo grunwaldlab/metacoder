@@ -6,7 +6,8 @@
 \usage{
 classified(taxon_ids, parent_ids, item_taxon_ids, taxon_data = NULL,
   item_data = NULL, taxon_funcs = list(item_counts = item_counts,
-  taxon_ranks = taxon_ranks), item_funcs = list())
+  taxon_ranks = taxon_ranks, classifications = classifications),
+  item_funcs = list())
 }
 \arguments{
 \item{taxon_ids}{Unique taxon ids}

@@ -19,7 +19,7 @@
 #' @export
 classified <- function(taxon_ids, parent_ids, item_taxon_ids,
                        taxon_data = NULL, item_data = NULL,
-                       taxon_funcs = list(item_counts = item_counts, taxon_ranks = taxon_ranks),
+                       taxon_funcs = list(item_counts = item_counts, taxon_ranks = taxon_ranks, classifications = classifications),
                                           # child_counts = child_counts, subtaxon_counts = subtaxon_counts),
                        item_funcs = list()) {
   # Check that taxon ids are unique
@@ -183,6 +183,12 @@ item_data_colnames <- function(obj) {
 #' If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$taxon_funcs}.
 #' These values are calculated each time \code{taxon_data} is called since their values can change if 
 #' the data is subset.
+#' @param sort_by (\code{character} of length 1)
+#' The name of a column in \code{obj$taxon_data} or a function name in  \code{obj$taxon_funcs}.
+#' This column will be used to sort the output rows.
+#' If \code{NULL}, no sorting will be done.
+#' @param decreasing (\code{logical} of length 1)
+#' If \code{TRUE}, \code{sort_by} order is decreasing.
 #' @param drop (\code{logical} of length 1)
 #' If \code{TRUE}, if \code{subset} is a single column
 #' name, then a \code{vector} is returned instead of a \code{data.frame}
@@ -194,6 +200,8 @@ taxon_data <- function(obj,
                        col_subset = taxon_data_colnames(obj),
                        row_subset = taxon_ids(obj),
                        calculated_cols = TRUE,
+                       sort_by = "classifications",
+                       decreasing = FALSE,
                        drop = FALSE) {
   row_subset <- format_taxon_subset(obj, row_subset)
   # Check that the user is making sense
@@ -213,8 +221,24 @@ taxon_data <- function(obj,
     names(calculated_data) <- names(functions)
     data <- cbind(data, as.data.frame(calculated_data))
   }
-  # Reorder output to match order of col_subset
+  
+  # Reorder output columns to match order of col_subset
   data <- data[ , col_subset, drop = drop]
+  
+  # Reorder output rows according to `sort_by`
+  if (! is.null(sort_by)) {
+    if (sort_by %in% colnames(data)) {
+      sort_by_col <- data[ , sort_by]
+    } else if (is.function(sort_by)) {
+      sort_by_col <- sort_by(obj, subset)
+    } else if (sort_by %in% names(obj$taxon_funcs)) {
+      sort_by_col <- obj$taxon_funcs[[sort_by]](obj, subset)
+    } else {
+      sort_by_col <- get(sort_by)(obj, subset)
+    }
+    data <- data[order(sort_by_col, decreasing = decreasing), ]
+  }
+  
   return(data)
 }
 
@@ -531,6 +555,26 @@ roots <- function(obj, subset = taxon_ids(obj)) {
 taxon_ids <- function(obj) {
   unname(obj$taxon_ids)
 }
+
+
+#' Get classification of taxa 
+#'
+#' Get classification strings of taxa in an object of type \code{\link{classified}}.
+#' Each classification is constructed by concatenating the taxon ids of the given taxon and its supertaxa.
+#'
+#' @param obj (\code{\link{classified}})
+#' @param subset (\code{character})
+#' The \code{taxon_ids}s to get classifications for.
+#' @param sep (\code{character} of length 1)
+#' The character(s) to place between taxon IDs
+#'
+#' @return \code{character} of length equal to \code{subset}
+#'
+#' @export
+classifications <- function(obj, subset = taxon_ids(obj), sep = ";") {
+  vapply(supertaxa(obj, subset, include_input = TRUE), paste0, character(1), collapse = sep)
+}
+
 
 
 #' Format taxon subset value

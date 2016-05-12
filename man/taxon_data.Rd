@@ -5,7 +5,8 @@
 \title{Return taxon data from \code{\link{classified}}}
 \usage{
 taxon_data(obj, col_subset = taxon_data_colnames(obj),
-  row_subset = taxon_ids(obj), calculated_cols = TRUE, drop = FALSE)
+  row_subset = taxon_ids(obj), calculated_cols = TRUE,
+  sort_by = "classifications", decreasing = FALSE, drop = FALSE)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}
@@ -22,6 +23,14 @@ Default: All rows.}
 If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$taxon_funcs}.
 These values are calculated each time \code{taxon_data} is called since their values can change if 
 the data is subset.}
+
+\item{sort_by}{(\code{character} of length 1)
+The name of a column in \code{obj$taxon_data} or a function name in  \code{obj$taxon_funcs}.
+This column will be used to sort the output rows.
+If \code{NULL}, no sorting will be done.}
+
+\item{decreasing}{(\code{logical} of length 1)
+If \code{TRUE}, \code{sort_by} order is decreasing.}
 
 \item{drop}{(\code{logical} of length 1)
 If \code{TRUE}, if \code{subset} is a single column
