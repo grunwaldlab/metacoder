@@ -460,7 +460,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
       # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
       if (layout == "reingold-tilford") { 
-        edgelist <- edgelist[sample(1:nrow(edgelist)), ]
+        grouped_index <- split(rownames(edgelist), f = edgelist[, "pid_user"])
+        grouped_index <- unlist(grouped_index[sample(seq_along(grouped_index))])
+        edgelist <- edgelist[grouped_index, , drop = FALSE] 
       }
       sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
