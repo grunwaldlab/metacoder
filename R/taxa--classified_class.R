@@ -572,7 +572,7 @@ taxon_ids <- function(obj) {
 #'
 #' @export
 classifications <- function(obj, subset = taxon_ids(obj), sep = ";") {
-  vapply(supertaxa(obj, subset, include_input = TRUE), paste0, character(1), collapse = sep)
+  vapply(supertaxa(obj, subset, include_input = TRUE), function(x) paste0(rev(x), collapse = sep), character(1))
 }
 
 

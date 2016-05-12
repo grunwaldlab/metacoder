@@ -458,12 +458,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
-      # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
-      if (layout == "reingold-tilford") { 
-        grouped_index <- split(rownames(edgelist), f = edgelist[, "pid_user"])
-        grouped_index <- unlist(grouped_index[sample(seq_along(grouped_index))])
-        edgelist <- edgelist[grouped_index, , drop = FALSE] 
-      }
+#       # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
+#       if (layout == "reingold-tilford") { 
+#         grouped_index <- split(rownames(edgelist), f = edgelist[, "pid_user"])
+#         grouped_index <- unlist(grouped_index[sample(seq_along(grouped_index))])
+#         edgelist <- edgelist[grouped_index, , drop = FALSE] 
+#       }
       sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
     igraph::V(sub_graph)$weight_factor <- data[taxa, c("vs_trans")]
@@ -866,8 +866,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
 #' @rdname plot_taxonomy
 plot.classified <- function(x, ...) {
   # Non-standard argument evaluation
-  arguments <- c(list(taxon_id = x$taxon_id, parent_id = x$parent_id),
-                 lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(x)))
+  data <- taxon_data(x)
+  arguments <- c(list(taxon_id = data$taxon_id, parent_id = data$parent_id),
+                 lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
   # Use variable name for scale axis labels
   if (! "vertex_color_axis_label" %in% names(arguments)) {
