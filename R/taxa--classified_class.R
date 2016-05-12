@@ -22,9 +22,6 @@ classified <- function(taxon_ids, parent_ids, item_taxon_ids,
                        taxon_funcs = list(item_counts = item_counts, taxon_ranks = taxon_ranks),
                                           # child_counts = child_counts, subtaxon_counts = subtaxon_counts),
                        item_funcs = list()) {
-  #
-
-
   # Check that taxon ids are unique
   if (length(unique(taxon_ids)) != length(taxon_ids)) { stop("'taxon_ids' must be unique") }
   # Check that parent_ids is the same length of taxon_ids
@@ -53,13 +50,10 @@ classified <- function(taxon_ids, parent_ids, item_taxon_ids,
   if (nrow(item_data) != length(item_taxon_ids)) {
     stop("'item_data' must have the same number of rows as 'item_taxon_ids'")
   }
-#   if ( any(colnames(taxon_data) %in% colnames(item_data)) ) {
-#     stop("'taxon_data' and 'item_data' may not share column names")
-#   }
-
-#   if ( any(colnames(taxon_data) %in% reserved_col_names()) ) {
+  reserved_col_names <- c("taxon_ids", "parent_ids", "item_taxon_ids")
+#   if ( any(colnames(taxon_data) %in% reserved_col_names ) {
 #     stop(paste("Column names cannot be one of the following:",
-#                paste0(reserved_col_names(), collapse = ", ")))
+#                paste0(reserved_col_names, collapse = ", ")))
 #   }
 
   # Check column functions
@@ -92,14 +86,6 @@ classified <- function(taxon_ids, parent_ids, item_taxon_ids,
   return(output)
 }
 
-#' invalid column names for user data
-#'
-#' invalid column names for user data
-#' 
-#' @keywords internal
-reserved_col_names <- function() {
-  c("taxon_ids", "parent_ids", "item_taxon_ids")
-}
 
 #' Create a inclusive subset of \code{\link{classified}}
 #'
@@ -117,30 +103,21 @@ reserved_col_names <- function() {
 #' @return \code{\link{classified}}
 #'
 #' @export
-subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_taxon_ids), subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, ...) {
+subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_taxon_ids),
+                              subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, ...) {
   # non-standard argument evaluation
   parsed_taxon <- lazyeval::lazy_eval(lazyeval::lazy(taxon), data = taxon_data(x))
   parsed_item <- lazyeval::lazy_eval(lazyeval::lazy(item), data = item_data(x))
   
   # Get taxa of subset
-  new_taxa <- x$taxon_ids[parsed_taxon]
-  if (subtaxa) {
-    new_taxa <- c(new_taxa,
-                  subtaxa(x,
-                          subset = parsed_taxon,
-                          recursive = TRUE,
-                          simplify = TRUE))
-  }
-  if (supertaxa) {
-    new_taxa <- c(new_taxa,
-                  supertaxa(x,
-                            subset = parsed_taxon,
-                            recursive = TRUE,
-                            simplify = TRUE,
-                            include_input = FALSE))
-  }
-  new_taxa <- unique(new_taxa)
-  
+  new_taxa <- unique(c(x$taxon_ids[parsed_taxon],
+                       if (subtaxa) {
+                         subtaxa(x, subset = parsed_taxon, simplify = TRUE)
+                       },
+                       if (supertaxa) {
+                         supertaxa(x, subset = parsed_taxon, simplify = TRUE, include_input = FALSE)
+                       }))
+
   # Get items of subset
   inluded_items <- x$item_taxon_ids[parsed_item] %in% new_taxa
 
@@ -176,6 +153,7 @@ taxon_data_colnames <- function(obj) {
   c("taxon_ids", "parent_ids", colnames(obj$taxon_data),  names(obj$taxon_funcs))
 }
 
+
 #' Return item data column names
 #'
 #' Return item data column names of and object of type \code{\link{classified}}.
@@ -187,8 +165,6 @@ taxon_data_colnames <- function(obj) {
 item_data_colnames <- function(obj) {
   c("taxon_ids", colnames(obj$item_data), names(obj$item_funcs))
 }
-
-
 
 
 #' Return taxon data from \code{\link{classified}}
@@ -242,6 +218,7 @@ taxon_data <- function(obj,
   return(data)
 }
 
+
 #' Return item data from \code{\link{classified}}
 #'
 #' Return a table of data associated with items of an object of type
@@ -252,23 +229,14 @@ taxon_data <- function(obj,
 #' Default: All columns.
 #' @param drop (\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
 #' name, then a \code{vector} is returned instead of a \code{data.frame}
-#' @param ... Passed to \code{taxon_data.classified}
 #'
 #' @return \code{data.frame} with rows corresponding to items in input
 #'
 #' @export
-#' @rdname item_data
-item_data <- function(...) {
-  UseMethod("item_data")
-}
-
-#' @method item_data classified
-#' @export
-#' @rdname item_data
-item_data.classified <- function(obj,
-                                 subset = item_data_colnames(obj),
-                                 # calculated_cols = TRUE,
-                                 drop = FALSE, ...) {
+item_data <- function(obj,
+                      subset = item_data_colnames(obj),
+                      # calculated_cols = TRUE,
+                      drop = FALSE) {
   # Check that the user is making sense
 #   if (calculated_cols == FALSE && any(subset %in% names(obj$item_funcs))) {
 #     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
@@ -289,8 +257,8 @@ item_data.classified <- function(obj,
   # Reorder output to match order of subset
   data <- data[ , subset, drop = drop]
   return(data)
-
 }
+
 
 #' Apply a function to every taxon
 #'
@@ -350,9 +318,8 @@ split_by_taxon.classified <- function(obj) {
                item_funcs = obj$item_funcs)
   }
 
-  mapply(process_one,
-         subtaxa(obj), supertaxa(obj, include_input = TRUE), items(obj),
-         SIMPLIFY = FALSE)
+  mapply(SIMPLIFY = FALSE, process_one,
+         subtaxa(obj), supertaxa(obj, include_input = TRUE), items(obj))
 }
 
 #' Combine classified data
