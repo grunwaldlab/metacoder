@@ -551,7 +551,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                         max = rep(max_breaks, length(min_breaks)))
     space[space$min <= space$max, ]
   }
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 30)
+  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 35)
   search_space$range_size <- search_space$max - search_space$min
   # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
   find_overlap <- function(a_min, a_max, distance) {
@@ -568,7 +568,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
     overlap_weight <- 1 / sqrt(nrow(data))
-    minimum_weight <- 10
+    minimum_weight <- 5
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   search_space$opt_stat <- apply(search_space, MARGIN = 1,
@@ -596,8 +596,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Infer tree size range -------------------------------------------------------------------
   #|
   get_tree_area <- function(a_root) {
+    size <- data[data$subgraph_root == a_root, "vs_plot"]
     x <- data[data$subgraph_root == a_root, "vx_plot"]
+    x <- c(x + size, x - size)
     y <- data[data$subgraph_root == a_root, "vy_plot"]
+    y <- c(y + size, y - size)
     (max(x) - min(x)) * (max(y) - min(y)) 
   }
   tree_area <- vapply(unique(data$subgraph_root), get_tree_area, FUN.VALUE = numeric(1))
@@ -726,10 +729,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
                       function(x) mean(range(x)))
     title_data$tx_plot <- tx_plot[title_data$subgraph_root]
     ty_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1),
-                      function(x) mean(range(x)))
+                      function(y) mean(range(y)))
     title_data$ty_plot <- ty_plot[title_data$subgraph_root]
     title_data$tlx_plot <- title_data$tx_plot 
-    tly_plot <- vapply(split(data$vy_plot, data$subgraph_root), FUN.VALUE = numeric(1), max)
+    tly_plot <- mapply(function(y, size) max(y + size),
+                       y = split(data$vy_plot, data$subgraph_root),
+                       size = split(data$vs_plot, data$subgraph_root))
     title_data$tly_plot <- tly_plot[title_data$subgraph_root] + title_data$tls_plot * 1.1
     text_data <- rbind(text_data,
                        data.frame(stringsAsFactors = FALSE, 
