@@ -279,8 +279,8 @@ First, the same sequences are amplified with 515F/1100R and results for the two 
 ```{r}
 pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
                       pair_name = "515F_1100R", mismatch = 10)
-pcr$taxon_data$count_amplified_2 <- taxon_data(pcr_2, "count_amplified")
-pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified") - taxon_data(pcr_2, "prop_amplified")
+pcr$taxon_data$count_amplified_2 <- taxon_data(pcr_2, "count_amplified", drop = TRUE)
+pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified", drop = TRUE) - taxon_data(pcr_2, "prop_amplified", drop = TRUE)
 ```
 
 Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
@@ -293,10 +293,18 @@ set.seed(2)
 ```{r}
 pcr %>%
   subset(name == "Bacteria") %>%
-  subset(count_amplified < item_counts | count_amplified_2 < item_counts, subtaxa = FALSE) %>%
-  plot(vertex_size = item_counts, vertex_label = name,
-       vertex_color = prop_diff, vertex_color_range = diverging_palette(),
-       vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
+  subset(abs(prop_diff) > 0.1, subtaxa = FALSE, supertaxa = TRUE) %>%
+  plot(vertex_size = item_counts,
+       vertex_label = ifelse(abs(prop_diff) > 0.3, name, NA),
+       vertex_color = prop_diff,
+       vertex_color_range = diverging_palette(),
+       vertex_color_interval = c(-1, 1),
+       vertex_color_trans = "radius",
+       vertex_label_max = 200,
+       vertex_color_axis_label = "Difference in proportion amplified",
+       vertex_size_axis_label = "Sequence count",
+       title = "Comparison of two universal primer pairs using in silico PCR",
+       title_size = 0.03)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
