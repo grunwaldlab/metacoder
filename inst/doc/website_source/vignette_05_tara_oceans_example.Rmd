@@ -48,7 +48,7 @@ taxon_data(data, row_subset = 1:10)
 ```
 
 
-### Plot data
+### Plot all data
 
  
 ```{r}
@@ -62,3 +62,25 @@ plot(data,
      tree_label = name,
      vertex_label_max = 400)
 ```
+
+
+
+### subset Eukaryota
+
+```{r}
+eukaryota <- subset(data, name == "Eukaryota")
+```
+
+```{r}
+plot(eukaryota,
+     title = "Tara Oceans Eukaryota OTU counts",
+     title_size = 0.03,
+     vertex_color_axis_label = "OTU count",
+     vertex_size = item_counts,
+     vertex_label = name,
+     vertex_color = item_counts,
+     vertex_label_max = 400)
+
+```
+
+

@@ -188,6 +188,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   row_count <- 0
   
   # Remove invalid classifications
+  item_data <- item_data[!is.na(classifications), , drop = FALSE]
   classifications <- classifications[!is.na(classifications)]
   
   # Run recursive part of the function

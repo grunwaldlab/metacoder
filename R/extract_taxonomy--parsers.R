@@ -193,8 +193,26 @@ get_name_from_id <- function(id, database) {
 #' 
 #' @keywords internal
 class_from_name <- function(name, database, ...) {
+  # Look up classifications
   result <- map_unique(name, taxize::classification, ask = FALSE, rows = 1, db = database)
-  result <- lapply(result, function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
+  # Complain about failed queries
+  failed_queries <- is.na(result)
+  max_print <- 10
+  if (sum(failed_queries) > 0) {
+    invalid_list <- paste("   ", which(failed_queries), ": ", names(which(failed_queries)), "\n")
+    if (length(invalid_list) > max_print) {
+      invalid_list <- c(invalid_list[1:max_print], "    ...")
+    }
+    vigilant_report(paste0(collapse = "",
+                           c("The following ", sum(failed_queries), " of ", length(failed_queries),
+                             " taxon name(s) could not be looked up using the database '", database, "':\n",
+                             invalid_list)))
+  }
+#   # Remove failed queries
+#   result <- result[! failed_queries]
+  # Rename columns of result
+  result[! failed_queries] <- lapply(result[! failed_queries],
+                                     function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 
