@@ -239,7 +239,7 @@ taxon_data <- function(obj,
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }
   
-  return(data)
+  return(dplyr::tbl_df(data))
 }
 
 
@@ -280,7 +280,7 @@ item_data <- function(obj,
 #   }
   # Reorder output to match order of subset
   data <- data[ , subset, drop = drop]
-  return(data)
+  return(dplyr::tbl_df(data))
 }
 
 

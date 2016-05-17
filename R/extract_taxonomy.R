@@ -258,3 +258,76 @@ extract_taxonomy.DNAbin <- function(input, ...) {
 
 
 
+#' Parse taxonomic data in a tsv/csv file
+#' 
+#' Parse taxonomic data in a tsv/csv file
+#' 
+#' @param file_path (\code{character} of length 1)
+#' The file path to the input file.
+#' @param taxon_col (named \code{integer} of length 1)
+#' The index of the column with taxonomic information, named by the type of information.
+#' A negative index is interpreted as the number of columns from the last.
+#' The name of the column can have to following values:
+#'  \describe{
+#'    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
+#'          Requires an internet connection.}
+#'    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
+#'          by a particular \code{database}. Requires an internet connection.}
+#'    \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
+#'          from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
+#'          are separated by the \code{class_sep} argument and the information is parsed by the
+#'          \code{class_regex} and \code{class_key} arguments.}
+#'  }
+#' @param other_col_type (\code{character}) 
+#' The type of the other columns no specified by \code{taxon_col}. Can be \code{"taxon_info"} or \code{"item_info"}. 
+#' @param header (\code{logical} of length 1)
+#' If \code{TRUE}, the first row of the file is the column names. 
+#' @param sep (\code{character} of length 1)
+#' The character(s) that separate each column in each row.
+#' Can be a regular expression.
+#' @param max_lines (\code{integer} of length 1)
+#' The maximum number of lines to read from the file.
+#' @param ...
+#' Passed to \code{\link{extract_taxonomy}}. 
+#' 
+#' @return \code{\link{classified}}
+#' 
+#' @export
+parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = -1L, ...) {
+  
+  # Validate input
+  if (length(file_path) > 1) {
+    stop("Currently this function can only handle one file at a time. If you think it would be useful for it to handle multiple files at once, request this feature by starting a issue at 'https://github.com/grunwaldlab/metacoder/issues'.")
+  }
+  possible_col_names <- c("taxon_id", "name", "class")
+  if (! names(taxon_col) %in% possible_col_names || ! is.numeric(taxon_col))  {
+    stop(paste0('"taxon_col" must be an integer vector named with the following: ', paste0(collapse = ", ", possible_col_names)))
+  }
+  
+  # Read file
+  content <- readLines(file_path, n = max_lines + header)
+  first_line <- strsplit(content[[1]], split = sep)[[1]]
+  
+  # Interpret negative indexes
+  if (taxon_col < 0) {
+    taxon_col <- length(first_line) + taxon_col + 1
+  }
+  
+  # Parse header to make key
+  key <- rep(other_col_type, length(first_line))
+  key[taxon_col] <- names(taxon_col)
+  if (header) {
+    key_names <- first_line
+    key_names[taxon_col] <- ""
+    names(key) <- key_names
+    content <- content[-1]
+  }
+  
+  # Make regex
+  regex <- paste0("^", paste0(collapse = sep, rep("(.*?)", length(first_line))), "$")
+  
+  # Extract taxonomic data
+  extract_taxonomy(content, key = key, regex = regex, return_input = FALSE, ...)
+  
+  }
+

@@ -1,0 +1,64 @@
+---
+title: "Tara oceans example"
+output: html_document
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitr)
+library(ggplot2)
+source("knitr_settings.R")
+```
+
+
+### Extracting taxonomic data
+
+The code below downloads the compressed data to a temporary directory:
+
+```{r}
+data_url <- "http://taraoceans.sb-roscoff.fr/EukDiv/data/Database_W5_OTU_occurences.tsv.zip"
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(data_url))
+download.file(url = data_url, destfile = local_file_path, quiet = TRUE)
+```
+
+Next we will uncompress the archive and identify the fasta file.
+
+```{r}
+max_lines = # Get contents of zip archive
+unpacked_file_paths <- unzip(local_file_path, list = TRUE)
+# Uncompress archive
+unzip(local_file_path, exdir = temp_dir_path)
+# Identify the Mothur RDP training set
+unpacked_file_path <- file.path(temp_dir_path, 
+                                  unpacked_file_paths[grepl("tsv$", unpacked_file_paths)])
+```
+
+The file can then be parsed using the `ape` package and the taxonomy data in the headers can be extracted by `extract_taxonomy`:
+
+```{r, warning=FALSE, message=FALSE}
+# Load the package
+library(metacoder)
+# Extract the taxonomic information of the sequences
+data <- parse_taxonomy_table(unpacked_file_path, taxon_col = c("class" = -9), class_sep = "\\|")
+```
+
+
+```{r}
+taxon_data(data, row_subset = 1:10)
+```
+
+
+### Plot data
+
+ 
+```{r}
+plot(data,
+     title = "Tara Oceans overall OTU counts",
+     title_size = 0.03,
+     vertex_color_axis_label = "OTU count",
+     vertex_size = item_counts,
+     vertex_label = name,
+     vertex_color = item_counts,
+     tree_label = name,
+     vertex_label_max = 400)
+```
