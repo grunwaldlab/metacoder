@@ -347,7 +347,7 @@ taxon_data(pcr, row_subset = 1:7)
 ```
 
 
-## *In silico* PCR use case example: Differntial plot
+## *In silico* PCR use case example: Differential plot
 
 ```{r, fig.height=2.5}
 subset(pcr, name == "Bacteria") %>%
