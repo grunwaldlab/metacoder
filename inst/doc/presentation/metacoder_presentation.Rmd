@@ -19,6 +19,7 @@ knitr::knit_hooks$set(mysize = function(before, options, envir) {
     return(options$size)
 })
 library(magrittr)
+library(metacoder)
 ```
 
 ## Introducing MetacodeR
@@ -48,7 +49,6 @@ unpacked_file_paths <- untar(local_file_path, list = TRUE)
 untar(local_file_path, exdir = temp_dir_path)
 # Identify the Mothur RDP training set
 input_file_path <- file.path(temp_dir_path, unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
-library(metacoder)
 seqs <- ape::read.FASTA(input_file_path)
 ```
 
@@ -140,7 +140,6 @@ item_data(its1_ex_data, row_subset = 1:4)
 ```
 
 
-
 ## Plotting taxonomic data: Metadiversity plots
 
 ```{r}
@@ -213,11 +212,34 @@ plot(contaminants, vertex_size = item_counts,
 ```
 
 
-## Subsetting taxonomic data
+## Subsetting taxonomic data: Picking a taxon
 
+```{r}
+set.seed(1)
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(subset(data, name == "Firmicutes"),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts),
+  plot(subset(data, name == "Bacilli"),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts))
+```
+
+
+## Subsetting taxonomic data: Removing root taxa
+
+```{r}
+set.seed(1)
+plot(subset(data, taxon_ranks > 2),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts, tree_label = name)
+```
 
 
 ## Sampling taxonomic data
 
 
 ## In silico PCR
+
+
+## Use case example
