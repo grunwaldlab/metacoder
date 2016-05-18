@@ -53,12 +53,12 @@ seqs <- ape::read.FASTA(input_file_path)
 
 The code below parses the Mothur 16s RDP training set.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 library(metacoder)
 seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta") 
 ```
 
-```{r, warning=FALSE, message=TRUE, mysize=TRUE, size='\\small'}
+```{r, warning = FALSE, message = TRUE, mysize = TRUE, size = '\\small'}
 cat(names(seqs)[1]) 
 data <- extract_taxonomy(seqs[1:1000],
                          regex = "^(.*)\\t(.*)", 
@@ -66,10 +66,11 @@ data <- extract_taxonomy(seqs[1:1000],
                          class_sep = ";")
 ```
 
+This parsed data will be used for most of the following plotting examples.
 
 ## Accessing parsed data
 
-```{r mysize=TRUE, size='\\small'}
+```{r mysize = TRUE, size = '\\small'}
 taxon_data(data, row_subset = 1:4) 
 item_data(data, row_subset = 1:4) 
 ```
@@ -77,9 +78,72 @@ item_data(data, row_subset = 1:4)
 
 ## Plotting taxonomic data: Metadiversity plots
 
-
-```{r mysize=TRUE, size='\\small'}
+```{r mysize = TRUE, size = '\\small'}
 plot(data, vertex_size = item_counts,
      vertex_label = name, vertex_color = item_counts)
+```
+
+
+## Plotting taxonomic data: Overlap optimization
+
+```{r mysize = TRUE, size = '\\small'}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, overlap_avoidance = 10),
+  plot(data, vertex_size = item_counts, overlap_avoidance = 0.1))
+```
+
+
+## Plotting taxonomic data: Size
+
+```{r mysize = TRUE, size = '\\small'}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts,
+       vertex_size_range = c(0.0001, 0.1)),
+  plot(data, vertex_size = item_counts,
+       edge_size = - taxon_ranks, edge_size_range = c(0.001, 0.001)))
+```
+
+
+## Plotting taxonomic data: Color
+
+```{r mysize = TRUE, size = '\\small'}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_color = item_counts,
+       vertex_color_range = c("#FFFFFF", "darkorange3", "#4e567d")),
+  plot(data, vertex_size = item_counts, vertex_color = "grey",
+       edge_color = item_counts))
+```
+
+
+## Plotting taxonomic data: Labels
+
+```{r mysize = TRUE, size = '\\small'}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       title = "Vertex labels"),
+  plot(data, vertex_size = item_counts, edge_label = name,
+       edge_label_max = 200, title = "Edge labels"))
+```
+
+
+## Plotting taxonomic data: Layouts
+
+```{r mysize = TRUE, size = '\\small'}
+set.seed(2)
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       layout = "davidson-harel"),
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       layout = "davidson-harel", initial_layout = "reingold"))
+```
+
+
+## Plotting taxonomic data: Multiple roots
+
+```{r mysize = TRUE, size = '\\small'}
+set.seed(3)
+plot(contaminants, vertex_size = item_counts,
+     vertex_color = item_counts, vertex_label = name,
+     tree_label = name, layout = "fruchterman-reingold")
 ```
 

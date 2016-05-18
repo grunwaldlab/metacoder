@@ -324,7 +324,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
                           vertex_color_interval = NULL,
-                          edge_size_interval = vertex_size_interval,
+                          edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
                           edge_color_interval = NULL,
                           
                           vertex_label_max = 40,
@@ -337,7 +337,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           initial_layout = "fruchterman-reingold",
                           make_legend = TRUE,
                           title = NULL,
-                          title_size = 0.1,
+                          title_size = 0.08,
                           
                           vertex_color_axis_label = NULL, 
                           vertex_size_axis_label = NULL,

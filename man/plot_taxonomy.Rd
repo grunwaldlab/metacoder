@@ -28,14 +28,15 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   edge_label_color_range = quantative_palette(),
   tree_label_color_range = quantative_palette(),
   vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
-  vertex_color_interval = NULL, edge_size_interval = vertex_size_interval,
-  edge_color_interval = NULL, vertex_label_max = 40, edge_label_max = 40,
-  tree_label_max = 40, overlap_avoidance = 1, margin_size = c(0, 0),
-  layout = "reingold-tilford", initial_layout = "fruchterman-reingold",
-  make_legend = TRUE, title = NULL, title_size = 0.1,
-  vertex_color_axis_label = NULL, vertex_size_axis_label = NULL,
-  edge_color_axis_label = NULL, edge_size_axis_label = NULL,
-  background_color = "#FFFFFF00", output_file = NULL, ...)
+  vertex_color_interval = NULL, edge_size_interval = range(edge_size, na.rm
+  = TRUE, finite = TRUE), edge_color_interval = NULL, vertex_label_max = 40,
+  edge_label_max = 40, tree_label_max = 40, overlap_avoidance = 1,
+  margin_size = c(0, 0), layout = "reingold-tilford",
+  initial_layout = "fruchterman-reingold", make_legend = TRUE,
+  title = NULL, title_size = 0.1, vertex_color_axis_label = NULL,
+  vertex_size_axis_label = NULL, edge_color_axis_label = NULL,
+  edge_size_axis_label = NULL, background_color = "#FFFFFF00",
+  output_file = NULL, ...)
 
 \method{plot}{classified}(x, ...)
 }
