@@ -1,5 +1,5 @@
 ---
-title: "MetacodeR: An R package metabarcoding visulizations"
+title: "MetacodeR: An R package for metabarcoding visualizations and primer evaluation"
 author: "Zachary Foster"
 date: "May 17, 2016"
 fontsize: 9pt
@@ -13,7 +13,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = TRUE, autodep = TRUE, mysize = TRUE, size = '\\small')
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE, mysize = TRUE, size = '\\small', warning = FALSE)
 knitr::knit_hooks$set(mysize = function(before, options, envir) {
   if (before) 
     return(options$size)
@@ -24,7 +24,7 @@ library(metacoder)
 
 ## Introducing MetacodeR
 
-Metabarcoding is presenting new challenges:
+Metabarcoding is revolutionizing microbial ecology and presenting new challenges:
 
 - Numerous formats make taxonomic data difficult to manipulate.
 - Stacked bar charts lack taxonomic context.
@@ -239,7 +239,135 @@ plot(subset(data, taxon_ranks > 2),
 ## Sampling taxonomic data
 
 
-## In silico PCR
+```{r}
+subsampled <- taxonomic_sample(unite_ex_data_3, min_counts = c("7" = 3),
+                               max_counts = c("4" = 20, "7" = 5))
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(unite_ex_data_3, vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts, title = "All data"),
+  plot(subset(subsampled, item_counts > 0, subtaxa = FALSE),
+     vertex_size = item_counts, vertex_color = item_counts,
+     vertex_label = item_counts, title = "Sampled"))
+```
 
 
-## Use case example
+## *In silico PCR* use case example: Parsing data
+
+```{r eval = FALSE}
+library(metacoder)
+seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta") 
+```
+
+```{r, warning = FALSE, message = FALSE}
+cat(names(seqs)[1]) 
+data <- extract_taxonomy(seqs,
+                         regex = "^(.*)\\t(.*)", 
+                         key = c(rdp_id = "item_info", "class"),
+                         class_sep = ";")
+```
+
+```{r}
+taxon_data(data, row_subset = 1:4)
+```
+
+## *In silico* PCR use case example: Plotting
+
+```{r, fig.height=2.5}
+plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
+     vertex_label = name, vertex_color = item_counts,
+     vertex_color_range = c("cyan", "magenta", "green"),
+     edge_color_range   = c("#555555", "#EEEEEE"), overlap_avoidance = 0.5)
+```
+
+
+## *In silico* PCR use case example: Subsetting
+
+```{r, fig.height=2.5}
+subsetted <- subset(data, taxon_ranks > 1)
+set.seed(2)
+plot(subsetted, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = item_counts, overlap_avoidance = 0.5, tree_label = name)
+```
+
+
+
+## *In silico* PCR use case example: Sampling
+
+```{r, fig.height=2.5}
+sampled <- taxonomic_sample(subsetted, min_counts = c("6" = 5),
+                            max_counts = c("3" = 100, "6" = 5))
+sampled <- subset(sampled, item_counts > 0, itemless = FALSE)
+set.seed(3)
+plot(sampled, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = item_counts, overlap_avoidance = 0.5, tree_label = name)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+pcr <- primersearch(sampled, forward = "CTCCTACGGGAGGCAGCAG", 
+                    reverse = "GWATTACCGCGGCKGCTG",
+                    pair_name = "357F_519R",  mismatch = 10)
+taxon_data(pcr, row_subset = 1:7)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+set.seed(3)
+plot(pcr, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = prop_amplified, vertex_color_range =  c("red", "cyan"),
+     vertex_color_trans = "radius", tree_label = name)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+subset(pcr, name == "Bacteria") %>%
+  subset(count_amplified < item_counts, subtaxa = FALSE) %>% 
+  plot(vertex_size = item_counts, vertex_label = name,
+       vertex_color = prop_amplified, vertex_color_range =  c("red", "cyan"),
+       vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
+```
+
+
+## *In silico* PCR use case example: Second PCR
+
+```{r, fig.height=2.5}
+pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA",
+                      reverse = "AGGGTTGCGCTCGTTG",
+                      pair_name = "515F_1100R", mismatch = 10)
+pcr$taxon_data$count_amp_2 <- taxon_data(pcr_2, "count_amplified")[[1]]
+pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified")[[1]] -
+  taxon_data(pcr_2, "prop_amplified")[[1]]
+taxon_data(pcr, row_subset = 1:7)
+```
+
+
+## *In silico* PCR use case example: Differntial plot
+
+```{r, fig.height=2.5}
+subset(pcr, name == "Bacteria") %>%
+  subset(count_amplified < item_counts | count_amp_2 < item_counts, subtaxa = F) %>%
+  plot(vertex_size = item_counts, vertex_label = name,
+       vertex_color = prop_diff, vertex_color_range = diverging_palette(),
+       vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
+```
+
+
+## Plans for future development
+
+MetacodeR is under active development and many new features are planned.
+Some improvements that are being worked on include:
+
+* Increases in function speed
+* Plotting functions for pairwise comparison of treatments
+* Barcoding gap analysis and associated plotting functions
+* A function to aid in retrieving appropriate sequence data from NCBI for *in silico* PCR from whole genome sequences.
+
+To see the details of what is being worked on, check out the [issues](https://github.com/grunwaldlab/metacoder/issues) tab of the MetacodeR [Github site](https://github.com/grunwaldlab).
+
+

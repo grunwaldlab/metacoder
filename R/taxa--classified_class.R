@@ -119,7 +119,8 @@ subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_t
                        }))
 
   # Get items of subset
-  inluded_items <- x$item_taxon_ids[parsed_item] %in% new_taxa
+  inluded_items <- intersect(which(x$item_taxon_ids %in% new_taxa),
+                             parsed_item)
 
   # Make output
   output <- classified(taxon_ids = new_taxa,
@@ -223,7 +224,7 @@ taxon_data <- function(obj,
   }
   
   # Reorder output columns to match order of col_subset
-  data <- data[ , col_subset, drop = drop]
+  data <- dplyr::tbl_df(data)[ , col_subset]
   
   # Reorder output rows according to `sort_by`
   if (! is.null(sort_by)) {
@@ -239,7 +240,12 @@ taxon_data <- function(obj,
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }
   
-  return(dplyr::tbl_df(data))
+  # Apply drop
+  if (ncol(data) == 1 && drop) {
+    data = data[[1]]
+  }
+  
+  return(data)
 }
 
 
@@ -283,8 +289,14 @@ item_data <- function(obj,
 #     data <- cbind(data, as.data.frame(calculated_data))
 #   }
   # Reorder output to match order of col_subset
-  data <- data[row_subset, col_subset, drop = drop]
-  return(dplyr::tbl_df(data))
+  data <- dplyr::tbl_df(data)[row_subset, col_subset]
+  
+  # Apply drop
+  if (ncol(data) == 1 && drop) {
+    data = data[[1]]
+  }
+  
+  return(data)
 }
 
 
