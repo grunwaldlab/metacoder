@@ -567,8 +567,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 1 / sqrt(nrow(data))
-    minimum_weight <- 5 / sqrt(nrow(data))
+    overlap_weight <- 1 / nrow(data)^(1/3)
+    minimum_weight <- 50 / sqrt(nrow(data))
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   search_space$opt_stat <- apply(search_space, MARGIN = 1,

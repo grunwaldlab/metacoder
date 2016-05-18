@@ -1,0 +1,85 @@
+---
+title: "MetacodeR: An R package metabarcoding visulizations"
+author: "Zachary Foster"
+date: "May 17, 2016"
+fontsize: 9pt
+output:
+  beamer_presentation:
+    theme: "default"
+    colortheme: "beaver"
+    fonttheme: "structurebold"
+    includes:
+      in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE)
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
+```
+
+## Introducing MetacodeR
+
+Metabarcoding is presenting new challenges:
+
+- Numerous formats make taxonomic data difficult to manipulate.
+- Stacked bar charts lack taxonomic context.
+- Barcode loci and primers are a source of under-explored bias.
+
+MetacodeR is an R package that attempts to addresses these issues:
+
+- Taxonomic data can be extracted from any file format and manipulated. 
+- Community diversity can be visualized by color and size in a tree plot.
+- Primer specificity can be estimated with *in silico* PCR.
+
+## Parsing taxonomic data
+
+```{r, echo = FALSE}
+rdp_fasta_url <- "http://mothur.org/w/images/b/b5/Trainset10_082014.rdp.tgz"
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url))
+download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
+# Get contents of tar archive
+unpacked_file_paths <- untar(local_file_path, list = TRUE)
+# Uncompress archive
+untar(local_file_path, exdir = temp_dir_path)
+# Identify the Mothur RDP training set
+input_file_path <- file.path(temp_dir_path, unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
+library(metacoder)
+seqs <- ape::read.FASTA(input_file_path)
+```
+
+The code below parses the Mothur 16s RDP training set.
+
+```{r eval=FALSE}
+library(metacoder)
+seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta") 
+```
+
+```{r, warning=FALSE, message=TRUE, mysize=TRUE, size='\\small'}
+cat(names(seqs)[1]) 
+data <- extract_taxonomy(seqs[1:1000],
+                         regex = "^(.*)\\t(.*)", 
+                         key = c(rdp_id = "item_info", "class"),
+                         class_sep = ";")
+```
+
+
+## Accessing parsed data
+
+```{r mysize=TRUE, size='\\small'}
+taxon_data(data, row_subset = 1:4) 
+item_data(data, row_subset = 1:4) 
+```
+
+
+## Plotting taxonomic data: Metadiversity plots
+
+
+```{r mysize=TRUE, size='\\small'}
+plot(data, vertex_size = item_counts,
+     vertex_label = name, vertex_color = item_counts)
+```
+

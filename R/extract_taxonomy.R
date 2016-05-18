@@ -132,7 +132,7 @@ extract_taxonomy.default <- function(input,
                                      allow_na = TRUE,
                                      vigilance = c("error", "warning", "message", "none"),
                                      return_match = FALSE,
-                                     return_input = TRUE,
+                                     return_input = FALSE,
                                      redundant_names = FALSE,
                                      verbosity = c("low", "none", "high"),
                                      ...) {

@@ -14,7 +14,7 @@ extract_taxonomy(input, ...)
   class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
   "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
   vigilance = c("error", "warning", "message", "none"),
-  return_match = FALSE, return_input = TRUE, redundant_names = FALSE,
+  return_match = FALSE, return_input = FALSE, redundant_names = FALSE,
   verbosity = c("low", "none", "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
