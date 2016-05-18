@@ -33,7 +33,7 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
   edge_label_max = 40, tree_label_max = 40, overlap_avoidance = 1,
   margin_size = c(0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE,
-  title = NULL, title_size = 0.1, vertex_color_axis_label = NULL,
+  title = NULL, title_size = 0.08, vertex_color_axis_label = NULL,
   vertex_size_axis_label = NULL, edge_color_axis_label = NULL,
   edge_size_axis_label = NULL, background_color = "#FFFFFF00",
   output_file = NULL, ...)

@@ -13,7 +13,7 @@ extract_taxonomy(input, ...)
   class_key = c("name", "taxon_id", "taxon_info"), class_regex = "(.*)",
   class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
   "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
-  vigilance = c("error", "warning", "message", "none"),
+  vigilance = c("warning", "error", "message", "none"),
   return_match = FALSE, return_input = FALSE, redundant_names = FALSE,
   verbosity = c("low", "none", "high"), ...)
 
