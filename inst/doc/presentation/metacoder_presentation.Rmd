@@ -1,6 +1,6 @@
 ---
 title: "MetacodeR: An R package for metabarcoding visualizations and primer evaluation"
-author: "Zachary Foster"
+author: "Zachary Foster and Niklaus Grunwald"
 date: "May 17, 2016"
 fontsize: 9pt
 output:
