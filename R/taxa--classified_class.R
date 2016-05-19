@@ -119,7 +119,8 @@ subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_t
                        }))
 
   # Get items of subset
-  inluded_items <- x$item_taxon_ids[parsed_item] %in% new_taxa
+  inluded_items <- intersect(which(x$item_taxon_ids %in% new_taxa),
+                             parsed_item)
 
   # Make output
   output <- classified(taxon_ids = new_taxa,
@@ -223,7 +224,7 @@ taxon_data <- function(obj,
   }
   
   # Reorder output columns to match order of col_subset
-  data <- data[ , col_subset, drop = drop]
+  data <- dplyr::tbl_df(data)[ , col_subset]
   
   # Reorder output rows according to `sort_by`
   if (! is.null(sort_by)) {
@@ -239,7 +240,12 @@ taxon_data <- function(obj,
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }
   
-  return(dplyr::tbl_df(data))
+  # Apply drop
+  if (ncol(data) == 1 && drop) {
+    data = data[[1]]
+  }
+  
+  return(data)
 }
 
 
@@ -249,8 +255,12 @@ taxon_data <- function(obj,
 #' \code{\link{classified}}.
 #'
 #' @param obj (\code{\link{classified}})
-#' @param subset (\code{character}) The names of columns, either user defined or generated using \code{item_funcs}.
+#' @param col_subset (\code{character})
+#' The names of columns, either user defined or generated using \code{taxon_funcs}.
 #' Default: All columns.
+#' @param row_subset (\code{character})
+#' The taxon_ids of a subset of \code{obj}.
+#' Default: All rows.
 #' @param drop (\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
 #' name, then a \code{vector} is returned instead of a \code{data.frame}
 #'
@@ -258,29 +268,35 @@ taxon_data <- function(obj,
 #'
 #' @export
 item_data <- function(obj,
-                      subset = item_data_colnames(obj),
-                      # calculated_cols = TRUE,
+                      col_subset = item_data_colnames(obj),
+                      row_subset = 1:nrow(obj$item_data),
                       drop = FALSE) {
   # Check that the user is making sense
-#   if (calculated_cols == FALSE && any(subset %in% names(obj$item_funcs))) {
+#   if (calculated_cols == FALSE && any(col_subset %in% names(obj$item_funcs))) {
 #     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
 #   }
   # Combine taxon id information and arbitrary user-defined data
   data <- cbind(data.frame(taxon_ids = obj$item_taxon_ids, stringsAsFactors = FALSE),
                 obj$item_data)
   # Remove any user-defined columns not specified
-  data <- data[ , colnames(data) %in% subset, drop = FALSE]
+  data <- data[ , colnames(data) %in% col_subset, drop = FALSE]
   # Check if any of the column-generating functions are needed
-  functions <- obj$item_funcs[names(obj$item_funcs) %in% subset]
+  functions <- obj$item_funcs[names(obj$item_funcs) %in% col_subset]
   # Apply column-generating functions and append to output
 #   if (calculated_cols && length(functions) > 0) {
 #     calculated_data <- lapply(functions, item_apply, obj = obj, item = obj$item_taxon_ids)
 #     names(calculated_data) <- names(functions)
 #     data <- cbind(data, as.data.frame(calculated_data))
 #   }
-  # Reorder output to match order of subset
-  data <- data[ , subset, drop = drop]
-  return(dplyr::tbl_df(data))
+  # Reorder output to match order of col_subset
+  data <- dplyr::tbl_df(data)[row_subset, col_subset]
+  
+  # Apply drop
+  if (ncol(data) == 1 && drop) {
+    data = data[[1]]
+  }
+  
+  return(data)
 }
 
 

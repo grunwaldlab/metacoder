@@ -324,7 +324,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
                           vertex_color_interval = NULL,
-                          edge_size_interval = vertex_size_interval,
+                          edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
                           edge_color_interval = NULL,
                           
                           vertex_label_max = 40,
@@ -337,7 +337,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           initial_layout = "fruchterman-reingold",
                           make_legend = TRUE,
                           title = NULL,
-                          title_size = 0.1,
+                          title_size = 0.08,
                           
                           vertex_color_axis_label = NULL, 
                           vertex_size_axis_label = NULL,
@@ -567,8 +567,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
   optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 1 / sqrt(nrow(data))
-    minimum_weight <- 5 / sqrt(nrow(data))
+    overlap_weight <- 1 / nrow(data)^(1/3)
+    minimum_weight <- 75 / sqrt(nrow(data))
     (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
   }
   search_space$opt_stat <- apply(search_space, MARGIN = 1,

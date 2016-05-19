@@ -174,3 +174,24 @@
 #' @format An object of type \code{\link{classified}}
 #' @source \url{http://itsonedb.ba.itb.cnr.it:8080/ITS1}
 "its1_ex_data"
+
+
+#' Example dataset of bryophytes
+#'
+#' A dataset containing information from 171 bryophytes family names scraped from \url{http://www.theplantlist.org/1.1/browse/B/}:
+#' 
+#' @examples
+#' \dontrun{
+#' 
+#' library(magrittr)
+#' library(XML)
+#' taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") %>% 
+#' xmlRoot() %>%
+#'   getNodeSet("//ul[@id='nametree']/li/a/i") %>%
+#'   sapply(xmlValue)
+#'   
+#' bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name", database = "itis")
+#' }
+#'
+#' @format An object of type \code{\link{classified}}
+"bryophytes_ex_data"

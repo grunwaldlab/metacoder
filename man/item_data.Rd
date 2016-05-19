@@ -4,13 +4,19 @@
 \alias{item_data}
 \title{Return item data from \code{\link{classified}}}
 \usage{
-item_data(obj, subset = item_data_colnames(obj), drop = FALSE)
+item_data(obj, col_subset = item_data_colnames(obj),
+  row_subset = 1:nrow(obj$item_data), drop = FALSE)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}
 
-\item{subset}{(\code{character}) The names of columns, either user defined or generated using \code{item_funcs}.
+\item{col_subset}{(\code{character})
+The names of columns, either user defined or generated using \code{taxon_funcs}.
 Default: All columns.}
+
+\item{row_subset}{(\code{character})
+The taxon_ids of a subset of \code{obj}.
+Default: All rows.}
 
 \item{drop}{(\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
 name, then a \code{vector} is returned instead of a \code{data.frame}}

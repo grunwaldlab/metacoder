@@ -1,0 +1,373 @@
+---
+title: "MetacodeR: An R package for metabarcoding visualizations and primer evaluation"
+author: "Zachary Foster and Niklaus Grunwald"
+date: "May 17, 2016"
+fontsize: 9pt
+output:
+  beamer_presentation:
+    theme: "default"
+    colortheme: "beaver"
+    fonttheme: "structurebold"
+    includes:
+      in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE, autodep = TRUE, mysize = TRUE, size = '\\small', warning = FALSE)
+knitr::knit_hooks$set(mysize = function(before, options, envir) {
+  if (before) 
+    return(options$size)
+})
+library(magrittr)
+library(metacoder)
+```
+
+## Introducing MetacodeR
+
+Metabarcoding is revolutionizing microbial ecology and presenting new challenges:
+
+- Numerous formats make taxonomic data difficult to manipulate.
+- Stacked bar charts lack taxonomic context.
+- Barcode loci and primers are a source of under-explored bias.
+
+MetacodeR is an R package that attempts to addresses these issues:
+
+- Taxonomic data can be extracted from any file format and manipulated. 
+- Community diversity can be visualized by color and size in a tree plot.
+- Primer specificity can be estimated with *in silico* PCR.
+
+## Parsing taxonomic data: Embedded classifications
+
+```{r, echo = FALSE}
+rdp_fasta_url <- "http://mothur.org/w/images/b/b5/Trainset10_082014.rdp.tgz"
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(rdp_fasta_url))
+download.file(url = rdp_fasta_url, destfile = local_file_path, quiet = TRUE)
+# Get contents of tar archive
+unpacked_file_paths <- untar(local_file_path, list = TRUE)
+# Uncompress archive
+untar(local_file_path, exdir = temp_dir_path)
+# Identify the Mothur RDP training set
+input_file_path <- file.path(temp_dir_path, unpacked_file_paths[grepl("fasta$", unpacked_file_paths)])
+seqs <- ape::read.FASTA(input_file_path)
+```
+
+The code below parses the Mothur 16s RDP training set.
+
+```{r eval = FALSE}
+library(metacoder)
+seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta") 
+```
+
+```{r, warning = FALSE, message = FALSE}
+cat(names(seqs)[1]) 
+data <- extract_taxonomy(seqs[1:1000],
+                         regex = "^(.*)\\t(.*)", 
+                         key = c(rdp_id = "item_info", "class"),
+                         class_sep = ";")
+```
+
+```{r}
+taxon_data(data, row_subset = 1:4)
+```
+
+
+## Parsing taxonomic data: Genbank accession numbers
+
+```{r, warning = FALSE, message = TRUE, eval = FALSE}
+ids <- c("JQ086376.1", "AM946981.2", "JQ182735.1", "CP001396.1", "J02459.1","AC150248.3", "X64334.1", "CP001509.3", "CP006698.1", "AC198536.1","JF340119.2", "KF771025.1", "CP007136.1", "CP007133.1", "U39286.1","CP006584.1", "EU421722.1", "U03462.1", "U03459.1", "AC198467.1","V00638.1", "CP007394.1", "CP007392.1", "HG941718.1", "HG813083.1","HG813082.1", "CP007391.1", "HG813084.1", "CP002516.1", "KF561236.1","JX509734.1", "AP010953.1", "U39285.1", "M15423.1", "X98613.1","CP006784.1", "CP007393.1", "CU928163.2", "AP009240.1", "CP007025.1","CP006027.1", "CP003301.1", "CP003289.1", "CP000946.1", "CP002167.1","HG428755.1", "JQ086370.1", "CP001846.1", "CP001925.1", "X99439.1","AP010958.1", "CP001368.1", "AE014075.1", "CP002212.1", "CP003034.1","CP000243.1", "AY940193.1", "CP004009.1", "JQ182732.1", "U02453.1","AY927771.1", "BA000007.2", "CP003109.1", "CP007390.1", "U02426.1", "U02425.1", "CP006262.1", "HG738867.1", "U00096.3", "FN554766.1","CP001855.1", "L19898.1", "AE005174.2", "FJ188381.1", "AK157373.1", "JQ182733.1", "U39284.1", "U37692.1", "AF129072.1", "FM180568.1","CP001969.1", "HE616528.1", "CP002729.1", "JF974339.1", "AB248924.1", "AB248923.1", "CP002291.1", "X98409.1", "CU928161.2", "CP003297.1","FJ797950.1", "CP000038.1", "U82598.1", "CP002211.1", "JQ806764.1", "U03463.1", "CP001665.1")
+contaminants <- extract_taxonomy(ids, key = c("item_id"),
+                                 database = "ncbi")
+```
+
+```{r}
+taxon_data(contaminants, row_subset = 1:4)
+```
+
+
+## Parsing taxonomic data: Taxon names
+
+Parsing bryophyte family names scraped from [The Plant List](http://www.theplantlist.org/1.1/browse/B/):
+
+```{r}
+taxon_names <- "http://www.theplantlist.org/1.1/browse/B/" %>%
+  XML::htmlTreeParse() %>% 
+  XML::xmlRoot() %>%
+  XML::getNodeSet("//ul[@id='nametree']/li/a/i") %>%
+  sapply(XML::xmlValue)
+head(taxon_names)
+```
+
+```{r, warning = FALSE, message = FALSE, eval = FALSE}
+bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name",
+                                       database = "itis")
+```
+
+```{r}
+taxon_data(bryophytes_ex_data, row_subset = 20:23) 
+```
+
+
+## Parsing taxonomic data: Taxon IDs
+
+Parsing included example data from the ITS1 database:
+
+```{r}
+file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta",
+                         package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+cat(names(sequences)[1])
+```
+
+```{r, warning = FALSE, message = FALSE, eval = FALSE}
+its1_ex_data <- extract_taxonomy(sequences,
+                                 regex = "^.*\\|(.*)\\|tax_id:(.*)\\|(.*)$",
+                                 key = c(taxon_name = "taxon_info",
+                                         "taxon_id", description = "item_info"),
+                                 database = "ncbi")
+```
+
+```{r}
+taxon_data(its1_ex_data, row_subset = 17:20) 
+```
+
+
+## Accessing parsed data
+
+```{r }
+taxon_data(its1_ex_data, row_subset = 17:20) 
+item_data(its1_ex_data, row_subset = 1:4) 
+```
+
+
+## Plotting taxonomic data: Metadiversity plots
+
+```{r}
+plot(data, vertex_size = item_counts,
+     vertex_label = name, vertex_color = item_counts)
+```
+
+
+## Plotting taxonomic data: Overlap optimization
+
+```{r}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, overlap_avoidance = 10),
+  plot(data, vertex_size = item_counts, overlap_avoidance = 0.1))
+```
+
+
+## Plotting taxonomic data: Size
+
+```{r}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts,
+       vertex_size_range = c(0.0001, 0.1)),
+  plot(data, vertex_size = item_counts,
+       edge_size = - taxon_ranks, edge_size_range = c(0.001, 0.001)))
+```
+
+
+## Plotting taxonomic data: Color
+
+```{r}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_color = item_counts,
+       vertex_color_range = c("#FFFFFF", "darkorange3", "#4e567d")),
+  plot(data, vertex_size = item_counts, vertex_color = "grey",
+       edge_color = item_counts))
+```
+
+
+## Plotting taxonomic data: Labels
+
+```{r}
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       title = "Vertex labels"),
+  plot(data, vertex_size = item_counts, edge_label = name,
+       edge_label_max = 200, title = "Edge labels"))
+```
+
+
+## Plotting taxonomic data: Layouts
+
+```{r}
+set.seed(2)
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       layout = "davidson-harel"),
+  plot(data, vertex_size = item_counts, vertex_label = name,
+       layout = "davidson-harel", initial_layout = "reingold"))
+```
+
+
+## Plotting taxonomic data: Multiple roots
+
+```{r}
+set.seed(3)
+plot(contaminants, vertex_size = item_counts,
+     vertex_color = item_counts, vertex_label = name,
+     tree_label = name, layout = "fruchterman-reingold")
+```
+
+
+## Subsetting taxonomic data: Picking a taxon
+
+```{r}
+set.seed(1)
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(subset(data, name == "Firmicutes"),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts),
+  plot(subset(data, name == "Bacilli"),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts))
+```
+
+
+## Subsetting taxonomic data: Removing root taxa
+
+```{r}
+set.seed(1)
+plot(subset(data, taxon_ranks > 2),
+       vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts, tree_label = name)
+```
+
+
+## Sampling taxonomic data
+
+
+```{r}
+subsampled <- taxonomic_sample(unite_ex_data_3, min_counts = c("7" = 3),
+                               max_counts = c("4" = 20, "7" = 5))
+gridExtra::grid.arrange(ncol = 2, nrow = 1,
+  plot(unite_ex_data_3, vertex_size = item_counts, vertex_label = name,
+       vertex_color = item_counts, title = "All data"),
+  plot(subset(subsampled, item_counts > 0, subtaxa = FALSE),
+     vertex_size = item_counts, vertex_color = item_counts,
+     vertex_label = item_counts, title = "Sampled"))
+```
+
+
+## *In silico PCR* use case example: Parsing data
+
+```{r eval = FALSE}
+library(metacoder)
+seqs <- ape::read.FASTA("trainset10_082014.rdp.fasta") 
+```
+
+```{r, warning = FALSE, message = FALSE}
+cat(names(seqs)[1]) 
+data <- extract_taxonomy(seqs,
+                         regex = "^(.*)\\t(.*)", 
+                         key = c(rdp_id = "item_info", "class"),
+                         class_sep = ";")
+```
+
+```{r}
+taxon_data(data, row_subset = 1:4)
+```
+
+## *In silico* PCR use case example: Plotting
+
+```{r, fig.height=2.5}
+plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
+     vertex_label = name, vertex_color = item_counts,
+     vertex_color_range = c("cyan", "magenta", "green"),
+     edge_color_range   = c("#555555", "#EEEEEE"), overlap_avoidance = 0.5)
+```
+
+
+## *In silico* PCR use case example: Subsetting
+
+```{r, fig.height=2.5}
+subsetted <- subset(data, taxon_ranks > 1)
+set.seed(2)
+plot(subsetted, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = item_counts, overlap_avoidance = 0.5, tree_label = name)
+```
+
+
+
+## *In silico* PCR use case example: Sampling
+
+```{r, fig.height=2.5}
+sampled <- taxonomic_sample(subsetted, min_counts = c("6" = 5),
+                            max_counts = c("3" = 100, "6" = 5))
+sampled <- subset(sampled, item_counts > 0, itemless = FALSE)
+set.seed(3)
+plot(sampled, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = item_counts, overlap_avoidance = 0.5, tree_label = name)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+pcr <- primersearch(sampled, forward = "CTCCTACGGGAGGCAGCAG", 
+                    reverse = "GWATTACCGCGGCKGCTG",
+                    pair_name = "357F_519R",  mismatch = 10)
+taxon_data(pcr, row_subset = 1:7)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+set.seed(3)
+plot(pcr, vertex_size = item_counts, vertex_label = name, 
+     vertex_color = prop_amplified, vertex_color_range =  c("red", "cyan"),
+     vertex_color_trans = "radius", tree_label = name)
+```
+
+
+## *In silico* PCR use case example: First PCR
+
+```{r, fig.height=2.5}
+subset(pcr, name == "Bacteria") %>%
+  subset(count_amplified < item_counts, subtaxa = FALSE) %>% 
+  plot(vertex_size = item_counts, vertex_label = name,
+       vertex_color = prop_amplified, vertex_color_range =  c("red", "cyan"),
+       vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
+```
+
+
+## *In silico* PCR use case example: Second PCR
+
+```{r, fig.height=2.5}
+pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA",
+                      reverse = "AGGGTTGCGCTCGTTG",
+                      pair_name = "515F_1100R", mismatch = 10)
+pcr$taxon_data$count_amp_2 <- taxon_data(pcr_2, "count_amplified")[[1]]
+pcr$taxon_data$prop_diff <- taxon_data(pcr, "prop_amplified")[[1]] -
+  taxon_data(pcr_2, "prop_amplified")[[1]]
+taxon_data(pcr, row_subset = 1:7)
+```
+
+
+## *In silico* PCR use case example: Differential plot
+
+```{r, fig.height=2.5}
+subset(pcr, name == "Bacteria") %>%
+  subset(count_amplified < item_counts | count_amp_2 < item_counts, subtaxa = F) %>%
+  plot(vertex_size = item_counts, vertex_label = name,
+       vertex_color = prop_diff, vertex_color_range = diverging_palette(),
+       vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
+```
+
+
+## Plans for future development
+
+MetacodeR is under active development and many new features are planned.
+Some improvements that are being worked on include:
+
+* Increases in function speed
+* Plotting functions for pairwise comparison of treatments
+* Barcoding gap analysis and associated plotting functions
+* A function to aid in retrieving appropriate sequence data from NCBI for *in silico* PCR from whole genome sequences.
+
+To see the details of what is being worked on, check out the [issues](https://github.com/grunwaldlab/metacoder/issues) tab of the MetacodeR [Github site](https://github.com/grunwaldlab).
+
+

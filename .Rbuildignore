@@ -6,5 +6,6 @@
 ^.+\.Rproj$
 ^\.Rproj\.user$
 ^quilt_config\.yml$
+^inst/doc/presentation/.*$
 ^inst/doc/website_source/.*\.html$
 ^inst/extdata/mothur\.summary$
