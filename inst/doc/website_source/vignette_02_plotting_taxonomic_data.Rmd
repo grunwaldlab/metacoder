@@ -79,7 +79,7 @@ Although there are many options that can be used to make highly customized graph
 We can see the default appearance of the data used in the introduction using the code below:
 
 ```{r}
-head(taxon_data(unite_ex_data_3))
+taxon_data(unite_ex_data_3)
 plot(unite_ex_data_3)
 ```
 
