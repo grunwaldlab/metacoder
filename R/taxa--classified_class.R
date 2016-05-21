@@ -75,11 +75,11 @@ classified <- function(taxon_ids, parent_ids, item_taxon_ids,
 
   # Make object
   rownames(taxon_data) <- taxon_ids
-  output <- list(taxon_ids = setNames(taxon_ids, taxon_ids),
-                 parent_ids = setNames(parent_ids, taxon_ids),
+  output <- list(taxon_ids = stats::setNames(taxon_ids, taxon_ids),
+                 parent_ids = stats::setNames(parent_ids, taxon_ids),
                  item_taxon_ids = item_taxon_ids,
-                 taxon_data = taxon_data,
-                 item_data = item_data,
+                 taxon_data = dplyr::tbl(taxon_data),
+                 item_data = dplyr::tbl(item_data),
                  taxon_funcs = taxon_funcs,
                  item_funcs = item_funcs)
   class(output) <- "classified"
@@ -417,7 +417,7 @@ supertaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
   }
 
   subset <- format_taxon_subset(obj, subset)
-  supertaxa <- setNames(lapply(subset, recursive_part), subset)
+  supertaxa <- stats::setNames(lapply(subset, recursive_part), subset)
   if (!include_input) {
     supertaxa <- lapply(supertaxa, `[`, -1)
     }
@@ -462,7 +462,7 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
     children <- get_children(taxon)
     # Run this function on them to get their output
     child_output <- lapply(children, recursive_part)
-    child_output <- setNames(unlist(child_output, recursive = FALSE),
+    child_output <- stats::setNames(unlist(child_output, recursive = FALSE),
                              unlist(lapply(child_output, names)))
     # Get all subtaxa from the names of the child output
     if (include_input) {
@@ -474,7 +474,7 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
       }
     }
     # Combine the child output with the subtaxa for the current taxon
-    output <- setNames(c(list(child_taxa), child_output),
+    output <- stats::setNames(c(list(child_taxa), child_output),
                        c(taxon, names(child_output)))
     return(output)
   }
@@ -485,7 +485,7 @@ subtaxa <- function(obj, subset = taxon_ids(obj), recursive = TRUE,
     starting_taxa <- roots(obj, subset)
     output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
   } else {
-    output <- setNames(lapply(subset, get_children), subset)
+    output <- stats::setNames(lapply(subset, get_children), subset)
     if (include_input) {
       output <- mapply(function(x, n) c(n, x), output, names(output), SIMPLIFY = FALSE)
     }
@@ -522,7 +522,7 @@ items <- function(obj, subset = taxon_ids(obj), recursive = TRUE, simplify = FAL
   # Get output content
   my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_key <- setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_taxon_ids)), unique_subtaxa)
+  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_taxon_ids)), unique_subtaxa)
   output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[x])))
   # Reduce dimensionality if specified
   if (simplify) {
