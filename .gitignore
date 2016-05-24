@@ -8,3 +8,4 @@ vignettes/.build.timestamp
 trainset10_082014.rdp.fasta
 **.html
 inst/doc/vignettes_info.*
+.pdf

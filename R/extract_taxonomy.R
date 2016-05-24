@@ -206,30 +206,30 @@ extract_taxonomy.default <- function(input,
   # Add taxon info columns to taxon_data ----------------------------------------------------------
   my_print(level = "high", "Formatting output ---------------------------------")
   taxon_info_column <- function(content, col_name) {
-    taxon_values <- lapply(split(content, taxonomy$item_taxon_id), unique)
+    taxon_values <- lapply(split(content, taxonomy$item_data$item_taxon_ids), unique)
     if (any(lapply(taxon_values, length) > 1)) {
       stop(paste0('Values for "', col_name, '" are not consistent with the inferred taxonomy (More than one unique value found for at least one taxon). Perhaps a "item_info" key value would be more appropriate?'))
     }
-    unlist(taxon_values)[taxonomy$taxon_id]
+    taxonomy$taxon_data[, col_name] <<- unlist(taxon_values)[taxonomy$taxa]
   }
   if ("taxon_info" %in% key) {
     taxon_info_col_names <- names(key)[key == "taxon_info"]
     taxon_info_source_cols <- setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
                                        taxon_info_col_names)
-    new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
+    unused_result <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)
-    taxonomy$taxon_data <- cbind(taxonomy$taxon_data, new_columns, stringsAsFactors = FALSE) 
   }
   
-  # Convert columns to numberic if appropriate
-  convert_numeric <- function(data) {
+  # Convert columns to numeric if appropriate
+  convert_numeric <- function(colname) {
+    data <- unlist(taxonomy$taxon_data[colname])
     if (all(! is.na(suppressWarnings(as.numeric(data))))) {
       data <- as.numeric(data)
     }
-    return(data)
+    taxonomy$taxon_data[, colname] <<- data
   }
-  taxonomy$taxon_data[ , ] <- lapply(taxonomy$taxon_data, convert_numeric)
-  
+  unused_result <- lapply(colnames(taxonomy$taxon_data), convert_numeric)
+                                           
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
   colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))
@@ -237,7 +237,7 @@ extract_taxonomy.default <- function(input,
   # Return output
   my_print(level = "low",
            paste0(length(input), " inputs used to classify ", nrow(taxonomy$item_data),
-                  " items by ", length(taxonomy$taxon_id), " taxa."))
+                  " items by ", length(taxonomy$taxa), " taxa."))
   return(taxonomy)
   }
 
