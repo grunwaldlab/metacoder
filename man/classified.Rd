@@ -4,9 +4,10 @@
 \alias{classified}
 \title{Create an instance of \code{classified}}
 \usage{
-classified(taxa, parents, item_taxa, taxon_data = NULL, item_data = NULL,
-  taxon_funcs = list(item_counts = item_counts, taxon_ranks = taxon_ranks,
-  classifications = classifications), item_funcs = list())
+classified(taxa, parents, item_taxa = numeric(0), taxon_data = NULL,
+  item_data = NULL, taxon_funcs = list(item_counts = item_counts,
+  taxon_ranks = taxon_ranks, classifications = classifications),
+  item_funcs = list())
 }
 \arguments{
 \item{taxa}{(\code{character})

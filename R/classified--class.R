@@ -30,13 +30,11 @@
 #' @return An object of type \code{classified}
 #'
 #' @export
-classified <- function(taxa, parents, item_taxa,
+classified <- function(taxa, parents, item_taxa = numeric(0),
                        taxon_data = NULL, item_data = NULL,
                        taxon_funcs = list(item_counts = item_counts,
                                           taxon_ranks = taxon_ranks,
                                           classifications = classifications),
-#                                           child_counts = child_counts,
-#                                           subtaxon_counts = subtaxon_counts),
                        item_funcs = list()) {
   # Validate `taxa` --------------------------------------------------------------------------------
   # Coerce into a character vector
@@ -96,30 +94,37 @@ classified <- function(taxa, parents, item_taxa,
   # Check that the tables are structured correctly
   validate_data <- function(data, data_var_name, ids, ids_var_name,
                             reserved_col_names = c("taxon_ids", "parent_ids", "item_taxon_ids")) {
-    if (! "data.frame" %in% class(data)) {
-      stop(paste("'", data_var_name, "' must be convertable to a data.frame"))
+    if (! is.null(data)) {
+      if (! "data.frame" %in% class(data)) {
+        stop(paste("'", data_var_name, "' must be convertable to a data.frame"))
+      }
+      if (nrow(data) != length(ids)) {
+        stop(paste("'", data_var_name, "' must have the same number of rows as '", ids_var_name, "'"))
+      }
+      if (any(colnames(data) %in% reserved_col_names)) {
+        stop(paste("Column names cannot be one of the following:",
+                   paste0(reserved_col_names, collapse = ", ")))
+      }
+    } else {
+      data <- data.frame(matrix(numeric(0), nrow = length(ids)))
     }
-    if (!is.null(data) && nrow(data) != length(ids)) {
-      stop(paste("'", data_var_name, "' must have the same number of rows as '", ids_var_name, "'"))
-    }
-    if (any(colnames(data) %in% reserved_col_names)) {
-      stop(paste("Column names cannot be one of the following:",
-                 paste0(reserved_col_names, collapse = ", ")))
-    }
+    return(data)
   }
-  validate_data(taxon_data, "taxon_data", taxon_ids, "taxon_ids")
-  validate_data(item_data, "item_data", item_taxon_ids, "item_taxa")
+  taxon_data <- validate_data(taxon_data, "taxon_data", taxon_ids, "taxon_ids")
+  item_data <- validate_data(item_data, "item_data", item_taxon_ids, "item_taxa")
   # Check that tables do not share column names
   all_col_names <- c(colnames(taxon_data), colnames(item_data))
-  if (unique(all_col_names) != all_col_names) {
+  if (length(unique(all_col_names)) != length(all_col_names)) {
     stop("'taxon_data' and 'item_data' can not share column names.")
   }
   # Add ID columns
-  taxon_data <- dplyr::tbl_dt(cbind(taxon_ids = taxon_ids, 
-                                   parent_ids = parent_ids, 
-                                   taxon_data))
+  taxon_data <- dplyr::tbl_dt(cbind(data.frame(taxon_ids = taxon_ids, 
+                                               parent_ids = parent_ids,
+                                               row.names = NULL), 
+                                    taxon_data))
   data.table::setkey(taxon_data, taxon_ids)
-  item_data <- dplyr::tbl_dt(cbind(item_taxon_ids = item_taxon_ids,
+  item_data <- dplyr::tbl_dt(cbind(data.frame(item_taxon_ids = item_taxon_ids,
+                                              row.names = NULL),
                                    item_data))
 
   # Validate column-generating functions -----------------------------------------------------------
@@ -508,59 +513,3 @@ roots <- function(obj, subset = taxon_ids(obj)) {
   }
   subset[is_root]
 }
-
-
-
-
-
-
-#' Format taxon subset value
-#' 
-#' Format an input to a \code{subset} option on functions like \code{subset}.
-#' Converts logical and numeric vectors into taxon ids
-#' 
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param index
-#' 
-#' @return \code{character}
-#' 
-#' @keywords internal
-format_taxon_subset <- function(obj, index) {
-  if (is.character(index)) {
-    index <- vapply(index, FUN.VALUE = numeric(1),
-                    function(x) {
-                      result = which(x == obj$taxa)
-                      if (length(result) == 0) {
-                        result = as.numeric(NA)
-                      }
-                      return(result)
-                    })
-  }
-  index <- unname(index)
-  return(index)
-}
-
-
-
-#' Remove the redundant taxon names
-#' 
-#' Remove the names of parent taxa in the begining of their children's names in a \code{classified} object.
-#' This is useful for remove genus names in species binomials.
-#' 
-#' @param obj a \code{classified} object
-#' @param name_col (\code{character} of length 1)
-#' The name of a column in \code{obj$taxon_data}
-#' 
-#' @return \code{character} 
-#' 
-#' @export
-remove_redundant_names <- function(obj, name_col) {
-  obj$taxon_data[, name_col] <- vapply(supertaxa(obj, recursive = FALSE, include_input = TRUE), 
-                                       function(x) gsub(obj$taxon_data[x[1], name_col],
-                                                        pattern = paste0("^", obj$taxon_data[x[2], name_col], "[_ ]+"),
-                                                        replacement = ""),
-                                       character(1))
-  return(obj)
-}
-
