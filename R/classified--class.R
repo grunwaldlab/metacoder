@@ -148,6 +148,32 @@ classified <- function(taxa, parents, item_taxa = numeric(0),
 }
 
 
+#' Print a \code{\link{classified}} object
+#' 
+#' Print a \code{\link{classified}} object
+#' 
+#' @param x object to print
+#' @param ... Passed to other methods
+#' 
+#' @export
+print.classified <- function(x, ...) {
+  max_chars <- 100
+  max_taxa_print <- which.max(cumsum(nchar(x$taxa) + 1) + 6 > max_chars | rep(c(FALSE, TRUE), c(length(x$taxa) - 1, 1)))
+  cat(paste0("taxa: ", paste0(x$taxa[1:max_taxa_print], collapse = " "), "\n"))
+  cat("taxon_data: \n")
+  print(x$taxon_data)
+  cat("item_data: \n")
+  print(x$item_data)
+  if (length(x$taxon_funcs) > 0) {
+    cat(paste0("taxon_funcs: ", paste0(collapse = " ", names(x$taxon_funcs)), "\n"))
+  }
+  if (length(x$item_funcs) > 0) {
+    cat(paste0("item_funcs: ", paste0(collapse = " ", names(x$item_funcs)), "\n"))
+  }
+  invisible(x)
+}
+
+
 #' Return taxon data column names
 #'
 #' Return taxon data column names of and object of type \code{\link{classified}}.
