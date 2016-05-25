@@ -184,8 +184,8 @@ print.classified <- function(x, ...) {
        max_printed <- which.max(is_greater_than_max)
      }
      if (max_printed < length(chars)) {
-       first_part <-  chars[1:(max_printed / 2)]
-       second_part <- chars[(length(chars) - (max_printed / 2)):length(chars)]
+       first_part <-  chars[1:as.integer(max_printed / 2 - 0.5)]
+       second_part <- chars[as.integer(length(chars) - (max_printed / 2) + 1.5):length(chars)]
        output <- paste0(q, paste0(collapse = paste0(q, ", ", q), first_part), q,
                         " ... ",
                         q, paste0(collapse = paste0(q, ", ", q), second_part), q,
