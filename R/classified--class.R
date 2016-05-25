@@ -157,18 +157,61 @@ classified <- function(taxa, parents, item_taxa = numeric(0),
 #' 
 #' @export
 print.classified <- function(x, ...) {
-  max_chars <- 100
-  max_taxa_print <- which.max(cumsum(nchar(x$taxa) + 1) + 6 > max_chars | rep(c(FALSE, TRUE), c(length(x$taxa) - 1, 1)))
-  cat(paste0("taxa: ", paste0(x$taxa[1:max_taxa_print], collapse = " "), "\n"))
-  cat("taxon_data: \n")
-  print(x$taxon_data)
-  cat("item_data: \n")
-  print(x$item_data)
+  max_chars <- getOption("width") - 12
+  
+   print_header <- function(var_name) {
+     target_width <- max_chars
+     spacer_count <- (target_width - nchar(var_name) - 2) / 2
+     spacer <- paste0(rep("-", spacer_count), collapse = "")
+     cat(paste0("\n", spacer, " ", var_name, " ", spacer, "\n"))
+   }
+   
+   print_chars <- function(chars) {
+     
+     interleave <- function(v1,v2) { # https://stat.ethz.ch/pipermail/r-help/2006-March/101023.html
+       ord1 <- 2*(1:length(v1))-1
+       ord2 <- 2*(1:length(v2))
+       c(v1,v2)[order(c(ord1,ord2))]
+     }
+     
+     q = "'"
+     interleaved <- interleave(chars[1:(length(chars) / 2)], 
+                               rev(chars[(length(chars) / 2 + 1):length(chars)]))
+     is_greater_than_max <- cumsum(nchar(interleaved) + 4) + 10 > max_chars
+     if (all(! is_greater_than_max)) { 
+       max_printed <- length(chars)
+     } else {
+       max_printed <- which.max(is_greater_than_max)
+     }
+     if (max_printed < length(chars)) {
+       first_part <-  chars[1:(max_printed / 2)]
+       second_part <- chars[(length(chars) - (max_printed / 2)):length(chars)]
+       output <- paste0(q, paste0(collapse = paste0(q, ", ", q), first_part), q,
+                        " ... ",
+                        q, paste0(collapse = paste0(q, ", ", q), second_part), q,
+                        "\n")
+     } else {
+       output <- paste0(q, paste0(collapse = paste0(q, ", ", q), chars), q, "\n")
+     }
+     cat(output)
+   }
+  
+  
+  cat(paste0('`classified` object with data for ', nrow(x$taxon_data),
+             ' taxa and ', nrow(x$item_data), ' items/observations:\n'))
+  print_header("taxa")
+  print_chars(x$taxa)
+  print_header("taxon_data")
+  dplyr:::print.tbl_dt(x$taxon_data)
+  print_header("item_data")
+  dplyr:::print.tbl_dt(x$item_data)
   if (length(x$taxon_funcs) > 0) {
-    cat(paste0("taxon_funcs: ", paste0(collapse = " ", names(x$taxon_funcs)), "\n"))
+    print_header("taxon_funcs")
+    print_chars(names(x$taxon_funcs))
   }
   if (length(x$item_funcs) > 0) {
-    cat(paste0("item_funcs: ", paste0(collapse = " ", names(x$item_funcs)), "\n"))
+    print_header("item_funcs")
+    print_chars(names(x$item_funcs))
   }
   invisible(x)
 }

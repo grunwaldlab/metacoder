@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for metabarcoding experiment planning
-Version: 0.0.509
+Version: 0.0.1.510
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
@@ -18,10 +18,9 @@ License: GPL-2
 LazyData: true
 Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
         reshape2, zoo, traits, RColorBrewer, RCurl, readr, ape,
-        reshape, stats, grDevices, utils, lazyeval, dplyr,
-    data.table
+        reshape, stats, grDevices, utils, lazyeval, dplyr, data.table
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Date: 2016-05-24
+Date: 2016-05-25
 Encoding: latin1
