@@ -153,7 +153,7 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
                         taxonless = FALSE, reassign = TRUE) {
   
   # non-standard argument evaluation
-  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(obj)) 
+  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(.data)) 
   
   # convert taxon_ids to logical
   is_char <- vapply(selection, is.character, logical(1))
@@ -167,18 +167,18 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   selection <- Reduce(`&`, selection)
   
   # Get taxa of subset
-  taxa_subset <- unique(c(obj$taxon_data$taxon_ids[selection],
+  taxa_subset <- unique(c(.data$taxon_data$taxon_ids[selection],
                           if (subtaxa) {
-                            subtaxa(obj, subset = selection, simplify = TRUE)
+                            subtaxa(.data, subset = selection, simplify = TRUE)
                           },
                           if (supertaxa) {
-                            supertaxa(obj, subset = selection, simplify = TRUE, include_input = FALSE)
+                            supertaxa(.data, subset = selection, simplify = TRUE, include_input = FALSE)
                           }))
   
   # Reassign taxonless items
   if (reassign) {
     reassign_one <- function(x) {
-      included_parents <- which(supertaxa(obj, subset = 3, simplify = TRUE) %in% taxa_subset)
+      included_parents <- which(supertaxa(.data, subset = x, simplify = TRUE) %in% taxa_subset)
       if (length(included_parents) > 0) {
         return(included_parents[1])
       } else {
@@ -186,21 +186,36 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
       }
     }
     
-    to_reassign <- ! obj$item_data$item_taxon_ids %in% taxa_subset
-    obj$item_data[to_reassign, "item_taxon_ids"] <- map_unique(obj$item_data[to_reassign, "item_taxon_ids"], 
-                                                               reassign_one)
+    to_reassign <- ! .data$item_data$item_taxon_ids %in% taxa_subset
+    .data$item_data[to_reassign, "item_taxon_ids"] <- vapply(.data$item_data[to_reassign, "item_taxon_ids"], 
+                                                             reassign_one, numeric(1))
   }
   
   # Remove taxonless items
   if (! taxonless) {
-    obj$item_data <- obj$taxon_data[obj$item_data$item_taxon_ids %in% taxa_subset, , drop = FALSE]
+    .data$item_data <- .data$item_data[.data$item_data$item_taxon_ids %in% taxa_subset, , drop = FALSE]
   }
   
   # Remove filtered taxa
-  obj$taxa <- obj$taxa[taxa_subset]
-  obj$taxon_data <- obj$taxon_data[obj$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
+  .data$taxa <- .data$taxa[taxa_subset]
+  .data$taxon_data <- .data$taxon_data[.data$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
   
-  return(obj)
+  # Rename taxon ids
+  custom_which <- function(x, data) {
+    if (is.na(x)) {
+      return(as.numeric(NA))
+    } else {
+      return(which(data$taxa == x))
+    }
+  }
+  .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
+                                     numeric(1))
+  .data$taxon_data$parent_ids <- vapply(.data$taxon_data$parent_ids, function(x) custom_which(x, .data), 
+                                       numeric(1))
+  .data$item_data$item_taxon_ids <- vapply(.data$item_data$item_taxon_ids, function(x) custom_which(x, .data), 
+                                       numeric(1))
+  
+  return(.data)
 }
 
 
