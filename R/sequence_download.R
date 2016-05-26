@@ -207,8 +207,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
 #' @return (\code{list} of \code{character})
 #' 
 #' @keywords internal
-ncbi_sequence <- function (ids, batch_size = 100) 
-{
+ncbi_sequence <- function (ids, batch_size = 100) {
   base_url <- "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
   output <- list()
   while(length(ids) > 0) {
