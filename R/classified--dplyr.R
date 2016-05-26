@@ -122,15 +122,38 @@ filter_.classified <- function(.data, ..., .dots,
 
 
 
-#' UNDER CONSTRUCTION
+#' Filter taxa on a list of conditions
 #' 
-#' UNDER CONSTRUCTION
+#' Filter taxa on a list of conditions.
+#' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
 #' 
 #' @param .data \code{\link{classified}}
-#' @param ... Filtering conditions.
+#' @param ... One or more filtering conditions.
+#' This can be one of three things:
+#' \describe{
+#'    \item{\code{character}}{One or more \code{taxon_id}s}
+#'    \item{\code{integer}}{One or more indexes of \code{taxon_data}}
+#'    \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{taxon_data}}
+#'  }
+#' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
+#' @param subtaxa (\code{logical} of length 1)
+#' If \code{TRUE}, include subtaxa of taxa passing the filter.
+#' @param supertaxa (\code{logical} of length 1)
+#' If \code{TRUE}, include supertaxa of taxa passing the filter.
+#' @param taxonless (\code{logical} of length 1)
+#' If \code{TRUE}, include items even if the taxon they are assigned to is filtered out.
+#' Item assigned to removed taxa will be assigned to \code{NA}.
+#' See the \code{reassign} option below for further complications.
+#' @param reassign (\code{logical} of length 1)
+#' If \code{TRUE}, items assigned to removed taxa will be reassigned to the closest supertaxon that passed the filter.
+#' If there are no supertaxa of such an item that passed the filter, they will be filtered out if \code{taxonless} is \code{TRUE}.
 #' 
 #' @export
-filter_taxa <- function(.data, ...) {
+filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
+                        taxonless = FALSE, reassign = TRUE) {
+  
+  
+  
 }
 
 
