@@ -1,3 +1,7 @@
+#' UNDER CONSTRUCTION
+#' 
+#' UNDER CONSTRUCTION
+#' 
 #' @export
 filter <- function(.data, ...) {
   UseMethod("filter")
@@ -14,7 +18,7 @@ filter.default <- function(.data, ...) {
 #' Create a subset of a \code{\link{classified}} object.
 #' Can filter based on columns in \code{obj$taxon_data} or \code{obj$taxon_data}.
 #'
-#' @param obj \code{\link{classified}}
+#' @param .data \code{\link{classified}}
 #' @param ...
 #' Filtering conditions.
 #' Each condition of must contain the name of at least one column from \code{obj$taxon_data} or \code{obj$taxon_data}.
@@ -31,10 +35,11 @@ filter.default <- function(.data, ...) {
 #' @return \code{\link{classified}}
 #'
 #' @export
-filter.classified <- function(obj, ...,
+#' @rdname filter
+filter.classified <- function(.data, ...,
                               subtaxa = TRUE, supertaxa = FALSE,
                               itemless = TRUE, taxonless = FALSE) {
-  filter_.classified(obj, ..., .dots = lazyeval::lazy_dots(...),
+  filter_.classified(.data, ..., .dots = lazyeval::lazy_dots(...),
                      subtaxa = subtaxa, supertaxa = supertaxa,
                      itemless = itemless, taxonless = taxonless)
 }
@@ -42,15 +47,20 @@ filter.classified <- function(obj, ...,
 
 #' Standard evaluation version of \code{\link{filter}}
 #' 
+#' @param .dots
+#' Filtering conditions.
+#' 
+#' @inheritParams filter
+#' 
 #' @export
 #' @rdname filter
-filter_.classified <- function(obj, ..., .dots,
+filter_.classified <- function(.data, ..., .dots,
                                subtaxa = TRUE, supertaxa = FALSE,
                                itemless = TRUE, taxonless = FALSE) {
   var_names_in_calls <- function(.dots) {
     components <- lapply(.dots, function(x) as.character(x$expr))
     lapply(components,
-           function(x) x[x %in% c(colnames(obj$taxon_data), colnames(obj$item_data))])
+           function(x) x[x %in% c(colnames(.data$taxon_data), colnames(.data$item_data))])
   }
   
   
@@ -108,3 +118,31 @@ filter_.classified <- function(obj, ..., .dots,
   
   return(obj)
 }
+
+
+
+
+#' UNDER CONSTRUCTION
+#' 
+#' UNDER CONSTRUCTION
+#' 
+#' @param .data \code{\link{classified}}
+#' @param ... Filtering conditions.
+#' 
+#' @export
+filter_taxa <- function(.data, ...) {
+}
+
+
+
+#' UNDER CONSTRUCTION
+#' 
+#' UNDER CONSTRUCTION
+#' 
+#' @param .data \code{\link{classified}}
+#' @param ... Filtering conditions.
+#' 
+#' @export
+filter_items <- function(.data, ...) {
+}
+

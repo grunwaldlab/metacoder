@@ -9,8 +9,8 @@
 #' Various transforamtions can be applied to numbers sizes/colors are mapped to.
 #' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
 #' 
-#' @param taxon_id The unique ids of taxa.
-#' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
+#' @param taxon_ids The unique ids of taxa.
+#' @param parent_ids The unique id of supertaxon \code{taxon_ids} is a part of.
 #' 
 #' @param vertex_label See details on labels.
 #' Default: no labels.
@@ -174,7 +174,7 @@
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual sizes displayed on the graph can be set using the range options.
 #' 
-#' Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
+#' Accepts a \code{numeric} vector, the same length \code{taxon_ids} or a
 #' factor of its length.
 #' 
 #' @section colors:
@@ -185,7 +185,7 @@
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual colors displayed on the graph can be set using the range options.
 #' 
-#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+#' Accepts a vector, the same length \code{taxon_ids} or a factor of its length.
 #' If a numeric vector is given, it is mapped to a color scale.
 #' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 #' 
@@ -196,7 +196,7 @@
 #' Edge labels are displayed over edges, in the same orientation.
 #' Tree labels are displayed over their tree.
 #' 
-#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+#' Accepts a vector, the same length \code{taxon_ids} or a factor of its length.
 #' 
 #' @section transformations:
 #' 
@@ -269,7 +269,7 @@
 #' 
 #' @export
 #' @rdname plot_taxonomy
-plot_taxonomy <- function(taxon_id, parent_id, 
+plot_taxonomy <- function(taxon_ids, parent_ids, 
                           vertex_label = NA,
                           edge_label = NA,
                           tree_label = NA,
@@ -349,14 +349,14 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           ...) {
   #| ### Verify arguments =========================================================================
-  if (length(taxon_id) != length(parent_id)) {
-    stop("'taxon_id' and 'parent_id' must be of equal length.")
+  if (length(taxon_ids) != length(parent_ids)) {
+    stop("'taxon_ids' and 'parent_ids' must be of equal length.")
   }
-  if (length(taxon_id) == 0) {
-    stop("'taxon_id' and 'parent_id' are empty.")
+  if (length(taxon_ids) == 0) {
+    stop("'taxon_ids' and 'parent_ids' are empty.")
   }
-  if (length(unique(taxon_id)) != length(taxon_id)) {
-    stop("All values of 'taxon_id' are not unique.")
+  if (length(unique(taxon_ids)) != length(taxon_ids)) {
+    stop("All values of 'taxon_ids' are not unique.")
   }
   check_element_length(c("vertex_size", "edge_size",# "tree_size",
                          "vertex_label_size", "edge_label_size",  "tree_label_size",
@@ -397,8 +397,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Standardize source data ==================================================================
   data <- data.frame(stringsAsFactors = FALSE,
-                     tid_user = as.character(taxon_id),
-                     pid_user = as.character(parent_id),
+                     tid_user = as.character(taxon_ids),
+                     pid_user = as.character(parent_ids),
                      
                      vl_user = as.character(vertex_label),
                      el_user = as.character(edge_label),
@@ -444,7 +444,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Make layout ==============================================================================
   #| The layout is used to generate a list of coordinates to places graph verticies
-  #| First the edge list consituted by the `taxon_id` and `parent_id` columns is used to construct 
+  #| First the edge list consituted by the `taxon_ids` and `parent_ids` columns is used to construct 
   #| an `igraph` graph object and then the layout is generated for that object. 
   #|
   #| #### Make a graph for each root in the graph -------------------------------------------------
@@ -454,7 +454,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
       adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
       sub_graph <- igraph::graph.adjacency(adj_matrix)
     } else {
-      # Make edge list from taxon_id and parent_id
+      # Make edge list from taxon_ids and parent_ids
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
@@ -872,7 +872,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
 plot.classified <- function(x, ...) {
   # Non-standard argument evaluation
   data <- taxon_data(x, sort_by = classifications)
-  arguments <- c(list(taxon_id = data$taxon_id, parent_id = data$parent_id),
+  arguments <- c(list(taxon_ids = data$taxon_ids, parent_ids = data$parent_ids),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
   # Use variable name for scale axis labels

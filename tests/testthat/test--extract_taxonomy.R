@@ -48,7 +48,7 @@ test_that("Looking up IDs for classification names works", {
                                "Myrmecridium_schulzeri|EU041774|SH189850.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_schulzeri", 
                                "Myrmecridium_sp|JX156014|SH189851.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_sp"),
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(name = "item_info", sequence_id = "item_info",
+                             key = c(seq_name = "item_info", sequence_id = "item_info",
                                      other_id = "item_info", "class"),
                              class_regex = "^(.*)__(.*)$",
                              class_key = c(unite_rank = "taxon_info", "name"),

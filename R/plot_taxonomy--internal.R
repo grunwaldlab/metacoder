@@ -95,12 +95,12 @@ verify_label_count <- function(args) {
 check_element_length <- function(args) {
   for (arg in args) {
     observed_length <- length(get(arg, pos = parent.frame()))
-    correct_length <- length(get("taxon_id", pos = parent.frame()))
+    correct_length <- length(get("taxon_ids", pos = parent.frame()))
     if (observed_length < 1) {
       stop(paste0("Argument '", arg, "' is empty."))
     }
     if (correct_length %% observed_length != 0) {
-      stop(paste0("Length of argument'", arg, "' must be a factor of the length of 'taxon_id'"))
+      stop(paste0("Length of argument'", arg, "' must be a factor of the length of 'taxon_ids'"))
     }
   }
 }

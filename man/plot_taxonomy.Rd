@@ -5,7 +5,7 @@
 \alias{plot_taxonomy}
 \title{Plot a taxonomic tree}
 \usage{
-plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
+plot_taxonomy(taxon_ids, parent_ids, vertex_label = NA, edge_label = NA,
   tree_label = NA, vertex_size = 1, edge_size = vertex_size,
   vertex_label_size = vertex_size, edge_label_size = edge_size,
   tree_label_size = as.numeric(NA), vertex_color = "#999999",
@@ -41,9 +41,9 @@ plot_taxonomy(taxon_id, parent_id, vertex_label = NA, edge_label = NA,
 \method{plot}{classified}(x, ...)
 }
 \arguments{
-\item{taxon_id}{The unique ids of taxa.}
+\item{taxon_ids}{The unique ids of taxa.}
 
-\item{parent_id}{The unique id of supertaxon \code{taxon_id} is a part of.}
+\item{parent_ids}{The unique id of supertaxon \code{taxon_ids} is a part of.}
 
 \item{vertex_label}{See details on labels.
 Default: no labels.}
@@ -245,7 +245,7 @@ Only the relative size of numbers is used, not the values themeselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual sizes displayed on the graph can be set using the range options.
 
-Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
+Accepts a \code{numeric} vector, the same length \code{taxon_ids} or a
 factor of its length.
 }
 
@@ -258,7 +258,7 @@ Only the relative size of numbers is used, not the values themeselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual colors displayed on the graph can be set using the range options.
 
-Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+Accepts a vector, the same length \code{taxon_ids} or a factor of its length.
 If a numeric vector is given, it is mapped to a color scale.
 Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 }
@@ -271,7 +271,7 @@ Vertex labels are centered over their vertex.
 Edge labels are displayed over edges, in the same orientation.
 Tree labels are displayed over their tree.
 
-Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+Accepts a vector, the same length \code{taxon_ids} or a factor of its length.
 }
 
 \section{transformations}{

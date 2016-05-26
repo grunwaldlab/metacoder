@@ -210,14 +210,17 @@ extract_taxonomy.default <- function(input,
     if (any(lapply(taxon_values, length) > 1)) {
       stop(paste0('Values for "', col_name, '" are not consistent with the inferred taxonomy (More than one unique value found for at least one taxon). Perhaps a "item_info" key value would be more appropriate?'))
     }
-    taxonomy$taxon_data[, col_name] <<- unlist(taxon_values)[taxonomy$taxa]
+    unlist(taxon_values)[as.character(taxonomy$taxon_data$taxon_ids)]
   }
   if ("taxon_info" %in% key) {
     taxon_info_col_names <- names(key)[key == "taxon_info"]
     taxon_info_source_cols <- setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
                                        taxon_info_col_names)
-    unused_result <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
+    new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)
+    taxonomy$taxon_data <- dplyr::tbl_dt(cbind(taxonomy$taxon_data, 
+                                               as.data.frame(new_columns,
+                                                             stringsAsFactors = FALSE)))
   }
   
   # Convert columns to numeric if appropriate

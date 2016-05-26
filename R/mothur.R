@@ -75,7 +75,7 @@ parse_mothur_summary <- function(file_path, unclassified = FALSE) {
   
   # Add 'all' calculated column
   result$taxon_funcs <- c(result$taxon_funcs,
-                          list(all = function(obj, subset = taxon_ids(obj)) {
+                          list(all = function(obj, subset = obj$taxon_data$taxon_ids) {
                             sample_cols <- header[6:length(header)]
                             sample_cols <- sample_cols[sample_cols %in% colnames(obj$taxon_data)]
                             apply(obj$taxon_data[subset, sample_cols], MARGIN = 1, sum)

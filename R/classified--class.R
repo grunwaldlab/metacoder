@@ -160,6 +160,7 @@ classified <- function(taxa, parents, item_taxa = numeric(0),
 #' 
 #' @export
 print.classified <- function(x, max_rows = 7, ...) {
+  loadNamespace("dplyr") # used for print methods
   max_chars <- getOption("width") - 12
   
    print_header <- function(var_name) {
@@ -205,9 +206,9 @@ print.classified <- function(x, max_rows = 7, ...) {
   print_header("taxa")
   print_chars(x$taxa)
   print_header("taxon_data")
-  dplyr:::print.tbl_dt(x$taxon_data, n = max_rows)
+  print(x$taxon_data, n = max_rows)
   print_header("item_data")
-  dplyr:::print.tbl_dt(x$item_data, n = max_rows)
+  print(x$item_data, n = max_rows)
   if (length(x$taxon_funcs) > 0) {
     print_header("taxon_funcs")
     print_chars(names(x$taxon_funcs))
@@ -507,7 +508,7 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)  # Get output content
   if (recursive) {
     starting_taxa <- roots(obj, subset)
-    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
+    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[as.character(subset)]
   } else {
     output <- stats::setNames(lapply(subset, get_children), subset)
     if (include_input) {
@@ -546,7 +547,8 @@ items <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE, simp
   # Get output content
   my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_data$item_taxon_ids)), unique_subtaxa)
+  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_data$item_taxon_ids)),
+                              unique_subtaxa)
   output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)])))
   # Reduce dimensionality if specified
   if (simplify) {

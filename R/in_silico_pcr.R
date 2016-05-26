@@ -229,10 +229,10 @@ primersearch.classified <- function(input, embed = TRUE, ...) {
     input$item_data[result$name, colnames(result)] <- result
     input$item_data$amplified <- ! is.na(input$item_data$length)
     input$taxon_funcs <- c(input$taxon_funcs,
-                           count_amplified = function(obj, subset = taxon_ids(obj)) {
+                           count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
                              vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]), numeric(1))
                            },
-                           prop_amplified = function(obj, subset = taxon_ids(obj)) {
+                           prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
                              vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]) / length(x), numeric(1))
                            })
     output <- input
