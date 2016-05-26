@@ -1,20 +1,35 @@
-#' Create a inclusive subset of \code{\link{classified}}
+
+
+#' Filter \code{\link{classified}} on a list of conditions
 #'
-#' Create a subset of items classified by a taxonomy.
-#' Only unspecified taxa with no items or children with items are discarded.
+#' Create a subset of a \code{\link{classified}} object.
+#' Can filter based on columns in \code{obj$taxon_data} or \code{obj$taxon_data}.
 #'
-#' @param x \code{\link{classified}}
-#' @param taxon A key to filter the taxon data.frame rows on
-#' @param item A key to filter the item data.frame rows on
-#' @param subtaxa (\code{logical} of length 1) If \code{TRUE}, return subtaxa of specified taxa
-#' @param supertaxa (\code{logical} of length 1) If \code{TRUE}, return supertaxa of specified taxa
-#' @param itemless (\code{logical} of length 1) If \code{TRUE}, return taxa even if they have no items assigned to them
-#' @param ... not used
+#' @param obj \code{\link{classified}}
+#' @param ...
+#' Filtering conditions.
+#' Each condition of must contain the name of at least one column from \code{obj$taxon_data} or \code{obj$taxon_data}.
+#' To filter by index or \code{TRUE}/\code{FALSE} vector, use \code{\link{filter_taxa}} or \code{\link{filter_items}}.
+#' @param subtaxa (\code{logical} of length 1)
+#' If \code{TRUE}, return subtaxa of specified taxa.
+#' @param supertaxa (\code{logical} of length 1)
+#' If \code{TRUE}, return supertaxa of specified taxa.
+#' @param itemless (\code{logical} of length 1)
+#' If \code{TRUE}, return taxa even if they have no items assigned to them.
+#' @param taxonless (\code{logical} of length 1)
+#' If \code{TRUE}, return items even if they are not assigned to taxa.
 #'
 #' @return \code{\link{classified}}
 #'
 #' @export
-subset.classified <- function(x, taxon = taxon_ids(x), item = seq_along(x$item_taxon_ids),
+filter.classified <- function(obj, ..., subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, taxonless = FALSE) {
+  filter_(obj, .dots = lazyeval::lazy_dots(...))
+}
+
+
+#' @export
+#' @rdname filter
+filter_.classified <- function(obj, taxon = taxon_ids(x), item = seq_along(x$item_taxon_ids),
                               subtaxa = TRUE, supertaxa = FALSE, itemless = TRUE, ...) {
   # non-standard argument evaluation
   parsed_taxon <- lazyeval::lazy_eval(lazyeval::lazy(taxon), data = taxon_data(x))
