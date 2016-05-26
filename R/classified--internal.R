@@ -14,12 +14,15 @@ format_taxon_subset <- function(obj, index) {
   if (is.character(index)) {
     index <- vapply(index, FUN.VALUE = numeric(1),
                     function(x) {
-                      result = which(x == obj$taxa)
+                      result = which(x == obj$taxon_data$taxon_ids)
                       if (length(result) == 0) {
                         result = as.numeric(NA)
                       }
                       return(result)
                     })
+  }
+  if (is.logical(index)) {
+    index <- which(index)
   }
   index <- unname(index)
   return(index)

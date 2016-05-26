@@ -152,8 +152,55 @@ filter_.classified <- function(.data, ..., .dots,
 filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
                         taxonless = FALSE, reassign = TRUE) {
   
+  # non-standard argument evaluation
+  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(obj)) 
   
+  # convert taxon_ids to logical
+  is_char <- vapply(selection, is.character, logical(1))
+  selection[is_char] <- lapply(selection[is_char], function(x) .data$taxon_data$taxon_ids %in% x)
   
+  # convert indexes to logical
+  is_index <- vapply(selection, is.numeric, logical(1))
+  selection[is_index] <- lapply(selection[is_index], function(x) 1:nrow(.data$taxon_data) %in% x)
+  
+  # combine filters
+  selection <- Reduce(`&`, selection)
+  
+  # Get taxa of subset
+  taxa_subset <- unique(c(obj$taxon_data$taxon_ids[selection],
+                          if (subtaxa) {
+                            subtaxa(obj, subset = selection, simplify = TRUE)
+                          },
+                          if (supertaxa) {
+                            supertaxa(obj, subset = selection, simplify = TRUE, include_input = FALSE)
+                          }))
+  
+  # Reassign taxonless items
+  if (reassign) {
+    reassign_one <- function(x) {
+      included_parents <- which(supertaxa(obj, subset = 3, simplify = TRUE) %in% taxa_subset)
+      if (length(included_parents) > 0) {
+        return(included_parents[1])
+      } else {
+        return(as.numeric(NA))
+      }
+    }
+    
+    to_reassign <- ! obj$item_data$item_taxon_ids %in% taxa_subset
+    obj$item_data[to_reassign, "item_taxon_ids"] <- map_unique(obj$item_data[to_reassign, "item_taxon_ids"], 
+                                                               reassign_one)
+  }
+  
+  # Remove taxonless items
+  if (! taxonless) {
+    obj$item_data <- obj$taxon_data[obj$item_data$item_taxon_ids %in% taxa_subset, , drop = FALSE]
+  }
+  
+  # Remove filtered taxa
+  obj$taxa <- obj$taxa[taxa_subset]
+  obj$taxon_data <- obj$taxon_data[obj$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
+  
+  return(obj)
 }
 
 
