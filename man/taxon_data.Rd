@@ -4,20 +4,20 @@
 \alias{taxon_data}
 \title{Return taxon data from \code{\link{classified}}}
 \usage{
-taxon_data(obj, col_subset = taxon_data_colnames(obj),
-  row_subset = taxon_ids(obj), calculated_cols = TRUE, sort_by = NULL,
-  decreasing = FALSE, drop = FALSE)
+taxon_data(obj, row_subset = NULL, col_subset = NULL,
+  calculated_cols = TRUE, sort_by = NULL, decreasing = FALSE,
+  drop = FALSE)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}
 
-\item{col_subset}{(\code{character})
-The names of columns, either user defined or generated using \code{taxon_funcs}.
-Default: All columns.}
-
 \item{row_subset}{(\code{character})
 The taxon_ids of a subset of \code{obj}.
 Default: All rows.}
+
+\item{col_subset}{(\code{character})
+The names of columns, either user defined or generated using \code{taxon_funcs}.
+Default: All columns.}
 
 \item{calculated_cols}{(\code{logical} of length 1)
 If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$taxon_funcs}.

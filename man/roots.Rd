@@ -4,7 +4,7 @@
 \alias{roots}
 \title{Get root taxa}
 \usage{
-roots(obj, subset = taxon_ids(obj))
+roots(obj, subset = obj$taxon_data$taxon_ids)
 }
 \arguments{
 \item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be queried.}

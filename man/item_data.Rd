@@ -4,28 +4,43 @@
 \alias{item_data}
 \title{Return item data from \code{\link{classified}}}
 \usage{
-item_data(obj, col_subset = item_data_colnames(obj),
-  row_subset = 1:nrow(obj$item_data), drop = FALSE)
+item_data(obj, row_subset = NULL, col_subset = NULL,
+  calculated_cols = TRUE, sort_by = NULL, decreasing = FALSE,
+  drop = FALSE)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}
 
-\item{col_subset}{(\code{character})
-The names of columns, either user defined or generated using \code{taxon_funcs}.
-Default: All columns.}
-
 \item{row_subset}{(\code{character})
-The taxon_ids of a subset of \code{obj}.
+The item_ids of a subset of \code{obj}.
 Default: All rows.}
 
-\item{drop}{(\code{logical} of length 1) If \code{TRUE}, if \code{subset} is a single column
+\item{col_subset}{(\code{character})
+The names of columns, either user defined or generated using \code{item_funcs}.
+Default: All columns.}
+
+\item{calculated_cols}{(\code{logical} of length 1)
+If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$item_funcs}.
+These values are calculated each time \code{item_data} is called since their values can change if 
+the data is subset.}
+
+\item{sort_by}{(\code{character} of length 1)
+The name of a column in \code{obj$item_data} or a function name in  \code{obj$item_funcs}.
+This column will be used to sort the output rows.
+If \code{NULL}, no sorting will be done.}
+
+\item{decreasing}{(\code{logical} of length 1)
+If \code{TRUE}, \code{sort_by} order is decreasing.}
+
+\item{drop}{(\code{logical} of length 1)
+If \code{TRUE}, if \code{subset} is a single column
 name, then a \code{vector} is returned instead of a \code{data.frame}}
 }
 \value{
-\code{data.frame} with rows corresponding to items in input
+A \code{data.frame} or \code{vector} with rows corresponding to taxa in input
 }
 \description{
-Return a table of data associated with items of an object of type
+Return a table of data associated with taxa of and object of type
 \code{\link{classified}}.
 }
 

@@ -4,7 +4,7 @@
 \alias{item_counts}
 \title{Count items in \code{\link{classified}}}
 \usage{
-item_counts(obj, subset = taxon_ids(obj))
+item_counts(obj, subset = obj$taxon_data$taxon_ids)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}

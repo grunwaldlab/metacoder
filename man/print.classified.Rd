@@ -4,12 +4,15 @@
 \alias{print.classified}
 \title{Print a \code{\link{classified}} object}
 \usage{
-\method{print}{classified}(x, ...)
+\method{print}{classified}(x, max_rows = 7, ...)
 }
 \arguments{
 \item{x}{object to print}
 
-\item{...}{Passed to other methods}
+\item{max_rows}{(\code{integer} of length 1)
+The maximum number of rows to print in tables.}
+
+\item{...}{Not used}
 }
 \description{
 Print a \code{\link{classified}} object

@@ -4,7 +4,7 @@
 \alias{classifications}
 \title{Get classification of taxa}
 \usage{
-classifications(obj, subset = taxon_ids(obj), sep = ";")
+classifications(obj, subset = obj$taxon_data$taxon_ids, sep = ";")
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}

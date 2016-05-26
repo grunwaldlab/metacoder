@@ -4,7 +4,7 @@
 \alias{taxon_ranks}
 \title{Get rank of taxa}
 \usage{
-taxon_ranks(obj, subset = taxon_ids(obj))
+taxon_ranks(obj, subset = obj$taxon_data$taxon_ids)
 }
 \arguments{
 \item{obj}{(\code{\link{classified}})}

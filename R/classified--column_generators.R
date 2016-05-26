@@ -12,7 +12,7 @@
 #' @return \code{character} of length equal to \code{subset}
 #'
 #' @export
-classifications <- function(obj, subset = taxon_ids(obj), sep = ";") {
+classifications <- function(obj, subset = obj$taxon_data$taxon_ids, sep = ";") {
   vapply(supertaxa(obj, subset, include_input = TRUE), function(x) paste0(rev(x), collapse = sep), character(1))
 }
 
@@ -27,7 +27,7 @@ classifications <- function(obj, subset = taxon_ids(obj), sep = ";") {
 #' @return \code{numeric}
 #'
 #' @export
-taxon_ranks <- function(obj, subset = taxon_ids(obj)) {
+taxon_ranks <- function(obj, subset = obj$taxon_data$taxon_ids) {
   vapply(supertaxa(obj, subset, include_input = TRUE), length, numeric(1))
 }
 
@@ -42,6 +42,6 @@ taxon_ranks <- function(obj, subset = taxon_ids(obj)) {
 #' @return \code{numeric}
 #'
 #' @export
-item_counts <- function(obj, subset = taxon_ids(obj)) {
+item_counts <- function(obj, subset = obj$taxon_data$taxon_ids) {
   vapply(items(obj, subset), length, numeric(1))
 }
