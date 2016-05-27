@@ -9,9 +9,9 @@ context("filtering `classified` objects")
 obj <- classified(taxa = c(1, 2, 3, 4, 5), parents = c(NA, 1, 2, 2, 1), 
                   item_taxa = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],  stringsAsFactors = FALSE))
+plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
 
 test_that("Taxon filtering with non-standard evaluation works", {
-  plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, taxon_ranks < 3, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = FALSE, reassign = TRUE)
@@ -22,7 +22,6 @@ test_that("Taxon filtering with non-standard evaluation works", {
 })
 
 test_that("Taxon filtering with taxon_ids works", {
-  plot(obj, vertex_label = paste(taxon_ids, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, c("1", "2"), 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = FALSE, reassign = TRUE)
@@ -33,7 +32,6 @@ test_that("Taxon filtering with taxon_ids works", {
 
 
 test_that("Taxon filtering with taxon_ids works", {
-  plot(obj, vertex_label = paste(taxon_ids, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, c(1, 2), 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = FALSE, reassign = TRUE)
@@ -43,7 +41,6 @@ test_that("Taxon filtering with taxon_ids works", {
 })
 
 test_that("Taxon filtering with variable works", {
-  plot(obj, vertex_label = paste(taxon_ids, item_counts), vertex_color = item_counts, layout = "fr")
   input <- c(1, 2)
   result <- filter_taxa(obj, input, 
                         subtaxa = FALSE, supertaxa = TRUE,
@@ -55,7 +52,6 @@ test_that("Taxon filtering with variable works", {
 
 
 test_that("Taxon filtering: removing items works", {
-  plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = FALSE, reassign = FALSE)
@@ -66,7 +62,6 @@ test_that("Taxon filtering: removing items works", {
 
 
 test_that("Taxon filtering: NA items works", {
-  plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = TRUE, reassign = FALSE)
@@ -76,7 +71,6 @@ test_that("Taxon filtering: NA items works", {
 })
 
 test_that("Taxon filtering: removing supertaxa works", {
-  plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   result <- filter_taxa(obj, taxon_ranks > 1, 
                         subtaxa = FALSE, supertaxa = FALSE,
                         taxonless = FALSE, reassign = TRUE)
