@@ -178,7 +178,8 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   # Reassign taxonless items
   if (reassign) {
     reassign_one <- function(x) {
-      included_parents <- which(supertaxa(.data, subset = x, simplify = TRUE) %in% taxa_subset)
+      parents <- supertaxa(.data, subset = x, simplify = TRUE)
+      included_parents <- parents[parents %in% taxa_subset]
       if (length(included_parents) > 0) {
         return(included_parents[1])
       } else {
@@ -209,11 +210,11 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
     }
   }
   .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
-                                     numeric(1))
+                                       numeric(1))
   .data$taxon_data$parent_ids <- vapply(.data$taxon_data$parent_ids, function(x) custom_which(x, .data), 
-                                       numeric(1))
+                                        numeric(1))
   .data$item_data$item_taxon_ids <- vapply(.data$item_data$item_taxon_ids, function(x) custom_which(x, .data), 
-                                       numeric(1))
+                                           numeric(1))
   
   return(.data)
 }

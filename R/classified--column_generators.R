@@ -45,3 +45,18 @@ taxon_ranks <- function(obj, subset = obj$taxon_data$taxon_ids) {
 item_counts <- function(obj, subset = obj$taxon_data$taxon_ids) {
   vapply(items(obj, subset), length, numeric(1))
 }
+
+
+#' Count item assigned in \code{\link{classified}}
+#'
+#' Count items assigned to a specific taxon in \code{\link{classified}}
+#'
+#' @param obj (\code{\link{classified}})
+#' @param subset (\code{character}) The \code{taxon_ids}s to get counts for.
+#'
+#' @return \code{numeric}
+#'
+#' @export
+assigned <- function(obj, subset = obj$taxon_data$taxon_ids) {
+  vapply(items(obj, subset, recursive = FALSE), length, numeric(1))
+}
