@@ -350,7 +350,7 @@ item_data <- function(obj,
                       drop = FALSE) {
   # Parse options
   if (is.null(row_subset)) {
-    row_subset <- obj$item_data$item_taxon_ids
+    row_subset <- 1:nrow(obj$item_data)
   }
   if (is.null(col_subset)) {
     col_subset <- c(colnames(obj$item_data), names(obj$item_funcs))
@@ -448,7 +448,7 @@ supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
     }
   # Reduce dimensionality if specified
   if (simplify) {
-    supertaxa <- unlist(supertaxa)
+    supertaxa <- unname(unlist(supertaxa))
   }
   return(supertaxa)
 }
@@ -517,7 +517,7 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
   }
   # Reduce dimensionality if specified
   if (simplify) {
-    output <- unique(unlist(output))
+    output <- unname(unique(unlist(output)))
   }
   return(output)
 }
@@ -552,7 +552,7 @@ items <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE, simp
   output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)])))
   # Reduce dimensionality if specified
   if (simplify) {
-    output <- unique(unlist(output))
+    output <- unname(unique(unlist(output)))
   }
   return(output)
 }
