@@ -2,16 +2,29 @@
 % Please edit documentation in R/classified--filter.R
 \name{filter_items}
 \alias{filter_items}
-\title{UNDER CONSTRUCTION}
+\title{Filter items with a list of conditions}
 \usage{
-filter_items(.data, ...)
+filter_items(.data, ..., itemless = TRUE)
 }
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{Filtering conditions.}
+\item{...}{One or more filtering conditions.
+This can be one of two things:
+\describe{
+   \item{\code{integer}}{One or more indexes of \code{item_data}}
+   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}}
+ }
+Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.}
+
+\item{itemless}{(\code{logical} of length 1)
+If \code{TRUE}, preserve taxa even if all of their items are filtered out.}
+}
+\value{
+An object of type \code{\link{classified}}
 }
 \description{
-UNDER CONSTRUCTION
+Filter items in a \code{\link{classified}} object with a list of conditions.
+Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
 }
 

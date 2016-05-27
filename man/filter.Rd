@@ -3,47 +3,57 @@
 \name{filter}
 \alias{filter}
 \alias{filter.classified}
+\alias{filter.default}
 \alias{filter_.classified}
-\title{UNDER CONSTRUCTION}
+\title{Filter \code{\link{classified}} on a list of conditions}
 \usage{
 filter(.data, ...)
 
+\method{filter}{default}(.data, ...)
+
 \method{filter}{classified}(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
-  itemless = TRUE, taxonless = FALSE)
+  itemless = TRUE, taxonless = FALSE, reassign = TRUE)
 
 filter_.classified(.data, ..., .dots, subtaxa = TRUE, supertaxa = FALSE,
-  itemless = TRUE, taxonless = FALSE)
+  itemless = TRUE, taxonless = FALSE, reassign = TRUE)
 }
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{Filtering conditions.
-Each condition of must contain the name of at least one column from \code{obj$taxon_data} or \code{obj$taxon_data}.
-To filter by index or \code{TRUE}/\code{FALSE} vector, use \code{\link{filter_taxa}} or \code{\link{filter_items}}.}
+\item{...}{One or more filtering conditions.
+This can be one of two things:
+\describe{
+   \item{\code{integer}}{One or more indexes of \code{item_data}}
+   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}}
+ }
+Any column name that appears in \code{item_data(.data)} or \code{taxon_data(.data)} can be used as if it was a vector on its own.
+However, olumn names from \code{item_data(.data)} and \code{taxon_data(.data)} cannot be mixed in a single condition.}
 
 \item{subtaxa}{(\code{logical} of length 1)
-If \code{TRUE}, return subtaxa of specified taxa.}
+If \code{TRUE}, include subtaxa of taxa passing the filter.}
 
 \item{supertaxa}{(\code{logical} of length 1)
-If \code{TRUE}, return supertaxa of specified taxa.}
+If \code{TRUE}, include supertaxa of taxa passing the filter.}
 
 \item{itemless}{(\code{logical} of length 1)
-If \code{TRUE}, return taxa even if they have no items assigned to them.}
+If \code{TRUE}, preserve taxa even if all of their items are filtered out.}
 
 \item{taxonless}{(\code{logical} of length 1)
-If \code{TRUE}, return items even if they are not assigned to taxa.}
+If \code{TRUE}, include items even if the taxon they are assigned to is filtered out.
+Item assigned to removed taxa will be assigned to \code{NA}.
+See the \code{reassign} option below for further complications.}
 
-\item{.dots}{Filtering conditions.}
+\item{reassign}{(\code{logical} of length 1)
+If \code{TRUE}, items assigned to removed taxa will be reassigned to the closest supertaxon that passed the filter.
+If there are no supertaxa of such an item that passed the filter, they will be filtered out if \code{taxonless} is \code{TRUE}.}
+
+\item{.dots}{A list of values to filter on. Used for standard evaluation.}
 }
 \value{
-\code{\link{classified}}
+An object of type \code{\link{classified}}
 }
 \description{
-UNDER CONSTRUCTION
-
 Create a subset of a \code{\link{classified}} object.
-Can filter based on columns in \code{obj$taxon_data} or \code{obj$taxon_data}.
-
-Standard evaluation version of \code{\link{filter}}
+Can filter based on columns in \code{.data$taxon_data} or \code{.data$taxon_data}.
 }
 

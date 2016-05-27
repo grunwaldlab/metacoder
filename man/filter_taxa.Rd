@@ -2,7 +2,7 @@
 % Please edit documentation in R/classified--filter.R
 \name{filter_taxa}
 \alias{filter_taxa}
-\title{Filter taxa on a list of conditions}
+\title{Filter taxa with a list of conditions}
 \usage{
 filter_taxa(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   taxonless = FALSE, reassign = TRUE)
@@ -34,8 +34,11 @@ See the \code{reassign} option below for further complications.}
 If \code{TRUE}, items assigned to removed taxa will be reassigned to the closest supertaxon that passed the filter.
 If there are no supertaxa of such an item that passed the filter, they will be filtered out if \code{taxonless} is \code{TRUE}.}
 }
+\value{
+An object of type \code{\link{classified}}
+}
 \description{
-Filter taxa on a list of conditions.
+Filter taxa in a \code{\link{classified}} object with a list of conditions.
 Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
 }
 
