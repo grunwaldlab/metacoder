@@ -206,7 +206,12 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
     if (is.na(x)) {
       return(as.numeric(NA))
     } else {
-      return(which(data$taxa == x))
+      result <- which(data$taxa == x)
+      if (length(result) == 0) {
+        return(NA)
+      } else {
+        return(result)
+      }
     }
   }
   .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
