@@ -206,11 +206,11 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
     if (is.na(x)) {
       return(as.numeric(NA))
     } else {
-      result <- which(data$taxa == x)
-      if (length(result) == 0) {
-        return(NA)
+      out <- which(data$taxa == x)
+      if (length(out) == 0) {
+        return(as.numeric(NA))
       } else {
-        return(result)
+        return(out)
       }
     }
   }
