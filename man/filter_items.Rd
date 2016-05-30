@@ -18,7 +18,9 @@ This can be one of two things:
 Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.}
 
 \item{itemless}{(\code{logical} of length 1)
-If \code{TRUE}, preserve taxa even if all of their items are filtered out.}
+If \code{TRUE}, preserve taxa even if all of their items are filtered out.
+If \code{FALSE}, remove taxa for which all items were filtered out.
+Note that only taxa that are itemless due to this filtering will be removed; there might be other taxa without items to begin with that will not be removed.}
 }
 \value{
 An object of type \code{\link{classified}}

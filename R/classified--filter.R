@@ -211,10 +211,39 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
 #' Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
 #' @param itemless (\code{logical} of length 1)
 #' If \code{TRUE}, preserve taxa even if all of their items are filtered out.
+#' If \code{FALSE}, remove taxa for which all items were filtered out.
+#' Note that only taxa that are itemless due to this filtering will be removed; there might be other taxa without items to begin with that will not be removed.
 #' 
 #' @return An object of type \code{\link{classified}}
 #' 
 #' @export
 filter_items <- function(.data, ..., itemless = TRUE) {
+  # non-standard argument evaluation ---------------------------------------------------------------
+  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = item_data(.data)) 
+  
+  # convert taxon_ids to logical -------------------------------------------------------------------
+  is_char <- vapply(selection, is.character, logical(1))
+  if (sum(is_char) > 0) {
+    stop("Item filtering with taxon IDs or item IDs (which dont exist yet) is not currently supported. If you want to filter item by taxon IDs, use something like: `item_taxon_ids %in% my_subset`")
+  }
+  
+  # convert indexes to logical ---------------------------------------------------------------------
+  is_index <- vapply(selection, is.numeric, logical(1))
+  selection[is_index] <- lapply(selection[is_index], function(x) 1:nrow(.data$item_data) %in% x)
+  
+  # combine filters --------------------------------------------------------------------------------
+  selection <- Reduce(`&`, selection)
+  
+  # Remove items -----------------------------------------------------------------------------------
+  itemless_taxa <- unique(.data$item_data$item_taxon_ids[! selection])
+  .data$item_data <- .data$item_data[selection, , drop = FALSE]
+  
+  # Remove itemless taxa ---------------------------------------------------------------------------
+  if (! itemless) {
+    taxa_to_remove <- .data$taxon_data$taxon_ids %in% itemless_taxa & item_counts(.data) == 0
+    .data$taxon_data <- .data$taxon_data[! taxa_to_remove, , drop = FALSE]
+  }
+  
+  return(.data)
 }
 
