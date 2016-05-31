@@ -289,7 +289,7 @@ taxon_data <- function(obj,
   # Reorder output rows according to `sort_by`
   if (! is.null(sort_by)) {
     if (is.character(sort_by) && sort_by %in% colnames(data)) {
-      sort_by_col <- data[ , sort_by]
+      sort_by_col <- data[ , sort_by][[1]]
     } else if (is.function(sort_by) && all(c("obj", "subset") %in% names(formals(sort_by)))) {
       sort_by_col <- sort_by(obj, row_subset)
     } else if (sort_by %in% names(obj$taxon_funcs)) {
