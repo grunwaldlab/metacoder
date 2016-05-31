@@ -2,6 +2,7 @@
 #' 
 #' Add columns to the \code{taxon_data} in \code{\link{classified}} objects.
 #' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
+#' See \code{\link[dplyr]{mutate}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
 #' @param ... One or more column names to add to the new object.
@@ -24,6 +25,7 @@ mutate_taxa <- function(.data, ...) {
 #' 
 #' Add columns to the \code{item_data} in \code{\link{classified}} objects.
 #' Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
+#' See \code{\link[dplyr]{mutate}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
 #' @param ... One or more column names to add to the new object.
@@ -45,6 +47,7 @@ mutate_items <- function(.data, ...) {
 #' 
 #' Replace columns of \code{taxon_data} in \code{\link{classified}} objects.
 #' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
+#' See \code{\link[dplyr]{transmute}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
 #' @param ... One or more column names to add to the new object.
@@ -67,6 +70,7 @@ transmute_taxa <- function(.data, ...) {
 #' 
 #' Replace columns of \code{item_data} in \code{\link{classified}} objects.
 #' Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
+#' See \code{\link[dplyr]{transmute}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
 #' @param ... One or more column names to add to the new object.
