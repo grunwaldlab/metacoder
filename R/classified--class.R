@@ -273,14 +273,14 @@ taxon_data <- function(obj,
   # Make copy of taxon data
   data <- obj$taxon_data
   # Remove any user-defined rows not specified
-  data <- data[row_subset, , drop = FALSE]
+  data <- dplyr::filter(data, taxon_ids %in% row_subset)
   # Check if any of the column-generating functions are needed
   functions <- obj$taxon_funcs[names(obj$taxon_funcs) %in% col_subset]
   # Apply column-generating functions and append to output
   if (calculated_cols && length(functions) > 0) {
     calculated_data <- lapply(functions, function(f) f(obj, row_subset))
     names(calculated_data) <- names(functions)
-    data <- cbind(data, as.data.frame(calculated_data))
+    data <- dplyr::bind_cols(data, calculated_data)
   }
   # Remove any user-defined columns not specified
   data <- data[, colnames(data) %in% col_subset, drop = FALSE]
@@ -303,8 +303,6 @@ taxon_data <- function(obj,
   # Apply drop
   if (ncol(data) == 1 && drop) {
     data <- data[[1]]
-  } else {
-    data <- dplyr::tbl_df(data)
   }
   
   return(data)
@@ -427,7 +425,7 @@ item_data <- function(obj,
 supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
                       simplify = FALSE, include_input = FALSE) {
   recursive_part <- function(taxon) {
-    supertaxon <- obj$taxon_data$parent_ids[taxon]
+    supertaxon <- obj$taxon_data$parent_ids[taxon == obj$taxon_data$taxon_ids]
     if (recursive) {
       if (is.na(supertaxon)) {
         output <- taxon
