@@ -3,7 +3,7 @@
 library(metacoder)
 context("filtering `classified` objects")
 #|
-#| ### Filter Filtering taxa
+#| ### Filtering taxa
 #|
 #| ####  Code shared by tests
 obj <- classified(taxa = c(1, 2, 3, 4, 5), parents = c(NA, 1, 2, 2, 1), 

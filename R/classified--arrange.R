@@ -13,9 +13,9 @@
 #' @export
 arrange_taxa <- function(.data, ...) {
   my_taxon_data <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
-  dots <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = my_taxon_data)
-  .data$taxon_data <- dplyr::arrange_(.data$taxon_data,
-                                      .dots = lapply(dots, function(x) ~ x))
+  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+                   names(my_taxon_data), my_taxon_data)
+  .data$taxon_data <- dplyr::arrange(.data$taxon_data, ...)
   return(.data) 
 } 
 
@@ -35,8 +35,8 @@ arrange_taxa <- function(.data, ...) {
 #' @export
 arrange_items <- function(.data, ...) {
   my_item_data <- item_data(.data, col_subset = item_data_cols_used(.data, ...))
-  dots <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = my_item_data)
-  .data$item_data <- dplyr::arrange_(.data$item_data,
-                                     .dots = lapply(dots, function(x) ~ x))
+  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+                   names(my_item_data), my_item_data)
+  .data$item_data <- dplyr::arrange(.data$item_data, ...)
   return(.data) 
 } 
