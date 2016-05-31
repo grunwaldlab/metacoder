@@ -25,5 +25,6 @@ An object of type \code{\link{classified}}
 Subsets \code{item_data} columns in a \code{\link{classified}} object.
 Takes and returns a \code{\link{classified}} object.
 Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
+See \code{\link[dplyr]{select}} for more information.
 }
 

@@ -12,11 +12,10 @@ select_taxa(.data, ...)
 \item{...}{One or more column names to return in the new object.
 This can be one of three things:
 \describe{
-   \item{\code{character}}{The name of a column in \code{taxon_data}}
-   \item{\code{unquoted column name}}{The name of a column in \code{taxon_data} typed as if it was a varaible on its own.}
-   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of columns in \code{taxon_data}}
+   \item{\code{expression with unquoted column name}}{The name of a column in \code{taxon_data} typed as if it was a varaible on its own.}
    \item{\code{numeric}}{Indexes of columns in \code{taxon_data}}
- }}
+ }
+ To match column names with a quoted character, use \code{matches("my_col_name")}}
 }
 \value{
 An object of type \code{\link{classified}}
@@ -25,5 +24,6 @@ An object of type \code{\link{classified}}
 Subsets \code{taxon_data} columns in a \code{\link{classified}} object.
 Takes and returns a \code{\link{classified}} object.
 Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
+See \code{\link[dplyr]{select}} for more information.
 }
 
