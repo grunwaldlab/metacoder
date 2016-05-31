@@ -48,5 +48,5 @@ select_taxa <- function(.data, ...) {
   # Select columns ---------------------------------------------------------------------------------
   .data$taxon_data <- .data$taxon_data[ , selected, drop = FALSE]
   
-  return(data)
+  return(.data)
 }
