@@ -20,7 +20,7 @@ test_that("Taxon filtering with non-standard evaluation works", {
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_s3_class(result, "classified")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
-  expect_equivalent(item_counts(result), c(10, 7))
+  expect_equivalent(unname(item_counts(result)), c(10, 7))
 })
 #|
 #| ####  Taxon filtering with taxon_ids
@@ -30,7 +30,7 @@ test_that("Taxon filtering with taxon_ids works", {
                         taxonless = FALSE, reassign = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
    expect_equivalent(result$taxon_data$name, c("a", "b"))
-  expect_equivalent(item_counts(result), c(10, 7))
+  expect_equivalent(unname(item_counts(result)), c(10, 7))
 })
 #|
 #| ####  Taxon filtering with taxon_data indexes
@@ -40,7 +40,7 @@ test_that("Taxon filtering with taxon_data indexes works", {
                         taxonless = FALSE, reassign = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
-  expect_equivalent(item_counts(result), c(10, 7))
+  expect_equivalent(unname(item_counts(result)), c(10, 7))
 })
 #|
 #| ####  Taxon filtering with data stored in variables
@@ -51,7 +51,7 @@ test_that("Taxon filtering with data stored in variables", {
                         taxonless = FALSE, reassign = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
-  expect_equivalent(item_counts(result), c(10, 7))
+  expect_equivalent(unname(item_counts(result)), c(10, 7))
 })
 #|
 #| ####  Removing items
@@ -61,7 +61,7 @@ test_that("Taxon filtering: removing items works", {
                         taxonless = FALSE, reassign = FALSE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b", "c", "d"))
-  expect_equivalent(item_counts(result), c(9, 7, 3, 2))
+  expect_equivalent(unname(item_counts(result)), c(9, 7, 3, 2))
 })
 #|
 #| ####  Adding NA to filtered items item_taxon_ids

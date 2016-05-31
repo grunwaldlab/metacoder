@@ -65,8 +65,8 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
       }
     }
     
-    to_reassign <- ! .data$item_data$item_taxon_ids %in% taxa_subset
-    .data$item_data[to_reassign, "item_taxon_ids"] <- vapply(.data$item_data[to_reassign, "item_taxon_ids"], 
+    to_reassign <- ! .data$item_data$item_taxon_ids %in% taxa_subset 
+    .data$item_data[to_reassign, "item_taxon_ids"] <- vapply(.data$item_data$item_taxon_ids[to_reassign], 
                                                              reassign_one, numeric(1))
   }
   

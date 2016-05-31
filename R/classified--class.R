@@ -118,12 +118,11 @@ classified <- function(taxa, parents, item_taxa = numeric(0),
     stop("'taxon_data' and 'item_data' can not share column names.")
   }
   # Add ID columns
-  taxon_data <- dplyr::tbl_dt(cbind(data.frame(taxon_ids = taxon_ids, 
+  taxon_data <- dplyr::tbl_df(cbind(data.frame(taxon_ids = taxon_ids, 
                                                parent_ids = parent_ids,
                                                row.names = NULL), 
                                     taxon_data))
-  data.table::setkey(taxon_data, taxon_ids)
-  item_data <- dplyr::tbl_dt(cbind(data.frame(item_taxon_ids = item_taxon_ids,
+  item_data <- dplyr::tbl_df(cbind(data.frame(item_taxon_ids = item_taxon_ids,
                                               row.names = NULL),
                                    item_data))
 
@@ -305,7 +304,7 @@ taxon_data <- function(obj,
   if (ncol(data) == 1 && drop) {
     data <- data[[1]]
   } else {
-    data <- dplyr::tbl_dt(data)
+    data <- dplyr::tbl_df(data)
   }
   
   return(data)
@@ -394,7 +393,7 @@ item_data <- function(obj,
   if (ncol(data) == 1 && drop) {
     data <- data[[1]]
   } else {
-    data <- dplyr::tbl_dt(data)
+    data <- dplyr::tbl_df(data)
   }
   
   return(data)

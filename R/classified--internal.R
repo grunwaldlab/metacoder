@@ -49,3 +49,62 @@ remove_redundant_names <- function(obj, name_col) {
                                        character(1))
   return(obj)
 }
+
+
+#' Get names of taxon_data in an unevaluated expression
+#' 
+#' Get names of taxon_data in an unevaluated expression
+#' 
+#' @param obj a \code{classified} object
+#' @param ... unevaluated expression
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal
+taxon_data_cols_used <- function(obj, ...) {
+  names_used <- unlist(lapply(lazyeval::lazy_dots(...), function(x) as.character(x$expr)))
+  names_used[names_used %in% taxon_data_colnames(obj)]
+}
+
+#' Get names of item_data in an unevaluated expression
+#' 
+#' Get names of item_data in an unevaluated expression
+#' 
+#' @param obj a \code{classified} object
+#' @param ... unevaluated expression
+#' 
+#' @return \code{character}
+#' 
+#' @keywords internal
+item_data_cols_used <- function(obj, ...) {
+  names_used <- unlist(lapply(lazyeval::lazy_dots(...), function(x) as.character(x$expr)))
+  names_used[names_used %in% item_data_colnames(obj)]
+}
+
+
+#' Get column names of taxon_data
+#' 
+#' Get column names of taxon_data without calculating columns
+#' 
+#' @param obj a \code{classified} object
+#' 
+#' @return \code{character}
+#' 
+#' @export
+taxon_data_colnames <- function(obj) {
+  c(colnames(obj$taxon_data), names(obj$taxon_funcs))
+}
+
+#' Get column names of item_data
+#' 
+#' Get column names of item_data without calculating columns
+#' 
+#' @param obj a \code{classified} object
+#' 
+#' @return \code{character}
+#' 
+#' @export
+item_data_colnames <- function(obj) {
+  c(colnames(obj$item_data), names(obj$item_funcs))
+}
+
