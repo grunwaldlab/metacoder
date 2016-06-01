@@ -36,7 +36,9 @@ While this project is in development it can be installed through github:
     devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes = TRUE)
     library(metacoder)
 
-Note that the vignette included in the package is just a link to the website, which hosts the primary documentation.
+If you've built the vignettes, you can browse them with:
+
+    browseVignettes(package="metacoder")
     
 ### Dependencies
 
@@ -85,27 +87,26 @@ seqs <- ape::read.FASTA(unpacked_fasta_path)
 cat(names(seqs)[1])
 # Extract the taxonomic information of the sequences
 data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
-                         key = c(sequence_id = "item_info", "class"),
+                         key = c(seq_id = "item_info", "class"),
                          class_sep = ";")
 ```
 
+Note, that this command will take a while to process. 
 The resulting object contains sequence information associated with an inferred taxonomic hierarchy.
-The defualt print method displays a few rows of each part of the object:
+The standard print method of the object shows a part of every kind of data it contains:
 
 ```{r}
-print(data)
+data
 ```
 
-Note that there are a set of functions associated with the object called `taxon_funcs`.
-These result in computed columns for `taxon_data` and you can see their result using the `taxon_data` function:
+Note the `taxon_funcs` part contains function names (e.g. `item_counts`) used to calculate   taxon statistics.
+You can see the results of these calculations using the `taxon_data` function:
 
 ```{r}
-taxon_data(data)
+taxon_data(data, row_subset = 1:10)
 ```
 
-These `taxon_funcs` columns are computed each time `taxon_data` is run because their results can change if the data is subset.
-They can be treated like other columns in `taxon_data` in most cases, which will be useful for many functions in `metacoder`.
-
+There is corresponding `item_data` function and `item_funcs` list, but they are not used in this case.
 
 ### Metadiversity Plots
 
@@ -122,7 +123,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Note, that this command can take a few minutes depending on your computer. 
+Note, that this command can take a few minutes. 
 The default size range displayed is optimized for each plot.
 The legend represents the number of sequences for each taxon as both a color gradient and width of vertices.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
@@ -142,21 +143,21 @@ The above command can take several minutes.
 ggplot2::ggsave(file = "intro_plot_2.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Note that `plot` is a generic R function that works differently depending on what it is given to it
+Note that `plot` is a generic R function that works differently depending on what it is given to it.
 MetacodeR supplies the function **plot_taxonomy**, which is used when plot is given the type of data outputted by `extract_taxonomy`.
 To see the long list of available plotting options, type `?plot_taxonomy`.
 
-### Filtering taxonomic data
+### Subsetting
 
-Taxonomic data can be easily subset using the `filter_taxa` and `filter_items` functions.
-When filtering taxa, the user can choose preserve or remove the subtaxa, supertaxa, and items associated with the subset.
-For example, `filter_taxa` can be used to look at just the Archaea:
+Taxonomic data in the form used in metacodeR can be manipulated using functions inspired by `dplyr`.
+For example, taxa can be subset using `filter_taxa`.
+Unlike the `dplyr` function `filter`, users can choose preserve or remove the subtaxa, supertaxa, and sequence data of the selected taxa.
+For example, `subset` can be used to look at just the Archaea:
 
 ```{r}
 set.seed(1)
-filter_taxa(data, name == "Archaea") %>%
-  plot(vertex_size = item_counts, vertex_label = name,
-       vertex_color = item_counts, layout = "fruchterman-reingold")
+plot(filter_taxa(data, name == "Archaea"), vertex_size = item_counts, 
+     vertex_label = name, vertex_color = item_counts, layout = "fruchterman-reingold")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -164,7 +165,7 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subset_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Any column displayed by `taxon_data` can be used with `subset` as if it were a variable on its own.
+Any column displayed by `taxon_data` can be used with `filter_taxa` (and most other metacodeR commands) as if it were a variable on its own.
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ```{r}
@@ -193,7 +194,7 @@ set.seed(1)
 
 ```{r}
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- filter_taxa(sampled, item_counts > 0, itemless = FALSE) 
+sampled <- subset(sampled, item_counts > 0, itemless = FALSE) 
 ```
 
 ```{r, echo = FALSE}

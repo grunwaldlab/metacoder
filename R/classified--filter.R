@@ -32,7 +32,8 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
                         taxonless = FALSE, reassign = TRUE) {
   
   # non-standard argument evaluation ---------------------------------------------------------------
-  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = taxon_data(.data)) 
+  selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...),
+                                   data = taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))) 
   
   # convert taxon_ids to logical -------------------------------------------------------------------
   is_char <- vapply(selection, is.character, logical(1))

@@ -248,8 +248,8 @@ primersearch.classified <- function(input, embed = TRUE, ...) {
 #' 
 #' Test if primersearch is installed
 #' 
-#' @param must_be_installed (\code{logical} of length 1) If \code{TRUE}, throw an error if
-#' primersearch is not installed.
+#' @param must_be_installed (\code{logical} of length 1)
+#' If \code{TRUE}, throw an error if primersearch is not installed.
 #' 
 #' @return \code{logical} of length 1
 #' 

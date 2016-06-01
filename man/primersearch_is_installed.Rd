@@ -7,8 +7,8 @@
 primersearch_is_installed(must_be_installed = TRUE)
 }
 \arguments{
-\item{must_be_installed}{(\code{logical} of length 1) If \code{TRUE}, throw an error if
-primersearch is not installed.}
+\item{must_be_installed}{(\code{logical} of length 1)
+If \code{TRUE}, throw an error if primersearch is not installed.}
 }
 \value{
 \code{logical} of length 1
