@@ -7,8 +7,8 @@ context("filtering `classified` objects")
 #| ### Filtering taxa
 #|
 #| ####  Code shared by tests
-obj <- classified(taxa = c(1, 2, 3, 4, 5), parents = c(NA, 1, 2, 2, 1), 
-                  item_taxa = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
+obj <- classified(taxon_ids = c(1, 2, 3, 4, 5), parent_ids = c(NA, 1, 2, 2, 1), 
+                  item_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],  stringsAsFactors = FALSE),
                   item_data = data.frame(item_attr = LETTERS[1:10],  stringsAsFactors = FALSE))
 original_plot <- plot(obj, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")

@@ -149,8 +149,8 @@ items <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE, simp
   my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
   item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_data$item_taxon_ids)),
-                              unique_subtaxa)
-  output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)])))
+                              unique_subtaxa) 
+  output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[x])))
   # Reduce dimensionality if specified
   if (simplify) {
     output <- unname(unique(unlist(output)))

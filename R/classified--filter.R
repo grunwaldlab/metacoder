@@ -68,7 +68,7 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
     
     to_reassign <- ! .data$item_data$item_taxon_ids %in% taxa_subset 
     .data$item_data[to_reassign, "item_taxon_ids"] <- vapply(.data$item_data$item_taxon_ids[to_reassign], 
-                                                             reassign_one, numeric(1))
+                                                             reassign_one, character(1))
   }
   
   # Remove taxonless items -------------------------------------------------------------------------
@@ -80,25 +80,25 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   .data$taxa <- .data$taxa[taxa_subset]
   .data$taxon_data <- .data$taxon_data[.data$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
   
-  # Rename taxon ids -------------------------------------------------------------------------------
-  custom_which <- function(x, data) {
-    if (is.na(x)) {
-      return(as.numeric(NA))
-    } else {
-      out <- which(data$taxa == x)
-      if (length(out) == 0) {
-        return(as.numeric(NA))
-      } else {
-        return(out)
-      }
-    }
-  }
-  .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
-                                       numeric(1))
-  .data$taxon_data$parent_ids <- vapply(.data$taxon_data$parent_ids, function(x) custom_which(x, .data), 
-                                        numeric(1))
-  .data$item_data$item_taxon_ids <- vapply(.data$item_data$item_taxon_ids, function(x) custom_which(x, .data), 
-                                           numeric(1))
+#   # Rename taxon ids -------------------------------------------------------------------------------
+#   custom_which <- function(x, data) {
+#     if (is.na(x)) {
+#       return(as.character(NA))
+#     } else {
+#       out <- which(data$taxon_data$taxon_ids == x)
+#       if (length(out) == 0) {
+#         return(as.character(NA))
+#       } else {
+#         return(out)
+#       }
+#     }
+#   }
+#   .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
+#                                        character(1))
+#   .data$taxon_data$parent_ids <- vapply(.data$taxon_data$parent_ids, function(x) custom_which(x, .data), 
+#                                         character(1))
+#   .data$item_data$item_taxon_ids <- vapply(.data$item_data$item_taxon_ids, function(x) custom_which(x, .data), 
+#                                            character(1))
   
   return(.data)
 }
