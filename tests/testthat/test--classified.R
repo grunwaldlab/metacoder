@@ -37,5 +37,14 @@ test_that("Basic use works", {
   expect_identical(result_from_mixed$taxon_data, result_from_num$taxon_data)  
   expect_identical(result_from_mixed$item_data, result_from_num$item_data)  
 })
-
-
+#|
+#| #### print method
+test_that("Print method works", {
+  result <- classified(taxon_ids = LETTERS[1:4],
+                       parent_ids = c(NA, LETTERS[1:3]),
+                       item_taxon_ids = c(2, 2, 1, 1, 3))
+  expect_output(print(result), "`classified` object with")
+  expect_output(print(result), "Source: local data frame")
+  expect_output(print(result), "taxon_data")
+  expect_output(print(result), "A, B, C, D")
+})
