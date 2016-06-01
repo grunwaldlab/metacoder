@@ -1,21 +1,23 @@
 #' Create an instance of \code{classified}
 #'
-#' Create an instance of \code{classified} containing items classified by a taxonomy
+#' Create an instance of \code{classified} containing items classified by a taxonomy.
 #'
-#' @param taxa (\code{character})
-#' Unique taxa.
-#' Currently, these should be respresented by a \code{character} vector, but this might 
-#' change in the future.  
-#' @param parents (\code{character} OR (\code{numeric}))
+#' @param taxon_ids (\code{character}) 
+#' These are unique identifiers for taxa.
+#' They will be coerced into characters.
+#' @param parent_ids (\code{character} OR (\code{numeric}))
 #' Parent taxa (i.e. supertaxa) of \code{taxa}.
-#' If a \code{character} vector, then these should be in the same format as \code{taxa}.
-#' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxa}.
+#' If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
+#' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 #' Taxa without parents should be \code{NA}.
-#' @param item_taxa (\code{character} OR (\code{numeric}))
+#' @param taxa (\code{character})
+#' Objects representing taxa.
+#' Currently, these can be anything, but this might change in the future.
+#' @param item_taxon_ids (\code{character} OR (\code{numeric}))
 #' Taxon assignments of items.
 #' Parent taxa (i.e. supertaxa) of \code{taxa}.
-#' If a \code{character} vector, then these should be in the same format as \code{taxa}.
-#' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxa}.
+#' If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
+#' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 #' @param taxon_data (\code{data.frame})
 #' A table with rows pretaining to \code{taxa}
 #' @param item_data A (\code{data.frame})
@@ -30,101 +32,78 @@
 #' @return An object of type \code{classified}
 #'
 #' @export
-classified <- function(taxa, parents, item_taxa = numeric(0),
+classified <- function(taxon_ids, parent_ids,
+                       taxa = taxon_ids,
+                       item_taxon_ids = numeric(0),
                        taxon_data = NULL, item_data = NULL,
                        taxon_funcs = list(item_counts = item_counts,
                                           taxon_ranks = taxon_ranks,
                                           classifications = classifications),
                        item_funcs = list()) {
-  # Validate `taxa` --------------------------------------------------------------------------------
-  # Coerce into a character vector
-  taxa <- as.character(taxa)
+  # Validate `taxon_ids` ---------------------------------------------------------------------------
+  # Coerce into character vector
+  taxon_ids <- as.character(taxon_ids)
+  # Check that `taxon_ids` is the same length as `taxa`
+  if (length(taxa) != length(taxon_ids)) {
+    stop("'taxon_ids' must be the same length as 'taxa'")
+  }
   # Check that taxa are unique
-  if (length(unique(taxa)) != length(taxa)) { stop("'taxa' must be unique") }
-  # Make `taxon_ids` vector 
-  taxon_ids <- seq_along(taxa)
+  if (length(unique(taxon_ids)) != length(taxon_ids)) { stop("'taxon_ids' must be unique") }
+  # Name `taxa` with taxon_ids
+  taxa <- stats::setNames(taxa, taxon_ids)
   
-  # Validate `parents` -----------------------------------------------------------------------------
-  # Check that `parents` is the same length of `taxa`
-  if (length(taxa) != length(parents)) {
-    stop("'parents' must be the same length as 'taxa'")
+  # Validate `parent_ids` -----------------------------------------------------------------------------
+  # Check that `parent_ids` is the same length as `taxa`
+  if (length(taxa) != length(parent_ids)) {
+    stop("'parent_ids' must be the same length as 'taxa'")
   }
-  # Make `parent_ids` vector
-  if (is.character(parents)) {
-    parent_ids <- vapply(parents, FUN.VALUE = numeric(1),
-                         function(x) {
-                           result = which(x == taxa)
-                           if (length(result) == 0) {
-                             result = as.numeric(NA)
-                           }
-                           return(result)
-                         })
-    
-  } else if (is.numeric(parents)) {
-    parent_ids <- parents
-    parent_ids[! parent_ids %in% taxon_ids] <- NA
-  } else {
-    stop("'parents' is invalid.")
+  # Convert indexes to values of `taxon_ids`
+  if (is.numeric(parent_ids)) {
+    parent_ids <- taxon_ids[parent_ids]
+  } 
+  parent_ids[! parent_ids %in% taxon_ids] <- NA
+  
+  # Validate `item_taxon_ids` ---------------------------------------------------------------------------
+  # Check that all `item_taxon_ids` are in `taxon_ids`
+  if (is.character(item_taxon_ids)) {
+    item_taxon_ids[! item_taxon_ids %in% taxon_ids] <- NA
+    if (any(is.na(item_taxon_ids))) {
+      warning("Some `item_taxon_ids` could not be found in `taxon_ids`. They will be `NA`. ")
+    }
+  } 
+  # Convert indexes to values of `taxon_ids`
+  if (is.numeric(item_taxon_ids)) {
+    item_taxon_ids <- taxon_ids[item_taxon_ids]
   }
   
-  # Validate `item_taxa` ---------------------------------------------------------------------------
-  if (is.character(item_taxa)) {
-    if (any(! item_taxa %in% c(taxa, NA))) {
-      stop("All 'item_taxa' must be in 'taxa'")
-    }
-    item_taxon_ids <- vapply(item_taxa, FUN.VALUE = numeric(1),
-                         function(x) {
-                           result = which(x == taxa)
-                           if (length(result) == 0) {
-                             result = as.numeric(NA)
-                           }
-                           return(result)
-                         })
-    
-  } else if (is.numeric(item_taxa)) {
-    if (any(! item_taxa %in% c(taxon_ids, NA))) {
-      stop("All 'item_taxa' must be in 'taxa'")
-    }
-    item_taxon_ids <- item_taxa
-  } else {
-    stop("'item_taxa' is invalid.")
-  }
-
   # Validate `taxon_data` and `item_data` ----------------------------------------------------------
   # Check that the tables are structured correctly
-  validate_data <- function(data, data_var_name, ids, ids_var_name,
-                            reserved_col_names = c("taxon_ids", "parent_ids", "item_taxon_ids")) {
+  validate_table <- function(data, ids, ...) {
+    reserved_col_names = c("taxon_ids", "parent_ids", "item_taxon_ids")
+    result <- dplyr::tbl_df(as.data.frame(list(...), stringsAsFactors = FALSE))
     if (! is.null(data)) {
-      if (! "data.frame" %in% class(data)) {
-        stop(paste("'", data_var_name, "' must be convertable to a data.frame"))
-      }
+      data <- as.data.frame(data)
       if (nrow(data) != length(ids)) {
-        stop(paste("'", data_var_name, "' must have the same number of rows as '", ids_var_name, "'"))
+        stop(paste("'", match.call()[["data"]],
+                   "' must have the same number of rows as '",
+                   match.call()[["id"]], "'"))
       }
       if (any(colnames(data) %in% reserved_col_names)) {
         stop(paste("Column names cannot be one of the following:",
                    paste0(reserved_col_names, collapse = ", ")))
       }
-    } else {
-      data <- data.frame(matrix(numeric(0), nrow = length(ids)))
-    }
-    return(data)
+      result <- dplyr::bind_cols(result, data)
+    } 
+    return(result)
   }
-  taxon_data <- validate_data(taxon_data, "taxon_data", taxon_ids, "taxon_ids")
-  item_data <- validate_data(item_data, "item_data", item_taxon_ids, "item_taxa")
+  taxon_data <- validate_table(taxon_data, taxon_ids, taxon_ids = taxon_ids, 
+                              parent_ids = parent_ids)
+  item_data <- validate_table(item_data, item_taxon_ids, item_taxon_ids = item_taxon_ids)
   # Check that tables do not share column names
   all_col_names <- c(colnames(taxon_data), colnames(item_data))
   if (length(unique(all_col_names)) != length(all_col_names)) {
     stop("'taxon_data' and 'item_data' can not share column names.")
   }
-  # Add ID columns
-  taxon_data <- dplyr::tbl_df(cbind(data.frame(taxon_ids = taxon_ids, 
-                                               parent_ids = parent_ids,
-                                               row.names = NULL), 
-                                    taxon_data))
-  item_data <- dplyr::tbl_df(cbind(data.frame(item_taxon_ids = item_taxon_ids,
-                                              row.names = NULL),
-                                   item_data))
 
   # Validate column-generating functions -----------------------------------------------------------
   validate_col_funcs <- function(col_funcs, col_funcs_name) {
@@ -180,7 +159,7 @@ print.classified <- function(x, max_rows = 7, ...) {
      q = "'"
      interleaved <- interleave(chars[1:(length(chars) / 2)], 
                                rev(chars[(length(chars) / 2 + 1):length(chars)]))
-     is_greater_than_max <- cumsum(nchar(interleaved) + 4) + 10 > max_chars
+     is_greater_than_max <- cumsum(nchar(interleaved) + 2) + 10 > max_chars
      if (all(! is_greater_than_max)) { 
        max_printed <- length(chars)
      } else {
@@ -189,12 +168,12 @@ print.classified <- function(x, max_rows = 7, ...) {
      if (max_printed < length(chars)) {
        first_part <-  chars[1:as.integer(max_printed / 2 - 0.5)]
        second_part <- chars[as.integer(length(chars) - (max_printed / 2) + 1.5):length(chars)]
-       output <- paste0(q, paste0(collapse = paste0(q, ", ", q), first_part), q,
+       output <- paste0(paste0(collapse = ", ", first_part),
                         " ... ",
-                        q, paste0(collapse = paste0(q, ", ", q), second_part), q,
+                        paste0(collapse = ", ", second_part),
                         "\n")
      } else {
-       output <- paste0(q, paste0(collapse = paste0(q, ", ", q), chars), q, "\n")
+       output <- paste0(paste0(collapse = ", ", chars), "\n")
      }
      cat(output)
    }
@@ -203,7 +182,7 @@ print.classified <- function(x, max_rows = 7, ...) {
   cat(paste0('`classified` object with data for ', nrow(x$taxon_data),
              ' taxa and ', nrow(x$item_data), ' items/observations:\n'))
   print_header("taxa")
-  print_chars(x$taxa)
+  print_chars(names(x$taxa))
   print_header("taxon_data")
   print(x$taxon_data, n = max_rows)
   print_header("item_data")
@@ -395,187 +374,4 @@ item_data <- function(obj,
   }
   
   return(data)
-}
-
-
-#' Get all supertaxa of a taxon
-#'
-#' Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
-#' object of type \code{classified}
-#'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which supertaxa will be returned.
-#' Default: All taxon in \code{obj} will be used.
-#' @param recursive (\code{logical})
-#' If \code{FALSE}, only return the supertaxa one level above the
-#'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.
-#' @param simplify (\code{logical})
-#' If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs
-#' @param include_input (\code{logical})
-#' If \code{TRUE}, the input taxa are included in the output
-#'
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
-#'   
-#' @export
-supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-                      simplify = FALSE, include_input = FALSE) {
-  recursive_part <- function(taxon) {
-    supertaxon <- obj$taxon_data$parent_ids[taxon == obj$taxon_data$taxon_ids]
-    if (recursive) {
-      if (is.na(supertaxon)) {
-        output <- taxon
-      } else {
-        output <- c(taxon, recursive_part(supertaxon))
-      }
-    } else {
-      output <- c(taxon, supertaxon)
-    }
-    return(unname(output))
-  }
-
-  subset <- format_taxon_subset(obj, subset)
-  supertaxa <- stats::setNames(lapply(subset, recursive_part), subset)
-  if (!include_input) {
-    supertaxa <- lapply(supertaxa, `[`, -1)
-    }
-  # Reduce dimensionality if specified
-  if (simplify) {
-    supertaxa <- unname(unlist(supertaxa))
-  }
-  return(supertaxa)
-}
-
-
-#' Get all subtaxa of a taxon
-#'
-#' Return the taxon IDs of all subtaxa in an object of type \code{classified}
-#'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which subtaxa will be returned.
-#' @param recursive (\code{logical})
-#' If \code{FALSE}, only return the subtaxa one level above the
-#'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc.
-#' @param simplify (\code{logical})
-#' If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs
-#' @param include_input (\code{logical})
-#' If \code{TRUE}, the input taxa are included in the output
-#'
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
-#'
-#' @export
-subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-                    simplify = FALSE, include_input = FALSE) {
-  get_children <- function(taxon) {
-    unname(obj$taxon_data$taxon_ids[obj$taxon_data$parent_ids == taxon & ! is.na(obj$taxon_data$parent_ids)])
-  }
-  
-  recursive_part <- function(taxon) {
-    # Get immediate children of current taxon
-    children <- get_children(taxon)
-    # Run this function on them to get their output
-    child_output <- lapply(children, recursive_part)
-    child_output <- stats::setNames(unlist(child_output, recursive = FALSE),
-                             unlist(lapply(child_output, names)))
-    # Get all subtaxa from the names of the child output
-    if (include_input) {
-      child_taxa <- c(taxon, as.numeric(names(child_output)))
-    } else {
-      child_taxa <- as.numeric(names(child_output))
-      if (is.null(child_taxa)) {
-        child_taxa <- numeric(0)
-      }
-    }
-    # Combine the child output with the subtaxa for the current taxon
-    output <- stats::setNames(c(list(child_taxa), child_output),
-                       c(taxon, names(child_output)))
-    return(output)
-  }
-  
-  
-  subset <- format_taxon_subset(obj, subset)  # Get output content
-  if (recursive) {
-    starting_taxa <- roots(obj, subset)
-    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[as.character(subset)]
-  } else {
-    output <- stats::setNames(lapply(subset, get_children), subset)
-    if (include_input) {
-      output <- mapply(function(x, n) c(n, x), output, names(output), SIMPLIFY = FALSE)
-    }
-  }
-  # Reduce dimensionality if specified
-  if (simplify) {
-    output <- unname(unique(unlist(output)))
-  }
-  return(output)
-}
-
-
-#' Get items associated with taxa
-#'
-#' Given one or more taxa IDs and a \code{\link{classified}} object, return the items
-#' (e.g. sequence information) associated with each taxon.
-#'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which items will be returned.
-#' @param recursive (\code{logical})
-#' If \code{FALSE}, only return the item assigned to the specified input taxa, not subtaxa.
-#' If \code{TRUE}, return all the items of every subtaxa, etc.
-#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single
-#'   vector of unique item indexes.
-#'
-#' @return If \code{simplify = FALSE}, then a list of vectors of item indexes are returned
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
-#'   for all \code{target} taxa are returned in a single vector.
-#'
-#' @export
-items <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE, simplify = FALSE) {
-  # Get output content
-  my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
-  unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_data$item_taxon_ids)),
-                              unique_subtaxa)
-  output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)])))
-  # Reduce dimensionality if specified
-  if (simplify) {
-    output <- unname(unique(unlist(output)))
-  }
-  return(output)
-}
-
-
-#' Get root taxa
-#' 
-#' Return the root taxa for a \code{\link{classified}} object.
-#' Can also be used to get the roots of a subset of taxa.
-#' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which supertaxa will be returned.
-#' Default: All taxon in \code{obj} will be used.
-#' 
-#' @return \code{character}
-#'  
-#' @export
-roots <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  parents <- supertaxa(obj, subset = subset, include_input = TRUE)
-  is_global_root <- vapply(parents, function(x) length(x) == 1, logical(1))
-  if (missing(subset)) {
-    is_root <- is_global_root
-  } else {
-    subset <- format_taxon_subset(obj, subset)
-    is_root <- is_global_root | vapply(parents, function(x) ! any(x[-1] %in% subset), logical(1))
-  }
-  subset[is_root]
 }

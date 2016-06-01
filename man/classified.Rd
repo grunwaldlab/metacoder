@@ -4,28 +4,31 @@
 \alias{classified}
 \title{Create an instance of \code{classified}}
 \usage{
-classified(taxa, parents, item_taxa = numeric(0), taxon_data = NULL,
-  item_data = NULL, taxon_funcs = list(item_counts = item_counts,
-  taxon_ranks = taxon_ranks, classifications = classifications),
-  item_funcs = list())
+classified(taxon_ids, parent_ids, taxa = taxon_ids,
+  item_taxon_ids = numeric(0), taxon_data = NULL, item_data = NULL,
+  taxon_funcs = list(item_counts = item_counts, taxon_ranks = taxon_ranks,
+  classifications = classifications), item_funcs = list())
 }
 \arguments{
-\item{taxa}{(\code{character})
-Unique taxa.
-Currently, these should be respresented by a \code{character} vector, but this might 
-change in the future.}
+\item{taxon_ids}{(\code{character}) 
+These are unique identifiers for taxa.
+They will be coerced into characters.}
 
-\item{parents}{(\code{character} OR (\code{numeric}))
+\item{parent_ids}{(\code{character} OR (\code{numeric}))
 Parent taxa (i.e. supertaxa) of \code{taxa}.
-If a \code{character} vector, then these should be in the same format as \code{taxa}.
-If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxa}.
+If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
+If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 Taxa without parents should be \code{NA}.}
 
-\item{item_taxa}{(\code{character} OR (\code{numeric}))
+\item{taxa}{(\code{character})
+Objects representing taxa.
+Currently, these can be anything, but this might change in the future.}
+
+\item{item_taxon_ids}{(\code{character} OR (\code{numeric}))
 Taxon assignments of items.
 Parent taxa (i.e. supertaxa) of \code{taxa}.
-If a \code{character} vector, then these should be in the same format as \code{taxa}.
-If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxa}.}
+If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
+If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.}
 
 \item{taxon_data}{(\code{data.frame})
 A table with rows pretaining to \code{taxa}}
@@ -45,6 +48,6 @@ The first parameter of each function should be a single \code{classified} object
 An object of type \code{classified}
 }
 \description{
-Create an instance of \code{classified} containing items classified by a taxonomy
+Create an instance of \code{classified} containing items classified by a taxonomy.
 }
 
