@@ -41,8 +41,8 @@ format_taxon_subset <- function(obj, index) {
 #' @export
 remove_redundant_names <- function(obj, name_col) {
   obj$taxon_data[, name_col] <- vapply(supertaxa(obj, recursive = FALSE, include_input = TRUE), 
-                                       function(x) gsub(obj$taxon_data[x[1], name_col],
-                                                        pattern = paste0("^", obj$taxon_data[x[2], name_col], "[_ ]+"),
+                                       function(x) gsub(obj$taxon_data[obj$taxon_data$taxon_ids == x[1], name_col],
+                                                        pattern = paste0("^", obj$taxon_data[obj$taxon_data$taxon_ids == x[2], name_col], "[_ ]+"),
                                                         replacement = ""),
                                        character(1))
   return(obj)

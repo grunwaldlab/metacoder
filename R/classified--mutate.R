@@ -60,7 +60,7 @@ transmute_taxa <- function(.data, ...) {
   my_taxon_data <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
                    names(my_taxon_data), my_taxon_data)
-  .data$taxon_data <- dplyr::bind_cols(dplyr::select(.data$taxon_data, taxon_ids, parent_ids),
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "parent_ids"), drop = FALSE],
                                        dplyr::transmute(.data$taxon_data, ...))
   return(.data) 
 } 
@@ -83,7 +83,7 @@ transmute_items <- function(.data, ...) {
   my_item_data <- item_data(.data, col_subset = item_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
                    names(my_item_data), my_item_data)
-  .data$item_data <- dplyr::bind_cols(dplyr::select(.data$item_data, item_taxon_ids),
-                                       dplyr::transmute(.data$item_data, ...))
+  .data$item_data <- dplyr::bind_cols(.data$item_data[ , c("item_taxon_ids"), drop = FALSE],
+                                      dplyr::transmute(.data$item_data, ...))
   return(.data) 
 } 

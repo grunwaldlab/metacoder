@@ -252,7 +252,7 @@ taxon_data <- function(obj,
   # Make copy of taxon data
   data <- obj$taxon_data
   # Remove any user-defined rows not specified
-  data <- dplyr::filter(data, taxon_ids %in% row_subset)
+  data <- dplyr::filter(data, data$taxon_ids %in% row_subset)
   # Check if any of the column-generating functions are needed
   functions <- obj$taxon_funcs[names(obj$taxon_funcs) %in% col_subset]
   # Apply column-generating functions and append to output

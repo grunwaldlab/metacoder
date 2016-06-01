@@ -19,7 +19,7 @@
 #' 
 #' @export
 select_taxa <- function(.data, ...) {
-  .data$taxon_data <- dplyr::bind_cols(dplyr::select(.data$taxon_data, taxon_ids, parent_ids),
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "parent_ids"), drop = FALSE],
                                        dplyr::select(.data$taxon_data, ...))
   return(.data)
 }
@@ -46,7 +46,7 @@ select_taxa <- function(.data, ...) {
 #' 
 #' @export
 select_items <- function(.data, ...) {
-  .data$item_data <- dplyr::bind_cols(dplyr::select(.data$item_data, item_taxon_ids),
-                                       dplyr::select(.data$item_data, ...))
+  .data$item_data <- dplyr::bind_cols(.data$item_data[ , c("item_taxon_ids"), drop = FALSE],
+                                      dplyr::select(.data$item_data, ...))
   return(.data)
 }

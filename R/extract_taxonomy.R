@@ -210,7 +210,7 @@ extract_taxonomy.default <- function(input,
     if (any(lapply(taxon_values, length) > 1)) {
       stop(paste0('Values for "', col_name, '" are not consistent with the inferred taxonomy (More than one unique value found for at least one taxon). Perhaps a "item_info" key value would be more appropriate?'))
     }
-    unlist(taxon_values)[as.character(taxonomy$taxon_data$taxon_ids)]
+    unlist(taxon_values)[taxonomy$taxon_data$taxon_ids]
   }
   if ("taxon_info" %in% key) {
     taxon_info_col_names <- names(key)[key == "taxon_info"]

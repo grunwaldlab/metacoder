@@ -208,9 +208,9 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
     parent_id <- taxonomy$my_parent_
     item_id <- unname(item_index)
   }
-  classified(taxa = taxon_id,
-             parents = parent_id,
-             item_taxa = item_id,
+  classified(taxon_ids = taxon_id,
+             parent_ids = parent_id,
+             item_taxon_ids = item_id,
              taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
              item_data = item_data)
 }
