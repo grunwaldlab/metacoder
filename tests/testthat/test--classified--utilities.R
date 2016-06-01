@@ -41,3 +41,33 @@ test_that("Getting all supertaxa works", {
   result <- supertaxa(obj, recursive = TRUE, simplify = TRUE, include_input = TRUE)
   expect_true(all(result %in% obj$taxon_data$taxon_ids))
 })
+#|
+#| ### Getting subtaxa
+#|
+#| ####  Code shared by tests
+test_that("Getting immediate subtaxa works", {
+  result <- subtaxa(obj, recursive = FALSE, simplify = FALSE, include_input = FALSE)
+  expect_equal(class(result), "list")
+  expect_equal(names(result), obj$taxon_data$taxon_ids)
+  expect_equal(result$E, character(0))
+  expect_equal(result$B, c("C", "D"))
+  result <- subtaxa(obj, recursive = FALSE, simplify = FALSE, include_input = TRUE)
+  expect_true(all(sapply(result, function(x) x[1]) ==  names(result)))
+  result <- subtaxa(obj, recursive = FALSE, simplify = TRUE, include_input = FALSE)
+  expect_equal(class(result), "character")
+  result <- subtaxa(obj, recursive = FALSE, simplify = TRUE, include_input = TRUE)
+  expect_true(all(result %in% obj$taxon_data$taxon_ids))
+})
+test_that("Getting all subtaxa works", {
+  result <- subtaxa(obj, recursive = TRUE, simplify = FALSE, include_input = FALSE)
+  expect_equal(class(result), "list")
+  expect_equal(names(result), obj$taxon_data$taxon_ids)
+  expect_equal(result$A, LETTERS[2:5])
+  expect_equal(result$E, character(0))
+  result <- subtaxa(obj, recursive = TRUE, simplify = FALSE, include_input = TRUE)
+  expect_true(all(sapply(result, function(x) x[1]) ==  names(result)))
+  result <- subtaxa(obj, recursive = TRUE, simplify = TRUE, include_input = FALSE)
+  expect_equal(class(result), "character")
+  result <- subtaxa(obj, recursive = TRUE, simplify = TRUE, include_input = TRUE)
+  expect_true(all(result %in% obj$taxon_data$taxon_ids))
+})

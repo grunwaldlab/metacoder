@@ -50,7 +50,6 @@ supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
   # Reduce dimensionality if specified
   if (simplify) {
     supertaxa <- unique(unname(unlist(supertaxa)))
-    supertaxa <- supertaxa[!is.na(supertaxa)]
   }
   return(supertaxa)
 }
@@ -93,11 +92,11 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
                                     unlist(lapply(child_output, names)))
     # Get all subtaxa from the names of the child output
     if (include_input) {
-      child_taxa <- c(taxon, as.numeric(names(child_output)))
+      child_taxa <- c(taxon, as.character(names(child_output)))
     } else {
-      child_taxa <- as.numeric(names(child_output))
+      child_taxa <- as.character(names(child_output))
       if (is.null(child_taxa)) {
-        child_taxa <- numeric(0)
+        child_taxa <- character(0)
       }
     }
     # Combine the child output with the subtaxa for the current taxon
@@ -110,7 +109,7 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)  # Get output content
   if (recursive) {
     starting_taxa <- roots(obj, subset)
-    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[as.character(subset)]
+    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
   } else {
     output <- stats::setNames(lapply(subset, get_children), subset)
     if (include_input) {
