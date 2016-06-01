@@ -62,7 +62,7 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
       if (length(included_parents) > 0) {
         return(included_parents[1])
       } else {
-        return(as.numeric(NA))
+        return(as.character(NA))
       }
     }
     
@@ -72,33 +72,17 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   }
   
   # Remove taxonless items -------------------------------------------------------------------------
-  if (! taxonless) {
-    .data$item_data <- .data$item_data[.data$item_data$item_taxon_ids %in% taxa_subset, , drop = FALSE]
+  item_subset <- .data$item_data$item_taxon_ids %in% taxa_subset
+  if (taxonless) {
+    .data$item_data[! item_subset, "item_taxon_ids"] <- as.character(NA)
+  } else {
+    .data$item_data <- .data$item_data[item_subset, , drop = FALSE]
   }
   
   # Remove filtered taxa ---------------------------------------------------------------------------
   .data$taxa <- .data$taxa[taxa_subset]
   .data$taxon_data <- .data$taxon_data[.data$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
-  
-#   # Rename taxon ids -------------------------------------------------------------------------------
-#   custom_which <- function(x, data) {
-#     if (is.na(x)) {
-#       return(as.character(NA))
-#     } else {
-#       out <- which(data$taxon_data$taxon_ids == x)
-#       if (length(out) == 0) {
-#         return(as.character(NA))
-#       } else {
-#         return(out)
-#       }
-#     }
-#   }
-#   .data$taxon_data$taxon_ids <- vapply(.data$taxon_data$taxon_ids, function(x) custom_which(x, .data), 
-#                                        character(1))
-#   .data$taxon_data$parent_ids <- vapply(.data$taxon_data$parent_ids, function(x) custom_which(x, .data), 
-#                                         character(1))
-#   .data$item_data$item_taxon_ids <- vapply(.data$item_data$item_taxon_ids, function(x) custom_which(x, .data), 
-#                                            character(1))
+  .data$taxon_data[! .data$taxon_data$parent_ids %in% taxa_subset, "parent_ids"] <- as.character(NA)
   
   return(.data)
 }
