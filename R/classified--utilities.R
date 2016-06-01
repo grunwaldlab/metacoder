@@ -33,7 +33,11 @@ supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
         output <- c(taxon, recursive_part(supertaxon))
       }
     } else {
-      output <- c(taxon, supertaxon)
+      if (is.na(supertaxon)) {
+        output <- taxon
+      } else {
+        output <- c(taxon, supertaxon)
+      }
     }
     return(unname(output))
   }
