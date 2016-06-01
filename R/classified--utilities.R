@@ -12,8 +12,8 @@
 #' If \code{FALSE}, only return the supertaxa one level above the
 #'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.
 #' @param simplify (\code{logical})
-#' If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs
+#' If \code{TRUE}, then combine all the results into a single vector of unique taxon IDs.
+#' NOTE: There will not be a one-to-one correspondance with the input and \code{NA}s will be removed.
 #' @param include_input (\code{logical})
 #' If \code{TRUE}, the input taxa are included in the output
 #'
@@ -45,7 +45,8 @@ supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
   }
   # Reduce dimensionality if specified
   if (simplify) {
-    supertaxa <- unname(unlist(supertaxa))
+    supertaxa <- unique(unname(unlist(supertaxa)))
+    supertaxa <- supertaxa[!is.na(supertaxa)]
   }
   return(supertaxa)
 }

@@ -10,13 +10,15 @@ format_taxon_subset(obj, index)
 \item{obj}{(\code{classified})
 The \code{classified} object containing taxon information to be queried.}
 
-\item{index}{}
+\item{index}{If a \code{character}, then it should be values of \code{taxon_ids}.
+If a \code{numeric}, then it should be row indexes of \code{taxon_data}.
+If a \code{logical}, then it should correspond to rows of \code{taxon_data}.}
 }
 \value{
 \code{character}
 }
 \description{
-Format an input to a \code{subset} option on functions like \code{subset}.
+Format an input to a \code{subset} option on functions like \code{\link{supertaxa}}.
 Converts logical and numeric vectors into taxon ids
 }
 \keyword{internal}
