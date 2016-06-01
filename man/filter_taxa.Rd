@@ -40,5 +40,6 @@ An object of type \code{\link{classified}}
 \description{
 Filter taxa in a \code{\link{classified}} object with a list of conditions.
 Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
+See \code{\link[dplyr]{filter}} for inspiration and more information.
 }
 

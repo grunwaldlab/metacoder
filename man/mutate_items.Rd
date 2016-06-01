@@ -18,5 +18,6 @@ An object of type \code{\link{classified}}
 \description{
 Add columns to the \code{item_data} in \code{\link{classified}} objects.
 Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
+See \code{\link[dplyr]{mutate}} for inspiration and more information.
 }
 

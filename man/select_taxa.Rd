@@ -15,7 +15,8 @@ This can be one of three things:
    \item{\code{expression with unquoted column name}}{The name of a column in \code{taxon_data} typed as if it was a varaible on its own.}
    \item{\code{numeric}}{Indexes of columns in \code{taxon_data}}
  }
- To match column names with a quoted character, use \code{matches("my_col_name")}}
+ To match column names with a character vector, use \code{matches("my_col_name")}.
+ To match a logical vector, convert it to a column index using \code{\link{which}}.}
 }
 \value{
 An object of type \code{\link{classified}}

@@ -1,6 +1,7 @@
 #| ## Testing filtering methods for `classified` objects
 #|
 library(metacoder)
+library(magrittr)
 context("filtering `classified` objects")
 #|
 #| ### Filtering taxa
@@ -82,6 +83,17 @@ test_that("Taxon filtering: removing supertaxa works", {
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("b", "c", "d", "e"))
   expect_equal(sum(is.na(result$taxon_data$parent_ids)), 2)
+})
+#|
+#| ####  Chaining multiple filtering commands
+test_that("Taxon filtering: chaining works", {
+  
+  result <- filter_taxa(obj, taxon_ranks > 1, 
+                        subtaxa = FALSE, supertaxa = FALSE,
+                        taxonless = FALSE, reassign = TRUE) %>%
+    filter_taxa(taxon_ranks > 1, 
+                subtaxa = FALSE, supertaxa = FALSE,
+                taxonless = FALSE, reassign = TRUE)
 })
 
 

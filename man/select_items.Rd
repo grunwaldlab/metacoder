@@ -12,11 +12,11 @@ select_items(.data, ...)
 \item{...}{One or more column names to return in the new object.
 This can be one of three things:
 \describe{
-   \item{\code{character}}{The name of a column in \code{item_data}}
-   \item{\code{unquoted column name}}{The name of a column in \code{item_data} typed as if it was a varaible on its own.}
-   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of columns in \code{item_data}}
-   \item{\code{numeric}}{Indexes of columns in \code{item_data}}
- }}
+   \item{\code{expression with unquoted column name}}{The name of a column in \code{taxon_data} typed as if it was a varaible on its own.}
+   \item{\code{numeric}}{Indexes of columns in \code{taxon_data}}
+ }
+ To match column names with a character vector, use \code{matches("my_col_name")}.
+ To match a logical vector, convert it to a column index using \code{\link{which}}.}
 }
 \value{
 An object of type \code{\link{classified}}
