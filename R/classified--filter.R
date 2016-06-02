@@ -137,6 +137,7 @@ filter_items <- function(.data, ..., itemless = TRUE) {
   if (! itemless) {
     taxa_to_remove <- .data$taxon_data$taxon_ids %in% itemless_taxa & item_counts(.data) == 0
     .data$taxon_data <- .data$taxon_data[! taxa_to_remove, , drop = FALSE]
+    .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
   }
   
   return(.data)

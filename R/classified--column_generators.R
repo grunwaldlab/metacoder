@@ -45,7 +45,7 @@ taxon_ranks <- function(obj, subset = obj$taxon_data$taxon_ids) {
 #'
 #' @export
 item_counts <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  vapply(items(obj, subset), length, numeric(1))
+  vapply(items(obj, subset = subset, recursive = TRUE, simplify = FALSE), length, numeric(1))
 }
 
 
@@ -60,5 +60,5 @@ item_counts <- function(obj, subset = obj$taxon_data$taxon_ids) {
 #'
 #' @export
 assigned <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  vapply(items(obj, subset, recursive = FALSE), length, numeric(1))
+  vapply(items(obj, subset = subset, recursive = FALSE, simplify = FALSE), length, numeric(1))
 }
