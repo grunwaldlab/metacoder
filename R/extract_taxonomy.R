@@ -231,7 +231,8 @@ extract_taxonomy.default <- function(input,
     }
     taxonomy$taxon_data[, colname] <<- data
   }
-  unused_result <- lapply(colnames(taxonomy$taxon_data), convert_numeric)
+  cols_to_convert <- colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "parent_ids")]
+  unused_result <- lapply(cols_to_convert, convert_numeric)
                                            
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))

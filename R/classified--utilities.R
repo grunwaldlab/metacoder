@@ -33,8 +33,9 @@ supertaxa <- function(obj, subset = NULL, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)
   
   # Get supertaxa ----------------------------------------------------------------------------------
+  parent_index <- match(obj$taxon_data$parent_ids, obj$taxon_data$taxon_ids) # precomputing makes it much faster
   recursive_part <- function(taxon) {
-    supertaxon <- match(obj$taxon_data$parent_ids[taxon], obj$taxon_data$taxon_ids)
+    supertaxon <- parent_index[taxon]
     if (recursive) {
       if (is.na(supertaxon)) {
         output <- c(taxon, supertaxon)
@@ -145,8 +146,10 @@ subtaxa <- function(obj, subset = NULL, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)
   
   # Get subtaxa ------------------------------------------------------------------------------------
+  parent_index <- match(obj$taxon_data$parent_ids, obj$taxon_data$taxon_ids) 
+
   get_children <- function(taxon) {
-    which(obj$taxon_data$parent_ids == obj$taxon_data$taxon_ids[taxon])
+    which(parent_index == taxon)
   }
   
   recursive_part <- function(taxon) {
@@ -220,7 +223,8 @@ items <- function(obj, subset = NULL, recursive = TRUE, simplify = FALSE) {
   # Get items of taxa ------------------------------------------------------------------------------
   my_subtaxa <- subtaxa(obj, subset = subset, recursive = recursive, include_input = TRUE, index = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(obj$taxon_data$taxon_ids[x] == obj$item_data$item_taxon_ids)),
+  item_index <- match(obj$item_data$item_taxon_ids, obj$taxon_data$taxon_ids)
+  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == item_index)),
                               unique_subtaxa)
   output <- stats::setNames(lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)]))),
                             names(subset))
