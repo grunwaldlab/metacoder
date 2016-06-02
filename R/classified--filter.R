@@ -1,32 +1,31 @@
 #' Filter taxa with a list of conditions
 #' 
-#' Filter taxa in a \code{\link{classified}} object with a list of conditions.
-#' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
-#' See \code{\link[dplyr]{filter}} for inspiration and more information.
+#' Filter taxa in a \code{\link{classified}} object with a list of conditions. Any column name that
+#' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
+#' \code{\link[dplyr]{filter}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
-#' @param ... One or more filtering conditions.
-#' This can be one of three things:
-#' \describe{
-#'    \item{\code{character}}{One or more \code{taxon_id}s}
-#'    \item{\code{integer}}{One or more indexes of \code{taxon_data}}
-#'    \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{taxon_data}}
-#'  }
-#' Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
-#' @param subtaxa (\code{logical} of length 1)
-#' If \code{TRUE}, include subtaxa of taxa passing the filter.
-#' @param supertaxa (\code{logical} of length 1)
-#' If \code{TRUE}, include supertaxa of taxa passing the filter.
-#' @param taxonless (\code{logical} of length 1)
-#' If \code{TRUE}, include items even if the taxon they are assigned to is filtered out.
-#' Item assigned to removed taxa will be assigned to \code{NA}.
-#' See the \code{reassign} option below for further complications.
-#' @param reassign (\code{logical} of length 1)
-#' If \code{TRUE}, items assigned to removed taxa will be reassigned to the closest supertaxon that passed the filter.
-#' If there are no supertaxa of such an item that passed the filter, they will be filtered out if \code{taxonless} is \code{TRUE}.
-#' 
+#' @param ... One or more filtering conditions. This can be one of three things: \describe{
+#'   \item{\code{character}}{One or more \code{taxon_id}s} \item{\code{integer}}{One or more indexes
+#'   of \code{taxon_data}} \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal
+#'   to the number of rows in \code{taxon_data}} } Any column name that appears in 
+#'   \code{taxon_data(.data)} can be used as if it was a vector on its own.
+#' @param subtaxa (\code{logical} of length 1) If \code{TRUE}, include subtaxa of taxa passing the
+#'   filter.
+#' @param supertaxa (\code{logical} of length 1) If \code{TRUE}, include supertaxa of taxa passing
+#'   the filter.
+#' @param taxonless (\code{logical} of length 1) If \code{TRUE}, include items even if the taxon
+#'   they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
+#'   \code{NA}. See the \code{reassign} option below for further complications.
+#' @param reassign (\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+#'   be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
+#'   such an item that passed the filter, they will be filtered out if \code{taxonless} is
+#'   \code{TRUE}.
+#'   
 #' @return An object of type \code{\link{classified}}
-#' 
+#'   
+#' @family dplyr-like functions
+#'   
 #' @export
 filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
                         taxonless = FALSE, reassign = TRUE) {
@@ -60,7 +59,6 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   # Reassign taxonless items -----------------------------------------------------------------------
   if (reassign) {
     reassign_one <- function(parents) {
-      # parents <- supertaxa_key[[.data$item_data$item_taxon_ids[x]]]
       included_parents <- parents[parents %in% taxa_subset]
       return(.data$taxon_data$taxon_ids[included_parents[1]])
     }
@@ -92,25 +90,25 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
 
 #' Filter items with a list of conditions
 #' 
-#' Filter items in a \code{\link{classified}} object with a list of conditions.
-#' Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
-#' See \code{\link[dplyr]{filter}} for inspiration and more information.
+#' Filter items in a \code{\link{classified}} object with a list of conditions. Any column name that
+#' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See 
+#' \code{\link[dplyr]{filter}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{classified}}
-#' @param ... One or more filtering conditions.
-#' This can be one of two things:
-#' \describe{
-#'    \item{\code{integer}}{One or more indexes of \code{item_data}}
-#'    \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}}
-#'  }
-#' Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
-#' @param itemless (\code{logical} of length 1)
-#' If \code{TRUE}, preserve taxa even if all of their items are filtered out.
-#' If \code{FALSE}, remove taxa for which all items were filtered out.
-#' Note that only taxa that are itemless due to this filtering will be removed; there might be other taxa without items to begin with that will not be removed.
-#' 
+#' @param ... One or more filtering conditions. This can be one of two things: \describe{ 
+#'   \item{\code{integer}}{One or more indexes of \code{item_data}} \item{\code{logical}}{A 
+#'   \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}} } 
+#'   Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on 
+#'   its own.
+#' @param itemless (\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
+#'   items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
+#'   Note that only taxa that are itemless due to this filtering will be removed; there might be 
+#'   other taxa without items to begin with that will not be removed.
+#'   
 #' @return An object of type \code{\link{classified}}
-#' 
+#'   
+#' @family dplyr-like functions
+#'   
 #' @export
 filter_items <- function(.data, ..., itemless = TRUE) {
   # non-standard argument evaluation ---------------------------------------------------------------

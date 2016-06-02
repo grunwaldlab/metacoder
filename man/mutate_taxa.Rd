@@ -9,15 +9,23 @@ mutate_taxa(.data, ...)
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{One or more column names to add to the new object.
-Newly created columns can be referenced in the same function call.}
+\item{...}{One or more column names to add to the new object. Newly created columns can be
+referenced in the same function call.}
 }
 \value{
 An object of type \code{\link{classified}}
 }
 \description{
-Add columns to the \code{taxon_data} in \code{\link{classified}} objects.
-Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
-See \code{\link[dplyr]{mutate}} for inspiration and more information.
+Add columns to the \code{taxon_data} in \code{\link{classified}} objects. Any column name that
+appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
+\code{\link[dplyr]{mutate}} for inspiration and more information.
+}
+\seealso{
+Other dplyr-like functions: \code{\link{arrange_items}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
+  \code{\link{filter_taxa}}, \code{\link{mutate_items}},
+  \code{\link{sample_n_items}}, \code{\link{select_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{transmute_taxa}}
 }
 

@@ -30,7 +30,7 @@ Given one or more taxa IDs and a \code{\link{classified}} object, return the ite
 (e.g. sequence information) associated with each taxon.
 }
 \seealso{
-Other classified.taxonomy.functions: \code{\link{roots}},
+Other classified taxonomy functions: \code{\link{roots}},
   \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
 

@@ -9,15 +9,23 @@ arrange_items(.data, ...)
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{One or more column names to sort on.
-Newly created columns can be referenced in the same function call.}
+\item{...}{One or more column names to sort on. Newly created columns can be referenced in the
+same function call.}
 }
 \value{
 An object of type \code{\link{classified}}
 }
 \description{
-Sort columns of \code{item_data} in \code{\link{classified}} objects.
-Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
-See \link[dplyr]{arrange} for more details.
+Sort columns of \code{item_data} in \code{\link{classified}} objects. Any column name that
+appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
+\link[dplyr]{arrange} for more details.
+}
+\seealso{
+Other dplyr-like functions: \code{\link{arrange_taxa}},
+  \code{\link{filter_items}}, \code{\link{filter_taxa}},
+  \code{\link{mutate_items}}, \code{\link{mutate_taxa}},
+  \code{\link{sample_n_items}}, \code{\link{select_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{transmute_taxa}}
 }
 

@@ -9,22 +9,27 @@ select_items(.data, ...)
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{One or more column names to return in the new object.
-This can be one of three things:
-\describe{
-   \item{\code{expression with unquoted column name}}{The name of a column in \code{taxon_data} typed as if it was a varaible on its own.}
-   \item{\code{numeric}}{Indexes of columns in \code{taxon_data}}
- }
- To match column names with a character vector, use \code{matches("my_col_name")}.
- To match a logical vector, convert it to a column index using \code{\link{which}}.}
+\item{...}{One or more column names to return in the new object. This can be one of three things:
+\describe{ \item{\code{expression with unquoted column name}}{The name of a column in
+\code{taxon_data} typed as if it was a varaible on its own.} \item{\code{numeric}}{Indexes of
+columns in \code{taxon_data}} } To match column names with a character vector, use 
+\code{matches("my_col_name")}. To match a logical vector, convert it to a column index using
+\code{\link{which}}.}
 }
 \value{
 An object of type \code{\link{classified}}
 }
 \description{
-Subsets \code{item_data} columns in a \code{\link{classified}} object.
-Takes and returns a \code{\link{classified}} object.
-Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
-See \code{\link[dplyr]{select}} for more information.
+Subsets \code{item_data} columns in a \code{\link{classified}} object. Takes and returns a
+\code{\link{classified}} object. Any column name that appears in \code{item_data(.data)} can be
+used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more information.
+}
+\seealso{
+Other dplyr-like functions: \code{\link{arrange_items}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
+  \code{\link{filter_taxa}}, \code{\link{mutate_items}},
+  \code{\link{mutate_taxa}}, \code{\link{sample_n_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{transmute_taxa}}
 }
 

@@ -24,7 +24,7 @@ Return the root taxa for a \code{\link{classified}} object. Can also be used to 
 a subset of taxa.
 }
 \seealso{
-Other classified.taxonomy.functions: \code{\link{items}},
+Other classified taxonomy functions: \code{\link{items}},
   \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
 

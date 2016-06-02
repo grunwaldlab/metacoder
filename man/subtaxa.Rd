@@ -39,7 +39,7 @@ subtaxa(contaminants, subset = 1:10)}
 
 }
 \seealso{
-Other classified.taxonomy.functions: \code{\link{items}},
+Other classified taxonomy functions: \code{\link{items}},
   \code{\link{roots}}, \code{\link{supertaxa}}
 }
 

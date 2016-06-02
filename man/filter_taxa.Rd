@@ -10,36 +10,41 @@ filter_taxa(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{One or more filtering conditions.
-This can be one of three things:
-\describe{
-   \item{\code{character}}{One or more \code{taxon_id}s}
-   \item{\code{integer}}{One or more indexes of \code{taxon_data}}
-   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{taxon_data}}
- }
-Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.}
+\item{...}{One or more filtering conditions. This can be one of three things: \describe{
+\item{\code{character}}{One or more \code{taxon_id}s} \item{\code{integer}}{One or more indexes
+of \code{taxon_data}} \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal
+to the number of rows in \code{taxon_data}} } Any column name that appears in 
+\code{taxon_data(.data)} can be used as if it was a vector on its own.}
 
-\item{subtaxa}{(\code{logical} of length 1)
-If \code{TRUE}, include subtaxa of taxa passing the filter.}
+\item{subtaxa}{(\code{logical} of length 1) If \code{TRUE}, include subtaxa of taxa passing the
+filter.}
 
-\item{supertaxa}{(\code{logical} of length 1)
-If \code{TRUE}, include supertaxa of taxa passing the filter.}
+\item{supertaxa}{(\code{logical} of length 1) If \code{TRUE}, include supertaxa of taxa passing
+the filter.}
 
-\item{taxonless}{(\code{logical} of length 1)
-If \code{TRUE}, include items even if the taxon they are assigned to is filtered out.
-Item assigned to removed taxa will be assigned to \code{NA}.
-See the \code{reassign} option below for further complications.}
+\item{taxonless}{(\code{logical} of length 1) If \code{TRUE}, include items even if the taxon
+they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
+\code{NA}. See the \code{reassign} option below for further complications.}
 
-\item{reassign}{(\code{logical} of length 1)
-If \code{TRUE}, items assigned to removed taxa will be reassigned to the closest supertaxon that passed the filter.
-If there are no supertaxa of such an item that passed the filter, they will be filtered out if \code{taxonless} is \code{TRUE}.}
+\item{reassign}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
+such an item that passed the filter, they will be filtered out if \code{taxonless} is
+\code{TRUE}.}
 }
 \value{
 An object of type \code{\link{classified}}
 }
 \description{
-Filter taxa in a \code{\link{classified}} object with a list of conditions.
-Any column name that appears in \code{taxon_data(.data)} can be used as if it was a vector on its own.
-See \code{\link[dplyr]{filter}} for inspiration and more information.
+Filter taxa in a \code{\link{classified}} object with a list of conditions. Any column name that
+appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
+\code{\link[dplyr]{filter}} for inspiration and more information.
+}
+\seealso{
+Other dplyr-like functions: \code{\link{arrange_items}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
+  \code{\link{mutate_items}}, \code{\link{mutate_taxa}},
+  \code{\link{sample_n_items}}, \code{\link{select_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{transmute_taxa}}
 }
 

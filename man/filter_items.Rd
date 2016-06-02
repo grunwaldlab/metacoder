@@ -9,25 +9,31 @@ filter_items(.data, ..., itemless = TRUE)
 \arguments{
 \item{.data}{\code{\link{classified}}}
 
-\item{...}{One or more filtering conditions.
-This can be one of two things:
-\describe{
-   \item{\code{integer}}{One or more indexes of \code{item_data}}
-   \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}}
- }
-Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.}
+\item{...}{One or more filtering conditions. This can be one of two things: \describe{ 
+\item{\code{integer}}{One or more indexes of \code{item_data}} \item{\code{logical}}{A 
+\code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}} } 
+Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on 
+its own.}
 
-\item{itemless}{(\code{logical} of length 1)
-If \code{TRUE}, preserve taxa even if all of their items are filtered out.
-If \code{FALSE}, remove taxa for which all items were filtered out.
-Note that only taxa that are itemless due to this filtering will be removed; there might be other taxa without items to begin with that will not be removed.}
+\item{itemless}{(\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
+items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
+Note that only taxa that are itemless due to this filtering will be removed; there might be 
+other taxa without items to begin with that will not be removed.}
 }
 \value{
 An object of type \code{\link{classified}}
 }
 \description{
-Filter items in a \code{\link{classified}} object with a list of conditions.
-Any column name that appears in \code{item_data(.data)} can be used as if it was a vector on its own.
-See \code{\link[dplyr]{filter}} for inspiration and more information.
+Filter items in a \code{\link{classified}} object with a list of conditions. Any column name that
+appears in \code{item_data(.data)} can be used as if it was a vector on its own. See 
+\code{\link[dplyr]{filter}} for inspiration and more information.
+}
+\seealso{
+Other dplyr-like functions: \code{\link{arrange_items}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_taxa}},
+  \code{\link{mutate_items}}, \code{\link{mutate_taxa}},
+  \code{\link{sample_n_items}}, \code{\link{select_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{transmute_taxa}}
 }
 
