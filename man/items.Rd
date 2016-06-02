@@ -4,15 +4,14 @@
 \alias{items}
 \title{Get items associated with taxa}
 \usage{
-items(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-  simplify = FALSE)
+items(obj, subset = NULL, recursive = TRUE, simplify = FALSE)
 }
 \arguments{
 \item{obj}{(\code{classified})
 The \code{classified} object containing taxon information to be queried.}
 
-\item{subset}{(\code{character})
-Taxon IDs for which items will be returned.}
+\item{subset}{(\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
+supertaxa will be returned. Default: All taxa in \code{obj} will be used.}
 
 \item{recursive}{(\code{logical})
 If \code{FALSE}, only return the item assigned to the specified input taxa, not subtaxa.
@@ -27,7 +26,11 @@ If \code{simplify = FALSE}, then a list of vectors of item indexes are returned
   for all \code{target} taxa are returned in a single vector.
 }
 \description{
-Given one or more taxa IDs and a \code{\link{classified}} object, return the items
+Given one or more taxa IDs and a \code{\link{classified}} object, return the item indexes
 (e.g. sequence information) associated with each taxon.
+}
+\seealso{
+Other classified.taxonomy.functions: \code{\link{roots}},
+  \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
 

@@ -47,33 +47,33 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   selection <- Reduce(`&`, selection)
   
   # Get taxa of subset -----------------------------------------------------------------------------
-  taxa_subset <- unique(c(.data$taxon_data$taxon_ids[selection],
+  taxa_subset <- unique(c(which(selection),
                           if (subtaxa) {
-                            subtaxa(.data, subset = selection, simplify = TRUE)
+                            subtaxa(.data, subset = selection, recursive = TRUE, index = TRUE,
+                                    include_input = FALSE, simplify = TRUE)
                           },
                           if (supertaxa) {
-                            supertaxa(.data, subset = selection, simplify = TRUE, include_input = FALSE)
+                            supertaxa(.data, subset = selection, recursive = TRUE, index = TRUE,
+                                      na = FALSE, simplify = TRUE, include_input = FALSE)
                           }))
   
   # Reassign taxonless items -----------------------------------------------------------------------
   if (reassign) {
-    reassign_one <- function(x) {
-      parents <- supertaxa(.data, subset = x, simplify = TRUE)
+    reassign_one <- function(parents) {
+      # parents <- supertaxa_key[[.data$item_data$item_taxon_ids[x]]]
       included_parents <- parents[parents %in% taxa_subset]
-      if (length(included_parents) > 0) {
-        return(included_parents[1])
-      } else {
-        return(as.character(NA))
-      }
+      return(.data$taxon_data$taxon_ids[included_parents[1]])
     }
     
-    to_reassign <- ! .data$item_data$item_taxon_ids %in% taxa_subset 
-    .data$item_data[to_reassign, "item_taxon_ids"] <- vapply(.data$item_data$item_taxon_ids[to_reassign], 
-                                                             reassign_one, character(1))
+    to_reassign <- ! .data$item_data$item_taxon_ids %in% .data$taxon_data$taxon_ids[taxa_subset]
+    supertaxa_key <- supertaxa(.data, subset = unique(.data$item_data$item_taxon_ids[to_reassign]),
+                              recursive = TRUE, simplify = FALSE, include_input = FALSE, index = TRUE, na = FALSE)
+    reassign_key <- vapply(supertaxa_key, reassign_one, character(1))
+    .data$item_data[to_reassign, "item_taxon_ids"] <- reassign_key[.data$item_data$item_taxon_ids[to_reassign]]
   }
   
   # Remove taxonless items -------------------------------------------------------------------------
-  item_subset <- .data$item_data$item_taxon_ids %in% taxa_subset
+  item_subset <- .data$item_data$item_taxon_ids %in% .data$taxon_data$taxon_ids[taxa_subset]
   if (taxonless) {
     .data$item_data[! item_subset, "item_taxon_ids"] <- as.character(NA)
   } else {
@@ -81,9 +81,9 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
   }
   
   # Remove filtered taxa ---------------------------------------------------------------------------
-  .data$taxa <- .data$taxa[taxa_subset]
-  .data$taxon_data <- .data$taxon_data[.data$taxon_data$taxon_ids %in% taxa_subset, , drop = FALSE]
-  .data$taxon_data[! .data$taxon_data$parent_ids %in% taxa_subset, "parent_ids"] <- as.character(NA)
+  .data$taxa <- .data$taxa[.data$taxon_data$taxon_ids[taxa_subset]]
+  .data$taxon_data <- .data$taxon_data[taxa_subset, , drop = FALSE]
+  .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
   
   return(.data)
 }

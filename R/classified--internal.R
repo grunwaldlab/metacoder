@@ -1,7 +1,7 @@
 #' Format taxon subset value
 #' 
 #' Format an input to a \code{subset} option on functions like \code{\link{supertaxa}}.
-#' Converts logical and numeric vectors into taxon ids
+#' Converts logical and \code{taxon_ids} into indexes of \code{taxon_data}.
 #' 
 #' @param obj (\code{classified})
 #' The \code{classified} object containing taxon information to be queried.
@@ -14,16 +14,27 @@
 #' 
 #' @keywords internal
 format_taxon_subset <- function(obj, index) {
-  if (is.character(index)) {
-    if (any(! index %in% obj$taxon_data$taxon_ids)) {
-      stop("All `index` must be in `obj$taxon_data$taxon_ids`.")
+  if (is.null(index)) {
+    output <- stats::setNames(1:nrow(obj$taxon_data), obj$taxon_data$taxon_ids)
+  } else {
+    if (is.null(names(index))) {
+      names(index) <- index
+    } 
+    if (is.numeric(index)) {
+      output <- index
+      my_names <- names(index)
+    } else if (is.character(index)) {
+      output <- match(index, obj$taxon_data$taxon_ids)
+      my_names <- names(index)
+    } else if (is.logical(index)) {
+      output <- which(index)
+      my_names <- names(index)[output]
+    } else {
+      stop("Invalid subset value.")
     }
+    names(output) <- my_names
   }
-  if (is.logical(index) || is.numeric(index)) {
-    index <- obj$taxon_data$taxon_ids[index]
-  }
-  index <- unname(index)
-  return(index)
+  return(output)
 }
 
 

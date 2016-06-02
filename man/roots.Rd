@@ -4,20 +4,27 @@
 \alias{roots}
 \title{Get root taxa}
 \usage{
-roots(obj, subset = obj$taxon_data$taxon_ids)
+roots(obj, subset = NULL, index = FALSE)
 }
 \arguments{
-\item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be queried.}
+\item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be
+queried.}
 
-\item{subset}{(\code{character})
-Taxon IDs for which supertaxa will be returned.
-Default: All taxon in \code{obj} will be used.}
+\item{subset}{(\code{character}) Taxon IDs for which supertaxa will be returned. Default: All
+taxon in \code{obj} will be used.}
+
+\item{index}{(\code{logical}) If \code{TRUE}, return the indexes of roots in 
+\code{taxon_data} instead of \code{taxon_ids}}
 }
 \value{
 \code{character}
 }
 \description{
-Return the root taxa for a \code{\link{classified}} object.
-Can also be used to get the roots of a subset of taxa.
+Return the root taxa for a \code{\link{classified}} object. Can also be used to get the roots of
+a subset of taxa.
+}
+\seealso{
+Other classified.taxonomy.functions: \code{\link{items}},
+  \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
 

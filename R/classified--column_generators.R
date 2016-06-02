@@ -13,7 +13,8 @@
 #'
 #' @export
 classifications <- function(obj, subset = obj$taxon_data$taxon_ids, sep = ";") {
-  vapply(supertaxa(obj, subset, include_input = TRUE), function(x) paste0(rev(x), collapse = sep), character(1))
+  vapply(supertaxa(obj, subset = subset, recursive = TRUE, include_input = TRUE, index = FALSE, na = FALSE),
+         function(x) paste0(rev(x), collapse = sep), character(1))
 }
 
 
@@ -28,7 +29,8 @@ classifications <- function(obj, subset = obj$taxon_data$taxon_ids, sep = ";") {
 #'
 #' @export
 taxon_ranks <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  vapply(supertaxa(obj, subset, include_input = TRUE), length, numeric(1))
+  vapply(supertaxa(obj, subset = subset, recursive = TRUE, include_input = TRUE, index = TRUE, na = FALSE),
+         length, numeric(1))
 }
 
 

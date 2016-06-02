@@ -1,86 +1,152 @@
 #' Get all supertaxa of a taxon
-#'
-#' Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
-#' object of type \code{classified}
-#'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which supertaxa will be returned.
-#' Default: All taxon in \code{obj} will be used.
-#' @param recursive (\code{logical})
-#' If \code{FALSE}, only return the supertaxa one level above the
+#' 
+#' Return the taxon IDs or \code{taxon_data} indexes of all supertaxa (i.e. all taxa the target taxa
+#' are a part of) in an object of type \code{classified}.
+#' 
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be 
+#'   queried.
+#' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
+#'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
+#' @param recursive (\code{logical}) If \code{FALSE}, only return the supertaxa one level above the 
 #'   target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.
-#' @param simplify (\code{logical})
-#' If \code{TRUE}, then combine all the results into a single vector of unique taxon IDs.
-#' NOTE: There will not be a one-to-one correspondance with the input and \code{NA}s will be removed.
-#' @param include_input (\code{logical})
-#' If \code{TRUE}, the input taxa are included in the output
-#'
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
+#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single 
+#'   vector of unique values.
+#' @param include_input (\code{logical}) If \code{TRUE}, the input taxa are included in the output
+#' @param index (\code{logical}) If \code{TRUE}, return the indexes of supertaxa in 
+#'   \code{taxon_data} instead of \code{taxon_ids}
+#' @param na (\code{logical}) If \code{TRUE}, return \code{NA} where information is not available.
+#'   
+#' @return If \code{simplify = FALSE}, then a list of vectors are returned corresponding to the 
+#'   \code{subset} argument. If \code{simplify = TRUE}, then unique values are returned in a single 
+#'   vector.
+#'   
+#' @examples 
+#' \dontrun{
+#' supertaxa(contaminants, subset = 1:10)}
+#'   
+#' @family classified taxonomy functions
 #'   
 #' @export
-supertaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-                      simplify = FALSE, include_input = FALSE) {
+supertaxa <- function(obj, subset = NULL, recursive = TRUE,
+                      simplify = FALSE, include_input = FALSE, index = FALSE, na = FALSE) {
+  # Parse arguments --------------------------------------------------------------------------------
+  subset <- format_taxon_subset(obj, subset)
+  
+  # Get supertaxa ----------------------------------------------------------------------------------
   recursive_part <- function(taxon) {
-    supertaxon <- obj$taxon_data$parent_ids[taxon == obj$taxon_data$taxon_ids]
+    supertaxon <- match(obj$taxon_data$parent_ids[taxon], obj$taxon_data$taxon_ids)
     if (recursive) {
       if (is.na(supertaxon)) {
-        output <- taxon
+        output <- c(taxon, supertaxon)
       } else {
         output <- c(taxon, recursive_part(supertaxon))
       }
     } else {
-      if (is.na(supertaxon)) {
-        output <- taxon
-      } else {
-        output <- c(taxon, supertaxon)
-      }
+      output <- c(taxon, supertaxon)
     }
     return(unname(output))
   }
+  output <- lapply(subset, recursive_part)
   
-  subset <- format_taxon_subset(obj, subset)
-  supertaxa <- stats::setNames(lapply(subset, recursive_part), subset)
-  if (!include_input) {
-    supertaxa <- lapply(supertaxa, `[`, -1)
+  # Remove query taxa from output ------------------------------------------------------------------
+  if (! include_input) {
+    output <- lapply(output, `[`, -1)
   }
-  # Reduce dimensionality if specified
+  
+  # Remove NAs from output -------------------------------------------------------------------------
+  if (! na) {
+    output <- lapply(output, function(x) x[!is.na(x)])
+  }
+  
+  # Convert to taxon_ids ---------------------------------------------------------------------------
+  if (! index) {
+    output <- lapply(output, function(x) obj$taxon_data$taxon_ids[x])
+  }
+  
+  # Reduce dimensionality --------------------------------------------------------------------------
   if (simplify) {
-    supertaxa <- unique(unname(unlist(supertaxa)))
+    output <- unique(unname(unlist(output)))
   }
-  return(supertaxa)
+  
+  return(output)
+}
+
+
+#' Get root taxa
+#' 
+#' Return the root taxa for a \code{\link{classified}} object. Can also be used to get the roots of
+#' a subset of taxa.
+#' 
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be
+#'   queried.
+#' @param subset (\code{character}) Taxon IDs for which supertaxa will be returned. Default: All
+#'   taxon in \code{obj} will be used.
+#' @param index (\code{logical}) If \code{TRUE}, return the indexes of roots in 
+#'   \code{taxon_data} instead of \code{taxon_ids}
+#'   
+#' @return \code{character}
+#'   
+#' @family classified taxonomy functions
+#'   
+#' @export
+roots <- function(obj, subset = NULL, index = FALSE) {
+  # Parse arguments --------------------------------------------------------------------------------
+  subset <- format_taxon_subset(obj, subset)
+  
+  # Get roots --------------------------------------------------------------------------------------
+  parents <- supertaxa(obj, subset = subset, recursive = TRUE, include_input = TRUE, index = TRUE, na = FALSE)
+  is_global_root <- vapply(parents, length, numeric(1)) == 1
+  if (missing(subset)) {
+    is_root <- is_global_root
+  } else {
+    is_root <- is_global_root | vapply(parents, function(x) ! any(x[-1] %in% subset), logical(1))
+  }
+  output <- unname(subset[is_root])
+  
+  # Convert to taxon_ids ---------------------------------------------------------------------------
+  if (! index) {
+    output <- obj$taxon_data$taxon_ids[output]
+  }
+  
+  return(output)
 }
 
 
 #' Get all subtaxa of a taxon
-#'
-#' Return the taxon IDs of all subtaxa in an object of type \code{classified}
-#'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which subtaxa will be returned.
-#' @param recursive (\code{logical})
-#' If \code{FALSE}, only return the subtaxa one level above the
+#' 
+#' Return the taxon IDs or \code{taxon_data} indexes of all subtaxa in an object of type \code{classified}
+#' 
+#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be
+#'   queried.
+#' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
+#'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
+#' @param recursive (\code{logical}) If \code{FALSE}, only return the subtaxa one level bwlow the 
 #'   target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc.
-#' @param simplify (\code{logical})
-#' If \code{TRUE}, then combine all the results into a single
-#'   vector of unique taxon IDs
-#' @param include_input (\code{logical})
-#' If \code{TRUE}, the input taxa are included in the output
+#' @param simplify (\code{logical}) If \code{TRUE}, then combine all the results into a single 
+#'   vector of unique values.
+#' @param include_input (\code{logical}) If \code{TRUE}, the input taxa are included in the output
+#' @param index (\code{logical}) If \code{TRUE}, return the indexes of supertaxa in 
+#'   \code{taxon_data} instead of \code{taxon_ids}
+#'   
+#' @return If \code{simplify = FALSE}, then a list of vectors are returned corresponding to the
+#'   \code{target} argument. If \code{simplify = TRUE}, then the unique values are returned in a
+#'   single vector.
 #'
-#' @return If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
-#'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-#'   IDs for all \code{target} taxa are returned in a single vector.
-#'
+#' @examples 
+#' \dontrun{
+#' subtaxa(contaminants, subset = 1:10)}
+#' 
+#' @family classified taxonomy functions
+#' 
 #' @export
-subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-                    simplify = FALSE, include_input = FALSE) {
+subtaxa <- function(obj, subset = NULL, recursive = TRUE,
+                    simplify = FALSE, include_input = FALSE, index = FALSE) {
+  # Parse arguments --------------------------------------------------------------------------------
+  subset <- format_taxon_subset(obj, subset)
+  
+  # Get subtaxa ------------------------------------------------------------------------------------
   get_children <- function(taxon) {
-    unname(obj$taxon_data$taxon_ids[obj$taxon_data$parent_ids == taxon & ! is.na(obj$taxon_data$parent_ids)])
+    which(obj$taxon_data$parent_ids == obj$taxon_data$taxon_ids[taxon])
   }
   
   recursive_part <- function(taxon) {
@@ -91,48 +157,49 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
     child_output <- stats::setNames(unlist(child_output, recursive = FALSE),
                                     unlist(lapply(child_output, names)))
     # Get all subtaxa from the names of the child output
-    if (include_input) {
-      child_taxa <- c(taxon, as.character(names(child_output)))
-    } else {
-      child_taxa <- as.character(names(child_output))
-      if (is.null(child_taxa)) {
-        child_taxa <- character(0)
-      }
-    }
+    child_taxa <- c(taxon, as.numeric(names(child_output)))
     # Combine the child output with the subtaxa for the current taxon
     output <- stats::setNames(c(list(child_taxa), child_output),
                               c(taxon, names(child_output)))
     return(output)
   }
   
-  
-  subset <- format_taxon_subset(obj, subset)  # Get output content
   if (recursive) {
-    starting_taxa <- roots(obj, subset)
-    output <- unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[subset]
+    starting_taxa <- roots(obj, subset = subset, index = TRUE)
+    output <- stats::setNames(unlist(lapply(starting_taxa, recursive_part), recursive = FALSE)[as.character(subset)],
+                              names(subset))
   } else {
-    output <- stats::setNames(lapply(subset, get_children), subset)
-    if (include_input) {
-      output <- mapply(function(x, n) c(n, x), output, names(output), SIMPLIFY = FALSE)
-    }
+    output <- lapply(subset, function(x) c(x, get_children(x)))
   }
-  # Reduce dimensionality if specified
+  
+  # Remove query taxa from output ------------------------------------------------------------------
+  if (! include_input) {
+    output <- lapply(output, `[`, -1)
+  }
+  
+  # Convert to taxon_ids ---------------------------------------------------------------------------
+  if (! index) {
+    output <- lapply(output, function(x) obj$taxon_data$taxon_ids[x])
+  }
+  
+  # Reduce dimensionality --------------------------------------------------------------------------
   if (simplify) {
-    output <- unname(unique(unlist(output)))
+    output <- unique(unname(unlist(output)))
   }
+  
   return(output)
 }
 
 
 #' Get items associated with taxa
 #'
-#' Given one or more taxa IDs and a \code{\link{classified}} object, return the items
+#' Given one or more taxa IDs and a \code{\link{classified}} object, return the item indexes
 #' (e.g. sequence information) associated with each taxon.
 #'
 #' @param obj (\code{classified})
 #' The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which items will be returned.
+#' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
+#'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
 #' @param recursive (\code{logical})
 #' If \code{FALSE}, only return the item assigned to the specified input taxa, not subtaxa.
 #' If \code{TRUE}, return all the items of every subtaxa, etc.
@@ -143,43 +210,25 @@ subtaxa <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
 #'   for all \code{target} taxa are returned in a single vector.
 #'
+#' @family classified taxonomy functions
+#'
 #' @export
-items <- function(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE, simplify = FALSE) {
-  # Get output content
-  my_subtaxa <- subtaxa(obj, subset, recursive = recursive, include_input = TRUE)
+items <- function(obj, subset = NULL, recursive = TRUE, simplify = FALSE) {
+  # Parse arguments --------------------------------------------------------------------------------
+  subset <- format_taxon_subset(obj, subset)
+  
+  # Get items of taxa ------------------------------------------------------------------------------
+  my_subtaxa <- subtaxa(obj, subset = subset, recursive = recursive, include_input = TRUE, index = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == obj$item_data$item_taxon_ids)),
-                              unique_subtaxa) 
-  output <- lapply(my_subtaxa, function(x) unname(unlist(item_key[x])))
-  # Reduce dimensionality if specified
+  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(obj$taxon_data$taxon_ids[x] == obj$item_data$item_taxon_ids)),
+                              unique_subtaxa)
+  output <- stats::setNames(lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)]))),
+                            names(subset))
+  
+  # Reduce dimensionality --------------------------------------------------------------------------
   if (simplify) {
-    output <- unname(unique(unlist(output)))
+    output <- unique(unname(unlist(output)))
   }
+  
   return(output)
-}
-
-
-#' Get root taxa
-#' 
-#' Return the root taxa for a \code{\link{classified}} object.
-#' Can also be used to get the roots of a subset of taxa.
-#' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be queried.
-#' @param subset (\code{character})
-#' Taxon IDs for which supertaxa will be returned.
-#' Default: All taxon in \code{obj} will be used.
-#' 
-#' @return \code{character}
-#'  
-#' @export
-roots <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  parents <- supertaxa(obj, subset = subset, include_input = TRUE)
-  is_global_root <- vapply(parents, function(x) length(x) == 1, logical(1))
-  if (missing(subset)) {
-    is_root <- is_global_root
-  } else {
-    subset <- format_taxon_subset(obj, subset)
-    is_root <- is_global_root | vapply(parents, function(x) ! any(x[-1] %in% subset), logical(1))
-  }
-  subset[is_root]
 }

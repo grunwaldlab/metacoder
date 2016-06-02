@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for metabarcoding experiment planning
-Version: 0.0.1.542
+Version: 0.0.1.543
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
@@ -22,5 +22,5 @@ Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Date: 2016-06-01
+Date: 2016-06-02
 Encoding: latin1

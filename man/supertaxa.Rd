@@ -4,35 +4,45 @@
 \alias{supertaxa}
 \title{Get all supertaxa of a taxon}
 \usage{
-supertaxa(obj, subset = obj$taxon_data$taxon_ids, recursive = TRUE,
-  simplify = FALSE, include_input = FALSE)
+supertaxa(obj, subset = NULL, recursive = TRUE, simplify = FALSE,
+  include_input = FALSE, index = FALSE, na = FALSE)
 }
 \arguments{
-\item{obj}{(\code{classified})
-The \code{classified} object containing taxon information to be queried.}
+\item{obj}{(\code{classified}) The \code{classified} object containing taxon information to be 
+queried.}
 
-\item{subset}{(\code{character})
-Taxon IDs for which supertaxa will be returned.
-Default: All taxon in \code{obj} will be used.}
+\item{subset}{(\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
+supertaxa will be returned. Default: All taxa in \code{obj} will be used.}
 
-\item{recursive}{(\code{logical})
-If \code{FALSE}, only return the supertaxa one level above the
-  target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.}
+\item{recursive}{(\code{logical}) If \code{FALSE}, only return the supertaxa one level above the 
+target taxa. If \code{TRUE}, return all the supertaxa of every supertaxa, etc.}
 
-\item{simplify}{(\code{logical})
-If \code{TRUE}, then combine all the results into a single vector of unique taxon IDs.
-NOTE: There will not be a one-to-one correspondance with the input and \code{NA}s will be removed.}
+\item{simplify}{(\code{logical}) If \code{TRUE}, then combine all the results into a single 
+vector of unique values.}
 
-\item{include_input}{(\code{logical})
-If \code{TRUE}, the input taxa are included in the output}
+\item{include_input}{(\code{logical}) If \code{TRUE}, the input taxa are included in the output}
+
+\item{index}{(\code{logical}) If \code{TRUE}, return the indexes of supertaxa in 
+\code{taxon_data} instead of \code{taxon_ids}}
+
+\item{na}{(\code{logical}) If \code{TRUE}, return \code{NA} where information is not available.}
 }
 \value{
-If \code{simplify = FALSE}, then a list of vectors of taxon IDs are returned
-  corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the unique taxon
-  IDs for all \code{target} taxa are returned in a single vector.
+If \code{simplify = FALSE}, then a list of vectors are returned corresponding to the 
+  \code{subset} argument. If \code{simplify = TRUE}, then unique values are returned in a single 
+  vector.
 }
 \description{
-Return the taxon IDs of all supertaxa (i.e. all taxa the target taxa are a part of) in an
-object of type \code{classified}
+Return the taxon IDs or \code{taxon_data} indexes of all supertaxa (i.e. all taxa the target taxa
+are a part of) in an object of type \code{classified}.
+}
+\examples{
+\dontrun{
+supertaxa(contaminants, subset = 1:10)}
+  
+}
+\seealso{
+Other classified.taxonomy.functions: \code{\link{items}},
+  \code{\link{roots}}, \code{\link{subtaxa}}
 }
 
