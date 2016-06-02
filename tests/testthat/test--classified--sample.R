@@ -18,4 +18,5 @@ original_plot <- plot(obj, vertex_label = paste(taxon_ids, item_counts), vertex_
 test_that("Sampling items by taxon_weights works", {
   result <- sample_n_items(obj, size = 10, taxon_weight = 1 / item_counts, replace = FALSE, use_supertaxa = TRUE)
   expect_s3_class(result, "classified")
+  expect_equal(nrow(result$item_data), 10)
 })

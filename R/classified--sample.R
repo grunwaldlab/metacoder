@@ -62,7 +62,8 @@ sample_n_items <- function(.data, size, replace = FALSE, taxon_weight = NULL, it
   item_item_weight <- item_item_weight / sum(item_item_weight)
   
   # Combine item and taxon weight components  ------------------------------------------------------
-  item_weight <- item_taxon_weight * item_item_weight
+  combine_func <- prod
+  item_weight <- mapply(item_taxon_weight, item_item_weight, FUN = function(x, y) combine_func(c(x,y)))
   item_weight <- item_weight / sum(item_weight)
   
   # Sample items -----------------------------------------------------------------------------------
