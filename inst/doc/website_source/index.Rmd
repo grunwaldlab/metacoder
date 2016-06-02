@@ -103,7 +103,7 @@ Note the `taxon_funcs` part contains function names (e.g. `item_counts`) used to
 You can see the results of these calculations using the `taxon_data` function:
 
 ```{r}
-taxon_data(data, row_subset = 1:10)
+taxon_data(data)
 ```
 
 There is corresponding `item_data` function and `item_funcs` list, but they are not used in this case.

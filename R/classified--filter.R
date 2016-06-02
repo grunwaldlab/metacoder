@@ -114,26 +114,32 @@ filter_items <- function(.data, ..., itemless = TRUE) {
   # non-standard argument evaluation ---------------------------------------------------------------
   selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = item_data(.data)) 
   
-  # convert taxon_ids to logical -------------------------------------------------------------------
+  # convert taxon_ids to indexes -------------------------------------------------------------------
   is_char <- vapply(selection, is.character, logical(1))
   if (sum(is_char) > 0) {
     stop("Item filtering with taxon IDs or item IDs (which dont exist yet) is not currently supported. If you want to filter item by taxon IDs, use something like: `item_taxon_ids %in% my_subset`")
   }
+  # selection[is_char] <- lapply(selection[is_char], function(x) match(x, .data$taxon_data$taxon_ids))
   
-  # convert indexes to logical ---------------------------------------------------------------------
-  is_index <- vapply(selection, is.numeric, logical(1))
-  selection[is_index] <- lapply(selection[is_index], function(x) 1:nrow(.data$item_data) %in% x)
+  # convert logical to indexes ---------------------------------------------------------------------
+  is_logical <- vapply(selection, is.logical, logical(1))
+  selection[is_logical] <- lapply(selection[is_logical], which)
   
   # combine filters --------------------------------------------------------------------------------
-  selection <- Reduce(`&`, selection)
+  intersect_with_dups <-function(a, b) {
+    #taken from http://r.789695.n4.nabble.com/intersect-without-discarding-duplicates-td2225377.html
+    rep(sort(intersect(a, b)), pmin(table(a[a %in% b]), table(b[b %in% a])))
+  }
+  selection <- Reduce(intersect_with_dups, selection)
   
   # Remove items -----------------------------------------------------------------------------------
-  itemless_taxa <- unique(.data$item_data$item_taxon_ids[! selection])
+  itemless_taxa <- supertaxa(.data, unique(.data$item_data$item_taxon_ids[-selection]), na = FALSE,
+                             recursive = TRUE, simplify = TRUE, include_input = TRUE, index = TRUE)
   .data$item_data <- .data$item_data[selection, , drop = FALSE]
   
   # Remove itemless taxa ---------------------------------------------------------------------------
   if (! itemless) {
-    taxa_to_remove <- .data$taxon_data$taxon_ids %in% itemless_taxa & item_counts(.data) == 0
+    taxa_to_remove <- 1:nrow(.data$taxon_data) %in% itemless_taxa & item_counts(.data) == 0
     .data$taxon_data <- .data$taxon_data[! taxa_to_remove, , drop = FALSE]
     .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
   }
