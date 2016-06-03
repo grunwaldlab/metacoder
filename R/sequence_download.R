@@ -3,7 +3,7 @@
 #' 
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 #' Can be used to get a shallow sampling of a vast groups. 
-#' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and can\
+#' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 #' can take a very long time. 
 #' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
 #' Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
@@ -47,6 +47,7 @@
 #'                           min_length = 600, max_length = 10000)
 #' }
 #' 
+#' @keywords internal
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,
                               interpolate_min = TRUE, interpolate_max = TRUE,

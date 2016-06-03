@@ -158,7 +158,6 @@ primersearch <- function(...) {
 }
 
 #' @method primersearch default
-#' @export
 #' @rdname primersearch
 primersearch.default <- function(input, forward, reverse,
                          seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
@@ -209,7 +208,6 @@ primersearch.default <- function(input, forward, reverse,
 #' @param embed If \code{TRUE}, embed output in input object and return
 #' 
 #' @method primersearch classified
-#' @export
 #' @rdname primersearch
 primersearch.classified <- function(input, embed = TRUE, ...) {
   if (is.null(input$item_data$sequence)) {

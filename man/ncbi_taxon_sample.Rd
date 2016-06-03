@@ -53,7 +53,7 @@ rank must have for its sequences to be searched. The names correspond to taxonom
 \description{
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
 Can be used to get a shallow sampling of a vast groups. 
-\strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and can\
+\strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 can take a very long time. 
 Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
 Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
@@ -71,4 +71,5 @@ data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum",
 }
 
 }
+\keyword{internal}
 

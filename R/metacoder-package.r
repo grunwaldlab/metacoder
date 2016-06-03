@@ -26,17 +26,35 @@
 #'   \item \code{\link{extract_taxonomy}}
 #' }
 #' 
+#' \strong{Dplyr-style manipulations of taxonomic data:}
+#' 
+#' \itemize{
+#'   \item \code{\link{arrange_items}}
+#'   \item \code{\link{arrange_taxa}}
+#'   \item \code{\link{filter_items}}
+#'   \item \code{\link{filter_taxa}}
+#'   \item \code{\link{mutate_items}}
+#'   \item \code{\link{mutate_taxa}}
+#'   \item \code{\link{transmute_items}}
+#'   \item \code{\link{transmute_taxa}}
+#'   \item \code{\link{sample_n_items}}
+#'   \item \code{\link{sample_n_taxa}}
+#'   \item \code{\link{sample_frac_items}}
+#'   \item \code{\link{sample_frac_taxa}}
+#'   \item \code{\link{select_items}}
+#'   \item \code{\link{select_taxa}}
+#' }
+#' 
 #' \strong{Taxonomically balanced sub-sampling:}
 #' 
 #' \itemize{
 #'   \item \code{\link{taxonomic_sample}}
-#'   \item \code{\link{ncbi_taxon_sample}}
 #' }
 #' 
 #' \strong{Plotting taxonomic distribution of data:}
 #' 
 #' \itemize{
-#'   \item \code{\link{plot_taxonomy}}
+#'   \item \code{\link{plot.classified}}
 #' }
 #'
 #' \strong{In silico PCR:}

@@ -111,15 +111,14 @@
 #'                                        other_id = "item_info", tax_string = "item_info"))
 #' }
 #' 
-#' @export
 #' @rdname extract_taxonomy
+#' @export
 extract_taxonomy <- function(input, ...) {
   UseMethod("extract_taxonomy")
 }
 
 
 #' @method extract_taxonomy default
-#' @export
 #' @rdname extract_taxonomy
 extract_taxonomy.default <- function(input,
                                      key = c("class", "taxon_id", "name", "taxon_info", "item_id", "item_info"),
@@ -249,7 +248,6 @@ extract_taxonomy.default <- function(input,
 
 
 #' @method extract_taxonomy DNAbin
-#' @export
 #' @rdname extract_taxonomy
 extract_taxonomy.DNAbin <- function(input, ...) {
   output <- extract_taxonomy(names(input), ...)

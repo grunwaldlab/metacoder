@@ -24,4 +24,5 @@ plot_alignment(woodmouse)
 \references{
 ColorBrewer2 was used for the color palette
 }
+\keyword{internal}
 

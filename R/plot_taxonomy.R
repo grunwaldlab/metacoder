@@ -267,7 +267,7 @@
 #'      tree_label = name,
 #'      layout = "fruchterman-reingold")
 #' 
-#' @export
+#' @keywords internal
 #' @rdname plot_taxonomy
 plot_taxonomy <- function(taxon_id, parent_id, 
                           vertex_label = NA,

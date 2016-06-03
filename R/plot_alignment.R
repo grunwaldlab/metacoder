@@ -14,7 +14,7 @@
 #' data(woodmouse)
 #' plot_alignment(woodmouse)
 #' 
-#' @export
+#' @keywords internal
 plot_alignment <- function(alignment) {
   color_key <- c("A" = "#a6cee3", "T" = "#1f78b4", "C" = "#b2df8a", "G" = "#33a02c", "-" = "#DDDDDD")
   alignment <- as.character(alignment)
