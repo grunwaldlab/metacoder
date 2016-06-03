@@ -57,17 +57,17 @@ sample_n_items <- function(.data, size, replace = FALSE, taxon_weight = NULL, it
   my_item_data <- item_data(.data)
   item_weight <- lazyeval::lazy_eval(lazyeval::lazy(item_weight), data = my_item_data)
   if (is.null(item_weight)) {
-    item_item_weight <- rep(1, nrow(.data$item_data)) 
+    item_weight <- rep(1, nrow(.data$item_data)) 
   }
-  item_item_weight <- item_item_weight / sum(item_item_weight)
+  item_weight <- item_weight / sum(item_weight)
   
   # Combine item and taxon weight components  ------------------------------------------------------
   combine_func <- prod
-  item_weight <- mapply(item_taxon_weight, item_item_weight, FUN = function(x, y) combine_func(c(x,y)))
-  item_weight <- item_weight / sum(item_weight)
+  weight <- mapply(item_taxon_weight, item_weight, FUN = function(x, y) combine_func(c(x,y)))
+  weight <- weight / sum(weight)
   
   # Sample items -----------------------------------------------------------------------------------
-  sampled_rows <- sample.int(nrow(my_item_data), size = size, replace = replace, prob = item_weight)
+  sampled_rows <- sample.int(nrow(my_item_data), size = size, replace = replace, prob = weight)
   filter_items(.data, sampled_rows, ...)
 }
 
@@ -128,7 +128,7 @@ sample_frac_items <- function(.data, size = 1, replace = FALSE, taxon_weight = N
 #'   
 #' @export
 sample_n_taxa <- function(.data, size, taxon_weight = NULL, item_weight = NULL,
-                          use_subtaxa = TRUE, collapse_func = mean) {
+                          use_subtaxa = TRUE, collapse_func = mean, ...) {
   # Calculate item component of taxon weights ------------------------------------------------------
   my_item_data <- item_data(.data)
   item_weight <- lazyeval::lazy_eval(lazyeval::lazy(item_weight), data = my_item_data)
@@ -144,17 +144,17 @@ sample_n_taxa <- function(.data, size, taxon_weight = NULL, item_weight = NULL,
   my_taxon_data <- taxon_data(.data)
   taxon_weight <- lazyeval::lazy_eval(lazyeval::lazy(taxon_weight), data = my_taxon_data)
   if (is.null(taxon_weight)) {
-    taxon_taxon_weight <- rep(1, nrow(.data$taxon_data)) 
+    taxon_weight <- rep(1, nrow(.data$taxon_data)) 
   }
-  taxon_taxon_weight <- taxon_taxon_weight / sum(taxon_taxon_weight)
+  taxon_weight <- taxon_weight / sum(taxon_weight)
   
   # Combine item and taxon weight components  ------------------------------------------------------
   combine_func <- prod
-  taxon_weight <- mapply(taxon_taxon_weight, taxon_item_weight, FUN = function(x, y) combine_func(c(x,y)))
-  taxon_weight <- taxon_weight / sum(taxon_weight)
+  weight <- mapply(taxon_weight, taxon_item_weight, FUN = function(x, y) combine_func(c(x,y)))
+  weight <- weight / sum(weight)
   
   # Sample items -----------------------------------------------------------------------------------
-  sampled_rows <- sample.int(nrow(.data$taxon_data), size = size, replace = FALSE, prob = taxon_weight)
+  sampled_rows <- sample.int(nrow(.data$taxon_data), size = size, replace = FALSE, prob = weight)
   filter_taxa(.data, sampled_rows, ...)
 }
 

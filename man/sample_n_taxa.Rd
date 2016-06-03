@@ -5,7 +5,7 @@
 \title{Sample n taxa from \code{\link{classified}}}
 \usage{
 sample_n_taxa(.data, size, taxon_weight = NULL, item_weight = NULL,
-  use_subtaxa = TRUE, collapse_func = mean)
+  use_subtaxa = TRUE, collapse_func = mean, ...)
 }
 \arguments{
 \item{.data}{(\code{\link{classified}}) The object to sample from.}
