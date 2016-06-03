@@ -43,7 +43,7 @@ get_class_from_el <- function(taxa, parents) {
   }
   if (!is.character(taxa)) taxa <- as.character(taxa)
   if (!is.character(parents)) parents <- as.character(parents)  
-  setNames(lapply(taxa, process_one), taxa)
+  stats::setNames(lapply(taxa, process_one), taxa)
 }
 
 
@@ -124,7 +124,7 @@ split_by_level <- function(taxa, parents, level, rank = NULL) {
     index <- vapply(class_data, function(x) id %in% x, logical(1))
     names(class_data[index])
   }
-  setNames(lapply(new_roots, get_children), new_roots)
+  stats::setNames(lapply(new_roots, get_children), new_roots)
 }
 
 

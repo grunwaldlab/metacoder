@@ -213,7 +213,7 @@ extract_taxonomy.default <- function(input,
   }
   if ("taxon_info" %in% key) {
     taxon_info_col_names <- names(key)[key == "taxon_info"]
-    taxon_info_source_cols <- setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
+    taxon_info_source_cols <- stats::setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
                                        taxon_info_col_names)
     new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)

@@ -162,7 +162,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
     finished <- vapply(group, nrow, numeric(1)) < level
     group <- group[! finished]
     # Assign items to tip taxa
-    item_taxa <- setNames(rep(parent, sum(finished)), names(finished[finished]))
+    item_taxa <- stats::setNames(rep(parent, sum(finished)), names(finished[finished]))
     # Split list of classifications based on level
     split_group <- split_class_list(group, level, id_column)
     # Make rows for current taxon-parent relationships
@@ -175,7 +175,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
       child_results <- mapply(recursive_part, SIMPLIFY = FALSE,
                            group = split_group, level = level + 1, parent = taxon_index)
       child_taxa <- unlist(lapply(child_results, function(x) x$taxon_data), recursive = FALSE, use.names = FALSE)
-      child_items <- unlist(setNames(lapply(child_results, function(x) x$item_data), NULL))
+      child_items <- unlist(stats::setNames(lapply(child_results, function(x) x$item_data), NULL))
     } else {
       child_taxa <- NULL
       child_items <- NULL

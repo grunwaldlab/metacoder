@@ -142,7 +142,7 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
   validate_filter_options <- function(filter) {
     if (length(get(filter)) > 0 && is.null(names(get(filter)))) {
       if (!is.null(get_rank)) stop(paste0("`", filter, "` must be named if `get_rank` is defined."))
-      return(setNames(get(filter), as.character(seq_along(get(filter)))))
+      return(stats::setNames(get(filter), as.character(seq_along(get(filter)))))
     }
     return(get(filter))
   }

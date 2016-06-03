@@ -38,11 +38,6 @@ supplied to \code{collapse_func} to get the item weight. This function should ta
 vector and return a single number.}
 
 \item{...}{Additional options are passed to \code{\link{filter_items}}.}
-
-\item{itemless}{(\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
-items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
-Note that only taxa that are itemless due to this filtering will be removed; there might be 
-other taxa without items to begin with that will not be removed.}
 }
 \value{
 An object of type \code{\link{classified}}

@@ -10,9 +10,10 @@
 #' @return A \code{\link[ggplot2]{ggplot}} object
 #' 
 #' @examples
+#' \dontrun{
 #' library(ape)
 #' data(woodmouse)
-#' plot_alignment(woodmouse)
+#' plot_alignment(woodmouse)}
 #' 
 #' @keywords internal
 plot_alignment <- function(alignment) {

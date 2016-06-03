@@ -43,7 +43,7 @@ class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
   }
   # Format result
   result[!error_indexes] <- lapply(result[!error_indexes],
-                                   function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
+                                   function(x) stats::setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 
@@ -111,7 +111,7 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
   }
   
   # Name columns in each classification according to the key
-  result <- lapply(result, function(x) setNames(x, names(class_key)))
+  result <- lapply(result, function(x) stats::setNames(x, names(class_key)))
   
   # Add taxon_id column if missing
   if (! "taxon_id" %in% class_key && "name" %in% class_key && database != "none") {
@@ -212,7 +212,7 @@ class_from_name <- function(name, database, ...) {
 #   result <- result[! failed_queries]
   # Rename columns of result
   result[! failed_queries] <- lapply(result[! failed_queries],
-                                     function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
+                                     function(x) stats::setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 
@@ -236,7 +236,7 @@ class_from_name <- function(name, database, ...) {
 #' @keywords internal
 class_from_taxon_id <- function(taxon_id, database, ...) {
   result <- map_unique(taxon_id, taxize::classification, ask = FALSE, rows = 1, db = database)
-  result <- lapply(result, function(x) setNames(x, c("name", "rank", paste0(database, "_id"))))
+  result <- lapply(result, function(x) stats::setNames(x, c("name", "rank", paste0(database, "_id"))))
   return(result)
 }
 

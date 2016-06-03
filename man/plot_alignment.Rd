@@ -16,9 +16,10 @@ A \code{\link[ggplot2]{ggplot}} object
 Make a plot af a sequence alignment for an overview of alignment structure.
 }
 \examples{
+\dontrun{
 library(ape)
 data(woodmouse)
-plot_alignment(woodmouse)
+plot_alignment(woodmouse)}
 
 }
 \references{

@@ -22,10 +22,6 @@
 #' @param use_supertaxa (\code{logical} of length 1) Affects how the \code{taxon_weight} is used. If
 #'   \code{TRUE}, the weights for each taxon in an item's classification are multiplied to get the 
 #'   item weight. Otherwise, just the taxonomic level the item is assign to it considered.
-#' @param itemless (\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
-#'   items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
-#'   Note that only taxa that are itemless due to this filtering will be removed; there might be 
-#'   other taxa without items to begin with that will not be removed.
 #' @param collapse_func (\code{function} of length 1) If \code{taxon_weight} option is used and 
 #'   \code{supertaxa} is \code{TRUE}, the weights for each taxon in an item's classification are 
 #'   supplied to \code{collapse_func} to get the item weight. This function should take  numeric 
