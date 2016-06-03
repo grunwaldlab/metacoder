@@ -28,8 +28,9 @@ used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more 
 Other dplyr-like functions: \code{\link{arrange_items}},
   \code{\link{arrange_taxa}}, \code{\link{filter_items}},
   \code{\link{filter_taxa}}, \code{\link{mutate_items}},
-  \code{\link{mutate_taxa}}, \code{\link{sample_n_items}},
-  \code{\link{select_items}},
+  \code{\link{mutate_taxa}},
+  \code{\link{sample_frac_items}},
+  \code{\link{sample_n_items}}, \code{\link{select_items}},
   \code{\link{transmute_items}},
   \code{\link{transmute_taxa}}
 }

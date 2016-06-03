@@ -1,22 +1,22 @@
 #' Sample n items from \code{\link{classified}}
 #' 
-#' Randomly sample some number of items from a \code{\link{classified}} object. Weighs can be 
+#' Randomly sample some number of items from a \code{\link{classified}} object. Weights can be 
 #' specified for items or the taxa they are classified by.
 #' 
 #' See \link[dplyr]{sample_n} for the inspiration for this function.
 #' 
-#' @param .data (\code{\link{classified}})
+#' @param .data (\code{\link{classified}}) The object to sample from.
 #' @param size (\code{numeric} of length 1) The number of items to sample.
 #' @param replace (\code{logical} of length 1) If \code{TRUE}, sample with replacement.
 #' @param taxon_weight (\code{numeric}) Non-negative sampling weights of each taxon. If 
 #'   \code{supertaxa} is \code{TRUE}, the weights for each taxon in an item's classification are 
 #'   supplied to \code{collapse_func} to get the item weight. The expression given is evaluated in 
-#'   the context of \code{\link{taxon_data}. In other words, any column name that appears in 
+#'   the context of \code{\link{taxon_data}}. In other words, any column name that appears in 
 #'   \code{\link{taxon_data}(.data)} can be used as if it was a vector on its own. If 
 #'   \code{item_weight} is also specified, the two weights are multiplied (after \code{taxon_weight}
 #'   for each item is calculated).
 #' @param item_weight (\code{numeric}) Sampling weights of each item. The expression given is 
-#'   evaluated in the context of \code{\link{taxon_data}. In other words, any column name that 
+#'   evaluated in the context of \code{\link{taxon_data}}. In other words, any column name that 
 #'   appears in \code{\link{taxon_data}(.data)} can be used as if it was a vector on its own. If 
 #'   \code{taxon_weight} is also specified, the two weights are multiplied (after 
 #'   \code{taxon_weight} for each item is calculated).
@@ -69,4 +69,25 @@ sample_n_items <- function(.data, size, replace = FALSE, taxon_weight = NULL, it
   # Sample items -----------------------------------------------------------------------------------
   sampled_rows <- sample.int(nrow(my_item_data), size = size, replace = replace, prob = item_weight)
   filter_items(.data, sampled_rows, itemless = itemless)
+}
+
+#' Sample a proportion of items from \code{\link{classified}}
+#' 
+#' Randomly sample some propoortion of items from a \code{\link{classified}} object. Weights can be 
+#' specified for items or the taxa they are classified by.
+#' 
+#' See \link[dplyr]{sample_frac} for the inspiration for this function.
+#' @inheritParams sample_n_items
+#' @param size (\code{numeric} of length 1) The proportion of items to sample.
+#' 
+#' @return An object of type \code{\link{classified}}
+#'   
+#' @family dplyr-like functions
+#'   
+#' @export
+sample_frac_items <- function(.data, size = 1, replace = FALSE, taxon_weight = NULL, item_weight = NULL,
+                           use_supertaxa = TRUE, itemless = TRUE, collapse_func = mean) {
+  sample_n_items(.data = .data, size = size * nrow(.data$item_data), replace = replace,
+                 taxon_weight = taxon_weight, item_weight = item_weight,
+                 use_supertaxa = use_supertaxa, itemless = itemless, collapse_func = collapse_func)
 }
