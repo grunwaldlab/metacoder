@@ -498,7 +498,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
-  subgraph_key <- setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
+  subgraph_key <- stats::setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
                            unlist(sub_graph_taxa))
   data$subgraph_root <- subgraph_key[data$tid_user]
   #|

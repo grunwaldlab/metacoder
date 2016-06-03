@@ -223,7 +223,7 @@ ncbi_sequence <- function (ids, batch_size = 100) {
     writeChar(raw_result, temp_path)
     result <- ape::read.dna(temp_path, format = "fasta", as.character = TRUE, as.matrix = FALSE)
     if (length(id_subset) == 1)
-      result <- setNames(list(result[1,]), dimnames(result)[[1]])
+      result <- stats::setNames(list(result[1,]), dimnames(result)[[1]])
     if (length(id_subset) != length(result))
       stop("Length of query and result do not match. Somthing went wrong.")
     output <- c(output, result)
