@@ -5,8 +5,7 @@
 \title{Sample a proportion of items from \code{\link{classified}}}
 \usage{
 sample_frac_items(.data, size = 1, replace = FALSE, taxon_weight = NULL,
-  item_weight = NULL, use_supertaxa = TRUE, itemless = TRUE,
-  collapse_func = mean)
+  item_weight = NULL, use_supertaxa = TRUE, collapse_func = mean, ...)
 }
 \arguments{
 \item{.data}{(\code{\link{classified}}) The object to sample from.}
@@ -16,7 +15,7 @@ sample_frac_items(.data, size = 1, replace = FALSE, taxon_weight = NULL,
 \item{replace}{(\code{logical} of length 1) If \code{TRUE}, sample with replacement.}
 
 \item{taxon_weight}{(\code{numeric}) Non-negative sampling weights of each taxon. If 
-\code{supertaxa} is \code{TRUE}, the weights for each taxon in an item's classification are 
+\code{use_supertaxa} is \code{TRUE}, the weights for each taxon in an item's classification are
 supplied to \code{collapse_func} to get the item weight. The expression given is evaluated in 
 the context of \code{\link{taxon_data}}. In other words, any column name that appears in 
 \code{\link{taxon_data}(.data)} can be used as if it was a vector on its own. If 
@@ -24,8 +23,8 @@ the context of \code{\link{taxon_data}}. In other words, any column name that ap
 for each item is calculated).}
 
 \item{item_weight}{(\code{numeric}) Sampling weights of each item. The expression given is 
-evaluated in the context of \code{\link{taxon_data}}. In other words, any column name that 
-appears in \code{\link{taxon_data}(.data)} can be used as if it was a vector on its own. If 
+evaluated in the context of \code{\link{item_data}}. In other words, any column name that 
+appears in \code{\link{item_data}(.data)} can be used as if it was a vector on its own. If 
 \code{taxon_weight} is also specified, the two weights are multiplied (after 
 \code{taxon_weight} for each item is calculated).}
 
@@ -33,15 +32,12 @@ appears in \code{\link{taxon_data}(.data)} can be used as if it was a vector on 
 \code{TRUE}, the weights for each taxon in an item's classification are multiplied to get the 
 item weight. Otherwise, just the taxonomic level the item is assign to it considered.}
 
-\item{itemless}{(\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
-items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
-Note that only taxa that are itemless due to this filtering will be removed; there might be 
-other taxa without items to begin with that will not be removed.}
-
-\item{collapse_func}{(\code{function} of length 1) If \code{taxon_weight} is used and 
+\item{collapse_func}{(\code{function} of length 1) If \code{taxon_weight} option is used and 
 \code{supertaxa} is \code{TRUE}, the weights for each taxon in an item's classification are 
-supplied to \code{collapse_func} to get the item weight. This function should take  numeric
+supplied to \code{collapse_func} to get the item weight. This function should take  numeric 
 vector and return a single number.}
+
+\item{...}{Additional options are passed to \code{\link{filter_items}}.}
 }
 \value{
 An object of type \code{\link{classified}}
@@ -49,17 +45,17 @@ An object of type \code{\link{classified}}
 \description{
 Randomly sample some propoortion of items from a \code{\link{classified}} object. Weights can be 
 specified for items or the taxa they are classified by.
-}
-\details{
 See \link[dplyr]{sample_frac} for the inspiration for this function.
 }
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_items}},
   \code{\link{arrange_taxa}}, \code{\link{filter_items}},
   \code{\link{filter_taxa}}, \code{\link{mutate_items}},
-  \code{\link{mutate_taxa}}, \code{\link{sample_n_items}},
-  \code{\link{select_items}}, \code{\link{select_taxa}},
-  \code{\link{transmute_items}},
+  \code{\link{mutate_taxa}},
+  \code{\link{sample_frac_taxa}},
+  \code{\link{sample_n_items}},
+  \code{\link{sample_n_taxa}}, \code{\link{select_items}},
+  \code{\link{select_taxa}}, \code{\link{transmute_items}},
   \code{\link{transmute_taxa}}
 }
 

@@ -30,7 +30,9 @@ Other dplyr-like functions: \code{\link{arrange_items}},
   \code{\link{filter_taxa}}, \code{\link{mutate_items}},
   \code{\link{mutate_taxa}},
   \code{\link{sample_frac_items}},
-  \code{\link{sample_n_items}}, \code{\link{select_items}},
+  \code{\link{sample_frac_taxa}},
+  \code{\link{sample_n_items}},
+  \code{\link{sample_n_taxa}}, \code{\link{select_items}},
   \code{\link{transmute_items}},
   \code{\link{transmute_taxa}}
 }
