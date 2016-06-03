@@ -515,65 +515,70 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Optimize vertex size range --------------------------------------------------------------
   #|
   # Get range of potential vertex size ranges - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  all_pairwise <- molten_dist(x = data$vx_plot, y = data$vy_plot) # get distance between all vertexes
-  x_diff <- max(data$vx_plot) - min(data$vx_plot)
-  y_diff <- max(data$vy_plot) - min(data$vy_plot)
-  square_side_length <- sqrt(x_diff * y_diff)
-  if (is.na(vertex_size_range[1])) { # if minimum vertex size not set
-    min_range <- c(square_side_length / 1000, min(all_pairwise$distance))
+  if (nrow(data) > 1) {
+    all_pairwise <- molten_dist(x = data$vx_plot, y = data$vy_plot) # get distance between all vertexes
+    x_diff <- max(data$vx_plot) - min(data$vx_plot)
+    y_diff <- max(data$vy_plot) - min(data$vy_plot)
+    square_side_length <- sqrt(x_diff * y_diff)
+    if (is.na(vertex_size_range[1])) { # if minimum vertex size not set
+      min_range <- c(square_side_length / 1000, min(all_pairwise$distance))
+    } else {
+      min_range <- rep(vertex_size_range[1], 2) * square_side_length
+    }
+    if (is.na(vertex_size_range[2])) { # if maximum vertex size not set
+      max_range <- c(min_range[1], square_side_length / 4)
+    } else {
+      max_range <- c(vertex_size_range[2], 2) * square_side_length
+    }
+    # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    max_important_pairs <- 2000 # Takes into account both size and distance
+    max_biggest_pairs <- 2000
+    max_closest_pairs <- 2000
+    if (nrow(all_pairwise) > sum(max_important_pairs, max_biggest_pairs, max_closest_pairs)) {
+      all_pairwise$size_sum <- data$vs_trans[all_pairwise$index_1] + data$vs_trans[all_pairwise$index_2]
+      all_pairwise$importance <- all_pairwise$size_sum / all_pairwise$distance
+      # all_pairwise <- all_pairwise[order(all_pairwise$importance, decreasing = TRUE), ]
+      pair_subset <- c(order(all_pairwise$importance, decreasing = TRUE)[1:max_important_pairs],
+                       order(all_pairwise$size_sum, decreasing = TRUE)[1:max_biggest_pairs],
+                       order(all_pairwise$distance)[1:max_closest_pairs])
+      all_pairwise <- all_pairwise[pair_subset, ]
+    }
+    # Define search space for potential vertex size ranges  - - - - - - - - - - - - - - - - - - - - -
+    get_search_space <- function(min_range, max_range, breaks_per_dim) {
+      min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
+      max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
+      max_breaks <- rescale(max_breaks^4, to = max_range)
+      space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
+                          max = rep(max_breaks, length(min_breaks)))
+      space[space$min <= space$max, ]
+    }
+    search_space <- get_search_space(min_range, max_range, breaks_per_dim = 35)
+    search_space$range_size <- search_space$max - search_space$min
+    # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
+    find_overlap <- function(a_min, a_max, distance) {
+      scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = vertex_size_interval_trans)
+      names(scaled_vs) <- data$tid_user
+      gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
+      gap <- ifelse(gap < 0, abs(gap), 0)
+      gap <- gap^2
+      sqrt(sum(gap))
+    } 
+    search_space$overlap <- apply(search_space, MARGIN = 1,
+                                  function(x) find_overlap(x["min"], x["max"], all_pairwise))
+    
+    # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
+    optimality_stat <- function(overlap, range_size, minimum) {
+      overlap_weight <- 1 / nrow(data)^(1/3)
+      minimum_weight <- 75 / sqrt(nrow(data))
+      (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
+    }
+    search_space$opt_stat <- apply(search_space, MARGIN = 1,
+                                   function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
+    vsr_plot <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
   } else {
-    min_range <- rep(vertex_size_range[1], 2) * square_side_length
+    square_side_length = 1
+    vsr_plot <- rep(square_side_length / 4, 2)
   }
-  if (is.na(vertex_size_range[2])) { # if maximum vertex size not set
-    max_range <- c(min_range[1], square_side_length / 4)
-  } else {
-    max_range <- c(vertex_size_range[2], 2) * square_side_length
-  }
-  # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  max_important_pairs <- 2000 # Takes into account both size and distance
-  max_biggest_pairs <- 2000
-  max_closest_pairs <- 2000
-  if (nrow(all_pairwise) > sum(max_important_pairs, max_biggest_pairs, max_closest_pairs)) {
-    all_pairwise$size_sum <- data$vs_trans[all_pairwise$index_1] + data$vs_trans[all_pairwise$index_2]
-    all_pairwise$importance <- all_pairwise$size_sum / all_pairwise$distance
-    # all_pairwise <- all_pairwise[order(all_pairwise$importance, decreasing = TRUE), ]
-    pair_subset <- c(order(all_pairwise$importance, decreasing = TRUE)[1:max_important_pairs],
-                     order(all_pairwise$size_sum, decreasing = TRUE)[1:max_biggest_pairs],
-                     order(all_pairwise$distance)[1:max_closest_pairs])
-    all_pairwise <- all_pairwise[pair_subset, ]
-  }
-  # Define search space for potential vertex size ranges  - - - - - - - - - - - - - - - - - - - - -
-  get_search_space <- function(min_range, max_range, breaks_per_dim) {
-    min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
-    max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
-    max_breaks <- rescale(max_breaks^4, to = max_range)
-    space <- data.frame(min = rep(min_breaks, each = length(max_breaks)),
-                        max = rep(max_breaks, length(min_breaks)))
-    space[space$min <= space$max, ]
-  }
-  search_space <- get_search_space(min_range, max_range, breaks_per_dim = 35)
-  search_space$range_size <- search_space$max - search_space$min
-  # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
-  find_overlap <- function(a_min, a_max, distance) {
-    scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = vertex_size_interval_trans)
-    names(scaled_vs) <- data$tid_user
-    gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
-    gap <- ifelse(gap < 0, abs(gap), 0)
-    gap <- gap^2
-    sqrt(sum(gap))
-  } 
-  search_space$overlap <- apply(search_space, MARGIN = 1,
-                                function(x) find_overlap(x["min"], x["max"], all_pairwise))
-  
-  # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
-  optimality_stat <- function(overlap, range_size, minimum) {
-    overlap_weight <- 1 / nrow(data)^(1/3)
-    minimum_weight <- 75 / sqrt(nrow(data))
-    (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
-  }
-  search_space$opt_stat <- apply(search_space, MARGIN = 1,
-                                 function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
-  vsr_plot <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
   data$vs_plot <- rescale(data$vs_t, to = vsr_plot, from = vertex_size_interval_trans)
   #|
   #| #### Infer edge size range -------------------------------------------------------------------

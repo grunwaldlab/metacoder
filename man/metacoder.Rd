@@ -50,7 +50,6 @@ To learn how to use the package and what it can do view the package vignettes by
   \item \code{\link{sample_frac_taxa}}
   \item \code{\link{select_items}}
   \item \code{\link{select_taxa}}
-  
 }
 
 \strong{Taxonomically balanced sub-sampling:}
