@@ -10,6 +10,7 @@ output:
 library(ape)
 library(metacoder)
 library(knitr)
+library(magrittr)
 source("knitr_settings.R")
 ```
 
@@ -19,19 +20,20 @@ source("knitr_settings.R")
 #### Parse file
 
 ```{r}
-file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
-sequences <- seqinr::read.fasta(file_path, as.string = TRUE)
-silva <- extract_taxonomy(sequences,
+file_path <- "data/SILVA_123.1_SSURef_Nr99_tax_silva.fasta"
+silva <- extract_taxonomy(seqinr::read.fasta(file_path, as.string = TRUE),
                           regex = "^(.*?) (.*)$",
                           key = c(id = "item_info", "class"),
                           class_sep = ";")
 silva
 ```
 
-#### Subset prokaryotes
+#### Subset
 
 ```{r}
-silva <- filter_taxa(silva, name %in% c("Bacteria", "Archaea"), subtaxa = TRUE)
+silva <- filter_taxa(silva, name == "Bacteria", subtaxa = TRUE) %>%
+  sample_n_items(size = 100000, taxon_weight = 1 / item_counts, itemless = FALSE) %>%
+  filter_taxa(item_counts > 10)
 ```
 
 

@@ -8,5 +8,6 @@
 ^quilt_config\.yml$
 ^inst/doc/presentation/.*$
 ^inst/doc/website_source/.*\.html$
+^inst/doc/website_source/data/.*$
 ^inst/extdata/mothur\.summary$
 ^.*\.pdf$
