@@ -21,12 +21,14 @@ The problem becomes more difficult with non-standard loci or taxa.
 Some examples of curated databases are shown below:
 
 
-Database                                        | locus         | Taxon
------------------------------------------------ | ------------- | ------------
-[UNITE](https://unite.ut.ee)                    | ITS           | Fungi  
-[RDP](http://rdp.cme.msu.edu/index.jsp)         | 16S, 28S rRNA | Bacteria, Archea, Fungi
-[ITS1](http://itsonedb.ba.itb.cnr.it:8080/ITS1) | ITS1          | Fungi
-[PR2](http://ssu-rrna.org/pr2)                  | 18S           | Protists
+Database                                                      | locus         | Taxon
+------------------------------------------------------------- | ------------- | ------------
+[UNITE](https://unite.ut.ee)                                  | ITS           | Fungi  
+[RDP](http://rdp.cme.msu.edu/index.jsp)                       | 16S, 28S rRNA | Bacteria, Archea, Fungi
+[ITS1](http://itsonedb.ba.itb.cnr.it:8080/ITS1)               | ITS1          | Fungi
+[PR2](http://ssu-rrna.org/pr2)                                | 18S           | Protists
+[SILVA](https://www.arb-silva.de/)                            | SSU, LSU      | Bacteria, Archaea and Eukarya
+[greengenes](http://greengenes.lbl.gov/cgi-bin/nph-index.cgi) | 16            | Bacteria, Archaea
 
 
 ## Parsing taxonomy data with `extract_taxonomy`
@@ -276,3 +278,33 @@ plot(rdp_ex_data,
      vertex_label = name,
      layout = "fruchterman-reingold")
 ```
+
+
+
+### SILVA FASTA headers
+
+```{r eval=FALSE}
+file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+silva_ex_data <- extract_taxonomy(sequences,
+                                regex = "^(.*?) (.*)$",
+                                key = c(id = "item_info", "class"),
+                                class_sep = ";")
+```
+
+
+```{r}
+taxon_data(silva_ex_data)
+```
+
+
+```{r}
+plot(silva_ex_data,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = name,
+     tree_label = name)
+```
+
+
+

@@ -249,6 +249,7 @@ extract_taxonomy.default <- function(input,
 
 #' @method extract_taxonomy DNAbin
 #' @rdname extract_taxonomy
+#' @export
 extract_taxonomy.DNAbin <- function(input, ...) {
   output <- extract_taxonomy(names(input), ...)
   output$item_data$sequence <- unlist(lapply(as.character(input),
