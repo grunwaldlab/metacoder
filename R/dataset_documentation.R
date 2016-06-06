@@ -101,11 +101,13 @@
 #' \dontrun{
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_3 <- extract_taxonomy(names(sequences),
-#'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                   key = c(name = "item_info", seq_id = "item_info",
-#'                                           other_id = "item_info", "class_name"),
-#'                                   database = "none")
+#' unite_ex_data_3 <- extract_taxonomy(sequences,
+#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                                     key = c(seq_name = "item_info", sequence_id = "item_info",
+#'                                             other_id = "item_info", "class"),
+#'                                     class_regex = "^(.*)__(.*)$",
+#'                                     class_key = c(unite_rank = "taxon_info", "name"),
+#'                                     class_sep = ";")
 #' }
 #'
 #' @format An object of type \code{\link{classified}}

@@ -61,35 +61,32 @@ You can also remove subtaxa by filtering with a specified level/rank:
 plot(unite_ex_data_3,
      vertex_size = item_counts,
      vertex_color = item_counts,
-     vertex_label = name,
-     tree_label = name)
-filter_taxa(unite_ex_data_3, taxon_ranks < 5) %>%
+     vertex_label = name)
+filter_taxa(unite_ex_data_3, taxon_ranks <= 4) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
 Or we can filter by the number of items assigned to each taxon:
 
 ```{r}
-filter_taxa(unite_ex_data_3, item_counts > 3) %>%
+filter_taxa(unite_ex_data_3, item_counts >= 3) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
        vertex_label = name,
        tree_label = name)
 ```
 
-This is useful when plotting very large data sets, since it is difficult to make effective visualization of over 1000 taxa.
+This is useful when plotting very large data sets, since it is difficult to make effective visualizations of over ~2000 taxa.
 Note that items assigned to removed subtaxa are reassigned to the closest parent taxa that passes the filter by default.
-You can prevent this by setting the `reassign_items` option to `FALSE`:
+You can prevent this by setting the `reassign_items` option to `FALSE`, but when most items are assigned to tip taxa, this is rarely useful:
 
 ```{r}
 filter_taxa(unite_ex_data_3, taxon_ranks < 5, reassign_items = FALSE) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
 
@@ -98,45 +95,43 @@ filter_taxa(unite_ex_data_3, taxon_ranks < 5, reassign_items = FALSE) %>%
 You can also remove internal taxa:
 
 ```{r}
-filter_taxa(unite_ex_data_3, taxon_ranks != 3) %>%
+filter_taxa(unite_ex_data_3, unite_rank != "c") %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
+Note that the above result has no fungal classes anymore (taxa with names ending in "mycetes").
 Like items, children of removed taxa are reassigned to the closest supertaxon that passes the filter.
-Although it usually does not make much sense to not do this, it is possible:
+Although it usually does not make much sense to not reassign taxa, it is possible:
 
 ```{r}
-filter_taxa(unite_ex_data_3, taxon_ranks != 3, reassign_taxa = FALSE) %>%
+filter_taxa(unite_ex_data_3, unite_rank != "c", reassign_taxa = FALSE) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
 
 #### Filtering items 
 
-Filtering items assigned to taxa is less complicated:
+Filtering items assigned to taxa is less complicated.
+The code below removes all taxa with `sequence_id`s that do not start with "A".
 
 ```{r}
-filter_items(unite_ex_data_3, ) %>%
+filter_items(unite_ex_data_3, grepl("^A",  sequence_id)) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
 You can remove any taxa that are made itemless by the filtering using the `itemless` option: 
 
 ```{r}
-filter_items(unite_ex_data_3, , itemless = FALSE) %>%
+filter_items(unite_ex_data_3, grepl("^A",  sequence_id), itemless = FALSE) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
-       vertex_label = name,
-       tree_label = name)
+       vertex_label = name)
 ```
 
 
@@ -151,34 +146,55 @@ Therefore, all the options of `filter_taxa` or `filter_items` can be used within
 Sampling items is useful for making a subset of a large data set (not that the example below uses a large data set):
 
 ```{r}
-sample_n_items(unite_ex_data_3, size = 100)
+sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
 ```
 
 Weights can be assigned to items to determine how likely each is to be sampled:
 
 ```{r}
-sample_n_items(unite_ex_data_3, size = 100, item_weight = )
+sample_n_items(unite_ex_data_3, size = 50, itemless = FALSE,
+               item_weight = ifelse(grepl("Agaricales", seq_name), 100, 1)) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
 ```
 
 You can also assign weights to items based on the taxon they are assigned to: 
 
 ```{r}
-sample_n_items(unite_ex_data_3, size = 100, taxon_weight = 1 / item_counts)
+sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE, 
+               taxon_weight = 1 / item_counts) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
 ```
 
 
 #### Sampling taxa
 
-Taxa can be sampled the same way items are sampled:
+Taxa can be sampled the same way items are sampled.
+The code below randomly selects 5 taxa of rank "class":
 
 ```{r}
-
+set.seed(1)
+sample_n_taxa(unite_ex_data_3, size = 5, subtaxa = TRUE, 
+               taxon_weight = ifelse(unite_rank == "c", 1, 0)) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name, tree_label = name)
 ```
 
-When randomly subsetting taxa, pay special attention to the options of `filter_taxa` as this can have a drastic effect:
+When randomly subsetting taxa, pay special attention to the options of `filter_taxa` since excluding them can have a drastic effect:
 
 ```{r}
-
+set.seed(1)
+sample_n_taxa(unite_ex_data_3, size = 100) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
 ```
 
 #### Sampling a fraction of the total
@@ -186,7 +202,11 @@ When randomly subsetting taxa, pay special attention to the options of `filter_t
 `sample_n_taxa` and `sample_n_items` have simple wrappers called `sample_frac_taxa` and `sample_frac_items` that sample a given proportion of the total number of rows:
 
 ```{r}
-sample_frac_items(unite_ex_data_3, size = 0.5)
+set.seed(1)
+sample_frac_items(unite_ex_data_3, size = 0.1) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
 ```
 
 
@@ -197,12 +217,15 @@ The functions `select_taxa` and `select_items` are little more that wrappers for
 The only thing they do differently is to enforce that the `taxon_ids`, `parent_ids`, and `item_taxon_ids` columns are preserved:
 
 ```{r}
-select_taxa()
+unite_ex_data_3
+select_taxa(unite_ex_data_3, unite_rank)
 ```
 
+Note how the "name" column has been removed from "taxon_data".
+You can also use this to reorder columns: 
 
 ```{r}
-select_taxa()
+select_items(unite_ex_data_3, other_id, seq_name)
 ```
 
 
@@ -242,11 +265,11 @@ The way `classified` objects are defined, the order of all of the components do 
 This means its easy to reorder them to fit your needs:
 
 ```{r}
-arrange_taxa(unite_ex_data_3, item_counts)
+arrange_taxa(unite_ex_data_3, name)
 ```
 
 To change the direction of ordering, use `dplyr::desc`:
 
 ```{r}
-arrange_taxa(unite_ex_data_3, desc(item_counts))
+arrange_taxa(unite_ex_data_3, desc(name))
 ```

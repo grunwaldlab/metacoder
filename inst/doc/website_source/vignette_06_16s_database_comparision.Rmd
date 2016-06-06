@@ -20,7 +20,7 @@ source("knitr_settings.R")
 #### Parse file
 
 ```{r}
-file_path <- "data/SILVA_123.1_SSURef_Nr99_tax_silva.fasta"
+file_path <- "../../../big_data/SILVA_123.1_SSURef_Nr99_tax_silva.fasta"
 silva <- extract_taxonomy(seqinr::read.fasta(file_path, as.string = TRUE),
                           regex = "^(.*?) (.*)$",
                           key = c(id = "item_info", "class"),
