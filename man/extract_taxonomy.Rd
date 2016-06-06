@@ -4,6 +4,7 @@
 \alias{extract_taxonomy}
 \alias{extract_taxonomy.DNAbin}
 \alias{extract_taxonomy.default}
+\alias{extract_taxonomy.list}
 \title{Extract taxonomy information from sequence headers}
 \usage{
 extract_taxonomy(input, ...)
@@ -18,6 +19,8 @@ extract_taxonomy(input, ...)
   verbosity = c("low", "none", "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
+
+\method{extract_taxonomy}{list}(input, ...)
 }
 \arguments{
 \item{input}{A vector from which to extract taxonomy information or an object of class

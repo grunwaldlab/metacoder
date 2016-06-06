@@ -209,6 +209,7 @@ primersearch.default <- function(input, forward, reverse,
 #' 
 #' @method primersearch classified
 #' @rdname primersearch
+#' @export
 primersearch.classified <- function(input, embed = TRUE, ...) {
   if (is.null(input$item_data$sequence)) {
     stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')

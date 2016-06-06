@@ -1,0 +1,53 @@
+---
+title: "Comparing 16S databases"
+output:
+  html_document:
+    toc: false
+    css: custom.css
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+source("knitr_settings.R")
+```
+
+
+### SILVA
+
+#### Parse file
+
+```{r}
+file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
+sequences <- seqinr::read.fasta(file_path, as.string = TRUE)
+silva <- extract_taxonomy(sequences,
+                          regex = "^(.*?) (.*)$",
+                          key = c(id = "item_info", "class"),
+                          class_sep = ";")
+silva
+```
+
+#### Subset prokaryotes
+
+```{r}
+silva <- filter_taxa(silva, name %in% c("Bacteria", "Archaea"), subtaxa = TRUE)
+```
+
+
+#### PCR
+
+```{r}
+silva$item_data$sequence <- gsub(pattern = "u", replacement = "t", silva$item_data$sequence)
+pcr <- primersearch(silva, forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
+                    pair_name = "357F_519R",  mismatch = 10)
+```
+
+
+```{r}
+plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
+     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
+```
+
+
+

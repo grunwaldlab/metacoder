@@ -258,6 +258,25 @@ extract_taxonomy.DNAbin <- function(input, ...) {
 }
 
 
+#' @method extract_taxonomy list
+#' @rdname extract_taxonomy
+#' @export
+extract_taxonomy.list <- function(input, ...) {
+  if (all(vapply(input, class, character(1)) == "SeqFastadna")) {
+    header <- vapply(input, attr, "Annot", FUN.VALUE = character(1))
+    if (all(vapply(input, length, numeric(1)) == 1)) {
+      sequence <- unlist(input)
+    } else {
+      sequence <- vapply(input, seqinr::c2s, character(1))
+    }
+    output <- extract_taxonomy(header, ...)
+    output$item_data$sequence <- sequence
+  } else {
+    stop("Unsupported class type.")
+  }
+  return(output)
+}
+
 
 
 
