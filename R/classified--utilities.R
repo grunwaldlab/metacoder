@@ -223,11 +223,12 @@ items <- function(obj, subset = NULL, recursive = TRUE, simplify = FALSE) {
   # Get items of taxa ------------------------------------------------------------------------------
   my_subtaxa <- subtaxa(obj, subset = subset, recursive = recursive, include_input = TRUE, index = TRUE)
   unique_subtaxa <- unique(unlist(my_subtaxa))
-  item_index <- match(obj$item_data$item_taxon_ids, obj$taxon_data$taxon_ids)
-  item_key <- stats::setNames(lapply(unique_subtaxa, function(x) which(x == item_index)),
-                              unique_subtaxa)
+  item_taxon_index <- match(obj$item_data$item_taxon_ids, obj$taxon_data$taxon_ids)
+  item_key <- split(seq_along(obj$item_data$item_taxon_ids), item_taxon_index)
   output <- stats::setNames(lapply(my_subtaxa, function(x) unname(unlist(item_key[as.character(x)]))),
                             names(subset))
+  is_null <- vapply(output, is.null, logical(1))
+  output[is_null] <- lapply(1:sum(is_null), function(x) numeric(0))
   
   # Reduce dimensionality --------------------------------------------------------------------------
   if (simplify) {

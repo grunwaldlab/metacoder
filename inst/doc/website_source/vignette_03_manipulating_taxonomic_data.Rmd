@@ -166,6 +166,7 @@ You can also assign weights to items based on the taxon they are assigned to:
 sample_n_items(unite_ex_data_3, size = 100, taxon_weight = 1 / item_counts)
 ```
 
+
 #### Sampling taxa
 
 Taxa can be sampled the same way items are sampled:

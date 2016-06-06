@@ -36,20 +36,43 @@ silva <- filter_taxa(silva, name == "Bacteria", subtaxa = TRUE) %>%
   filter_taxa(item_counts > 10)
 ```
 
+```{r}
+filter_taxa(silva, taxon_ranks < 6, subtaxa = FALSE) %>%
+  filter_taxa(item_counts > 10, subtaxa = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
 
 #### PCR
 
 ```{r}
 silva$item_data$sequence <- gsub(pattern = "u", replacement = "t", silva$item_data$sequence)
-pcr <- primersearch(silva, forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
-                    pair_name = "357F_519R",  mismatch = 10)
+pcr <- filter_taxa(silva, taxon_ranks < 7, subtaxa = FALSE) %>%
+  filter_taxa(item_counts > 10, subtaxa = FALSE) %>%
+  primersearch(forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
+               pair_name = "357F_519R",  mismatch = 10)
 ```
 
 
 ```{r}
-plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
+plot(pcr,
+     vertex_size = item_counts,
+     vertex_label = name,
+     vertex_color = prop_amplified,
+     vertex_color_range =  c("red", "cyan"),
+     vertex_color_trans = "radius")
 ```
 
+```{r}
+filter_taxa(pcr, prop_amplified < 0.9, subtaxa = FALSE, supertaxa = TRUE) %>%
+  plot(vertex_size = item_counts,
+     vertex_label = name,
+     vertex_color = prop_amplified,
+     vertex_color_range =  c("red", "cyan"),
+     vertex_color_trans = "radius")
+```
 
 

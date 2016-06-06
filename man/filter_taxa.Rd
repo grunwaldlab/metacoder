@@ -4,8 +4,8 @@
 \alias{filter_taxa}
 \title{Filter taxa with a list of conditions}
 \usage{
-filter_taxa(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
-  taxonless = FALSE, reassign = TRUE)
+filter_taxa(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
+  taxonless = FALSE, reassign_items = TRUE, reassign_taxa = TRUE)
 }
 \arguments{
 \item{.data}{\code{\link{classified}}}
@@ -26,10 +26,13 @@ the filter.}
 they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
 \code{NA}. See the \code{reassign} option below for further complications.}
 
-\item{reassign}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+\item{reassign_items}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
 be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
 such an item that passed the filter, they will be filtered out if \code{taxonless} is
 \code{TRUE}.}
+
+\item{reassign_taxa}{(\code{logical} of length 1) If \code{TRUE}, children of removed taxa will
+be reassigned to the closest supertaxon that passed the filter.}
 }
 \value{
 An object of type \code{\link{classified}}

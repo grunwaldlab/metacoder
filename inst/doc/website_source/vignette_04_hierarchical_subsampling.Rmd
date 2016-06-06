@@ -32,40 +32,11 @@ Random samples of online sequence databases typically do have these characterist
 Sequences are not available for many taxa and the numbers of sequences vary dramatically for different taxa. 
 For these reasons, a simple random sample of sequences for a given taxon from an online database will often not constitute an ideal reference sequence set. 
 Therefore, `metacoder` includes functions to extract a sample of reference sequences that meet these criteria from a larger set of sequences. 
-There are two main ways to accomplish this using `metacoder`. 
-
-* **Taxonomically-balanced sub-sample:** Functions `extract_taxonomy` and `taxonomic_sample` can be used to parse taxonomy information from a sequence file (e.g. from FASTA headers with Genbank ids) and the sub-sample/re-sample the data to make it taxonomically balanced.
-* **Taxonomically-balanced Genbank download:** A function called `ncbi_taxon_sample` can be used to identify and download a set of sequences for a given taxon and custom Genbank query. 
-
-## Usage examples
-
-`taxonomic_sample` and `ncbi_taxon_sample` have similar arguments and behaviors. 
-Both use recursion to search through a taxonomic tree while sub-sampling taxa and items (e.g. sequences) that have a taxonomic classification. 
-Both can return a samples of a given size by controlling how many items (e.g. sequences) are allowed/required at each taxonomic rank (e.g. genus)
-They differ in what they are best used for. 
-`taxonomic_sample` is good for use on downloaded copies of curated databases, such as [UNITE](https://unite.ut.ee/) or [RDP](http://rdp.cme.msu.edu/seqmatch/seqmatch_intro.jsp), especially ones that have embedded classifications for each sequence (i.e. something like `k__Fungi;p__Ascomycota;c__Leotiomycetes` in the headers). 
-`ncbi_taxon_sample` is good for downloading sparse informal surveys of large taxonomic groups (e.g. all fungi) without having to download every sequence. 
 
 ### Using `taxonomic_sample`
 
 `taxonomic_sample` is used to sample items according to their taxonomic classifications. 
-These items must have a unique taxon id and an associated taxonomy defining how these taxon ids are related. 
-The example below uses `extract_taxonomy` to get this information; the use of this function is explained in the vignette about extracting taxonomy information from sequence metadata.
-
-```{r parse_data, eval = FALSE}
-library(metacoder)
-file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
-sequences <- ape::read.FASTA(file_path)
-unite_ex_data_3 <- extract_taxonomy(sequences,
-                                    regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                                    key = c(name = "item_info", sequence_id = "item_info",
-                                            other_id = "item_info", "class"),
-                                    class_regex = "^(.*)__(.*)$",
-                                    class_key = c(unite_rank = "taxon_info", "name"),
-                                    class_sep = ";")
-```
-
-If we look at how sequences are distributed throughout the taxonomy, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
+If we look data below, we can see that Ascomycota and Basidiomycota comprise the majority of the sequences, even though three other fungal phyla are also present.
 Depending on the goal, this might or might not be a problem.
 The overrepresentation of Agaricales is likely a bigger problem. 
 
@@ -104,10 +75,24 @@ Note how the taxonomy information for taxa with no items is preserved.
 This can be removed using `subset`:
 
 ```{r}
-plot(subset(subsampled, item_counts > 0, subtaxa = FALSE),
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
-     edge_label = ifelse(taxon_ranks == 4, name, NA))
+filter_taxa(subsampled, item_counts > 0, subtaxa = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
+       edge_label = ifelse(taxon_ranks == 4, name, NA))
 ```
 
+
+### Using `sample_n_items` and `sample_n_taxa`
+
+If you want to have the random sample be a specified number of items or want more control over how often different items or taxa get sampled, you can use `sample_n_items` and `sample_n_taxa`.
+
+```{r}
+sample_n_items(unite_ex_data_3, size = 100, taxon_weight = 1 / item_counts)
+```
+
+These functions also support sampling with repacement: 
+
+```{r}
+sample_n_items(unite_ex_data_3, size = 10000, taxon_weight = 1 / item_counts, replace = TRUE)
+```
