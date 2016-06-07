@@ -19,41 +19,49 @@ source("knitr_settings.R")
 
 #### Parse file
 
+The code below parses and subsets the entire SILVA non-redundant reference database.
+It is done in a single step so that no large intermediate files are generated.
+
 ```{r}
+set.seed(1)
 file_path <- "../../../big_data/SILVA_123.1_SSURef_Nr99_tax_silva.fasta"
-silva <- extract_taxonomy(seqinr::read.fasta(file_path, as.string = TRUE),
-                          regex = "^(.*?) (.*)$",
-                          key = c(id = "item_info", "class"),
-                          class_sep = ";")
-silva
+silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
+  extract_taxonomy(regex = "^(.*?) (.*)$",
+                   key = c(id = "item_info", "class"),
+                   class_sep = ";")
 ```
 
-#### Subset
+
+#### subset
 
 ```{r}
-silva <- filter_taxa(silva, name == "Bacteria", subtaxa = TRUE) %>%
-  sample_n_items(size = 100000, taxon_weight = 1 / item_counts, itemless = FALSE) %>%
-  filter_taxa(item_counts > 10)
+silva_subset <- filter_taxa(silva, taxon_ranks <= 7) %>%
+  filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
+  filter_taxa(item_counts >= 10)
 ```
 
+
+
+
+#### Plot data
+
 ```{r}
-filter_taxa(silva, taxon_ranks < 6, subtaxa = FALSE) %>%
-  filter_taxa(item_counts > 10, subtaxa = FALSE) %>%
+filter_taxa(silva_subset, taxon_ranks < 6) %>%
   plot(vertex_size = item_counts,
        vertex_color = item_counts,
        vertex_label = name)
 ```
 
 
-
 #### PCR
 
 ```{r}
-silva$item_data$sequence <- gsub(pattern = "u", replacement = "t", silva$item_data$sequence)
-pcr <- filter_taxa(silva, taxon_ranks < 7, subtaxa = FALSE) %>%
-  filter_taxa(item_counts > 10, subtaxa = FALSE) %>%
-  primersearch(forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
-               pair_name = "357F_519R",  mismatch = 10)
+silva_subset$item_data$sequence <- gsub(pattern = "u", replacement = "t",
+                                        silva_subset$item_data$sequence)
+pcr <- primersearch(filter_items(silva_subset),
+                    forward = "CTCCTACGGGAGGCAGCAG",
+                    reverse = "GWATTACCGCGGCKGCTG",
+                    pair_name = "357F_519R",  mismatch = 10)
 ```
 
 
@@ -67,7 +75,7 @@ plot(pcr,
 ```
 
 ```{r}
-filter_taxa(pcr, prop_amplified < 0.9, subtaxa = FALSE, supertaxa = TRUE) %>%
+filter_taxa(pcr, prop_amplified < 0.9, supertaxa = TRUE) %>%
   plot(vertex_size = item_counts,
      vertex_label = name,
      vertex_color = prop_amplified,

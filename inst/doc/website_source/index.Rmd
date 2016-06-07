@@ -237,8 +237,10 @@ The function **primersearch** is a wrapper for an EMBOSS tool that implements *i
 The code below estimates the coverage of the universal bacterial primer pair 357F/519F: 
 
 ```{r}
-pcr <- primersearch(sampled, forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTACCGCGGCKGCTG",
-                    pair_name = "357F_519R",  mismatch = 10)
+pcr <- primersearch(sampled, 
+                    forward = c("357F" = "CTCCTACGGGAGGCAGCAG"), 
+                    reverse = c("519F" = "GWATTACCGCGGCKGCTG"), 
+                    mismatch = 10)
 taxon_data(pcr)
 ```
 
