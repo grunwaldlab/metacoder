@@ -9,5 +9,6 @@
 ^inst/doc/presentation/.*$
 ^inst/doc/website_source/.*\.html$
 ^big_data$
+^scratch$
 ^inst/extdata/mothur\.summary$
 ^.*\.pdf$
