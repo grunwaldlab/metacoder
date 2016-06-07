@@ -140,7 +140,8 @@ system.time(rdp <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
 #### Plot data
 
 ```{r}
-system.time(plot(rdp, vertex_size = item_counts,
+system.time(filter_taxa(rdp, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
                  vertex_color = item_counts,
                  vertex_label = name,
                  vertex_label_max = 150,
@@ -160,8 +161,8 @@ system.time(pcr <- primersearch(rdp,
 ```
 
 ```{r}
-system.time(plot(pcr,
-                 vertex_size = item_counts,
+system.time(filter_taxa(pcr, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
                  vertex_label = name,
                  vertex_color = prop_amplified,
                  vertex_color_range =  c("red", "cyan"),
@@ -176,6 +177,7 @@ system.time(plot(pcr,
 
 ```{r}
 system.time(filter_taxa(pcr, prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
+              filter_taxa(taxon_ranks <= 5) %>%
               plot(vertex_size = item_counts,
                    vertex_label = name,
                    vertex_color = prop_amplified,
