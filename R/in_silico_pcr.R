@@ -136,9 +136,8 @@ primersearch <- function(...) {
 #' @examples
 #' \dontrun{
 #' result <- primersearch(rdp_ex_data, 
-#'                        forward = "CAGYMGCCRCGGKAAHACC",
-#'                        reverse = "GGACTACNSGGGTMTCTAAT",
-#'                        pair_name = "U519F_Arch806R",
+#'                        forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                        reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
 #'                        mismatch = 10)
 #'                        
 #' plot(result, 
@@ -198,6 +197,11 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5) {
 
 
 #' @method primersearch classified
+#' 
+#' @param sequence_col (\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.
+#' @param result_cols (\code{character}) The names of columns to include in the output.
+#' By defualt, all output columns are included.
+#' 
 #' @rdname primersearch
 #' @export
 primersearch.classified <- function(input, forward, reverse, mismatch = 5,
