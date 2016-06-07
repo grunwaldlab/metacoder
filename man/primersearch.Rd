@@ -21,6 +21,11 @@ primersearch(...)
 \item{reverse}{(\code{character} of length 1) The reverse primer sequence}
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
+
+\item{sequence_col}{(\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.}
+
+\item{result_cols}{(\code{character}) The names of columns to include in the output.
+By defualt, all output columns are included.}
 }
 \value{
 An object of type \code{\link{classified}}
@@ -62,9 +67,8 @@ NOTE: This has not been tested by us yet.
 \examples{
 \dontrun{
 result <- primersearch(rdp_ex_data, 
-                       forward = "CAGYMGCCRCGGKAAHACC",
-                       reverse = "GGACTACNSGGGTMTCTAAT",
-                       pair_name = "U519F_Arch806R",
+                       forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                       reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
                        mismatch = 10)
                        
 plot(result, 

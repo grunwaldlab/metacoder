@@ -651,7 +651,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| These shapes must be added to the graph in a specific order.
   #| A list of vertexes is sorted by first vertex depth in the heirarchy and then by vertex size.
   taxon_elements <- function(tid) {
-    circle_resolution <- 25
+    circle_resolution <- 35
     edge_data <- line_coords(x1 = data[tid, 'vx_plot'],
                              y1 = data[tid, 'vy_plot'],
                              x2 = data[data[tid, 'pid_user'], "vx_plot"],

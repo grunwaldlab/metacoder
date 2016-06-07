@@ -7,11 +7,28 @@ output:
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(ape)
 library(metacoder)
 library(knitr)
 library(magrittr)
 source("knitr_settings.R")
+```
+
+### Analyses parameters
+
+```{r}
+input_folder <- "../../../big_data"
+output_folder <- "16s_database_comparison_results"
+output_format <- ".pdf"
+max_taxonomy_depth <- 8
+min_seq_count <- 10
+max_mismatch <- 10 # percentage mismatch tolerated in pcr
+pcr_success_cutoff <- 0.95 # Used to subset for graphing
+forward_primer = c("357F" = "CTCCTACGGGAGGCAGCAG")
+reverse_primer = c("519R" = "GWATTACCGCGGCKGCTG")
+```
+
+```{r}
+dir.create(output_folder, showWarnings = FALSE)
 ```
 
 
@@ -21,66 +38,217 @@ source("knitr_settings.R")
 
 The code below parses and subsets the entire SILVA non-redundant reference database.
 It is done in a single step so that no large intermediate files are generated.
+Even so, the object made is quite large.
 
 ```{r}
 set.seed(1)
-file_path <- "../../../big_data/SILVA_123.1_SSURef_Nr99_tax_silva.fasta"
-silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
-  extract_taxonomy(regex = "^(.*?) (.*)$",
-                   key = c(id = "item_info", "class"),
-                   class_sep = ";")
+file_path <- file_path(input_folder, "SILVA_123.1_SSURef_Nr99_tax_silva.fasta")
+system.time(silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
+              extract_taxonomy(regex = "^(.*?) (.*)$",
+                               key = c(id = "item_info", "class"),
+                               class_sep = ";") %>% 
+              filter_taxa(taxon_ranks <= max_taxonomy_depth) %>%
+              filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
+              filter_taxa(item_counts >= min_seq_count))
 ```
 
-
-#### subset
+#### Plot data
 
 ```{r}
-silva_subset <- filter_taxa(silva, taxon_ranks <= 7) %>%
-  filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
-  filter_taxa(item_counts >= 10)
+system.time(filter_taxa(silva, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
+                   vertex_color = item_counts,
+                   vertex_label = name,
+                   vertex_label_max = 150,
+                   title = "SILVA sequence abundance",
+                   title_size = 0.03,
+                   vertex_color_axis_label = "Sequence count",
+                   output_file = file.path(output_folder, paste0("silva--abundance_rank_5", output_format))))
+```
+
+#### PCR
+
+```{r}
+silva$item_data$sequence <- gsub(pattern = "u", replacement = "t", silva$item_data$sequence)
+system.time(pcr <- primersearch(silva,
+                                forward = forward_primer,
+                                reverse = reverse_primer,
+                                mismatch = max_mismatch))
+```
+
+```{r}
+system.time(filter_taxa(pcr, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
+                   vertex_label = name,
+                   vertex_color = prop_amplified,
+                   vertex_color_range =  c("red", "cyan"),
+                   vertex_color_trans = "radius",
+                   vertex_label_max = 150,
+                   title = paste0("SILVA in silico pcr with ", pcr$item_data$pair_name[1]),
+                   title_size = 0.03,
+                   vertex_color_axis_label = "Proportion PCR success",
+                   vertex_size_axis_label = "Sequence count",
+                   output_file = file.path(output_folder, paste0("silva--pcr_all_rank_5", output_format))))
+```
+
+```{r}
+system.time(filter_taxa(pcr, taxon_ranks <= 5) %>%
+              filter_taxa(prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
+              plot(vertex_size = item_counts,
+                   vertex_label = name,
+                   vertex_color = prop_amplified,
+                   vertex_color_range =  c("red", "cyan"),
+                   vertex_color_trans = "radius",
+                   vertex_label_max = 100,
+                   title = paste0("SILVA in silico pcr with ", pcr$item_data$pair_name[1], 
+                                  " ( < ", pcr_success_cutoff * 100, "%)"),
+                   title_size = 0.03,
+                   vertex_color_axis_label = "Proportion PCR success",
+                   vertex_size_axis_label = "Sequence count",
+                   output_file = file.path(output_folder, paste0("silva--pcr_rank_5_less_than_", 
+                                                                 pcr_success_cutoff * 100, 
+                                                                 output_format))))
+```
+
+#### Cleanup
+
+```{r}
+rm(silva)
+rm(pcr)
+gc()
 ```
 
 
+
+
+### RDP
+
+```{r}
+set.seed(1)
+file_path <- file.path(input_folder, "rdp_current_Bacteria_unaligned.fa")
+system.time(rdp <- seqinr::read.fasta(file_path, as.string = TRUE) %>% 
+              extract_taxonomy(regex = "\\tLineage(.*)",
+                               key = c("class"),
+                               class_regex = "[;=](.+?);(.+?)",
+                               class_key = c("name", rdp_rank = "taxon_info")) %>% 
+              filter_taxa(taxon_ranks <= max_taxonomy_depth) %>%
+              filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
+              filter_taxa(item_counts >= min_seq_count))
+```
 
 
 #### Plot data
 
 ```{r}
-filter_taxa(silva_subset, taxon_ranks < 6) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+system.time(filter_taxa(rdp, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
+                 vertex_color = item_counts,
+                 vertex_label = name,
+                 vertex_label_max = 150,
+                 title = "RDP sequence abundance",
+                 title_size = 0.03,
+                 vertex_color_axis_label = "Sequence count",
+                 output_file = file.path(output_folder, paste0("rdp--abundance_rank_5", output_format))))
+```
+
+
+```{r}
+system.time(plot(rdp, vertex_size = item_counts,
+                 vertex_color = item_counts,
+                 vertex_label = name,
+                 vertex_label_max = 150,
+                 title = "RDP sequence abundance",
+                 title_size = 0.03,
+                 vertex_color_axis_label = "Sequence count",
+                 output_file = file.path(output_folder, paste0("rdp--abundance_all_taxa", output_format))))
 ```
 
 
 #### PCR
 
 ```{r}
-silva_subset$item_data$sequence <- gsub(pattern = "u", replacement = "t",
-                                        silva_subset$item_data$sequence)
-pcr <- primersearch(filter_items(silva_subset),
-                    forward = "CTCCTACGGGAGGCAGCAG",
-                    reverse = "GWATTACCGCGGCKGCTG",
-                    pair_name = "357F_519R",  mismatch = 10)
+system.time(pcr <- primersearch(rdp,
+                                forward = forward_primer,
+                                reverse = reverse_primer,
+                                mismatch = max_mismatch))
+```
+
+```{r}
+system.time(filter_taxa(pcr, taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
+                 vertex_label = name,
+                 vertex_color = prop_amplified,
+                 vertex_color_range =  c("red", "cyan"),
+                 vertex_color_trans = "radius",
+                 vertex_label_max = 150,
+                 title = paste0("RDP in silico pcr with ", unique(pcr$item_data$pair_name)[2]),
+                 title_size = 0.03,
+                 vertex_color_axis_label = "Proportion PCR success",
+                 vertex_size_axis_label = "Sequence count",
+                 output_file = file.path(output_folder, paste0("rdp--pcr_rank_5", output_format))))
+```
+
+```{r}
+system.time(plot(pcr,
+                 vertex_size = item_counts,
+                 vertex_label = name,
+                 vertex_color = prop_amplified,
+                 vertex_color_range =  c("red", "cyan"),
+                 vertex_color_trans = "radius",
+                 vertex_label_max = 150,
+                 title = paste0("RDP in silico pcr with ", unique(pcr$item_data$pair_name)[2]),
+                 title_size = 0.03,
+                 vertex_color_axis_label = "Proportion PCR success",
+                 vertex_size_axis_label = "Sequence count",
+                 output_file = file.path(output_folder, paste0("rdp--pcr_all_taxa", output_format))))
+```
+
+
+
+```{r}
+system.time(filter_taxa(pcr, prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
+              filter_taxa(taxon_ranks <= 5) %>%
+              plot(vertex_size = item_counts,
+                   vertex_label = name,
+                   vertex_color = prop_amplified,
+                   vertex_color_range =  c("red", "cyan"),
+                   vertex_color_trans = "radius",
+                   vertex_label_max = 100,
+                   title = paste0("RDP in silico pcr with ", unique(pcr$item_data$pair_name)[2], 
+                                  " ( < ", pcr_success_cutoff * 100, "%)"),
+                   title_size = 0.03,
+                   vertex_color_axis_label = "Proportion PCR success",
+                   vertex_size_axis_label = "Sequence count",
+                   output_file = file.path(output_folder, paste0("rdp--pcr_rank_5_less_than_", 
+                                                                 pcr_success_cutoff * 100, 
+                                                                 output_format))))
 ```
 
 
 ```{r}
-plot(pcr,
-     vertex_size = item_counts,
-     vertex_label = name,
-     vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"),
-     vertex_color_trans = "radius")
+system.time(filter_taxa(pcr, prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
+              plot(vertex_size = item_counts,
+                   vertex_label = name,
+                   vertex_color = prop_amplified,
+                   vertex_color_range =  c("red", "cyan"),
+                   vertex_color_trans = "radius",
+                   vertex_label_max = 100,
+                   title = paste0("RDP in silico pcr with ", unique(pcr$item_data$pair_name)[2], 
+                                  " ( < ", pcr_success_cutoff * 100, "%)"),
+                   title_size = 0.03,
+                   vertex_color_axis_label = "Proportion PCR success",
+                   vertex_size_axis_label = "Sequence count",
+                   output_file = file.path(output_folder, paste0("rdp--pcr_all_taxa_less_than_", 
+                                                                 pcr_success_cutoff * 100, 
+                                                                 output_format))))
 ```
+
+
+#### Cleanup
 
 ```{r}
-filter_taxa(pcr, prop_amplified < 0.9, supertaxa = TRUE) %>%
-  plot(vertex_size = item_counts,
-     vertex_label = name,
-     vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"),
-     vertex_color_trans = "radius")
+rm(rdp)
+rm(pcr)
+gc()
 ```
-
 
