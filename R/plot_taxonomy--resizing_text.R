@@ -8,8 +8,12 @@
 #' 
 #' @keywords internal 
 text_grob_length <- function(text) {
-  nchar(text) * 0.4
-}
+  do_one <- function(text) {
+    text_grob <- grid::textGrob(text)
+    as.numeric(grid::widthDetails(text_grob)) / as.numeric(grid::heightDetails(text_grob))
+  }
+  vapply(text, do_one, numeric(1))
+ }
 
 
 
