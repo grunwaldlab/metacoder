@@ -2,34 +2,30 @@
 % Please edit documentation in R/in_silico_pcr.R
 \name{primersearch}
 \alias{primersearch}
+\alias{primersearch.character}
 \alias{primersearch.classified}
-\alias{primersearch.default}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
 primersearch(...)
 
-\method{primersearch}{default}(input, forward, reverse, seq_name = NULL,
-  pair_name = NULL, mismatch = 5, ...)
+\method{primersearch}{character}(input, forward, reverse, mismatch = 5)
 
-\method{primersearch}{classified}(input, embed = TRUE, ...)
+\method{primersearch}{classified}(input, forward, reverse, mismatch = 5,
+  sequence_col = "sequence", result_cols = NULL)
 }
 \arguments{
-\item{...}{Additional arguments are passed to \code{\link{run_primersearch}}.}
-
-\item{input}{A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
-or an object of type \code{\link{classified}}}
+\item{input}{(\code{character})}
 
 \item{forward}{(\code{character} of length 1) The forward primer sequence}
 
 \item{reverse}{(\code{character} of length 1) The reverse primer sequence}
 
-\item{seq_name}{(\code{character}) Names of sequences}
-
-\item{pair_name}{(\code{character} of length 1) The name of the primer pair.}
-
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
 
-\item{embed}{If \code{TRUE}, embed output in input object and return}
+\item{sequence_col}{(\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.}
+
+\item{result_cols}{(\code{character}) The names of columns to include in the output.
+By defualt, all output columns are included.}
 }
 \value{
 An object of type \code{\link{classified}}
@@ -71,9 +67,8 @@ NOTE: This has not been tested by us yet.
 \examples{
 \dontrun{
 result <- primersearch(rdp_ex_data, 
-                       forward = "CAGYMGCCRCGGKAAHACC",
-                       reverse = "GGACTACNSGGGTMTCTAAT",
-                       pair_name = "U519F_Arch806R",
+                       forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                       reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
                        mismatch = 10)
                        
 plot(result, 

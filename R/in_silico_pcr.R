@@ -69,23 +69,27 @@ parse_primersearch <- function(file_path) {
                    "\t([^\n]+) hits forward strand at ([0-9]+) with ([0-9]+) mismatches",
                    "\t([^\n]+) hits reverse strand at \\[([0-9]+)\\] with ([0-9]+) mismatches",
                    "\tAmplimer length: ([0-9]+) bp", sep = '\n')
-  primer_data <- do.call(rbind, stringr::str_match_all(primer_chunks, pattern))[,-1]
+  primer_data <- stringr::str_match_all(primer_chunks, pattern)
+  primer_data <- as.data.frame(cbind(rep(names(primer_chunks), vapply(primer_data, nrow, numeric(1))),
+                       do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
   # Reformat amplicon data -------------------------------------------------------------------------
-  primer_data <- plyr::name_rows(as.data.frame(primer_data))
-  colnames(primer_data) <- c("amplimer", "seq_id", "name", "forward_primer", "forward_index",
-                             "forward_mismatch",  "reverse_primer", "reverse_index",
-                             "reverse_mismatch", "length", "primer_pair")
-  primer_data <- primer_data[c("primer_pair", "amplimer", "length", "seq_id", "name",
-                               "forward_primer", "forward_index", "forward_mismatch",
-                               "reverse_primer", "reverse_index", "reverse_mismatch")]
-  for (i in seq_along(primer_data)) primer_data[[i]] <- as.character(primer_data[[i]])
-  numeric_cols <- c("amplimer", "length","forward_index", "forward_mismatch",
-                    "reverse_index", "reverse_mismatch")
-  for (col in numeric_cols) primer_data[[col]] <- as.numeric(primer_data[[col]])
+  colnames(primer_data) <- c("pair_name", "amplimer", "seq_id", "name", "f_primer", "f_index",
+                             "f_mismatch",  "r_primer", "r_index", "r_mismatch", "length")
+  primer_data <- primer_data[, c("seq_id", "pair_name", "amplimer", "length", 
+                               "f_primer", "f_index", "f_mismatch",
+                               "r_primer", "r_index", "r_mismatch")]
+  numeric_cols <- c("amplimer", "length","f_index", "f_mismatch",
+                    "r_index", "r_mismatch", "seq_id")
+  for (col in numeric_cols) primer_data[, col] <- as.numeric(primer_data[, col]) 
   return(primer_data)
 } 
 
 
+#' @rdname primersearch
+#' @export
+primersearch <- function(...) {
+  UseMethod("primersearch")
+}
 
 #===================================================================================================
 #' Use EMBOSS primersearch for in silico PCR
@@ -94,14 +98,10 @@ parse_primersearch <- function(file_path) {
 #' The location of the best hits, quality of match, and predicted amplicons are returned.
 #' Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 #' 
-#' @param input A list of character vectors of DNA sequence, a \code{\link[ape]{DNAbin}} object,
-#' or an object of type \code{\link{classified}}
+#' @param input (\code{character})
 #' @param forward (\code{character} of length 1) The forward primer sequence
 #' @param reverse (\code{character} of length 1) The reverse primer sequence
-#' @param seq_name (\code{character}) Names of sequences
-#' @param pair_name (\code{character} of length 1) The name of the primer pair.
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
-#' @param ... Additional arguments are passed to \code{\link{run_primersearch}}.
 #' 
 #' @return An object of type \code{\link{classified}}
 #' 
@@ -136,9 +136,8 @@ parse_primersearch <- function(file_path) {
 #' @examples
 #' \dontrun{
 #' result <- primersearch(rdp_ex_data, 
-#'                        forward = "CAGYMGCCRCGGKAAHACC",
-#'                        reverse = "GGACTACNSGGGTMTCTAAT",
-#'                        pair_name = "U519F_Arch806R",
+#'                        forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                        reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
 #'                        mismatch = 10)
 #'                        
 #' plot(result, 
@@ -151,93 +150,90 @@ parse_primersearch <- function(file_path) {
 #'      layout = "fruchterman-reingold")
 #' }
 #' 
+#' @method primersearch character
+#' @rdname primersearch
 #' @export
-#' @rdname primersearch
-primersearch <- function(...) {
-  UseMethod("primersearch")
-}
-
-#' @method primersearch default
-#' @rdname primersearch
-primersearch.default <- function(input, forward, reverse,
-                         seq_name = NULL, pair_name = NULL, mismatch = 5, ...) {
-  # Read input file if supplied --------------------------------------------------------------------
-  if (class(input) == "DNAbin") {
-    if (is.null(seq_name)) seq_name <- names(input)
-  } else if (is.atomic(input) && all(file.exists(input))) {
-    if (length(input) == 1) {
-      input <- as.character(ape::read.dna(input, format = "fasta"))
-    } else {
-      stop("Only one input file can be used currently.")
-    }
-  } else {
-    if (is.atomic(input)) input <- lapply(as.character(input), seqinr::s2c)
-    input <- ape::as.DNAbin(input)
-  }
+primersearch.character <- function(input, forward, reverse, mismatch = 5) {
+  
   # Write temporary fasta file for primersearch input ----------------------------------------------
-  if (!is.null(seq_name)) names(input) <- seq_name
-  names(input) <- paste(seq_along(input), names(input))
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
   on.exit(file.remove(sequence_path))
-  ape::write.dna(input, sequence_path, format = "fasta", nbcol = -1, colsep = "")    
+  writeLines(text = paste0(">", seq_along(input), "\n", input),
+             con = sequence_path)
+    
   # Write primer file for primersearch input -------------------------------------------------------
-  if (is.null(names(forward))) names(forward) <- seq_along(forward)
-  if (is.null(names(reverse))) names(reverse) <- seq_along(reverse)
-  if (is.null(pair_name)) pair_name <- paste(names(forward), names(reverse), sep = "__and__")
-  forward <- unlist(lapply(forward, paste, collapse = ""))
-  reverse <- unlist(lapply(reverse, paste, collapse = ""))
+  name_primer <- function(primer) {
+    if (is.null(names(primer))) {
+      to_be_named <- seq_along(primer)
+    } else {
+      to_be_named <- which(is.na(names(primer)) | names(primer) == "")
+    }
+    names(primer)[to_be_named] <- seq_along(primer)[to_be_named]
+    return(primer)
+  }
+  forward <- name_primer(forward)
+  reverse <- name_primer(reverse)
+  pair_name <- paste(names(forward), names(reverse), sep = "_")
   primer_path <- tempfile("primersearch_primer_input_", fileext = ".txt")
   on.exit(file.remove(primer_path))
-  utils::write.table(cbind(pair_name, forward, reverse), primer_path,
+  primer_table <- as.data.frame(stringsAsFactors = FALSE,
+                                cbind(pair_name, forward, reverse))
+  utils::write.table(primer_table, primer_path,
               quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
+  
   # Run and parse primersearch ---------------------------------------------------------------------
-  output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch, ...)
+  output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch)
   on.exit(file.remove(output_path))
   output <- parse_primersearch(output_path)
+  
   # Extract amplicon input ---------------------------------------------------------------------
-  output$seq_id <- as.numeric(output$seq_id)
-  output$amp_start <- output$forward_index + nchar(output$forward_primer)
-  output$amp_end <- vapply(input[output$seq_id], length, numeric(1)) -
-    (output$reverse_index + nchar(output$reverse_primer)) + 1
-  output$amplicon <- unlist(Map(function(seq, start, end) paste(seq[start:end], collapse = ""),
-                         as.character(input[output$seq_id]), output$amp_start, output$amp_end))
+  output$f_primer <- primer_table[match(output$pair_name, primer_table$pair_name), "forward"]
+  output$r_primer <- primer_table[match(output$pair_name, primer_table$pair_name), "reverse"]
+  output$r_index <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_index + 1
+  output$amplicon <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+                                input[output$seq_id], output$f_index, output$r_index)) 
   return(output)
 }
 
 
-#' @param embed If \code{TRUE}, embed output in input object and return
-#' 
 #' @method primersearch classified
+#' 
+#' @param sequence_col (\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.
+#' @param result_cols (\code{character}) The names of columns to include in the output.
+#' By defualt, all output columns are included.
+#' 
 #' @rdname primersearch
 #' @export
-primersearch.classified <- function(input, embed = TRUE, ...) {
-  if (is.null(input$item_data$sequence)) {
-    stop('"primersearch" requires a column in "item_data" called "sequence" when using an object of class "classified"')
+primersearch.classified <- function(input, forward, reverse, mismatch = 5,
+                                    sequence_col = "sequence", result_cols = NULL) {
+  if (is.null(input$item_data[[sequence_col]])) {
+    stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))
   }
-  result <- primersearch(input = input$item_data$sequence,
-                         seq_name = rownames(input$item_data),
-                         ...)
+  result <- primersearch(input = input$item_data[[sequence_col]],
+                         forward = forward, reverse = reverse, mismatch = mismatch)
+  seq_id <- result$seq_id
+  result <- result[, colnames(result) != "seq_id", drop = FALSE]
+  pair_name <- result$pair_name
+  if (!is.null(result_cols)) {
+    result <- result[, result_cols, drop = FALSE]
+  }
   
-  if (embed) {
-    overwritten_cols <-  colnames(input$item_data)[colnames(input$item_data) %in% colnames(result)]
-    if (length(overwritten_cols) > 0) {
-      warning(paste0('The following item_data columns will be overwritten by primersearch:\n',
-                     paste0(collapse = "\n", "    ", overwritten_cols)))
-    }
-    input$item_data[ , colnames(result)] <- NA
-    input$item_data[result$name, colnames(result)] <- result
-    input$item_data$amplified <- ! is.na(input$item_data$length)
-    input$taxon_funcs <- c(input$taxon_funcs,
-                           count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                             vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]), numeric(1))
-                           },
-                           prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                             vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]) / length(x), numeric(1))
-                           })
-    output <- input
-  } else {
-    output <- result
+  overwritten_cols <-  colnames(input$item_data)[colnames(input$item_data) %in% colnames(result)]
+  if (length(overwritten_cols) > 0) {
+    warning(paste0('The following item_data columns will be overwritten by primersearch:\n',
+                   paste0(collapse = "\n", "    ", overwritten_cols)))
   }
+  input$item_data[ , colnames(result)] <- NA
+  input$item_data[seq_id, colnames(result)] <- result
+  input$item_data$amplified <- ! is.na(input$item_data$length)
+  input$taxon_funcs <- c(input$taxon_funcs,
+                         count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
+                           vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]), numeric(1))
+                         },
+                         prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
+                           vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]) / length(x), numeric(1))
+                         })
+  output <- input
   return(output)
 }
 

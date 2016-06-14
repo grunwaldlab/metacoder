@@ -17,18 +17,20 @@
 #' @param taxonless (\code{logical} of length 1) If \code{TRUE}, include items even if the taxon
 #'   they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
 #'   \code{NA}. See the \code{reassign} option below for further complications.
-#' @param reassign (\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+#' @param reassign_items (\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
 #'   be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
 #'   such an item that passed the filter, they will be filtered out if \code{taxonless} is
 #'   \code{TRUE}.
+#' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, children of removed taxa will
+#'   be reassigned to the closest supertaxon that passed the filter.
 #'   
 #' @return An object of type \code{\link{classified}}
 #'   
 #' @family dplyr-like functions
 #'   
 #' @export
-filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
-                        taxonless = FALSE, reassign = TRUE) {
+filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
+                        taxonless = FALSE, reassign_items = TRUE, reassign_taxa = TRUE) {
   
   # non-standard argument evaluation ---------------------------------------------------------------
   selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...),
@@ -57,7 +59,7 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
                           }))
   
   # Reassign taxonless items -----------------------------------------------------------------------
-  if (reassign) {
+  if (reassign_items) {
     reassign_one <- function(parents) {
       included_parents <- parents[parents %in% taxa_subset]
       return(.data$taxon_data$taxon_ids[included_parents[1]])
@@ -69,6 +71,21 @@ filter_taxa <- function(.data, ..., subtaxa = TRUE, supertaxa = FALSE,
     reassign_key <- vapply(supertaxa_key, reassign_one, character(1))
     .data$item_data[to_reassign, "item_taxon_ids"] <- reassign_key[.data$item_data$item_taxon_ids[to_reassign]]
   }
+  
+  # Reassign subtaxa  ------------------------------------------------------------------------------
+  if (reassign_taxa) {
+    reassign_one <- function(parents) {
+      included_parents <- parents[parents %in% taxa_subset]
+      return(.data$taxon_data$taxon_ids[included_parents[1]])
+    }
+    
+    to_reassign <- ! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids[taxa_subset]
+    supertaxa_key <- supertaxa(.data, subset = unique(.data$taxon_data$taxon_ids[to_reassign]),
+                               recursive = TRUE, simplify = FALSE, include_input = FALSE, index = TRUE, na = FALSE)
+    reassign_key <- vapply(supertaxa_key, reassign_one, character(1))
+    .data$taxon_data[to_reassign, "parent_ids"] <- reassign_key[.data$taxon_data$taxon_ids[to_reassign]]
+  }
+  
   
   # Remove taxonless items -------------------------------------------------------------------------
   item_subset <- .data$item_data$item_taxon_ids %in% .data$taxon_data$taxon_ids[taxa_subset]

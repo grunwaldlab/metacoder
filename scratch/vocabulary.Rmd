@@ -1,0 +1,41 @@
+
+
+
+```{r}
+obj <- classified(taxon_ids = LETTERS[1:18],
+                  parent_ids = c(NA, "A", "A", "A", "B", "B", "C", "C", "D", "F", "F", "K", 
+"J", "J", "H", "H", "I", "G"))
+
+plot_one <- function(obj, subset, highlight, title = deparse(match.call()[[3]])) {
+  
+  ids <- obj$taxon_data$taxon_ids
+  vc <- rep("#EEEEEE", length(ids))
+  vc[ids == highlight] <- "#999999"
+  vc[ids %in% subset[[1]]] <- "lightblue"
+  obj$taxon_data$my_vc <- vc
+  
+  plot(obj, vertex_label = taxon_ids,
+     vertex_color = my_vc, 
+     make_legend = FALSE,
+     edge_color = "#EEEEEE",
+     vertex_size = 1 / taxon_ranks,
+     vertex_size_range = c(0.06, NA),
+     title = title,
+     title_size = 0.05, 
+     vertex_color_range = c("#555555", "#EEEEEE"))
+}
+
+
+gridExtra::grid.arrange(ncol = 4, nrow = 1,
+                        plot_one(obj, supertaxa(obj, "F", recursive = FALSE),
+                                 highlight = "F", "Parent"),
+                        plot_one(obj, supertaxa(obj, "F"),
+                                 highlight = "F", "Supertaxa"),
+                        plot_one(obj, subtaxa(obj, "F", recursive = FALSE),
+                                 highlight = "F", "Children"),
+                        plot_one(obj, subtaxa(obj, "F"),
+                                 highlight = "F", "Subtaxa"))
+
+
+```
+

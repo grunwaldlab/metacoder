@@ -17,7 +17,7 @@ original_plot <- plot(obj, vertex_label = paste(name, item_counts), vertex_color
 test_that("Taxon filtering with non-standard evaluation works", {
   result <- filter_taxa(obj, taxon_ranks < 3, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = FALSE, reassign = TRUE)
+                        taxonless = FALSE, reassign_items = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_s3_class(result, "classified")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
@@ -28,7 +28,7 @@ test_that("Taxon filtering with non-standard evaluation works", {
 test_that("Taxon filtering with taxon_ids works", {
   result <- filter_taxa(obj, c("A", "B"), 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = FALSE, reassign = TRUE)
+                        taxonless = FALSE, reassign_items = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
   expect_equivalent(unname(item_counts(result)), c(10, 7))
@@ -38,7 +38,7 @@ test_that("Taxon filtering with taxon_ids works", {
 test_that("Taxon filtering with taxon_data indexes works", {
   result <- filter_taxa(obj, c(1, 2), 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = FALSE, reassign = TRUE)
+                        taxonless = FALSE, reassign_items = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
   expect_equivalent(unname(item_counts(result)), c(10, 7))
@@ -49,7 +49,7 @@ test_that("Taxon filtering with data stored in variables", {
   input <- c(1, 2)
   result <- filter_taxa(obj, input, 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = FALSE, reassign = TRUE)
+                        taxonless = FALSE, reassign_items = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b"))
   expect_equivalent(unname(item_counts(result)), c(10, 7))
@@ -59,7 +59,7 @@ test_that("Taxon filtering with data stored in variables", {
 test_that("Taxon filtering: removing items works", {
   result <- filter_taxa(obj, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = FALSE, reassign = FALSE)
+                        taxonless = FALSE, reassign_items = FALSE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b", "c", "d"))
   expect_equivalent(unname(item_counts(result)), c(9, 7, 3, 2))
@@ -69,7 +69,7 @@ test_that("Taxon filtering: removing items works", {
 test_that("Taxon filtering: NA items works", {
   result <- filter_taxa(obj, item_counts > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
-                        taxonless = TRUE, reassign = FALSE)
+                        taxonless = TRUE, reassign_items = FALSE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("a", "b", "c", "d"))
   expect_equal(sum(is.na(item_data(result))), 1)
@@ -79,7 +79,7 @@ test_that("Taxon filtering: NA items works", {
 test_that("Taxon filtering: removing supertaxa works", {
   result <- filter_taxa(obj, taxon_ranks > 1, 
                         subtaxa = FALSE, supertaxa = FALSE,
-                        taxonless = FALSE, reassign = TRUE)
+                        taxonless = FALSE, reassign_items = TRUE)
   plot(result, vertex_label = paste(name, item_counts), vertex_color = item_counts, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("b", "c", "d", "e"))
   expect_equal(sum(is.na(result$taxon_data$parent_ids)), 2)
@@ -89,10 +89,10 @@ test_that("Taxon filtering: removing supertaxa works", {
 test_that("Taxon filtering: chaining works", {
   result <- filter_taxa(obj, taxon_ranks > 1, 
                         subtaxa = FALSE, supertaxa = FALSE,
-                        taxonless = FALSE, reassign = TRUE) %>%
+                        taxonless = FALSE, reassign_items = TRUE) %>%
     filter_taxa(taxon_ranks > 1, 
                 subtaxa = FALSE, supertaxa = FALSE,
-                taxonless = FALSE, reassign = TRUE)
+                taxonless = FALSE, reassign_items = TRUE)
   expect_equal(sum(is.na(result$taxon_data$parent_ids)), 2)
   expect_equal(result$taxon_data$taxon_ids, c("C", "D"))
 })

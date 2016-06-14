@@ -120,6 +120,7 @@ extract_taxonomy <- function(input, ...) {
 
 #' @method extract_taxonomy default
 #' @rdname extract_taxonomy
+#' @export
 extract_taxonomy.default <- function(input,
                                      key = c("class", "taxon_id", "name", "taxon_info", "item_id", "item_info"),
                                      regex = "(.*)",

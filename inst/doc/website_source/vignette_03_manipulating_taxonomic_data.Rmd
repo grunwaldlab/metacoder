@@ -1,0 +1,275 @@
+---
+title: "Manipulating taxonomic data"
+output:
+  html_document:
+    toc: false
+    css: custom.css
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ape)
+library(metacoder)
+library(knitr)
+library(ggplot2)
+library(magrittr)
+source("knitr_settings.R")
+```
+
+
+## Introduction
+
+Manipulating taxonomic data is a more subtle problem then it might seem at first.
+For example, if you want to remove a taxon, do you remove its supertaxa and subtaxa as well?
+What if there are sequences assigned to that taxon; are the sequences removed or reassigned to a preserved supertaxa?
+What if the taxon is an internal node in the taxonomy; do you connect it parent and children taxa or break the taxonomy?
+The answers to these questions depend on what the goal of the subsetting is.
+MetacodeR uses `dplyr`-style functions for manipulating taxonomic data.
+For each `dplyr` verb, there are two functions in metacodeR, one that manipulates the taxon portion of the data and one that manipulates the item portion.
+
+### Subsetting rows: `filter_taxa` and `filter_items`
+
+#### Removing supertaxa
+
+Often, there are many shared ranks in the taxonomic hierarchy that can prevent effective visualization:
+
+```{r}
+plot(genbank_ex_data,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = name)
+```
+
+`filter_taxa` can easily remove these taxa by filtering by rank or selecting the root taxon by name:
+
+```{r}
+filter_taxa(genbank_ex_data, taxon_ranks > 5) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+filter_taxa(genbank_ex_data, name == "Basidiomycota", subtaxa = TRUE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+#### Removing subtaxa
+
+You can also remove subtaxa by filtering with a specified level/rank:
+
+```{r}
+plot(unite_ex_data_3,
+     vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = name)
+filter_taxa(unite_ex_data_3, taxon_ranks <= 4) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+Or we can filter by the number of items assigned to each taxon:
+
+```{r}
+filter_taxa(unite_ex_data_3, item_counts >= 3) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name,
+       tree_label = name)
+```
+
+This is useful when plotting very large data sets, since it is difficult to make effective visualizations of over ~2000 taxa.
+Note that items assigned to removed subtaxa are reassigned to the closest parent taxa that passes the filter by default.
+You can prevent this by setting the `reassign_items` option to `FALSE`, but when most items are assigned to tip taxa, this is rarely useful:
+
+```{r}
+filter_taxa(unite_ex_data_3, taxon_ranks < 5, reassign_items = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+#### Removing internal taxa
+
+You can also remove internal taxa:
+
+```{r}
+filter_taxa(unite_ex_data_3, unite_rank != "c") %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+Note that the above result has no fungal classes anymore (taxa with names ending in "mycetes").
+Like items, children of removed taxa are reassigned to the closest supertaxon that passes the filter.
+Although it usually does not make much sense to not reassign taxa, it is possible:
+
+```{r}
+filter_taxa(unite_ex_data_3, unite_rank != "c", reassign_taxa = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+#### Filtering items 
+
+Filtering items assigned to taxa is less complicated.
+The code below removes all taxa with `sequence_id`s that do not start with "A".
+
+```{r}
+filter_items(unite_ex_data_3, grepl("^A",  sequence_id)) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+You can remove any taxa that are made itemless by the filtering using the `itemless` option: 
+
+```{r}
+filter_items(unite_ex_data_3, grepl("^A",  sequence_id), itemless = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+### Sampling rows: `sample_n_taxa` and `sample_n_items`
+
+Random sampling of taxa and items is similar to subsetting, except you provide weights to each item or taxon indicating how likely it is to be included in the subset.
+The random subset of taxa or items is then passed to `filter_taxa` or `filter_items` respectively.
+Therefore, all the options of `filter_taxa` or `filter_items` can be used within `sample_n_taxa` and `sample_n_items`.
+
+#### Sampling items
+
+Sampling items is useful for making a subset of a large data set (not that the example below uses a large data set):
+
+```{r}
+sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+Weights can be assigned to items to determine how likely each is to be sampled:
+
+```{r}
+sample_n_items(unite_ex_data_3, size = 50, itemless = FALSE,
+               item_weight = ifelse(grepl("Agaricales", seq_name), 100, 1)) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+You can also assign weights to items based on the taxon they are assigned to: 
+
+```{r}
+sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE, 
+               taxon_weight = 1 / item_counts) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+#### Sampling taxa
+
+Taxa can be sampled the same way items are sampled.
+The code below randomly selects 5 taxa of rank "class":
+
+```{r}
+set.seed(1)
+sample_n_taxa(unite_ex_data_3, size = 5, subtaxa = TRUE, 
+               taxon_weight = ifelse(unite_rank == "c", 1, 0)) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name, tree_label = name)
+```
+
+When randomly subsetting taxa, pay special attention to the options of `filter_taxa` since excluding them can have a drastic effect:
+
+```{r}
+set.seed(1)
+sample_n_taxa(unite_ex_data_3, size = 100) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+#### Sampling a fraction of the total
+
+`sample_n_taxa` and `sample_n_items` have simple wrappers called `sample_frac_taxa` and `sample_frac_items` that sample a given proportion of the total number of rows:
+
+```{r}
+set.seed(1)
+sample_frac_items(unite_ex_data_3, size = 0.1) %>%
+  plot(vertex_size = item_counts,
+       vertex_color = item_counts,
+       vertex_label = name)
+```
+
+
+### Subsetting columns: `select_taxa` and `select_items`
+
+Subsetting columns is more straight forward that subsetting rows.
+The functions `select_taxa` and `select_items` are little more that wrappers for `dplyr::select`.
+The only thing they do differently is to enforce that the `taxon_ids`, `parent_ids`, and `item_taxon_ids` columns are preserved:
+
+```{r}
+unite_ex_data_3
+select_taxa(unite_ex_data_3, unite_rank)
+```
+
+Note how the "name" column has been removed from "taxon_data".
+You can also use this to reorder columns: 
+
+```{r}
+select_items(unite_ex_data_3, other_id, seq_name)
+```
+
+
+### Adding columns: `mutate_taxa` and `mutate_items`
+
+Adding a column to either `taxon_data` or `item_data` is easy using the `dplyr` syntax:
+
+```{r}
+mutate_taxa(unite_ex_data_3, new_col = "Im new!")
+```
+
+A convenient attribute of `dplyr::mutate` is the ability to reference newly created columns:
+
+```{r}
+mutate_taxa(unite_ex_data_3,
+            new_col = "Im new!",
+            newer_col = gsub(pattern = "!", replacement = "er!!", new_col))
+```
+
+Adding item columns with `mutate_items` works the same way.
+
+
+### Replacing columns: `transmute_taxa` and `transmute_items`
+
+`transmute_taxa` and `transmute_items` make new columns and discard all of the old columns:
+
+```{r}
+transmute_taxa(unite_ex_data_3,
+               new_col = "Im new!",
+               newer_col = gsub(pattern = "!", replacement = "er!!", new_col))
+```
+
+
+### Reordering rows: `arrange_taxa` and `arrange_items`
+
+The way `classified` objects are defined, the order of all of the components do not matter.
+This means its easy to reorder them to fit your needs:
+
+```{r}
+arrange_taxa(unite_ex_data_3, name)
+```
+
+To change the direction of ordering, use `dplyr::desc`:
+
+```{r}
+arrange_taxa(unite_ex_data_3, desc(name))
+```
