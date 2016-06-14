@@ -813,9 +813,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   #| ### Draw plot ================================================================================
   
-  label_x_bounds <- function(x, size, label) {
-    spread <- size  * text_grob_length(label)
-    c(x + spread, x - spread)
+  label_x_bounds <- function(x, size, label, justification) {
+    just <- strsplit(justification, split = "-")[[1]][1] # hackish; should be changed
+    grob_length <- size  * text_grob_length(label)
+    if (just == "left") {
+      return(c(x, x + grob_length))
+    } else if (just == "right") {
+      return(c(x - grob_length, x))
+    } else { #center 
+      return(c(x - grob_length / 2, x + grob_length / 2))
+    }
   }
   label_y_bounds <- function(y, size, label) {
     spread <- size / 2 * 1.1
@@ -824,7 +831,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   
   
-  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label")],
+  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label", "justification")],
                                              FUN = label_x_bounds)))
   label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
                                              FUN = label_y_bounds)))
