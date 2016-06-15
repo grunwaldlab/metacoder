@@ -5,7 +5,7 @@
 \title{Parse taxonomic data in a tsv/csv file}
 \usage{
 parse_taxonomy_table(file_path, taxon_col, other_col_type = "item_info",
-  header = TRUE, sep = "\\t", max_lines = -1L, ...)
+  header = TRUE, sep = "\\t", max_lines = NULL, ...)
 }
 \arguments{
 \item{file_path}{(\code{character} of length 1)

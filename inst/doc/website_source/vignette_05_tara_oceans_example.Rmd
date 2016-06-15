@@ -24,7 +24,7 @@ download.file(url = data_url, destfile = local_file_path, quiet = TRUE)
 Next we will uncompress the archive and identify the fasta file.
 
 ```{r}
-max_lines = # Get contents of zip archive
+# Get contents of zip archive
 unpacked_file_paths <- unzip(local_file_path, list = TRUE)
 # Uncompress archive
 unzip(local_file_path, exdir = temp_dir_path)
@@ -38,6 +38,7 @@ The file can then be parsed using the `ape` package and the taxonomy data in the
 ```{r, warning=FALSE, message=FALSE}
 # Load the package
 library(metacoder)
+library(magrittr)
 # Extract the taxonomic information of the sequences
 data <- parse_taxonomy_table(unpacked_file_path, taxon_col = c("class" = -9), class_sep = "\\|")
 ```
@@ -48,19 +49,31 @@ taxon_data(data, row_subset = 1:10)
 ```
 
 
+### Getting sample data
+
+```{r}
+data_url <- "http://taraoceans.sb-roscoff.fr/EukDiv/data/Database_W1_Sample_parameters.xls"
+temp_dir_path <- tempdir()
+local_file_path <- file.path(temp_dir_path, basename(data_url))
+download.file(url = data_url, destfile = local_file_path, quiet = TRUE)
+sample_data <- readxl::read_excel(local_file_path)
+```
+
+
 ### Plot all data
 
  
 ```{r}
-plot(data,
-     title = "Tara Oceans overall OTU counts",
+filter_taxa(data, !(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+plot(title = "Tara Oceans overall OTU counts",
      title_size = 0.03,
      vertex_color_axis_label = "OTU count",
      vertex_size = item_counts,
      vertex_label = name,
      vertex_color = item_counts,
      tree_label = name,
-     vertex_label_max = 400)
+     vertex_label_max = 100,
+     initial_layout = "re", layout = "da")
 ```
 
 
@@ -68,12 +81,8 @@ plot(data,
 ### subset Eukaryota
 
 ```{r}
-eukaryota <- subset(data, name == "Eukaryota")
-```
-
-```{r}
-plot(eukaryota,
-     title = "Tara Oceans Eukaryota OTU counts",
+filter_taxa(data, name == "Eukaryota", subtaxa = TRUE) %>%
+plot(title = "Tara Oceans Eukaryota OTU counts",
      title_size = 0.03,
      vertex_color_axis_label = "OTU count",
      vertex_size = item_counts,
@@ -84,3 +93,75 @@ plot(eukaryota,
 ```
 
 
+### Plot sampling depth differential
+
+```{r}
+sample_columns <- sample_data[["PANGAEA ACCESSION NUMBER"]]
+data <- mutate_items(data, total_counts = apply(data$item_data[, sample_columns], MARGIN = 1, function(x) sum(as.numeric(x))))
+data <- mutate_taxa(data, total_taxon_counts = vapply(items(data), function(x) sum(data$item_data$total_counts[x]), numeric(1)))
+
+```
+
+
+```{r}
+sur_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "SUR"]
+dcm_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "DCM"]
+
+data <- mutate_items(data, sur_counts = apply(data$item_data[, sur_columms], MARGIN = 1, function(x) sum(as.numeric(x))))
+data <- mutate_items(data, dcm_counts = apply(data$item_data[, dcm_columms], MARGIN = 1, function(x) sum(as.numeric(x))))
+
+data <- mutate_taxa(data, sur_taxon_counts = vapply(items(data), function(x) sum(data$item_data$sur_counts[x]), numeric(1)))
+data <- mutate_taxa(data, dcm_taxon_counts = vapply(items(data), function(x) sum(data$item_data$dcm_counts[x]), numeric(1)))
+
+sur_total <- sum(data$taxon_data$sur_taxon_counts[taxon_ranks(data) == 1])
+dcm_total <- sum(data$taxon_data$dcm_taxon_counts[taxon_ranks(data) == 1])
+
+data <- mutate_taxa(data, dcm_taxon_prop = dcm_taxon_counts / dcm_total)
+data <- mutate_taxa(data, sur_taxon_prop = sur_taxon_counts / sur_total)
+
+data <- mutate_taxa(data, depth_prop_diff = dcm_taxon_prop - sur_taxon_prop)
+data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / total_taxon_counts)
+
+```
+
+
+```{r}
+background_color <- "white"
+filter_taxa(data, !(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 3)) %>%
+  filter_taxa(total_taxon_counts >= 100) %>%
+plot(title = "TARA Oceans sampling depth",
+     title_size = 0.03,
+     vertex_color_axis_label = "Proportion of reads in DCM",
+     vertex_size_axis_label = "Read count",
+     vertex_size = item_counts,
+     vertex_label = name,
+     vertex_color = depth_prop_dcm,
+     vertex_color_range = c("#c2f0f0", background_color, "#0f3d3d"),
+     vertex_color_trans = "radius",
+     tree_label = name,
+     vertex_label_max = 100,
+     initial_layout = "re", layout = "da",
+     overlap_avoidance = 0.5,
+     background_color = background_color,
+     tree_label_size = total_taxon_counts)
+```
+
+```{r}
+background_color <- "#33cccc"
+filter_taxa(data, total_taxon_counts < 100000000) %>%
+  filter_taxa(total_taxon_counts >= 100) %>%
+plot(title = "TARA Oceans sampling depth",
+     title_size = 0.03,
+     vertex_color_axis_label = "Proportion of reads in DCM",
+     vertex_size_axis_label = "Read count",
+     vertex_size = total_taxon_counts,
+     vertex_label = name,
+     vertex_color = depth_prop_dcm,
+     vertex_color_range = c("#c2f0f0", background_color, "#0f3d3d"),
+     vertex_color_trans = "radius",
+     tree_label = name,
+     vertex_label_max = 100,
+     initial_layout = "re", layout = "da",
+     overlap_avoidance = 0.5,
+     background_color = background_color)
+```
