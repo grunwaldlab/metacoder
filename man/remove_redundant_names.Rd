@@ -4,7 +4,7 @@
 \alias{remove_redundant_names}
 \title{Remove the redundant taxon names}
 \usage{
-remove_redundant_names(obj, name_col)
+remove_redundant_names(obj, name_col, all_supertaxa = TRUE)
 }
 \arguments{
 \item{obj}{a \code{classified} object}
