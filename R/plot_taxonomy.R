@@ -751,21 +751,6 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   rotation = 0,
                                   justification = "center"))
   }
-  # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (! is.null(title)) {
-    max_label_size <- ifelse(is.null(text_data), 0, max(text_data$size))
-    x_range <- range(element_data$x)
-    
-    text_data <- rbind(text_data,
-                       data.frame(stringsAsFactors = FALSE, 
-                                  label = title,
-                                  x = mean(x_range),
-                                  y = max(element_data$y) * 1.05 + diff(x_range) * title_size + max_label_size,
-                                  size = diff(x_range) * title_size,
-                                  color = "#000000",
-                                  rotation = 0,
-                                  justification = "center"))
-  }
   #|
   #| #### Make vertex legend -----------------------------------------------------------------------
   #|
@@ -811,8 +796,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   } else {
     legend_data <- NULL
   }
-  #| ### Draw plot ================================================================================
-  
+  # Get range data ---------------------------------------------------------------------------------
   label_x_bounds <- function(x, size, label, justification) {
     just <- strsplit(justification, split = "-")[[1]][1] # hackish; should be changed
     grob_length <- size  * text_grob_length(label)
@@ -842,7 +826,30 @@ plot_taxonomy <- function(taxon_id, parent_id,
   x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
   y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
   
-  # theme(panel.background = element_rect(fill = '#00000000', colour = '#00000000'))
+  # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (! is.null(title)) {
+    max_label_size <- ifelse(is.null(text_data), 0, max(text_data$size))
+    text_data <- rbind(text_data,
+                       data.frame(stringsAsFactors = FALSE, 
+                                  label = title,
+                                  x = mean(x_range),
+                                  y = max(element_data$y) * 1.05 + diff(x_range) * title_size + max_label_size,
+                                  size = diff(x_range) * title_size,
+                                  color = "#000000",
+                                  rotation = 0,
+                                  justification = "center"))
+  }
+  #| ### Draw plot ================================================================================
+  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label", "justification")],
+                                             FUN = label_x_bounds)))
+  label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
+                                             FUN = label_y_bounds)))
+  
+  x_points <- c(element_data$x, label_x)
+  y_points <- c(element_data$y, label_y)
+  margin_size_plot <- margin_size * square_side_length
+  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
+  y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
   
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
