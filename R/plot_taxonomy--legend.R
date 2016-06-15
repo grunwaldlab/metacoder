@@ -31,7 +31,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 8, title = NULL, label_size = 0.05,
+                             divisions = 100, label_count = 9, title = NULL, label_size = 0.04,
                              title_size = 0.05, axis_label_size = 0.05,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
@@ -151,7 +151,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   # Add color axis title ---------------------------------------------------------------------------
   y_range <- range(point_data$y)
   axis_label_size <- length * axis_label_size
-  axis_spacer <- axis_label_size * 0.3
+  axis_spacer <- axis_label_size * 0.5
   if (!hide_color && !is.null(color_axis_label)) {
     grob_lengths <- text_grob_length(label_data$label) * label_data$size
     label_x_min <- min(label_data$x - ifelse(label_data$justification == "right", grob_lengths, 0))
