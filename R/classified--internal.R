@@ -73,7 +73,16 @@ remove_redundant_names <- function(obj, name_col) {
 #' 
 #' @keywords internal
 taxon_data_cols_used <- function(obj, ...) {
-  names_used <- unique(unlist(lapply(lazyeval::lazy_dots(...), function(x) as.character(x$expr))))
+  decompose <- function(x) {
+    if (class(x) %in% c("call", "(")) {
+      return(lapply(1:length(x), function(i) decompose(x[[i]])))
+    } else {
+      return(as.character(x))
+    }
+  }
+  
+  expressions <- lapply(lazyeval::lazy_dots(...), function(x) x$expr)
+  names_used <- unlist(lapply(1:length(expressions), function(i) decompose(expressions[[i]])))
   names_used[names_used %in% taxon_data_colnames(obj)]
 }
 

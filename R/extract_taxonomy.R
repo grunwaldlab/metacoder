@@ -316,7 +316,7 @@ extract_taxonomy.list <- function(input, ...) {
 #' @return \code{\link{classified}}
 #' 
 #' @export
-parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = -1L, ...) {
+parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = NULL, ...) {
   
   # Validate input
   if (length(file_path) > 1) {
@@ -328,7 +328,12 @@ parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_in
   }
   
   # Read file
-  content <- readLines(file_path, n = max_lines + header)
+  if (is.null(max_lines)) {
+    content <- readLines(file_path)
+  } else {
+    content <- readLines(file_path, n = max_lines + header)
+  }
+  
   first_line <- strsplit(content[[1]], split = sep)[[1]]
   
   # Interpret negative indexes
