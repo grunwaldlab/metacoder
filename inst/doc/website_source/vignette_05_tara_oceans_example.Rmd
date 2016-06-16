@@ -165,8 +165,9 @@ filter_taxa(data, name == "Eukaryota", subtaxa = TRUE) %>%
 #### Ocean-themed depth differential plot
 
 ```{r}
+  seed = 10 #9 is good
+set.seed(seed)
 taxa_patterns_to_remove <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp", "Uncultured"), "$")
-set.seed(9)
 background_color <- "lightblue"
 filter_taxa(data, ! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(total_taxon_counts >= 50) %>%
@@ -197,7 +198,7 @@ filter_taxa(data, ! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name)
        initial_layout = "re", layout = "da",
        overlap_avoidance = 0.8,
        background_color = background_color,
-       output_file = file.path(output_folder, paste0("tara_oceans--depth_differential_ocean_theme", output_format)),
+       output_file = file.path(output_folder, paste0("tara_oceans--depth_differential_ocean_theme_seed", seed,  output_format)),
        maxiter = 50, fineiter = 50)
 ```
 
@@ -284,18 +285,17 @@ set.seed(2)
 filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
   filter_taxa(! name %in% c("X", "XX", "XXX", "X+sp.", "NA", "root", "*", "sp.", "sp")) %>%
   filter_taxa(total_taxon_counts >= 100) %>%
-  plot(title = "TARA Metazoan OTU uncertainty",
-       title_size = 0.03,
+  plot(title_size = 0.03,
        vertex_color_axis_label = "Mean OTU identity to reference",
        vertex_size_axis_label = "OTU count",
        vertex_size_range = c(.004, NA),
        vertex_size = item_counts,
        vertex_label = name,
        vertex_color = mean_pid,
-       vertex_color_range = c("red", "orange", "yellow", "cyan"),
+       vertex_color_range = c("darkred", "red", "orange", "yellow", "cyan", "blue"),
        vertex_color_trans = "radius",
-       vertex_color_interval = c(70, 100),
-       edge_color_interval = c(70, 100),
+       vertex_color_interval = c(60, 97),
+       edge_color_interval = c(60, 97),
        vertex_size_trans = "area",
        vertex_label_color_range = c("#555555", "#000000"),
        vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
@@ -306,5 +306,14 @@ filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
        initial_layout = "re", layout = "da",
        overlap_avoidance = 0.4,
        output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--met_readmin100", output_format)),
-       maxiter = 100, fineiter = 100)
+       maxiter = 10, fineiter = 10)
 ```
+
+
+
+### Size differences
+
+```{r}
+
+```
+
