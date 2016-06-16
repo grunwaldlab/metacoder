@@ -754,10 +754,17 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make vertex legend -----------------------------------------------------------------------
   #|
-  y_range <- max(element_data$y) - min(element_data$y)
-  legend_length <- square_side_length * 0.3
-  right_plot_boundry <- max(element_data$x) * 1.1
   if (make_legend) {
+    legend_length <- square_side_length * 0.3 
+    
+  
+    y_in_legend_space <-  (!missing(vertex_size) & element_data$y <  min(element_data$y) + legend_length) | 
+      (!missing(edge_size) & element_data$y >  max(element_data$y) - legend_length)
+    legend_min_x <- max(element_data$x[y_in_legend_space])  # The furthest left allowed by graph components
+    legend_ideal_x <- max(element_data$x) - diff(range(data$vs_plot) * 2) # The ideal position of the legend
+    
+    # right_plot_boundry <- max(c(legend_min_x, legend_ideal_x))
+    right_plot_boundry <- legend_min_x + diff(range(element_data$y)) * 0.1 # needs to be changed; hackish
     vertex_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
                                     length = legend_length, 
@@ -809,7 +816,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     }
   }
   label_y_bounds <- function(y, size, label) {
-    spread <- size / 2 * 1.1
+    spread <- size * 1.1 #hackish
     c(y + spread, y - spread)
   }
   
@@ -828,16 +835,16 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (! is.null(title)) {
-    max_label_size <- ifelse(is.null(text_data), 0, max(text_data$size))
+    title_size <- diff(x_range) * title_size
     text_data <- rbind(text_data,
                        data.frame(stringsAsFactors = FALSE, 
                                   label = title,
                                   x = mean(x_range),
-                                  y = max(element_data$y) * 1.05 + diff(x_range) * title_size + max_label_size,
-                                  size = diff(x_range) * title_size,
+                                  y = max(y_range) + title_size * 0.5,
+                                  size = title_size,
                                   color = "#000000",
                                   rotation = 0,
-                                  justification = "center"))
+                                  justification = "center-bottom"))
   }
   #| ### Draw plot ================================================================================
   label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label", "justification")],

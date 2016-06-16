@@ -291,7 +291,7 @@ filter_taxa(data, ! name %in% c("X", "NA", "root")) %>%
 #### Metazoa
 
 ```{r}
-set.seed(1) #1
+set.seed(2) 
 filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
   remove_redundant_names("name") %>%
   filter_taxa(! name %in% c("X", "XX", "XXX", "X+sp.", "NA", "root", "*", "sp.", "sp")) %>%
@@ -304,7 +304,7 @@ filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
        title_size = 0.03,
        vertex_color_axis_label = "Mean OTU identity to reference",
        vertex_size_axis_label = "OTU count",
-       vertex_size_range = c(.005, NA),
+       vertex_size_range = c(.004, NA),
        vertex_size = item_counts,
        vertex_label = name,
        vertex_color = mean_pid,
@@ -313,9 +313,14 @@ filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
        vertex_color_interval = c(70, 100),
        edge_color_interval = c(70, 100),
        vertex_size_trans = "area",
-       vertex_label_max = 500,
+       vertex_label_color_range = c("#555555", "#000000"),
+       vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
+       vertex_label_color_trans = "area",
+       vertex_label_size = (item_counts ^ 0.5) / taxon_ranks,
+       vertex_label_size_trans = "area",
+       vertex_label_max = 1000,
        initial_layout = "re", layout = "da",
-       overlap_avoidance = 0.5,
+       overlap_avoidance = 0.4,
        output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--met_readmin100", output_format)),
-       maxiter = 50, fineiter = 50)
+       maxiter = 100, fineiter = 100)
 ```
