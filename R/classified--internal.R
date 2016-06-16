@@ -46,18 +46,24 @@ format_taxon_subset <- function(obj, index) {
 #' @param obj a \code{classified} object
 #' @param name_col (\code{character} of length 1)
 #' The name of a column in \code{obj$taxon_data}
+#' @param all_supertaxa (\code{logical} of length 1) If \code{TRUE}, check all supertaxa for redundant names instead of just the one immediate supertaxa.
 #' 
 #' @return \code{character} 
 #' 
 #' @export
-remove_redundant_names <- function(obj, name_col) {
-  my_supertaxa <- supertaxa(obj, recursive = FALSE, include_input = TRUE, simplify = FALSE, index = TRUE, na = FALSE)
+remove_redundant_names <- function(obj, name_col, all_supertaxa = TRUE) {
+  my_supertaxa <- supertaxa(obj, recursive = all_supertaxa, include_input = TRUE, simplify = FALSE, index = TRUE, na = FALSE)
   has_parent <- vapply(my_supertaxa, length, numeric(1)) > 1
+  
+  make_pattern <- function(x) {
+    paste0("^", paste0(collapse = "|", paste0(obj$taxon_data[[name_col]][x[-1]], "[_ ]+")))
+  }
+  
   obj$taxon_data[has_parent, name_col] <- vapply(my_supertaxa[has_parent], 
-                                       function(x) gsub(obj$taxon_data[[name_col]][x[1]],
-                                                        pattern = paste0("^", obj$taxon_data[[name_col]][x[2]], "[_ ]+"),
-                                                        replacement = ""),
-                                       character(1))
+                                                 function(x) gsub(obj$taxon_data[[name_col]][x[1]],
+                                                                  pattern = make_pattern(x),
+                                                                  replacement = ""),
+                                                 character(1))
   return(obj)
 }
 

@@ -4,13 +4,15 @@
 \alias{remove_redundant_names}
 \title{Remove the redundant taxon names}
 \usage{
-remove_redundant_names(obj, name_col)
+remove_redundant_names(obj, name_col, all_supertaxa = TRUE)
 }
 \arguments{
 \item{obj}{a \code{classified} object}
 
 \item{name_col}{(\code{character} of length 1)
 The name of a column in \code{obj$taxon_data}}
+
+\item{all_supertaxa}{(\code{logical} of length 1) If \code{TRUE}, check all supertaxa for redundant names instead of just the one immediate supertaxa.}
 }
 \value{
 \code{character}
