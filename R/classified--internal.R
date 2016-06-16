@@ -56,7 +56,7 @@ remove_redundant_names <- function(obj, name_col, all_supertaxa = TRUE) {
   has_parent <- vapply(my_supertaxa, length, numeric(1)) > 1
   
   make_pattern <- function(x) {
-    paste0("^", paste0(collapse = "|", paste0(obj$taxon_data[[name_col]][x[-1]], "[_ ]+")))
+    paste0("^", paste0(collapse = "|", paste0(obj$taxon_data[[name_col]][x[-1]], "[_ +-]+")))
   }
   
   obj$taxon_data[has_parent, name_col] <- vapply(my_supertaxa[has_parent], 
