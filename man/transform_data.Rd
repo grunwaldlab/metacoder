@@ -4,12 +4,14 @@
 \alias{transform_data}
 \title{Transformation functions}
 \usage{
-transform_data(func = NULL, data = NULL)
+transform_data(func = NULL, data = NULL, inverse = FALSE)
 }
 \arguments{
 \item{func}{(\code{character}) Name of transformation to apply.}
 
 \item{data}{(\code{numeric}) Data to transform}
+
+\item{inverse}{(\code{logical} of length 1) If \code{TRUE}, return the inverse of the selected function.}
 }
 \description{
 Functions used by plotting funtions to transform data.

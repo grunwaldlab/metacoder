@@ -109,12 +109,12 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   
   # Text output ====================================================================================
   format_label <- function(n) {
-    as.character(signif(n, digits = 3))
+    as.character(format(signif(n, digits = 3), scientific = FALSE))
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
     pre_scaled <- points#scales::rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
-    trans_points <- inverse(my_trans, interval = my_range)(pre_scaled)
+    trans_points <- my_trans(pre_scaled)
     format_label(scales::rescale(trans_points, to = my_range))
   }
   

@@ -42,7 +42,7 @@ unpacked_file_paths <- unzip(local_file_path, list = TRUE)
 unzip(local_file_path, exdir = temp_dir_path)
 # Identify the Mothur RDP training set
 unpacked_file_path <- file.path(temp_dir_path, 
-                                  unpacked_file_paths[grepl("tsv$", unpacked_file_paths)])
+                                unpacked_file_paths[grepl("tsv$", unpacked_file_paths)])
 ```
 
 The file can then be parsed using the `ape` package and the taxonomy data in the headers can be extracted by `extract_taxonomy`:
@@ -90,11 +90,11 @@ data <- mutate_taxa(data,
 
  
 ```{r}
-seed = 15 #9, 10, 12 is good
+seed = 9 #9, 10, 12 is good
 set.seed(seed)
 taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp", "Uncultured"), "$")
 taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-background_color <- "lightblue"
+background_color <- "#ccfff7"
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(total_taxon_counts >= 100) %>%
@@ -106,10 +106,10 @@ data %>%
        vertex_color_axis_label = "Number of reads",
        vertex_size_axis_label = "Number of species (OTUs)",
        vertex_size = item_counts,
-       vertex_size_range = c(0.0015, NA),
+       vertex_size_range = c(0.0012, NA),
        vertex_color = total_taxon_counts,
-       vertex_color_range = c("white", "#018571", "#80cdc1", "#dfc27d", "#a6611a", "#a6611a", "#a6611a"),
-       vertex_color_trans = "area",
+       vertex_color_range = c("grey", "#80cdc1", "#018571", "#dfc27d", "#a6611a", "#a6611a"),
+       vertex_color_trans = "log10 radius",
        # vertex_color_interval = c(0, 1),
        vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)) &
@@ -119,16 +119,16 @@ data %>%
        vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
        vertex_label_color_trans = "area",
        vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.0006, NA),
+       vertex_label_size_trans = "log10 radius",
+       vertex_label_size_range = c(0.0008, NA),
        tree_label = name,
-       tree_label_color = "#ccfff3",
+       tree_label_color = "#00806c",
        vertex_label_max = 1000,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
        overlap_avoidance = .65,
        background_color = background_color,
-       maxiter = 20, fineiter = 20,
+       maxiter = 50, fineiter = 50,
        output_file = file.path(output_folder, paste0("tara_oceans--read_count_all_seed", seed,  output_format)))# 
 ```
 

@@ -114,9 +114,10 @@ check_element_length <- function(args) {
 #' 
 #' @param data (\code{numeric}) Data to transform
 #' @param func (\code{character}) Name of transformation to apply.
+#' @param inverse (\code{logical} of length 1) If \code{TRUE}, return the inverse of the selected function.
 #' 
 #' @keywords internal
-transform_data <- function(func = NULL, data = NULL) {
+transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
   sign <- function(x) {
     ifelse(x < 0, -1, 1)
   }
@@ -130,12 +131,30 @@ transform_data <- function(func = NULL, data = NULL) {
                 "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
                 "ln area" =  function(x) {log((x/pi)^(1/2))})
   
+  inverse_funcs <- list("radius" = function(x) {x},
+                        "area" = function(x) {pi * (abs(x) ^ 2)},
+                        "log10 radius" = function(x) {10 ^ x},
+                        "log2 radius" = function(x) {2 ^ x},
+                        "ln radius" = function(x) {exp(1) ^ x},
+                        "log10 area" = function(x) {pi * (abs(10 ^ x) ^ 2)},
+                        "log2 area" = function(x) {pi * (abs(2 ^ x) ^ 2)},
+                        "ln area" =  function(x) {pi * (abs(exp(1) ^ x) ^ 2)})
+  
+   
   if (is.null(data) & is.null(func)) {
     return(names(funcs))
-  } else if (is.null(data)) {
-    return(funcs[[func]])
+  }
+  
+  if (inverse) {
+    returned_funcs <- inverse_funcs
+  } else {
+    returned_funcs <- funcs
+  }
+  
+  if (is.null(data)) {
+    return(returned_funcs[[func]])
   } else if (is.numeric(data)) {
-    return(vapply(X = data, FUN = funcs[[func]], FUN.VALUE = numeric(1)))
+    return(vapply(X = data, FUN = returned_funcs[[func]], FUN.VALUE = numeric(1)))
   } else {
     return(data)
   }
