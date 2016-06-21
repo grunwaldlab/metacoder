@@ -133,6 +133,8 @@ data <- mutate_taxa(data, sur_taxon_prop = sur_taxon_counts / sur_total)
 data <- mutate_taxa(data, depth_prop_diff = dcm_taxon_prop - sur_taxon_prop)
 data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / total_taxon_counts)
 
+
+
 ```
 
 #### depth differntial eukaryotic plot
@@ -208,6 +210,9 @@ filter_taxa(data, ! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name)
 ```{r}
 data <- mutate_items(data, pid = as.numeric(pid))
 data <- mutate_taxa(data, mean_pid = vapply(items(data), function(x) mean(data$item_data$pid[x], na.rm = TRUE), numeric(1)))
+# Percentage of OTUs with less than 95% idententiy
+data <- mutate_taxa(data, percent_known = vapply(items(data), function(x) sum(data$item_data$pid[x] >= 90, na.rm = TRUE) / length(x) * 100, numeric(1)))
+
 ```
 
 ```{r}
@@ -285,17 +290,16 @@ set.seed(2)
 filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
   filter_taxa(! name %in% c("X", "XX", "XXX", "X+sp.", "NA", "root", "*", "sp.", "sp")) %>%
   filter_taxa(total_taxon_counts >= 100) %>%
-  plot(title_size = 0.03,
-       vertex_color_axis_label = "Mean OTU identity to reference",
+  plot(vertex_color_axis_label = "Percent of species known",
        vertex_size_axis_label = "OTU count",
        vertex_size_range = c(.004, NA),
        vertex_size = item_counts,
        vertex_label = name,
-       vertex_color = mean_pid,
-       vertex_color_range = c("darkred", "red", "orange", "yellow", "cyan", "blue"),
+       vertex_color = percent_known,
+       vertex_color_range = c("red", "orange", "yellow", "cyan", "blue"),
        vertex_color_trans = "radius",
-       vertex_color_interval = c(60, 97),
-       edge_color_interval = c(60, 97),
+       vertex_color_interval = c(0, 100),
+       edge_color_interval = c(0, 100),
        vertex_size_trans = "area",
        vertex_label_color_range = c("#555555", "#000000"),
        vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
