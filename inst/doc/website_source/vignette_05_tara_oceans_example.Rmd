@@ -72,20 +72,64 @@ sample_data <- readxl::read_excel(local_file_path)
 ```
 
 
+### Caluculate read depths
+
+```{r}
+sample_columns <- sample_data[["PANGAEA ACCESSION NUMBER"]]
+data <- mutate_items(data,
+                     total_counts = apply(data$item_data[, sample_columns], MARGIN = 1,
+                                          function(x) sum(as.numeric(x))))
+data <- mutate_taxa(data,
+                    total_taxon_counts = vapply(items(data),
+                                                function(x) sum(data$item_data$total_counts[x]), numeric(1)))
+```
+
+
+
 ### Plot all data
 
  
 ```{r}
-filter_taxa(data, !(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
-plot(title = "Tara Oceans overall OTU counts",
-     title_size = 0.03,
-     vertex_color_axis_label = "OTU count",
-     vertex_size = item_counts,
-     vertex_label = name,
-     vertex_color = item_counts,
-     tree_label = name,
-     vertex_label_max = 100,
-     initial_layout = "re", layout = "da")
+seed = 15 #9, 10, 12 is good
+set.seed(seed)
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp", "Uncultured"), "$")
+taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+background_color <- "lightblue"
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(total_taxon_counts >= 100) %>%
+  # filter_taxa(item_counts >= 10) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  # filter_taxa(taxon_ranks >= 2) %>%
+  plot(title = "Eukaryotic plankton diversity in the sunlit ocean",
+       title_size = 0.03,
+       vertex_color_axis_label = "Number of reads",
+       vertex_size_axis_label = "Number of species (OTUs)",
+       vertex_size = item_counts,
+       vertex_size_range = c(0.0015, NA),
+       vertex_color = total_taxon_counts,
+       vertex_color_range = c("white", "#018571", "#80cdc1", "#dfc27d", "#a6611a", "#a6611a", "#a6611a"),
+       vertex_color_trans = "area",
+       # vertex_color_interval = c(0, 1),
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)) &
+                               total_taxon_counts > 10000,
+                             name, NA),
+       vertex_label_color_range = c("#888888", "#222222"),
+       vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
+       vertex_label_color_trans = "area",
+       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
+       vertex_label_size_trans = "area",
+       vertex_label_size_range = c(0.0006, NA),
+       tree_label = name,
+       tree_label_color = "#ccfff3",
+       vertex_label_max = 1000,
+       tree_label_max = 100,
+       initial_layout = "re", layout = "da",
+       overlap_avoidance = .65,
+       background_color = background_color,
+       maxiter = 20, fineiter = 20,
+       output_file = file.path(output_folder, paste0("tara_oceans--read_count_all_seed", seed,  output_format)))# 
 ```
 
 
@@ -106,13 +150,6 @@ plot(title = "Tara Oceans Eukaryota OTU counts",
 
 
 ### Plot sampling depth differential
-
-```{r}
-sample_columns <- sample_data[["PANGAEA ACCESSION NUMBER"]]
-data <- mutate_items(data, total_counts = apply(data$item_data[, sample_columns], MARGIN = 1, function(x) sum(as.numeric(x))))
-data <- mutate_taxa(data, total_taxon_counts = vapply(items(data), function(x) sum(data$item_data$total_counts[x]), numeric(1)))
-```
-
 
 ```{r}
 sur_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "SUR"]
