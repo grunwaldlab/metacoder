@@ -26,10 +26,10 @@
 #' @param hide_color (\code{logical} of length 1) If \code{TRUE} hide color axis
 #' @param axis_label_size (\code{numeric} of length 1) 
 #' @keywords internal 
-make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_prefix,
+make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL, width_stat_range, group_prefix,
                              tick_size = .007, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
-                             color_range, color_stat_range, color_stat_trans = function(x) {x},
+                             color_range, color_trans_range = NULL, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
                              divisions = 100, label_count = 9, title = NULL, label_size = 0.04,
                              title_size = 0.05, axis_label_size = 0.05,
@@ -139,7 +139,7 @@ make_plot_legend <- function(x, y, length, width_range, width_stat_range, group_
   if (!hide_color) {
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(label_point_y, color_stat_range, color_stat_trans),
+                                   label = scale_undo_trans(scales::rescale(label_point_y, to = color_trans_range), color_stat_range, color_stat_trans),
                                    x = 0 - max(width_range) * 0.1,
                                    y = rev(label_point_y),
                                    size = label_size,

@@ -4,14 +4,15 @@
 \alias{make_plot_legend}
 \title{Make color/size legend}
 \usage{
-make_plot_legend(x, y, length, width_range, width_stat_range, group_prefix,
-  tick_size = 0.007, width_stat_trans = function(x) {     x },
-  width_title = "Size", width_sig_fig = 3, color_range, color_stat_range,
-  color_stat_trans = function(x) {     x }, color_title = "Color",
-  color_sig_fig = 3, divisions = 100, label_count = 9, title = NULL,
-  label_size = 0.04, title_size = 0.05, axis_label_size = 0.05,
-  color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
-  hide_color = FALSE)
+make_plot_legend(x, y, length, width_range, width_trans_range = NULL,
+  width_stat_range, group_prefix, tick_size = 0.007,
+  width_stat_trans = function(x) {     x }, width_title = "Size",
+  width_sig_fig = 3, color_range, color_trans_range = NULL,
+  color_stat_range, color_stat_trans = function(x) {     x },
+  color_title = "Color", color_sig_fig = 3, divisions = 100,
+  label_count = 9, title = NULL, label_size = 0.04, title_size = 0.05,
+  axis_label_size = 0.05, color_axis_label = NULL, size_axis_label = NULL,
+  hide_size = FALSE, hide_color = FALSE)
 }
 \arguments{
 \item{x}{bottom left}
