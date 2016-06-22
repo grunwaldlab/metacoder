@@ -75,3 +75,11 @@ map_unique <- function(input, func, ...) {
 DNAbin_to_char <- function(dna_bin) {
   vapply(as.character(dna_bin), paste, character(1), collapse="")
 }
+
+
+#' magrittr forward-pipe operator
+#' @name %>%
+#' @importFrom magrittr %>%
+#' @export
+#' @keywords internal
+NULL

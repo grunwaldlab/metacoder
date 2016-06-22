@@ -223,17 +223,12 @@ extract_taxonomy.default <- function(input,
                                                              stringsAsFactors = FALSE)))
   }
   
-  # Convert columns to numeric if appropriate
-  convert_numeric <- function(colname) {
-    data <- unlist(taxonomy$taxon_data[colname])
-    if (all(! is.na(suppressWarnings(as.numeric(data))))) {
-      data <- as.numeric(data)
-    }
-    taxonomy$taxon_data[, colname] <<- data
-  }
-  cols_to_convert <- colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "parent_ids")]
-  unused_result <- lapply(cols_to_convert, convert_numeric)
-                                           
+  # Convert columns to numeric is appropriate
+  taxonomy$taxon_data <- convert_numeric_cols(taxonomy$taxon_data,
+                                              colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "parent_ids")])
+  taxonomy$item_data <- convert_numeric_cols(taxonomy$item_data,
+                                              colnames(taxonomy$item_data)[! colnames(taxonomy$item_data) %in% c("item_taxon_ids")])
+  
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
   colnames(taxonomy$item_data) <- rename_duplicated(colnames(taxonomy$item_data))

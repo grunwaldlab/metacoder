@@ -266,3 +266,33 @@ rename_duplicated <- function(my_names, replace_auto = TRUE) {
   }
   return(my_names)
 }
+
+
+
+
+
+
+#' Convert columns to numeric if appropriate
+#' 
+#' Converts columns in a \code{data.frame} to numeric is they can be converted without producing \code{NA}s.
+#' 
+#' @param table (\code{data.frame})
+#' @param columns (\code{character} or \code{numeric}) A subset of columns to attempt to convert.
+#' 
+#' @return \code{data.frame}
+#' 
+#' @keywords internal
+convert_numeric_cols <- function(table, columns = colnames(table)) {
+  
+  try_to_make_numeric <- function(values) {
+    converted <- suppressWarnings(as.numeric(values))
+    if (all(! is.na(converted))) {
+      return(converted)
+    } else {
+      return(values)
+    }
+  }
+
+  table[columns] <- lapply(table[columns], try_to_make_numeric)
+  return(table)
+}

@@ -5,7 +5,6 @@ output: html_document
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
-library(ggplot2)
 source("knitr_settings.R")
 ```
 
@@ -17,12 +16,14 @@ output_folder <- "tara_oceans_results"
 output_format <- ".pdf"
 ```
 
+### Create output directory
+
 ```{r}
 dir.create(output_folder, showWarnings = FALSE)
 ```
 
 
-### Extracting taxonomic data
+### Parsing taxonomic data
 
 The code below downloads the compressed data to a temporary directory:
 
@@ -45,19 +46,11 @@ unpacked_file_path <- file.path(temp_dir_path,
                                 unpacked_file_paths[grepl("tsv$", unpacked_file_paths)])
 ```
 
-The file can then be parsed using the `ape` package and the taxonomy data in the headers can be extracted by `extract_taxonomy`:
-
 ```{r, warning=FALSE, message=FALSE}
 # Load the package
 library(metacoder)
-library(magrittr)
 # Extract the taxonomic information of the sequences
 data <- parse_taxonomy_table(unpacked_file_path, taxon_col = c("class" = -9), class_sep = "\\|")
-```
-
-
-```{r}
-taxon_data(data, row_subset = 1:10)
 ```
 
 
@@ -72,289 +65,234 @@ sample_data <- readxl::read_excel(local_file_path)
 ```
 
 
-### Caluculate read depths
+### Caluculate read abundance per taxon
 
 ```{r}
 sample_columns <- sample_data[["PANGAEA ACCESSION NUMBER"]]
-data <- mutate_items(data,
-                     total_counts = apply(data$item_data[, sample_columns], MARGIN = 1,
-                                          function(x) sum(as.numeric(x))))
 data <- mutate_taxa(data,
-                    total_taxon_counts = vapply(items(data),
-                                                function(x) sum(data$item_data$total_counts[x]), numeric(1)))
+                    read_counts = vapply(items(data),
+                                         function(x) sum(data$item_data$totab[x]), numeric(1)))
 ```
 
 
+### Plot read and OTU abundance
 
-### Plot all data
-
- 
 ```{r}
 seed = 9 #9, 10, 12 is good
 set.seed(seed)
-taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp", "Uncultured"), "$")
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
 taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
 background_color <- "#ccfff7"
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
-  filter_taxa(total_taxon_counts >= 100) %>%
-  # filter_taxa(item_counts >= 10) %>%
+  filter_taxa(read_counts >= 100) %>%
   filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
-  # filter_taxa(taxon_ranks >= 2) %>%
-  plot(title = "Eukaryotic plankton diversity in the sunlit ocean",
+  plot(title = "Plankton diversity in the sunlit ocean",
        title_size = 0.03,
        vertex_color_axis_label = "Number of reads (Abundance)",
        vertex_size_axis_label = "Number of species (OTUs)",
        vertex_size = item_counts,
        vertex_size_range = c(0.0012, NA),
-       vertex_color = total_taxon_counts,
+       vertex_color = read_counts,
        vertex_color_range = c("grey", "#80cdc1", "#018571", "#dfc27d", "#a6611a"),
        vertex_color_trans = "log10 radius",
-       # vertex_color_interval = c(0, 1),
        vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)) &
-                               total_taxon_counts > 10000,
+                               read_counts > 10000,
                              name, NA),
        vertex_label_color = "#000000",
        vertex_label_color_trans = "area",
        vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
        vertex_label_size_trans = "area",
        vertex_label_size_range = c(0.001, NA),
+       vertex_label_max = 1000,
        tree_label = name,
        tree_label_color = "#00806c",
-       vertex_label_max = 1000,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
        overlap_avoidance = .65,
        background_color = background_color,
        maxiter = 50, fineiter = 50,
        margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("tara_oceans--read_count_all_seed", seed,  output_format)))# 
+       output_file = file.path(output_folder, paste0("sup_figure_1--tara_all_plankton_diversity--seed_", seed,  output_format)))
 ```
 
 
+### Sampling depth differential
 
-### subset Eukaryota
-
-```{r}
-filter_taxa(data, name == "Eukaryota", subtaxa = TRUE) %>%
-plot(title = "Tara Oceans Eukaryota OTU counts",
-     title_size = 0.03,
-     vertex_color_axis_label = "OTU count",
-     vertex_size = item_counts,
-     vertex_label = name,
-     vertex_color = item_counts,
-     vertex_label_max = 400)
-
-```
-
-
-### Plot sampling depth differential
+#### Calculate depth read counts
 
 ```{r}
 sur_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "SUR"]
 dcm_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "DCM"]
 
-data <- mutate_items(data, sur_counts = apply(data$item_data[, sur_columms], MARGIN = 1, function(x) sum(as.numeric(x))))
-data <- mutate_items(data, dcm_counts = apply(data$item_data[, dcm_columms], MARGIN = 1, function(x) sum(as.numeric(x))))
+data <- mutate_items(data, sur_counts = apply(data$item_data[, sur_columms], MARGIN = 1,
+                                              function(x) sum(as.numeric(x))))
+data <- mutate_items(data, dcm_counts = apply(data$item_data[, dcm_columms], MARGIN = 1,
+                                              function(x) sum(as.numeric(x))))
 
-data <- mutate_taxa(data, sur_taxon_counts = vapply(items(data), function(x) sum(data$item_data$sur_counts[x]), numeric(1)))
-data <- mutate_taxa(data, dcm_taxon_counts = vapply(items(data), function(x) sum(data$item_data$dcm_counts[x]), numeric(1)))
+data <- mutate_taxa(data, sur_taxon_counts = vapply(items(data),
+                                                    function(x) sum(data$item_data$sur_counts[x]), numeric(1)))
+data <- mutate_taxa(data, dcm_taxon_counts = vapply(items(data),
+                                                    function(x) sum(data$item_data$dcm_counts[x]), numeric(1)))
 
-sur_total <- sum(data$taxon_data$sur_taxon_counts[taxon_ranks(data) == 1])
-dcm_total <- sum(data$taxon_data$dcm_taxon_counts[taxon_ranks(data) == 1])
-
-data <- mutate_taxa(data, dcm_taxon_prop = dcm_taxon_counts / dcm_total)
-data <- mutate_taxa(data, sur_taxon_prop = sur_taxon_counts / sur_total)
-
-data <- mutate_taxa(data, depth_prop_diff = dcm_taxon_prop - sur_taxon_prop)
-data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / total_taxon_counts)
+data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / read_counts)
+total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[taxon_ranks(data) == 1])
+total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[taxon_ranks(data) == 1])
+total_reads <- total_dcm_reads + total_sur_reads
 
 
-
+data <- mutate_taxa(data, depth_prop_diff = ((dcm_taxon_counts / total_dcm_reads) - (sur_taxon_counts / total_sur_reads)) / (read_counts / total_reads))
 ```
 
-#### depth differntial eukaryotic plot
+#### Plot proportion of reads in DCM 
 
 ```{r}
-set.seed(1)
-filter_taxa(data, name == "Eukaryota", subtaxa = TRUE) %>%
-  filter_taxa(! name %in% c("X", "XX", "XXX", "XXXX", "XXXXX", "X+sp.", "NA", "root", "*", "sp.", "sp")) %>%
-  filter_taxa(total_taxon_counts >= 100) %>%
-  filter_taxa(taxon_ranks <= 5) %>%
-  # filter_taxa(item_counts >= 10) %>%
-  plot(title = "Depth of Eukaryotes",
-       title_size = 0.03,
-       vertex_color_axis_label = "Proportion of reads in DCM",
-       vertex_size_axis_label = "Read count",
-       vertex_size = total_taxon_counts,
-       vertex_label = name,
-       vertex_color = depth_prop_dcm,
-       vertex_color_range = c("#a6611a", "white", "#018571"),
-       vertex_color_trans = "radius",
-       vertex_color_interval = c(0, 1),
-       vertex_label_max = 100,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "re",
-       overlap_avoidance = 1,
-       output_file = file.path(output_folder, paste0("tara_oceans--depth_diff-euk_rank5_minotu10", output_format)))
-```
-
-
-#### Ocean-themed depth differential plot
-
-```{r}
-  seed = 10 #9 is good
+seed = 9 #9, 10, 12 is good
 set.seed(seed)
-taxa_patterns_to_remove <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp", "Uncultured"), "$")
-background_color <- "lightblue"
-filter_taxa(data, ! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
-  filter_taxa(total_taxon_counts >= 50) %>%
-  # filter_taxa(item_counts >= 10) %>%
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(read_counts >= 100) %>%
   filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
-  # filter_taxa(taxon_ranks >= 2) %>%
-  plot(title = "TARA Oceans sampling depth",
+  plot(title = "Location of taxa in water column",
        title_size = 0.03,
-       vertex_color_axis_label = "Proportion of reads in DCM",
-       vertex_size_axis_label = "Read count",
-       vertex_size = total_taxon_counts,
-       vertex_size_range = c(0.001, NA),
+       vertex_color_axis_label = "DCM only        Both       Surface only",
+       vertex_size_axis_label = "Number of species (OTUs)",
+       vertex_size = item_counts,
+       vertex_size_range = c(0.0012, NA),
        vertex_color = depth_prop_dcm,
-       vertex_color_range = c("#a6611a", "white", "#018571"),
+       vertex_color_range = diverging_palette(),
        vertex_color_trans = "radius",
        vertex_color_interval = c(0, 1),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name), name, NA),
-       vertex_label_color_range = c("#888888", "#222222"),
-       vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
-       vertex_label_color_trans = "area",
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+                             name, NA),
        vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
        vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.0005, NA),
+       vertex_label_size_range = c(0.001, NA),
+       vertex_label_max = 1000,
        tree_label = name,
-       tree_label_color = "#ccfff3",
-       vertex_label_max = 700,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
-       overlap_avoidance = 0.8,
-       background_color = background_color,
-       output_file = file.path(output_folder, paste0("tara_oceans--depth_differential_ocean_theme_seed", seed,  output_format)),
-       maxiter = 50, fineiter = 50)
+       overlap_avoidance = .65,
+       maxiter = 50, fineiter = 50,
+       margin_size = c(0.001, 0.001),
+       output_file = file.path(output_folder, paste0("sup_figure_2--tara_proportion_in_dcm--seed_", seed,  output_format)))
 ```
 
 
-### Plotting percent identity
+```{r}
+seed = 9 #9, 10, 12 is good
+set.seed(seed)
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(read_counts >= 100) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  plot(title = "Location of taxa in water column",
+       title_size = 0.03,
+       vertex_color_axis_label = "DCM only        Both       Surface only",
+       vertex_size_axis_label = "Number of species (OTUs)",
+       vertex_size = item_counts,
+       vertex_size_range = c(0.0012, NA),
+       vertex_color = depth_prop_diff,
+       vertex_color_range = diverging_palette(),
+       vertex_color_trans = "radius",
+       vertex_color_interval = c(-2, 2),
+       edge_color_interval = c(-2, 2),
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+                             name, NA),
+       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
+       vertex_label_size_trans = "area",
+       vertex_label_size_range = c(0.001, NA),
+       vertex_label_max = 1000,
+       tree_label = name,
+       tree_label_max = 100,
+       initial_layout = "re", layout = "da",
+       overlap_avoidance = .65,
+       maxiter = 50, fineiter = 50,
+       margin_size = c(0.001, 0.001),
+       output_file = file.path(output_folder, paste0("sup_figure_2--tara_scaled_proportion_diff--seed_", seed,  output_format)))
+```
+
+### Plot propotion of OTUs identified 
 
 ```{r}
 data <- mutate_items(data, pid = as.numeric(pid))
-data <- mutate_taxa(data, mean_pid = vapply(items(data), function(x) mean(data$item_data$pid[x], na.rm = TRUE), numeric(1)))
-# Percentage of OTUs with less than 95% idententiy
-data <- mutate_taxa(data, percent_known = vapply(items(data), function(x) sum(data$item_data$pid[x] >= 90, na.rm = TRUE) / length(x) * 100, numeric(1)))
+data <- mutate_taxa(data, mean_pid = vapply(items(data),
+                                            function(x) mean(data$item_data$pid[x], na.rm = TRUE), numeric(1)))
+# Percentage of OTUs with less than 90% idententiy
+data <- mutate_taxa(data, percent_known = vapply(items(data),
+                                                 function(x) sum(data$item_data$pid[x] >= 90, na.rm = TRUE) / length(x) * 100, numeric(1)))
 
 ```
 
 ```{r}
-set.seed(1)
-filter_taxa(data, ! name %in% c("X", "NA", "root")) %>%
+seed = 1
+set.seed(seed)
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(read_counts >= 100) %>%
   filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
-  plot(title = "TARA OTU uncertainty",
+  plot(title = "Poportion of OTUs not well identified",
        title_size = 0.03,
-       vertex_color_axis_label = "Mean OTU identity to reference",
-       vertex_size_axis_label = "OTU count",
+       vertex_color_axis_label = "Percent of species (OTUs) identified",
+       vertex_size_axis_label = "Number of species (OTUs)",
        vertex_size = item_counts,
-       vertex_label = name,
-       vertex_color = mean_pid,
-       vertex_color_range = c("red", "orange", "yellow", "cyan"),
+       vertex_size_range = c(0.0012, NA),
+       vertex_color = percent_known,
+       vertex_color_range = c("red", "orange", "yellow", "green", "cyan"),
        vertex_color_trans = "radius",
+       vertex_color_interval = c(0, 100),
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+                             name, NA),
+       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
+       vertex_label_size_trans = "area",
+       vertex_label_size_range = c(0.001, NA),
+       vertex_label_max = 1000,
        tree_label = name,
-       vertex_label_max = 500,
        tree_label_max = 100,
-       initial_layout = "re", layout = "re",
-       overlap_avoidance = 1,
-       output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--all", output_format)))
+       initial_layout = "re", layout = "da",
+       overlap_avoidance = .65,
+       maxiter = 50, fineiter = 50,
+       margin_size = c(0.001, 0.001),
+       output_file = file.path(output_folder, paste0("sup_figure_3--tara_proportion_identified--seed_", seed,  output_format)))
 ```
-
-
-```{r}
-set.seed(1)
-filter_taxa(data, name == "Eukaryota", subtaxa = TRUE) %>%
-  filter_taxa(! name %in% c("X", "NA", "root")) %>%
-  filter_taxa(taxon_ranks <= 5) %>%
-  filter_taxa(item_counts >= 10) %>%
-  plot(title = "TARA Eukaryotic OTU uncertainty",
-       title_size = 0.03,
-       vertex_color_axis_label = "Mean OTU identity to reference",
-       vertex_size_axis_label = "OTU count",
-       vertex_size = item_counts,
-       vertex_label = name,
-       vertex_color = mean_pid,
-       vertex_color_range = c("red", "orange", "yellow", "cyan"),
-       vertex_color_trans = "radius",
-       vertex_label_max = 100,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "re",
-       overlap_avoidance = 1,
-       output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--euk_rank5_minotu10", output_format)))
-```
-
-
-```{r}
-set.seed(2)
-filter_taxa(data, ! name %in% c("X", "NA", "root")) %>%
-  filter_taxa(item_counts >= 10) %>%
-  filter_taxa(taxon_ranks <= 5) %>%
-  plot(title = "TARA OTU uncertainty",
-       title_size = 0.03,
-       vertex_color_axis_label = "Mean OTU identity to reference",
-       vertex_size_axis_label = "OTU count",
-       vertex_size = item_counts,
-       vertex_label = name,
-       vertex_color = mean_pid,
-       vertex_color_range = c("red", "orange", "yellow", "cyan"),
-       vertex_color_trans = "radius",
-       vertex_label_max = 200,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "re",
-       overlap_avoidance = 1,
-       tree_label = name,
-       output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--all_rank5_minotu10", output_format)))
-```
-
 
 #### Just Metazoa
 
 ```{r}
-set.seed(2) 
-filter_taxa(data, name == "Metazoa", subtaxa = TRUE) %>%
-  filter_taxa(! name %in% c("X", "XX", "XXX", "X+sp.", "NA", "root", "*", "sp.", "sp")) %>%
-  filter_taxa(total_taxon_counts >= 100) %>%
-  plot(vertex_color_axis_label = "Percent of species known",
-       vertex_size_axis_label = "OTU count",
-       vertex_size_range = c(.004, NA),
+seed = 1
+set.seed(seed)
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+taxa_patterns_to_remove <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(read_counts >= 100) %>%
+  filter_taxa(name == "Metazoa", subtaxa = TRUE) %>%
+  plot(vertex_color_axis_label = "Percent of OTUs identified",
+       vertex_size_axis_label = "Number of OTUs",
        vertex_size = item_counts,
-       vertex_label = name,
        vertex_color = percent_known,
-       vertex_color_range = c("red", "orange", "yellow", "cyan", "blue"),
+       vertex_color_range = c("red", "orange", "yellow", "green", "cyan"),
        vertex_color_trans = "radius",
        vertex_color_interval = c(0, 100),
-       edge_color_interval = c(0, 100),
-       vertex_size_trans = "area",
-       vertex_label_color_range = c("#555555", "#000000"),
-       vertex_label_color = (item_counts ^ 0.25) / taxon_ranks,
-       vertex_label_color_trans = "area",
-       vertex_label_size = (item_counts ^ 0.5) / taxon_ranks,
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+                             name, NA),
+       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
        vertex_label_size_trans = "area",
        vertex_label_max = 1000,
        initial_layout = "re", layout = "da",
-       overlap_avoidance = 0.4,
-       output_file = file.path(output_folder, paste0("tara_oceans--mean_pid--met_readmin100", output_format)),
-       maxiter = 10, fineiter = 10)
-```
-
-
-
-### Size differences
-
-```{r}
-
+       overlap_avoidance = .65,
+       maxiter = 50, fineiter = 50,
+       output_file = file.path(output_folder, paste0("figure_1--tara_proportion_identified_metazoa--seed_", seed,  output_format)))
 ```
 
