@@ -142,7 +142,16 @@ total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[taxon_ranks(data) == 1])
 total_reads <- total_dcm_reads + total_sur_reads
 
 
+prop_diff_test_stat <- function(prop_1, prop_2, prop_total, count_1, count_2) {
+  (prop_1 - prop_2) / sqrt(prop_total * (1 - prop_total) * (1 / count_1 + 1 / count_2))
+}
+
 data <- mutate_taxa(data, depth_prop_diff = ((dcm_taxon_counts / total_dcm_reads) - (sur_taxon_counts / total_sur_reads)) / (read_counts / total_reads))
+data <- mutate_taxa(data, depth_diff_test_stat = prop_diff_test_stat(prop_1 = dcm_taxon_counts / total_dcm_reads,
+                                                                     prop_2 = sur_taxon_counts / total_sur_reads,
+                                                                     prop_total = read_counts / total_reads,
+                                                                     count_1 = total_dcm_reads,
+                                                                     count_2 = total_sur_reads))
 ```
 
 #### Plot proportion of reads in DCM 
@@ -218,6 +227,46 @@ data %>%
        margin_size = c(0.001, 0.001),
        output_file = file.path(output_folder, paste0("sup_figure_2--tara_scaled_proportion_diff--seed_", seed,  output_format)))
 ```
+
+```{r}
+seed = 9 #9, 10, 12 is good
+set.seed(seed)
+taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
+data %>%
+  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
+  filter_taxa(read_counts >= 100) %>%
+  filter_taxa(name == "Metazoa", subtaxa = TRUE) %>%
+  # filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  plot(title = "Location of taxa in water column",
+       title_size = 0.03,
+       vertex_color_axis_label = "DCM only        Both       Surface only",
+       vertex_size_axis_label = "Number of species (OTUs)",
+       vertex_size = item_counts,
+       vertex_size_range = c(0.0012, NA),
+       vertex_color = depth_diff_test_stat,
+       vertex_color_range = diverging_palette(),
+       vertex_color_trans = "area",
+       vertex_color_interval = c(-1000, 1000),
+       edge_color_interval = c(-1000, 1000),
+#        vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+#                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+#                              name, NA),
+       vertex_label = depth_diff_test_stat,
+       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
+       vertex_label_size_trans = "area",
+       vertex_label_size_range = c(0.001, NA),
+       vertex_label_max = 1000,
+       tree_label = name,
+       tree_label_max = 100,
+       initial_layout = "re", layout = "da",
+       overlap_avoidance = .65,
+       maxiter = 10, fineiter = 10,
+       margin_size = c(0.001, 0.001),
+       output_file = file.path(output_folder, paste0("sup_figure_2--tara_depth_test_stat--seed_", seed,  output_format)))
+```
+
+
 
 ### Plot propotion of OTUs identified 
 

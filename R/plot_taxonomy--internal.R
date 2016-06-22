@@ -132,7 +132,7 @@ transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
                 "ln area" =  function(x) {log((x/pi)^(1/2))})
   
   inverse_funcs <- list("radius" = function(x) {x},
-                        "area" = function(x) {pi * (abs(x) ^ 2)},
+                        "area" = function(x) {sign(x) * pi * (x ^ 2)},
                         "log10 radius" = function(x) {10 ^ x},
                         "log2 radius" = function(x) {2 ^ x},
                         "ln radius" = function(x) {exp(1) ^ x},

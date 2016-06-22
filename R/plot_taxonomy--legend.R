@@ -113,9 +113,9 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
-    pre_scaled <- points#scales::rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
+    pre_scaled <- points#rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
     trans_points <- my_trans(pre_scaled)
-    format_label(scales::rescale(trans_points, to = my_range))
+    format_label(rescale(trans_points, to = my_range))
   }
   
   label_color = "#000000"
@@ -139,7 +139,7 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   if (!hide_color) {
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(scales::rescale(label_point_y, to = color_trans_range), color_stat_range, color_stat_trans),
+                                   label = scale_undo_trans(rescale(label_point_y, to = color_trans_range), color_stat_range, color_stat_trans),
                                    x = 0 - max(width_range) * 0.1,
                                    y = rev(label_point_y),
                                    size = label_size,
