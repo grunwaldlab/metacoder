@@ -482,8 +482,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
     # Calculate an initial layout if specified
     if (! is.null(initial_layout) && layout != initial_layout) {
       intitial_coords <- layout_functions(initial_layout, graph)
-      intitial_coords <- rescale(intitial_coords, to = ((nrow(intitial_coords) ^ 0.65) + 5) * c(-1, 1))
-      # intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
+        if (! any(is.na(intitial_coords) | is.nan(unlist(intitial_coords)))) {
+          intitial_coords <- rescale(intitial_coords, to = ((nrow(intitial_coords) ^ 0.65) + 5) * c(-1, 1))
+          # intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
+        }
     } else {
       intitial_coords <- NULL
     }

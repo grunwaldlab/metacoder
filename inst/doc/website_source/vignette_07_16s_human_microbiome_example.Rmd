@@ -1,0 +1,48 @@
+---
+title: "Human microbiome example"
+output: html_document
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitr)
+source("knitr_settings.R")
+```
+
+
+### Analyses parameters
+
+```{r}
+output_folder <- "human_microbiome_results"
+output_format <- ".pdf"
+```
+
+### Create output directory
+
+```{r}
+dir.create(output_folder, showWarnings = FALSE)
+```
+
+
+### Parsing taxonomic data
+
+The code below downloads a compressed archive and uncompresses it:
+
+```{r}
+download_and_extract <- function(url, file_name) {
+  temp_dir_path <- tempdir()
+  local_file_path <- file.path(temp_dir_path, basename(url))
+  download.file(url = url, destfile = local_file_path, quiet = TRUE)
+  unzipped_path <- R.utils::gunzip(local_file_path, overwrite = TRUE)
+  unzipped_path[1]
+}
+```
+
+```{r, warning=FALSE, message=FALSE}
+library(metacoder)
+v35_otu_file <- download_and_extract("http://downloads.hmpdacc.org/data/HMQCP/otu_table_psn_v35.txt.gz",
+                                     "otu_table_psn_v35.txt")
+v35_otu <- parse_taxonomy_table(v35_otu_file, taxon_col = c("class" = -1), max_lines = 20,
+                                class_regex = "^(.*)?_?_?(.*)$",
+                                class_key = c(unite_rank = "taxon_info", "name"),
+                                class_sep = ";")
+```

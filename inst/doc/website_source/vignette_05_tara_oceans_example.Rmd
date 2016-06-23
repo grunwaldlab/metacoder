@@ -236,8 +236,7 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(name == "Metazoa", subtaxa = TRUE) %>%
-  # filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
        vertex_color_axis_label = "DCM only        Both       Surface only",
@@ -249,10 +248,9 @@ data %>%
        vertex_color_trans = "area",
        vertex_color_interval = c(-1000, 1000),
        edge_color_interval = c(-1000, 1000),
-#        vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
-#                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
-#                              name, NA),
-       vertex_label = depth_diff_test_stat,
+       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
+                             name, NA),
        vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
        vertex_label_size_trans = "area",
        vertex_label_size_range = c(0.001, NA),

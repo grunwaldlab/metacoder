@@ -5,7 +5,8 @@
 \title{Parse taxonomic data in a tsv/csv file}
 \usage{
 parse_taxonomy_table(file_path, taxon_col, other_col_type = "item_info",
-  header = TRUE, sep = "\\t", max_lines = NULL, ...)
+  header = TRUE, sep = "\\t", max_lines = NULL, comment_prefix = "#",
+  ...)
 }
 \arguments{
 \item{file_path}{(\code{character} of length 1)
@@ -38,6 +39,8 @@ Can be a regular expression.}
 
 \item{max_lines}{(\code{integer} of length 1)
 The maximum number of lines to read from the file.}
+
+\item{comment_prefix}{(\code{character}) One or more characters that appear at the start of a line indicating that the line is a comment and not part of the data.}
 
 \item{...}{Passed to \code{\link{extract_taxonomy}}.}
 }

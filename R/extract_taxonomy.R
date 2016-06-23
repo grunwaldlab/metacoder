@@ -305,13 +305,15 @@ extract_taxonomy.list <- function(input, ...) {
 #' Can be a regular expression.
 #' @param max_lines (\code{integer} of length 1)
 #' The maximum number of lines to read from the file.
+#' @param comment_prefix (\code{character}) One or more characters that appear at the start of a line indicating that the line is a comment and not part of the data.
 #' @param ...
 #' Passed to \code{\link{extract_taxonomy}}. 
 #' 
 #' @return \code{\link{classified}}
 #' 
 #' @export
-parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = NULL, ...) {
+parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = NULL,
+                                 comment_prefix = "#", ...) {
   
   # Validate input
   if (length(file_path) > 1) {
@@ -328,6 +330,10 @@ parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_in
   } else {
     content <- readLines(file_path, n = max_lines + header)
   }
+  
+  # Remove comment lines
+  content <- content[! grepl(pattern = paste0("^", comment_prefix), content)]
+  
   
   first_line <- strsplit(content[[1]], split = sep)[[1]]
   
