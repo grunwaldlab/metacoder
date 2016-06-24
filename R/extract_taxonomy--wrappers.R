@@ -38,21 +38,30 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
                                class_key = c(rank = "taxon_info", "name"),
                                class_sep = ";")
   # Add OTU counts to item data
-  otu_data$item_data <- dplyr::bind_cols(otu_data$item_data, otu_raw[ , -ncol(otu_raw)])
-  # Convert to long format
-  gather_one <- function(index) {
-    part <- tidyr::gather(otu_data$item_data[index, ], key = sample_id, value = abundance, 3:ncol(otu_data$item_data[index, ]))
-    part[part$abundance >= min_abundance, ] 
-  }
+  otu_data$item_data <- dplyr::bind_cols(otu_data$item_data, convert_numeric_cols(otu_raw[ , -ncol(otu_raw)]))
+  # # Convert to long format
+  # gather_one <- function(index) {
+  #   part <- tidyr::gather(otu_data$item_data[index, ], key = sample_id, value = abundance, 3:ncol(otu_data$item_data[index, ]))
+  #   part[part$abundance >= min_abundance, ] 
+  # }
+  # 
+  # # otu_data$item_data <- dplyr::bind_rows(lapply(1:nrow(otu_data$item_data[1:10, ]), gather_one))
+  # 
+  # 
+  # 
+  # # Add taxon column generators
+  # taxon_abundance <- function(obj, subset = 1:nrow(obj$taxon_data)) {
+  #   vapply(items(obj, subset = subset, recursive = TRUE, simplify = FALSE, index = TRUE), FUN.VALUE = numeric(1), 
+  #          function(x) sum(obj$item_data[x, ]))
+  # }
+  # otu_data$taxon_funcs <- c(otu_data$taxon_funcs, list(taxon_abundance = taxon_abundance))
   
-  otu_data$item_data <- dplyr::bind_rows(lapply(1:nrow(otu_data$item_data[1:10, ]), gather_one))
   
-  # Add taxon column generators
-  taxon_abundance <- function(obj, subset = 1:nrow(obj$taxon_data)) {
-    vapply(items(obj, subset = subset, recursive = TRUE, simplify = FALSE, index = TRUE), FUN.VALUE = numeric(1), 
-           function(x) sum(obj$taxon_data$abundance[x]))
-  }
-  otu_data$taxon_funcs <- c(otu_data$taxon_funcs, list(taxon_abundance = taxon_abundance))
+  # Parse mapping table 
+  mapping_data <- read.table(mapping_file, header = TRUE, comment.char = "",
+                             stringsAsFactors = FALSE, sep = "\t")[1:7]
+  colnames(mapping_data) <- c("sample_id", "rsid", "visit_no", "sex", "run_center", "body_site", "description")
+  otu_data$mapping <- dplyr::tbl_df(mapping_data)
   
   return(otu_data)
 }

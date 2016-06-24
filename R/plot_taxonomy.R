@@ -325,7 +325,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
                           vertex_color_interval = NULL,
                           edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
-                          edge_color_interval = NULL,
+                          edge_color_interval = vertex_color_interval,
                           
                           vertex_label_max = 40,
                           edge_label_max = 40,
