@@ -18,7 +18,8 @@ License: GPL-2
 LazyData: true
 Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
         reshape2, zoo, traits, RColorBrewer, RCurl, ape, reshape,
-        stats, grDevices, utils, lazyeval, dplyr
+        stats, grDevices, utils, lazyeval, dplyr,
+    tidyr
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
