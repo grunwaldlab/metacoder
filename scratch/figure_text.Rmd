@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+author: "Zachary Foster"
+date: "June 24, 2016"
+output: html_document
+---
+
+## flow chart code
+
+
+```{r}
+file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+data <- extract_taxonomy(sequences,
+                         regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                         key = c(seq_name = "item_info", sequence_id = "item_info",
+                                 other_id = "item_info", "class"),
+                         class_regex = "^(.*)__(.*)$",
+                         class_key = c(unite_rank = "taxon_info", "name"),
+                         class_sep = ";")
+```
+
+```{r}
+data %>%
+  filter_taxa(name %in% c("Russula"), subtaxa = TRUE, supertaxa = TRUE, taxonless = FALSE, reassign_items = FALSE) %>%
+  filter_taxa(taxon_ranks <= 6, taxonless = FALSE) %>%
+  filter_taxa(! grepl("[_0-9]+", name), taxonless = FALSE, reassign_items = FALSE) %>%
+  arrange_taxa(c(p = 1, c = 2, o = 3, f = 4, g = 5, s = 6)[unite_rank])
+plot(vertex_size = item_counts,
+     vertex_color = item_counts,
+     vertex_label = name,
+     layout = "ka",
+     make_legend = FALSE, 
+     output_file = "figure_plot.pdf")
+```
+
+
+
+------------------ taxon_data -------------------
+   taxon_ids parent_ids unite_rank           name
+1          3         NA          p  Basidiomycota
+2        305          3          c Agaricomycetes
+3        323        305          o     Russulales
+4        553        323          f    Russulaceae
+5        557        553          g        Russula
+6        575        557          s     chloroides
+7        576        557          s    cyanoxantha
+...      ...        ...        ...            ...
+
+------------------ obs_data --------------------
+   item_taxon_ids            seq_name sequence_id
+1             576 Russula_cyanoxantha    AB451977
+2             578          Russula_sp    DQ424937
+3             578          Russula_sp    HQ445312
+4             578          Russula_sp    DQ061867
+...      ...        ...        ...            ...
+
+
+
+mutate_taxa, mutate_obs
+transmute_taxa, transmute_obs
+select_taxa, select_obs
+filter_taxa, filter_obs
+arrange_taxa, arrange_obs
+sample_n_taxa, sample_n_obs
+
+
+
+
+... f__Russulaceae;g__Russula;s__Russula_cyanoxantha
+... f__Russulaceae;g__Russula;s__Russula_chloroides
+... f__Russulaceae;g__Russula;s__Russula_delica
+                       ...
