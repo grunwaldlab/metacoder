@@ -282,11 +282,11 @@ Any of the transformations listed below can be used by specifying their name.
 A customized function can also be supplied to do the transformation.
 
 \describe{
-  \item{"radius"}{Proprotional to radius/diameter of node}
-  \item{"area"}{circular area; better perceptual accuracy than \code{"radius"}}
-  \item{"log10 radius"}{Log base 10 of radius}
-  \item{"log2 radius"}{Log base 2 of radius}
-  \item{"ln radius"}{Log base e of radius}
+  \item{"linear"}{Proprotional to radius/diameter of node}
+  \item{"area"}{circular area; better perceptual accuracy than \code{"linear"}}
+  \item{"log10"}{Log base 10 of radius}
+  \item{"log2"}{Log base 2 of radius}
+  \item{"ln"}{Log base e of radius}
   \item{"log10 area"}{Log base 10 of circular area}
   \item{"log2 area"}{Log base 2 of circular area}
   \item{"ln area"}{Log base e of circular area}

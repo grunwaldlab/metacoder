@@ -122,20 +122,20 @@ transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
     ifelse(x < 0, -1, 1)
   }
   
-  funcs <- list("radius" = function(x) {x},
+  funcs <- list("linear" = function(x) {x},
                 "area" = function(x) {sign(x) * (abs(x)/pi)^(1/2)},
-                "log10 radius" = function(x) {log(x, base = 10)},
-                "log2 radius" = function(x) {log(x, base = 2)},
-                "ln radius" = function(x) {log(x)},
+                "log10" = function(x) {log(x, base = 10)},
+                "log2" = function(x) {log(x, base = 2)},
+                "ln" = function(x) {log(x)},
                 "log10 area" = function(x) {log((x/pi)^(1/2), base = 10)},
                 "log2 area" = function(x) {log((x/pi)^(1/2), base = 2)},
                 "ln area" =  function(x) {log((x/pi)^(1/2))})
   
-  inverse_funcs <- list("radius" = function(x) {x},
+  inverse_funcs <- list("linear" = function(x) {x},
                         "area" = function(x) {sign(x) * pi * (x ^ 2)},
-                        "log10 radius" = function(x) {10 ^ x},
-                        "log2 radius" = function(x) {2 ^ x},
-                        "ln radius" = function(x) {exp(1) ^ x},
+                        "log10" = function(x) {10 ^ x},
+                        "log2" = function(x) {2 ^ x},
+                        "ln" = function(x) {exp(1) ^ x},
                         "log10 area" = function(x) {pi * (abs(10 ^ x) ^ 2)},
                         "log2 area" = function(x) {pi * (abs(2 ^ x) ^ 2)},
                         "ln area" =  function(x) {pi * (abs(exp(1) ^ x) ^ 2)})

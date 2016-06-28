@@ -206,11 +206,11 @@
 #' A customized function can also be supplied to do the transformation.
 #' 
 #' \describe{
-#'   \item{"radius"}{Proprotional to radius/diameter of node}
-#'   \item{"area"}{circular area; better perceptual accuracy than \code{"radius"}}
-#'   \item{"log10 radius"}{Log base 10 of radius}
-#'   \item{"log2 radius"}{Log base 2 of radius}
-#'   \item{"ln radius"}{Log base e of radius}
+#'   \item{"linear"}{Proprotional to radius/diameter of node}
+#'   \item{"area"}{circular area; better perceptual accuracy than \code{"linear"}}
+#'   \item{"log10"}{Log base 10 of radius}
+#'   \item{"log2"}{Log base 2 of radius}
+#'   \item{"ln"}{Log base e of radius}
 #'   \item{"log10 area"}{Log base 10 of circular area}
 #'   \item{"log2 area"}{Log base 2 of circular area}
 #'   \item{"ln area"}{Log base e of circular area}
@@ -663,9 +663,9 @@ plot_taxonomy <- function(taxon_id, supertaxon_id,
     edge_data$group <- paste0(tid, "_edge")
     edge_data$color <- rep(data[tid, 'ec_plot'], each = 4)
     node_data <- polygon_coords(n = circle_resolution,
-                                  x = data[tid, 'vx_plot'],
-                                  y = data[tid, 'vy_plot'],
-                                  radius = data[tid, 'vs_plot'])
+                                x = data[tid, 'vx_plot'],
+                                y = data[tid, 'vy_plot'],
+                                radius = data[tid, 'vs_plot'])
     node_data$group <- paste0(tid, "_node")
     node_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
     output <- rbind(edge_data, node_data)
@@ -763,11 +763,17 @@ plot_taxonomy <- function(taxon_id, supertaxon_id,
   
     y_in_legend_space <-  (!missing(node_size) & element_data$y <  min(element_data$y) + legend_length) | 
       (!missing(edge_size) & element_data$y >  max(element_data$y) - legend_length)
-    legend_min_x <- max(element_data$x[y_in_legend_space])  # The furthest left allowed by graph components
-    legend_ideal_x <- max(element_data$x) - diff(range(data$vs_plot) * 2) # The ideal position of the legend
+    legend_min_x <- max(c(element_data$x[y_in_legend_space], min(element_data$x)))  # The furthest left allowed by graph components
+    legend_ideal_x <- max(element_data$x) - diff(range(data$vs_plot) * 2) - square_side_length * 0.1 # The ideal position of the legend
     
     # right_plot_boundry <- max(c(legend_min_x, legend_ideal_x))
-    right_plot_boundry <- legend_min_x + diff(range(element_data$y)) * 0.1 # needs to be changed; hackish
+    if (legend_ideal_x >= legend_min_x) {
+      right_plot_boundry <- legend_ideal_x + diff(range(element_data$x)) * 0.05 # needs to be changed; hackish
+    } else {
+      right_plot_boundry <- legend_min_x + diff(range(element_data$x)) * 0.05 # needs to be changed; hackish
+    }
+    
+    
     node_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
                                     length = legend_length, 

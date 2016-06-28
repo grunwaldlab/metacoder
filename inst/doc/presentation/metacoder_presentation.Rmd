@@ -319,7 +319,7 @@ taxon_data(pcr, row_subset = 1:7)
 set.seed(3)
 plot(pcr, node_size = n_obs, node_label = name, 
      node_color = prop_amplified, node_color_range =  c("red", "cyan"),
-     node_color_trans = "radius", tree_label = name)
+     node_color_trans = "linear", tree_label = name)
 ```
 
 
@@ -330,7 +330,7 @@ subset(pcr, name == "Bacteria") %>%
   subset(count_amplified < n_obs, subtaxa = FALSE) %>% 
   plot(node_size = n_obs, node_label = name,
        node_color = prop_amplified, node_color_range =  c("red", "cyan"),
-       node_color_interval = c(0, 1), node_color_trans = "radius")
+       node_color_interval = c(0, 1), node_color_trans = "linear")
 ```
 
 
@@ -354,7 +354,7 @@ subset(pcr, name == "Bacteria") %>%
   subset(count_amplified < n_obs | count_amp_2 < n_obs, subtaxa = F) %>%
   plot(node_size = n_obs, node_label = name,
        node_color = prop_diff, node_color_range = diverging_palette(),
-       node_color_interval = c(-1, 1), node_color_trans = "radius")
+       node_color_interval = c(-1, 1), node_color_trans = "linear")
 ```
 
 

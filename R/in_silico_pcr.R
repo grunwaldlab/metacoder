@@ -146,7 +146,7 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
 #'      node_label = name,
 #'      node_color = prop_amplified,
 #'      node_color_range = c("red", "yellow", "green"),
-#'      node_color_trans = "radius",
+#'      node_color_trans = "linear",
 #'      node_color_interval = c(0, 1),
 #'      layout = "fruchterman-reingold")
 #' }

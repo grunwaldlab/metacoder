@@ -95,7 +95,7 @@ data %>%
        node_size_range = c(0.0012, NA),
        node_color = read_counts,
        node_color_range = c("grey", "#80cdc1", "#018571", "#dfc27d", "#a6611a"),
-       node_color_trans = "log10 radius",
+       node_color_trans = "log10",
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)) &
                                read_counts > 10000,
@@ -173,7 +173,7 @@ data %>%
        node_size_range = c(0.0012, NA),
        node_color = depth_prop_dcm,
        node_color_range = diverging_palette(),
-       node_color_trans = "radius",
+       node_color_trans = "linear",
        node_color_interval = c(0, 1),
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
@@ -209,7 +209,7 @@ data %>%
        node_size_range = c(0.0012, NA),
        node_color = depth_prop_diff,
        node_color_range = diverging_palette(),
-       node_color_trans = "radius",
+       node_color_trans = "linear",
        node_color_interval = c(-2, 2),
        edge_color_interval = c(-2, 2),
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
@@ -295,7 +295,7 @@ data %>%
        node_size_range = c(0.0012, NA),
        node_color = percent_known,
        node_color_range = c("red", "orange", "yellow", "green", "cyan"),
-       node_color_trans = "radius",
+       node_color_trans = "linear",
        node_color_interval = c(0, 100),
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
@@ -329,7 +329,7 @@ data %>%
        node_size = n_obs,
        node_color = percent_known,
        node_color_range = c("red", "orange", "yellow", "green", "cyan"),
-       node_color_trans = "radius",
+       node_color_trans = "linear",
        node_color_interval = c(0, 100),
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),

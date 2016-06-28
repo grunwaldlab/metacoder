@@ -1,7 +1,6 @@
 #| ## Testing filtering methods for `taxmap` objects
 #|
 library(metacoder)
-library(magrittr)
 context("filtering `taxmap` objects")
 #|
 #| ### Filtering taxa

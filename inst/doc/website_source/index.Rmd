@@ -249,7 +249,7 @@ The proportion of sequences amplified can be represented by color in a metadiver
 ```{r}
 set.seed(1)
 plot(pcr, node_size = n_obs, node_label = name, node_color = prop_amplified,
-     node_color_range =  c("red", "cyan"), node_color_trans = "radius", tree_label = name)
+     node_color_range =  c("red", "cyan"), node_color_trans = "linear", tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -267,7 +267,7 @@ pcr %>%
   filter_taxa(count_amplified < n_obs, subtaxa = FALSE) %>% 
   plot(node_size = n_obs, node_label = name, node_color = prop_amplified,
        node_color_range =  c("red", "cyan"),
-       node_color_interval = c(0, 1), node_color_trans = "radius")
+       node_color_interval = c(0, 1), node_color_trans = "linear")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -307,7 +307,7 @@ pcr %>%
        node_color = prop_diff,
        node_color_range = diverging_palette(),
        node_color_interval = c(-1, 1),
-       node_color_trans = "radius",
+       node_color_trans = "linear",
        node_label_max = 200,
        node_color_axis_label = "Difference in proportion amplified",
        node_size_axis_label = "Sequence count",
