@@ -2,13 +2,13 @@
 % Please edit documentation in R/extract_taxonomy--parsers.R
 \name{class_from_obs_id}
 \alias{class_from_obs_id}
-\title{Retrieve classifications from item IDs}
+\title{Retrieve classifications from observation IDs}
 \usage{
 class_from_obs_id(obs_id, database = c("ncbi", "none"), ...)
 }
 \arguments{
 \item{obs_id}{(\code{character})
-An unique item (e.g. sequence) identifier for a particular \code{database}.
+An unique observation (e.g. sequence) identifier for a particular \code{database}.
 Requires an internet connection.}
 
 \item{database}{(\code{character} of length 1)
@@ -23,7 +23,7 @@ internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 \code{list} of \code{data.frame}
 }
 \description{
-Retrieve taxonomic classifications from item (e.g. sequence) IDs using a specified database.
+Retrieve taxonomic classifications from observation (e.g. sequence) IDs using a specified database.
 }
 \keyword{internal}
 

@@ -286,7 +286,7 @@
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle"
          id="flowPara4170">------------------ taxon_data -------------------</flowPara><flowPara
          id="flowPara4130"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">   taxon_ids parent_ids unite_rank           name</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">   taxon_ids supertaxon_ids unite_rank           name</flowPara><flowPara
          id="flowPara4132"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">1          3         NA          p  Basidiomycota</flowPara><flowPara
          id="flowPara4134"

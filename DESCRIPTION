@@ -16,9 +16,9 @@ Description: A set of tools for metabarcoding (i.e. amplicon
 Depends: R (>= 3.0.2)
 License: GPL-2
 LazyData: true
-Imports: stringr, ggplot2, igraph, scales, grid, taxize, plyr, seqinr,
+Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
         reshape2, zoo, traits, RColorBrewer, RCurl, ape, reshape,
-        stats, grDevices, utils, lazyeval, dplyr, tidyr
+        stats, grDevices, utils, lazyeval, dplyr, magrittr, readr
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1

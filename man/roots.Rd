@@ -24,7 +24,7 @@ Return the root taxa for a \code{\link{taxmap}} object. Can also be used to get 
 a subset of taxa.
 }
 \seealso{
-Other taxmap taxonomy functions: \code{\link{items}},
+Other taxmap taxonomy functions: \code{\link{obs}},
   \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
 

@@ -10,13 +10,12 @@
 extract_taxonomy(input, ...)
 
 \method{extract_taxonomy}{default}(input, key = c("class", "taxon_id", "name",
-  "taxon_info", "obs_id", "obs_info"), regex = "(.*)",
-  class_key = c("name", "taxon_id", "taxon_info"), class_regex = "(.*)",
-  class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
-  "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
-  vigilance = c("warning", "error", "message", "none"),
-  return_match = FALSE, return_input = FALSE, redundant_names = FALSE,
-  verbosity = c("low", "none", "high"), ...)
+  "taxon_info", "obs_id", "obs_info"), regex = "(.*)", class_key = c("name",
+  "taxon_id", "taxon_info"), class_regex = "(.*)", class_sep = NULL,
+  class_rev = FALSE, database = c("none", "ncbi", "itis", "eol", "col",
+  "tropicos", "nbn"), allow_na = TRUE, vigilance = c("warning", "error",
+  "message", "none"), return_match = FALSE, return_input = FALSE,
+  redundant_names = FALSE, verbosity = c("low", "none", "high"), ...)
 
 \method{extract_taxonomy}{DNAbin}(input, ...)
 
@@ -43,9 +42,9 @@ Each term must be one of those decribed below:
         from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
         are separated by the \code{class_sep} argument and the information is parsed by the
         \code{class_regex} and \code{class_key} arguments.}
-  \item{\code{obs_id}}{An unique item (e.g. sequence) identifier for a particular \code{database}.
+  \item{\code{obs_id}}{An unique observation (e.g. sequence) identifier for a particular \code{database}.
         Requires an internet connection.}
-  \item{\code{obs_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
+  \item{\code{obs_info}}{Arbitrary observation info you want included in the output. Can be used more than once.}
 }}
 
 \item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
@@ -109,7 +108,7 @@ If \code{TRUE}, include the part of the input matched by \code{regex} in the out
 \item{return_input}{(\code{logical} of length 1) If \code{TRUE}, include the input in the output object.}
 
 \item{redundant_names}{(\code{logical} of length 1)
-If \code{TRUE}, remove any occurrence of the a parent taxon's name at the start of the taxon name.
+If \code{TRUE}, remove any occurrence of the a supertaxon's name at the start of the taxon name.
 This is useful for removing the redundant genus information in species binomials.}
 
 \item{verbosity}{(\code{character} of length 1) Controls the printing of progress updates.

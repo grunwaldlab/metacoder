@@ -6,7 +6,7 @@ context("Sampling`taxmap` objects")
 #| ### Add `taxon_data` columns
 #|
 #| ####  Code shared by tests
-obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
+obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1), 
                   obs_taxon_ids = rep(c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4), 10),
                   taxon_data = data.frame(name = letters[1:5],
                                           stringsAsFactors = FALSE),

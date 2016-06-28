@@ -6,7 +6,7 @@ context("Utility methods for `taxmap` objects")
 #| ### Getting supertaxa
 #|
 #| ####  Code shared by tests
-obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
+obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1), 
                   obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],  stringsAsFactors = FALSE),
                   obs_data = data.frame(obs_attr = letters[1:10],  stringsAsFactors = FALSE))

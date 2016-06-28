@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxmap--column_generators.R
 \name{n_obs}
 \alias{n_obs}
-\title{Count items in \code{\link{taxmap}}}
+\title{Count observations in \code{\link{taxmap}}}
 \usage{
 n_obs(obj, subset = obj$taxon_data$taxon_ids)
 }
@@ -15,6 +15,6 @@ n_obs(obj, subset = obj$taxon_data$taxon_ids)
 \code{numeric}
 }
 \description{
-Count items in \code{\link{taxmap}}
+Count observations in \code{\link{taxmap}}
 }
 

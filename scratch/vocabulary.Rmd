@@ -3,7 +3,7 @@
 
 ```{r}
 obj <- taxmap(taxon_ids = LETTERS[1:18],
-                  parent_ids = c(NA, "A", "A", "A", "B", "B", "C", "C", "D", "F", "F", "K", 
+                  supertaxon_ids = c(NA, "A", "A", "A", "B", "B", "C", "C", "D", "F", "F", "K", 
 "J", "J", "H", "H", "I", "G"))
 
 plot_one <- function(obj, subset, highlight, title = deparse(match.call()[[3]])) {

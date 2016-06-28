@@ -135,7 +135,7 @@ test_that("observation info columns are added", {
                              regex = "obs_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
                              class_key = "name", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "taxmap")
-  expect_equal(result$obs_data$my_custom_name, c("9689", "9694", "9643"))
+  expect_equal(result$obs_data$my_custom_name, c(9689, 9694, 9643))
   expect_equal(result$obs_data$obs_info_1, c("FJ712037.1", "KC879292.1", "HW243304.1"))
 })
 

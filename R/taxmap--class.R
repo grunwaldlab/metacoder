@@ -5,8 +5,8 @@
 #' @param taxon_ids (\code{character}) 
 #' These are unique identifiers for taxa.
 #' They will be coerced into characters.
-#' @param parent_ids (\code{character} OR (\code{numeric}))
-#' Parent taxa (i.e. supertaxa) of \code{taxa}.
+#' @param supertaxon_ids (\code{character} OR (\code{numeric}))
+#' Supertaxa of \code{taxa}.
 #' If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
 #' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 #' Taxa without parents should be \code{NA}.
@@ -15,7 +15,7 @@
 #' Currently, these can be anything, but this might change in the future.
 #' @param obs_taxon_ids (\code{character} OR (\code{numeric}))
 #' Taxon assignments of observations.
-#' Parent taxa (i.e. supertaxa) of \code{taxa}.
+#' Supertaxa of \code{taxa}.
 #' If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
 #' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 #' @param taxon_data (\code{data.frame})
@@ -32,7 +32,7 @@
 #' @return An object of type \code{taxmap}
 #'
 #' @export
-taxmap <- function(taxon_ids, parent_ids,
+taxmap <- function(taxon_ids, supertaxon_ids,
                        taxa = taxon_ids,
                        obs_taxon_ids = numeric(0),
                        taxon_data = NULL, obs_data = NULL,
@@ -52,16 +52,16 @@ taxmap <- function(taxon_ids, parent_ids,
   # Name `taxa` with taxon_ids
   taxa <- stats::setNames(taxa, taxon_ids)
   
-  # Validate `parent_ids` -----------------------------------------------------------------------------
-  # Check that `parent_ids` is the same length as `taxa`
-  if (length(taxa) != length(parent_ids)) {
-    stop("'parent_ids' must be the same length as 'taxa'")
+  # Validate `supertaxon_ids` -----------------------------------------------------------------------------
+  # Check that `supertaxon_ids` is the same length as `taxa`
+  if (length(taxa) != length(supertaxon_ids)) {
+    stop("'supertaxon_ids' must be the same length as 'taxa'")
   }
   # Convert indexes to values of `taxon_ids`
-  if (is.numeric(parent_ids)) {
-    parent_ids <- taxon_ids[parent_ids]
+  if (is.numeric(supertaxon_ids)) {
+    supertaxon_ids <- taxon_ids[supertaxon_ids]
   } 
-  parent_ids[! parent_ids %in% taxon_ids] <- NA
+  supertaxon_ids[! supertaxon_ids %in% taxon_ids] <- NA
   
   # Validate `obs_taxon_ids` ---------------------------------------------------------------------------
   # Check that all `obs_taxon_ids` are in `taxon_ids`
@@ -79,7 +79,7 @@ taxmap <- function(taxon_ids, parent_ids,
   # Validate `taxon_data` and `obs_data` ----------------------------------------------------------
   # Check that the tables are structured correctly
   validate_table <- function(data, ids, ...) {
-    reserved_col_names = c("taxon_ids", "parent_ids", "obs_taxon_ids")
+    reserved_col_names = c("taxon_ids", "supertaxon_ids", "obs_taxon_ids")
     result <- dplyr::tbl_df(as.data.frame(list(...), stringsAsFactors = FALSE))
     if (! is.null(data)) {
       data <- as.data.frame(data)
@@ -97,7 +97,7 @@ taxmap <- function(taxon_ids, parent_ids,
     return(result)
   }
   taxon_data <- validate_table(taxon_data, taxon_ids, taxon_ids = taxon_ids, 
-                              parent_ids = parent_ids)
+                              supertaxon_ids = supertaxon_ids)
   obs_data <- validate_table(obs_data, obs_taxon_ids, obs_taxon_ids = obs_taxon_ids)
   # Check that tables do not share column names
   all_col_names <- c(colnames(taxon_data), colnames(obs_data))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxonomy.R
 \name{edge_list_depth}
 \alias{edge_list_depth}
-\title{Get distance from root of edgelist items}
+\title{Get distance from root of edgelist observations}
 \usage{
 edge_list_depth(taxa, parents)
 }
@@ -13,7 +13,7 @@ edge_list_depth(taxa, parents)
 Root taxa should have \code{NA} in this column.}
 }
 \description{
-Gets the number of ancestors/supergroups for items of an edge/adjacency list
+Gets the number of ancestors/supergroups for observations of an edge/adjacency list
 }
 \keyword{internal}
 

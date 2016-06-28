@@ -21,7 +21,7 @@ I say "taxonomy-specific" because there are obviously other considerations that 
 The three taxonomy-specific criteria are: 
 
 1. **taxonomic coverage**: All taxa of interest should be represented by enough sequences to capture their diversity.
-2. **balance**: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the parent taxon are not biased for a particular child. 
+2. **balance**: The number of sequences for each sub-taxon should be approximately equal, so that estimates for the supertaxon are not biased for a particular subtaxon. 
 3. **size**: A reference sequence set should be the minimum size that meets the above two criteria, since this allows for computationally intense analysis. 
 
 When evaluating potential primers for metabarcoding experiments it is important to have reference sequences representative of every taxon of interest.

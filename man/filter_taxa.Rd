@@ -22,16 +22,16 @@ filter.}
 \item{supertaxa}{(\code{logical} of length 1) If \code{TRUE}, include supertaxa of taxa passing
 the filter.}
 
-\item{taxonless}{(\code{logical} of length 1) If \code{TRUE}, include items even if the taxon
-they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
+\item{taxonless}{(\code{logical} of length 1) If \code{TRUE}, include observations even if the taxon
+they are assigned to is filtered out. observation assigned to removed taxa will be assigned to
 \code{NA}. See the \code{reassign} option below for further complications.}
 
-\item{reassign_obs}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+\item{reassign_obs}{(\code{logical} of length 1) If \code{TRUE}, observations assigned to removed taxa will
 be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
-such an item that passed the filter, they will be filtered out if \code{taxonless} is
+such an observation that passed the filter, they will be filtered out if \code{taxonless} is
 \code{TRUE}.}
 
-\item{reassign_taxa}{(\code{logical} of length 1) If \code{TRUE}, children of removed taxa will
+\item{reassign_taxa}{(\code{logical} of length 1) If \code{TRUE}, subtaxa of removed taxa will
 be reassigned to the closest supertaxon that passed the filter.}
 }
 \value{
@@ -48,9 +48,8 @@ Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{mutate_obs}}, \code{\link{mutate_taxa}},
   \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_obs}},
-  \code{\link{sample_n_taxa}}, \code{\link{select_obs}},
-  \code{\link{select_taxa}}, \code{\link{transmute_obs}},
-  \code{\link{transmute_taxa}}
+  \code{\link{sample_n_obs}}, \code{\link{sample_n_taxa}},
+  \code{\link{select_obs}}, \code{\link{select_taxa}},
+  \code{\link{transmute_obs}}, \code{\link{transmute_taxa}}
 }
 

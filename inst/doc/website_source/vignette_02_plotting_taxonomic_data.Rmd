@@ -70,7 +70,7 @@ plot(unite_ex_data_3,
 ```
 
 In this example, both size and color are being used to represent the abundance of taxa.
-Using this method, it is clear how child taxa are distributed within their parents and what taxa are unusual (note the unidentified agaricales). 
+Using this method, it is clear how subtaxa are distributed within their supertaxa and what taxa are unusual (note the unidentified agaricales). 
 
 
 ## Basic usage

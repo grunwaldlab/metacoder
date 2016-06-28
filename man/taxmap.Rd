@@ -4,7 +4,7 @@
 \alias{taxmap}
 \title{Create an instance of \code{taxmap}}
 \usage{
-taxmap(taxon_ids, parent_ids, taxa = taxon_ids,
+taxmap(taxon_ids, supertaxon_ids, taxa = taxon_ids,
   obs_taxon_ids = numeric(0), taxon_data = NULL, obs_data = NULL,
   taxon_funcs = list(n_obs = n_obs, taxon_levels = taxon_levels,
   classifications = classifications), obs_funcs = list())
@@ -14,8 +14,8 @@ taxmap(taxon_ids, parent_ids, taxa = taxon_ids,
 These are unique identifiers for taxa.
 They will be coerced into characters.}
 
-\item{parent_ids}{(\code{character} OR (\code{numeric}))
-Parent taxa (i.e. supertaxa) of \code{taxa}.
+\item{supertaxon_ids}{(\code{character} OR (\code{numeric}))
+Supertaxa of \code{taxa}.
 If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
 If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 Taxa without parents should be \code{NA}.}
@@ -25,8 +25,8 @@ Objects representing taxa.
 Currently, these can be anything, but this might change in the future.}
 
 \item{obs_taxon_ids}{(\code{character} OR (\code{numeric}))
-Taxon assignments of items.
-Parent taxa (i.e. supertaxa) of \code{taxa}.
+Taxon assignments of observations.
+Supertaxa of \code{taxa}.
 If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
 If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.}
 
@@ -48,6 +48,6 @@ The first parameter of each function should be a single \code{taxmap} object.}
 An object of type \code{taxmap}
 }
 \description{
-Create an instance of \code{taxmap} containing items taxmap by a taxonomy.
+Create an instance of \code{taxmap} containing observations taxmap by a taxonomy.
 }
 

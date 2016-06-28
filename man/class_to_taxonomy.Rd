@@ -8,7 +8,7 @@ class_to_taxonomy(classifications, id_column, obs_data = NULL)
 }
 \arguments{
 \item{classifications}{(\code{list} of \code{data.frame}) 
-The classifications of a set of items.
+The classifications of a set of observations.
 Not necessarily unique.
 Rows should correspond to taxa and columns to information associated with those taxa.}
 
@@ -27,7 +27,7 @@ Convert a list of classifications to a taxonomic tree structure.
 Columns in the input not used to create the taxonomy are preserved in the output.
 Unique IDs can be assigned if the column used to create the taxonomy does not
 have unique values for place in the hierarchy (e.g. same species epithet in different phlya.)
-Missing data does not effect the taxonomy, but its positon is preserved in the item output.
+Missing data does not effect the taxonomy, but its positon is preserved in the observation output.
 }
 \keyword{internal}
 

@@ -18,7 +18,7 @@
 #'   
 #' @export
 select_taxa <- function(.data, ...) {
-  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "parent_ids"), drop = FALSE],
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "supertaxon_ids"), drop = FALSE],
                                        dplyr::select(.data$taxon_data, ...))
   return(.data)
 }

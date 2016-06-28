@@ -12,7 +12,7 @@ taxonomy_ranks(taxa, parents, rank, strict = TRUE)
 \item{parents}{(\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 Root taxa should have \code{NA} in this column.}
 
-\item{rank}{(\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+\item{rank}{(\code{character}) The rank designation (e.g. "genus") corresponding to each observation in
 \code{taxa}.}
 
 \item{strict}{If \code{FALSE}, ranks with inconsistent levels will be allowed. Otherwise ranks 

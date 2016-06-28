@@ -209,7 +209,7 @@ class_to_taxonomy <- function(classifications, id_column, obs_data = NULL) {
     obs_id <- unname(obs_index)
   }
   taxmap(taxon_ids = taxon_id,
-             parent_ids = parent_id,
+             supertaxon_ids = parent_id,
              obs_taxon_ids = obs_id,
              taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
              obs_data = obs_data)
@@ -293,6 +293,6 @@ convert_numeric_cols <- function(table, columns = colnames(table)) {
     }
   }
 
-  table[columns] <- lapply(table[columns], try_to_make_numeric)
+  table[colnames(table) %in% columns] <- lapply(table[colnames(table) %in% columns], try_to_make_numeric)
   return(table)
 }

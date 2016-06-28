@@ -21,7 +21,7 @@
 #'   be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
 #'   such an observation that passed the filter, they will be filtered out if \code{taxonless} is
 #'   \code{TRUE}.
-#' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, children of removed taxa will
+#' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, subtaxa of removed taxa will
 #'   be reassigned to the closest supertaxon that passed the filter.
 #'   
 #' @return An object of type \code{\link{taxmap}}
@@ -79,11 +79,11 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
       return(.data$taxon_data$taxon_ids[included_parents[1]])
     }
     
-    to_reassign <- ! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids[taxa_subset]
+    to_reassign <- ! .data$taxon_data$supertaxon_ids %in% .data$taxon_data$taxon_ids[taxa_subset]
     supertaxa_key <- supertaxa(.data, subset = unique(.data$taxon_data$taxon_ids[to_reassign]),
                                recursive = TRUE, simplify = FALSE, include_input = FALSE, index = TRUE, na = FALSE)
     reassign_key <- vapply(supertaxa_key, reassign_one, character(1))
-    .data$taxon_data[to_reassign, "parent_ids"] <- reassign_key[.data$taxon_data$taxon_ids[to_reassign]]
+    .data$taxon_data[to_reassign, "supertaxon_ids"] <- reassign_key[.data$taxon_data$taxon_ids[to_reassign]]
   }
   
   
@@ -98,7 +98,7 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
   # Remove filtered taxa ---------------------------------------------------------------------------
   .data$taxa <- .data$taxa[.data$taxon_data$taxon_ids[taxa_subset]]
   .data$taxon_data <- .data$taxon_data[taxa_subset, , drop = FALSE]
-  .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
+  .data$taxon_data[! .data$taxon_data$supertaxon_ids %in% .data$taxon_data$taxon_ids, "supertaxon_ids"] <- as.character(NA)
   
   return(.data)
 }
@@ -158,7 +158,7 @@ filter_obs <- function(.data, ..., unobserved = TRUE) {
   if (! unobserved) {
     taxa_to_remove <- 1:nrow(.data$taxon_data) %in% unobserved_taxa & n_obs(.data) == 0
     .data$taxon_data <- .data$taxon_data[! taxa_to_remove, , drop = FALSE]
-    .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
+    .data$taxon_data[! .data$taxon_data$supertaxon_ids %in% .data$taxon_data$taxon_ids, "supertaxon_ids"] <- as.character(NA)
   }
   
   return(.data)

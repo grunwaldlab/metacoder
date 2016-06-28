@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxmap--column_generators.R
 \name{assigned}
 \alias{assigned}
-\title{Count item assigned in \code{\link{taxmap}}}
+\title{Count observation assigned in \code{\link{taxmap}}}
 \usage{
 assigned(obj, subset = obj$taxon_data$taxon_ids)
 }
@@ -15,6 +15,6 @@ assigned(obj, subset = obj$taxon_data$taxon_ids)
 \code{numeric}
 }
 \description{
-Count items assigned to a specific taxon in \code{\link{taxmap}}
+Count observations assigned to a specific taxon in \code{\link{taxmap}}
 }
 

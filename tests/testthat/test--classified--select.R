@@ -6,7 +6,7 @@ context("Subsetting columns of `taxmap` objects")
 #| ### Select `taxon_data` columns
 #|
 #| ####  Code shared by tests
-obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
+obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1), 
                   obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],
                                           other_col = 1:5,
@@ -22,7 +22,7 @@ test_that("Selecting taxon_data with unquoted column names works", {
   result <- select_taxa(obj, name)
   expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
-  expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
+  expect_true(all(c("name", "taxon_ids", "supertaxon_ids") %in% colnames(result$taxon_data)))
 })
 #|
 #| ####  Selecting taxon_data using dplyr functions
@@ -30,7 +30,7 @@ test_that("Selecting taxon_data with dplyr functions works", {
   result <- select_taxa(obj, matches("name"))
   expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
-  expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
+  expect_true(all(c("name", "taxon_ids", "supertaxon_ids") %in% colnames(result$taxon_data)))
 })
 #|
 #| ####  Selecting taxon_data with index
@@ -38,7 +38,7 @@ test_that("Selecting taxon_data with index works", {
   result <- select_taxa(obj, which("name" == colnames(obj$taxon_data)))
   expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
-  expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
+  expect_true(all(c("name", "taxon_ids", "supertaxon_ids") %in% colnames(result$taxon_data)))
 })
 #|
 #| ####  Selecting taxon_data with multiple types
@@ -47,7 +47,7 @@ test_that("Selecting taxon_data with multiple types works", {
                         other_col, 2)
   expect_s3_class(result, "taxmap")
   expect_false("yet_another" %in% colnames(result$taxon_data))
-  expect_true(all(c("name", "taxon_ids", "parent_ids", "other_col") %in% colnames(result$taxon_data)))
+  expect_true(all(c("name", "taxon_ids", "supertaxon_ids", "other_col") %in% colnames(result$taxon_data)))
 })
 #|
 #|

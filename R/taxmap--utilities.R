@@ -33,7 +33,7 @@ supertaxa <- function(obj, subset = NULL, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)
   
   # Get supertaxa ----------------------------------------------------------------------------------
-  parent_index <- match(obj$taxon_data$parent_ids, obj$taxon_data$taxon_ids) # precomputing makes it much faster
+  parent_index <- match(obj$taxon_data$supertaxon_ids, obj$taxon_data$taxon_ids) # precomputing makes it much faster
   recursive_part <- function(taxon) {
     supertaxon <- parent_index[taxon]
     if (recursive) {
@@ -146,7 +146,7 @@ subtaxa <- function(obj, subset = NULL, recursive = TRUE,
   subset <- format_taxon_subset(obj, subset)
   
   # Get subtaxa ------------------------------------------------------------------------------------
-  parent_index <- match(obj$taxon_data$parent_ids, obj$taxon_data$taxon_ids) 
+  parent_index <- match(obj$taxon_data$supertaxon_ids, obj$taxon_data$taxon_ids) 
 
   get_children <- function(taxon) {
     which(parent_index == taxon)

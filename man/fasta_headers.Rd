@@ -4,7 +4,7 @@
 \alias{fasta_headers}
 \title{Get line numbers of FASTA headers}
 \usage{
-fasta_headers(file_path, buffer_size = 1000)
+fasta_headers(file_path, buffer_size = 1000, return_headers = TRUE)
 }
 \arguments{
 \item{file_path}{(\code{character} of length 1) The path to a file to read.}
@@ -19,4 +19,5 @@ fasta_headers(file_path, buffer_size = 1000)
 \description{
 Get line numbers of FASTA headers without reading whole fasta file into RAM.
 }
+\keyword{internal}
 

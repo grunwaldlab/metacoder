@@ -42,7 +42,7 @@ supertaxa(contaminants, subset = 1:10)}
   
 }
 \seealso{
-Other taxmap taxonomy functions: \code{\link{items}},
+Other taxmap taxonomy functions: \code{\link{obs}},
   \code{\link{roots}}, \code{\link{subtaxa}}
 }
 

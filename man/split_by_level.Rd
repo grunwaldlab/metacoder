@@ -13,7 +13,7 @@ split_by_level(taxa, parents, level, rank = NULL)
 
 \item{level}{(\code{character} or \code{numeric} of length 1)}
 
-\item{rank}{(\code{character}) The rank designation (e.g. "genus") corresponding to each item in}
+\item{rank}{(\code{character}) The rank designation (e.g. "genus") corresponding to each observation in}
 }
 \value{
 a \code{list} of taxon id \code{character} vectors. 

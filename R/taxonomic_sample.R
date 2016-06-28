@@ -63,12 +63,12 @@ taxonomic_sample <- function(taxmap_data,
     # tree <- subset(taxmap_data, root_taxon)
     # extract information from `taxmap` (This is a retrofit to use `classfied` objects)
     taxon_ids <- taxmap_data$taxon_data$taxon_ids
-    parent_ids <- taxmap_data$taxon_data$parent_ids
+    supertaxon_ids <- taxmap_data$taxon_data$supertaxon_ids
     obs_ids <- taxmap_data$obs_data$obs_taxon_ids
     ranks <- taxon_levels(taxmap_data)
     # Define functions to interact with the taxonomic information ------------------------------------
     get_obs_func <- function(id, ...) which(obs_ids == id)
-    get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(parent_ids) & parent_ids == id]
+    get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(supertaxon_ids) & supertaxon_ids == id]
     get_rank_func <- function(id, ...) ranks[taxon_ids == id]
     # recursive sampling -----------------------------------------------------------------------------
     recursive_sample(root_id = root_taxon, get_obs = get_obs_func, get_subtaxa = get_subtaxa_func,
@@ -78,7 +78,7 @@ taxonomic_sample <- function(taxmap_data,
                      stop_conditions = stop_conditions)
   }
   
-  root_taxa <- taxmap_data$taxon_data$taxon_ids[is.na(taxmap_data$taxon_data$parent_ids)]
+  root_taxa <- taxmap_data$taxon_data$taxon_ids[is.na(taxmap_data$taxon_data$supertaxon_ids)]
   obs_indexes <- unlist(lapply(root_taxa, process_one_tree))
   filter_obs(taxmap_data, obs = obs_indexes)
 }

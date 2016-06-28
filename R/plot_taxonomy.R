@@ -10,7 +10,7 @@
 #' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
 #' 
 #' @param taxon_id The unique ids of taxa.
-#' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
+#' @param supertaxon_id The unique id of supertaxon \code{taxon_id} is a part of.
 #' 
 #' @param node_label See details on labels.
 #' Default: no labels.
@@ -269,7 +269,7 @@
 #' 
 #' @keywords internal
 #' @rdname plot_taxonomy
-plot_taxonomy <- function(taxon_id, parent_id, 
+plot_taxonomy <- function(taxon_id, supertaxon_id, 
                           node_label = NA,
                           edge_label = NA,
                           tree_label = NA,
@@ -349,11 +349,11 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           
                           ...) {
   #| ### Verify arguments =========================================================================
-  if (length(taxon_id) != length(parent_id)) {
-    stop("'taxon_id' and 'parent_id' must be of equal length.")
+  if (length(taxon_id) != length(supertaxon_id)) {
+    stop("'taxon_id' and 'supertaxon_id' must be of equal length.")
   }
   if (length(taxon_id) == 0) {
-    stop("'taxon_id' and 'parent_id' are empty.")
+    stop("'taxon_id' and 'supertaxon_id' are empty.")
   }
   if (length(unique(taxon_id)) != length(taxon_id)) {
     stop("All values of 'taxon_id' are not unique.")
@@ -398,7 +398,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| ### Standardize source data ==================================================================
   data <- data.frame(stringsAsFactors = FALSE,
                      tid_user = as.character(taxon_id),
-                     pid_user = as.character(parent_id),
+                     pid_user = as.character(supertaxon_id),
                      
                      vl_user = as.character(node_label),
                      el_user = as.character(edge_label),
@@ -444,7 +444,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Make layout ==============================================================================
   #| The layout is used to generate a list of coordinates to places graph verticies
-  #| First the edge list consituted by the `taxon_id` and `parent_id` columns is used to construct 
+  #| First the edge list consituted by the `taxon_id` and `supertaxon_id` columns is used to construct 
   #| an `igraph` graph object and then the layout is generated for that object. 
   #|
   #| #### Make a graph for each root in the graph -------------------------------------------------
@@ -454,7 +454,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
       adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
       sub_graph <- igraph::graph.adjacency(adj_matrix)
     } else {
-      # Make edge list from taxon_id and parent_id
+      # Make edge list from taxon_id and supertaxon_id
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
@@ -905,8 +905,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
 plot.taxmap <- function(x, ...) {
   # Non-standard argument evaluation
   data <- taxon_data(x, sort_by = classifications, 
-                     col_subset = unique(c(taxon_data_cols_used(x, ...), "taxon_ids", "parent_ids")))
-  arguments <- c(list(taxon_id = data$taxon_ids, parent_id = data$parent_ids),
+                     col_subset = unique(c(taxon_data_cols_used(x, ...), "taxon_ids", "supertaxon_ids")))
+  arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
   # Use variable name for scale axis labels

@@ -2,9 +2,9 @@
 % Please edit documentation in R/taxmap--filter.R
 \name{filter_obs}
 \alias{filter_obs}
-\title{Filter items with a list of conditions}
+\title{Filter observations with a list of conditions}
 \usage{
-filter_obs(.data, ..., itemless = TRUE)
+filter_obs(.data, ..., unobserved = TRUE)
 }
 \arguments{
 \item{.data}{\code{\link{taxmap}}}
@@ -15,16 +15,16 @@ filter_obs(.data, ..., itemless = TRUE)
 Any column name that appears in \code{obs_data(.data)} can be used as if it was a vector on 
 its own.}
 
-\item{itemless}{(\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
-items are filtered out. If \code{FALSE}, remove taxa for which all items were filtered out. 
-Note that only taxa that are itemless due to this filtering will be removed; there might be 
-other taxa without items to begin with that will not be removed.}
+\item{unobserved}{(\code{logical} of length 1) If \code{TRUE}, preserve taxa even if all of their 
+observations are filtered out. If \code{FALSE}, remove taxa for which all observations were filtered out. 
+Note that only taxa that are unobserved due to this filtering will be removed; there might be 
+other taxa without observations to begin with that will not be removed.}
 }
 \value{
 An object of type \code{\link{taxmap}}
 }
 \description{
-Filter items in a \code{\link{taxmap}} object with a list of conditions. Any column name that
+Filter observations in a \code{\link{taxmap}} object with a list of conditions. Any column name that
 appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See 
 \code{\link[dplyr]{filter}} for inspiration and more information.
 }
@@ -34,9 +34,8 @@ Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{mutate_obs}}, \code{\link{mutate_taxa}},
   \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_obs}},
-  \code{\link{sample_n_taxa}}, \code{\link{select_obs}},
-  \code{\link{select_taxa}}, \code{\link{transmute_obs}},
-  \code{\link{transmute_taxa}}
+  \code{\link{sample_n_obs}}, \code{\link{sample_n_taxa}},
+  \code{\link{select_obs}}, \code{\link{select_taxa}},
+  \code{\link{transmute_obs}}, \code{\link{transmute_taxa}}
 }
 

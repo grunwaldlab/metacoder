@@ -21,7 +21,7 @@ source("knitr_settings.R")
 Manipulating taxonomic data is a more subtle problem then it might seem at first.
 For example, if you want to remove a taxon, do you remove its supertaxa and subtaxa as well?
 What if there are sequences assigned to that taxon; are the sequences removed or reassigned to a preserved supertaxa?
-What if the taxon is an internal node in the taxonomy; do you connect it parent and children taxa or break the taxonomy?
+What if the taxon is an internal node in the taxonomy; do you connect its supertaxa and subtaxa or break the taxonomy?
 The answers to these questions depend on what the goal of the subsetting is.
 MetacodeR uses `dplyr`-style functions for manipulating taxonomic data.
 For each `dplyr` verb, there are two functions in metacodeR, one that manipulates the taxon portion of the data and one that manipulates the observation portion.
@@ -79,7 +79,7 @@ filter_taxa(unite_ex_data_3, n_obs >= 3) %>%
 ```
 
 This is useful when plotting very large data sets, since it is difficult to make effective visualizations of over ~2000 taxa.
-Note that observations assigned to removed subtaxa are reassigned to the closest parent taxa that passes the filter by default.
+Note that observations assigned to removed subtaxa are reassigned to the closest supertaxa that passes the filter by default.
 You can prevent this by setting the `reassign_obs` option to `FALSE`, but when most observations are assigned to tip taxa, this is rarely useful:
 
 ```{r}
@@ -102,7 +102,7 @@ filter_taxa(unite_ex_data_3, unite_rank != "c") %>%
 ```
 
 Note that the above result has no fungal classes anymore (taxa with names ending in "mycetes").
-Like observations, children of removed taxa are reassigned to the closest supertaxon that passes the filter.
+Like observations, subtaxa of removed taxa are reassigned to the closest supertaxon that passes the filter.
 Although it usually does not make much sense to not reassign taxa, it is possible:
 
 ```{r}
@@ -214,7 +214,7 @@ sample_frac_obs(unite_ex_data_3, size = 0.1) %>%
 
 Subsetting columns is more straight forward that subsetting rows.
 The functions `select_taxa` and `select_obs` are little more that wrappers for `dplyr::select`.
-The only thing they do differently is to enforce that the `taxon_ids`, `parent_ids`, and `obs_taxon_ids` columns are preserved:
+The only thing they do differently is to enforce that the `taxon_ids`, `supertaxon_ids`, and `obs_taxon_ids` columns are preserved:
 
 ```{r}
 unite_ex_data_3

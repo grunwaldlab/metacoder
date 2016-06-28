@@ -7,7 +7,7 @@ context("filtering `taxmap` objects")
 #| ### Filtering taxa
 #|
 #| ####  Code shared by tests
-obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
+obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1), 
                   obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],  stringsAsFactors = FALSE),
                   obs_data = data.frame(obs_attr = LETTERS[1:10],  stringsAsFactors = FALSE))
@@ -82,7 +82,7 @@ test_that("Taxon filtering: removing supertaxa works", {
                         taxonless = FALSE, reassign_obs = TRUE)
   plot(result, node_label = paste(name, n_obs), node_color = n_obs, layout = "fr")
   expect_equivalent(result$taxon_data$name, c("b", "c", "d", "e"))
-  expect_equal(sum(is.na(result$taxon_data$parent_ids)), 2)
+  expect_equal(sum(is.na(result$taxon_data$supertaxon_ids)), 2)
 })
 #|
 #| ####  Chaining multiple filtering commands
@@ -93,7 +93,7 @@ test_that("Taxon filtering: chaining works", {
     filter_taxa(taxon_levels > 1, 
                 subtaxa = FALSE, supertaxa = FALSE,
                 taxonless = FALSE, reassign_obs = TRUE)
-  expect_equal(sum(is.na(result$taxon_data$parent_ids)), 2)
+  expect_equal(sum(is.na(result$taxon_data$supertaxon_ids)), 2)
   expect_equal(result$taxon_data$taxon_ids, c("C", "D"))
 })
 

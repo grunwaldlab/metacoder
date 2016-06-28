@@ -81,7 +81,7 @@
 #' If \code{TRUE}, include the part of the input matched by \code{regex} in the output object.
 #' @param return_input (\code{logical} of length 1) If \code{TRUE}, include the input in the output object.
 #' @param redundant_names (\code{logical} of length 1)
-#' If \code{TRUE}, remove any occurrence of the a parent taxon's name at the start of the taxon name.
+#' If \code{TRUE}, remove any occurrence of the a supertaxon's name at the start of the taxon name.
 #' This is useful for removing the redundant genus information in species binomials.
 #' @param verbosity (\code{character} of length 1) Controls the printing of progress updates.
 #' The following values are possible: 
@@ -225,7 +225,7 @@ extract_taxonomy.default <- function(input,
   
   # Convert columns to numeric is appropriate
   taxonomy$taxon_data <- convert_numeric_cols(taxonomy$taxon_data,
-                                              colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "parent_ids")])
+                                              colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "supertaxon_ids")])
   taxonomy$obs_data <- convert_numeric_cols(taxonomy$obs_data,
                                               colnames(taxonomy$obs_data)[! colnames(taxonomy$obs_data) %in% c("obs_taxon_ids")])
   

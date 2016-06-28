@@ -66,7 +66,7 @@ transmute_taxa <- function(.data, ...) {
   my_taxon_data <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
                    names(my_taxon_data), my_taxon_data)
-  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "parent_ids"), drop = FALSE],
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "supertaxon_ids"), drop = FALSE],
                                        dplyr::transmute(.data$taxon_data, ...))
   return(.data) 
 } 

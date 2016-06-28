@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxonomic_sample.R
 \name{recursive_sample}
 \alias{recursive_sample}
-\title{Recursivly sample items with a heirarchical classification}
+\title{Recursivly sample observations with a heirarchical classification}
 \usage{
 recursive_sample(root_id, get_obs, get_subtaxa, get_rank = NULL,
   cat_obs = unlist, max_counts = c(), min_counts = c(),
@@ -13,9 +13,9 @@ recursive_sample(root_id, get_obs, get_subtaxa, get_rank = NULL,
 \item{root_id}{(\code{character} of length 1) The taxon to sample. By default, the root of the
 taxonomy used.}
 
-\item{get_obs}{(\code{function(character)}) A function that returns the items assigned to the
+\item{get_obs}{(\code{function(character)}) A function that returns the observations assigned to the
 a given taxon. The function's first argument should be the taxon id and it should return a data
-structure possibly representing multiple items.}
+structure possibly representing multiple observations.}
 
 \item{get_subtaxa}{(\code{function(character)}) A function that returns the sub taxa for a given
 taxon. The function's first argument should be the taxon id and it should return a vector of
@@ -30,12 +30,12 @@ taxon.}
 \code{get_obs}.}
 
 \item{max_counts}{(\code{numeric}) A named vector that defines that maximum number of
-items in for each level specified. The names of the vector specifies that level each number
-applies to. If more than the maximum number of items exist for a given taxon, it is randomly
+observations in for each level specified. The names of the vector specifies that level each number
+applies to. If more than the maximum number of observations exist for a given taxon, it is randomly
 subsampled to this number.}
 
 \item{min_counts}{(\code{numeric}) A named vector that defines that minimum number of
-items in for each level specified. The names of the vector specifies that level each number
+observations in for each level specified. The names of the vector specifies that level each number
 applies to.}
 
 \item{max_children}{(\code{numeric}) A named vector that defines that maximum number of
@@ -47,23 +47,23 @@ are randomly subsampled to this number of subtaxa.}
 subtaxa in for each level specified. The names of the vector specifies that level each number
 applies to.}
 
-\item{obs_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
-structure containing the information of multiple items and a taxon id.
-Returns a object of the same type with some of the items potentially removed.}
+\item{obs_filters}{(\code{list} of \code{function(observations, id)}) A list of functions that take a data
+structure containing the information of multiple observations and a taxon id.
+Returns a object of the same type with some of the observations potentially removed.}
 
-\item{subtaxa_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
+\item{subtaxa_filters}{(\code{list} of \code{function(observations, id)}) A list of functions that take a data
 structure containing the information of multiple subtaxa IDs and the current taxon id.
 Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
-\code{NULL}, then no items for the current taxon are returned.}
+\code{NULL}, then no observations for the current taxon are returned.}
 
 \item{stop_conditions}{(\code{list} of \code{function(id)}) A list of functions that take the
-current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
-returned rather than looking for items of subtaxa, stopping the recursion.}
+current taxon id. If any of the functions return \code{TRUE}, the observations for the current taxon are 
+returned rather than looking for observations of subtaxa, stopping the recursion.}
 
 \item{...}{Additional parameters are passed to all of the function options.}
 }
 \description{
-Recursivly sample a set of items with a heirarchical classification.
+Recursivly sample a set of observations with a heirarchical classification.
 This function takes other functions as arguments and is intended to be used to make other more 
 user-friendly functions.
 }

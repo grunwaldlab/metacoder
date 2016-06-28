@@ -5,14 +5,13 @@
 \alias{plot_taxonomy}
 \title{Plot a taxonomic tree}
 \usage{
-plot_taxonomy(taxon_id, parent_id, node_label = NA, edge_label = NA,
+plot_taxonomy(taxon_id, supertaxon_id, node_label = NA, edge_label = NA,
   tree_label = NA, node_size = 1, edge_size = node_size,
   node_label_size = node_size, edge_label_size = edge_size,
   tree_label_size = as.numeric(NA), node_color = "#999999",
-  edge_color = node_color, tree_color = NA,
-  node_label_color = "#000000", edge_label_color = "#000000",
-  tree_label_color = "#000000", node_size_trans = "area",
-  edge_size_trans = node_size_trans,
+  edge_color = node_color, tree_color = NA, node_label_color = "#000000",
+  edge_label_color = "#000000", tree_label_color = "#000000",
+  node_size_trans = "area", edge_size_trans = node_size_trans,
   node_label_size_trans = node_size_trans,
   edge_label_size_trans = edge_size_trans, tree_label_size_trans = "area",
   node_color_trans = "area", edge_color_trans = node_color_trans,
@@ -28,8 +27,8 @@ plot_taxonomy(taxon_id, parent_id, node_label = NA, edge_label = NA,
   edge_label_color_range = quantative_palette(),
   tree_label_color_range = quantative_palette(),
   node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
-  node_color_interval = NULL, edge_size_interval = range(edge_size, na.rm
-  = TRUE, finite = TRUE), edge_color_interval = node_color_interval,
+  node_color_interval = NULL, edge_size_interval = range(edge_size, na.rm =
+  TRUE, finite = TRUE), edge_color_interval = node_color_interval,
   node_label_max = 40, edge_label_max = 40, tree_label_max = 40,
   overlap_avoidance = 1, margin_size = c(0, 0),
   layout = "reingold-tilford", initial_layout = "fruchterman-reingold",
@@ -43,7 +42,7 @@ plot_taxonomy(taxon_id, parent_id, node_label = NA, edge_label = NA,
 \arguments{
 \item{taxon_id}{The unique ids of taxa.}
 
-\item{parent_id}{The unique id of supertaxon \code{taxon_id} is a part of.}
+\item{supertaxon_id}{The unique id of supertaxon \code{taxon_id} is a part of.}
 
 \item{node_label}{See details on labels.
 Default: no labels.}

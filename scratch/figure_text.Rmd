@@ -37,7 +37,7 @@ plot(node_size = n_obs,
 
 
 ------------------ taxon_data -------------------
-   taxon_ids parent_ids unite_rank           name
+   taxon_ids supertaxon_ids unite_rank           name
 1          3         NA          p  Basidiomycota
 2        305          3          c Agaricomycetes
 3        323        305          o     Russulales

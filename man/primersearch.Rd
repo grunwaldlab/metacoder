@@ -6,12 +6,12 @@
 \alias{primersearch.taxmap}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
-primersearch(...)
+primersearch(input, forward, reverse, mismatch = 5, ...)
 
-\method{primersearch}{character}(input, forward, reverse, mismatch = 5)
+\method{primersearch}{character}(input, forward, reverse, mismatch = 5, ...)
 
 \method{primersearch}{taxmap}(input, forward, reverse, mismatch = 5,
-  sequence_col = "sequence", result_cols = NULL)
+  sequence_col = "sequence", result_cols = NULL, ...)
 }
 \arguments{
 \item{input}{(\code{character})}
@@ -21,6 +21,8 @@ primersearch(...)
 \item{reverse}{(\code{character} of length 1) The reverse primer sequence}
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
+
+\item{...}{Unused.}
 
 \item{sequence_col}{(\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.}
 

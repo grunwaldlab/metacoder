@@ -8,7 +8,7 @@ split_class_list(classifications, row_index, col_index)
 }
 \arguments{
 \item{classifications}{(\code{list} of \code{data.frame}) 
-The classifications of a set of items.
+The classifications of a set of observations.
 Not necessarily unique.
 Rows should correspond to taxa and columns to information associated with those taxa.}
 

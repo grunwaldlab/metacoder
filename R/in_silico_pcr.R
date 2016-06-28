@@ -87,7 +87,7 @@ parse_primersearch <- function(file_path) {
 
 #' @rdname primersearch
 #' @export
-primersearch <- function(...) {
+primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   UseMethod("primersearch")
 }
 
@@ -102,6 +102,7 @@ primersearch <- function(...) {
 #' @param forward (\code{character} of length 1) The forward primer sequence
 #' @param reverse (\code{character} of length 1) The reverse primer sequence
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
+#' @param ... Unused.
 #' 
 #' @return An object of type \code{\link{taxmap}}
 #' 
@@ -153,7 +154,7 @@ primersearch <- function(...) {
 #' @method primersearch character
 #' @rdname primersearch
 #' @export
-primersearch.character <- function(input, forward, reverse, mismatch = 5) {
+primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
   
   # Write temporary fasta file for primersearch input ----------------------------------------------
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
@@ -205,7 +206,7 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5) {
 #' @rdname primersearch
 #' @export
 primersearch.taxmap <- function(input, forward, reverse, mismatch = 5,
-                                    sequence_col = "sequence", result_cols = NULL) {
+                                    sequence_col = "sequence", result_cols = NULL, ...) {
   if (is.null(input$obs_data[[sequence_col]])) {
     stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))
   }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/taxmap--class.R
 \name{obs_data}
 \alias{obs_data}
-\title{Return item data from \code{\link{taxmap}}}
+\title{Return observation data from \code{\link{taxmap}}}
 \usage{
 obs_data(obj, row_subset = NULL, col_subset = NULL,
   calculated_cols = TRUE, sort_by = NULL, decreasing = FALSE,

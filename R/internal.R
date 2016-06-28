@@ -27,7 +27,7 @@ get_node_children <- function(graph, node) {
 #' @keywords internal
 delete_vetices_and_children <- function(graph, nodes) {
   nodes <- unlist(sapply(nodes, function(x) get_node_children(graph, x)))
-  graph <- igraph::delete.nodes(graph, nodes)
+  graph <- igraph::delete.vertices(graph, nodes)
   return(graph)
 }
 

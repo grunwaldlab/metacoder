@@ -34,8 +34,8 @@ read_lines_apply <- function(file_path, func, buffer_size = 1000, simplify = FAL
 #' 
 #' @return \code{numeric}
 #' 
-#' @export
-fasta_headers <- function(file_path, buffer_size = 1000) {
+#' @keywords internal
+fasta_headers <- function(file_path, buffer_size = 1000, return_headers = TRUE) {
   extract_headers <- function(chunk) {
     is_header <- grepl(pattern = "^>", chunk)
     output <- current_pos + which(is_header)
