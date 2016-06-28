@@ -5,7 +5,7 @@
 \title{Filter taxa with a list of conditions}
 \usage{
 filter_taxa(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
-  taxonless = FALSE, reassign_items = TRUE, reassign_taxa = TRUE)
+  taxonless = FALSE, reassign_obs = TRUE, reassign_taxa = TRUE)
 }
 \arguments{
 \item{.data}{\code{\link{taxmap}}}
@@ -26,7 +26,7 @@ the filter.}
 they are assigned to is filtered out. Item assigned to removed taxa will be assigned to
 \code{NA}. See the \code{reassign} option below for further complications.}
 
-\item{reassign_items}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
+\item{reassign_obs}{(\code{logical} of length 1) If \code{TRUE}, items assigned to removed taxa will
 be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
 such an item that passed the filter, they will be filtered out if \code{taxonless} is
 \code{TRUE}.}
@@ -43,14 +43,14 @@ appears in \code{taxon_data(.data)} can be used as if it was a vector on its own
 \code{\link[dplyr]{filter}} for inspiration and more information.
 }
 \seealso{
-Other dplyr-like functions: \code{\link{arrange_items}},
-  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
-  \code{\link{mutate_items}}, \code{\link{mutate_taxa}},
-  \code{\link{sample_frac_items}},
+Other dplyr-like functions: \code{\link{arrange_obs}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_obs}},
+  \code{\link{mutate_obs}}, \code{\link{mutate_taxa}},
+  \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_items}},
-  \code{\link{sample_n_taxa}}, \code{\link{select_items}},
-  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{sample_n_obs}},
+  \code{\link{sample_n_taxa}}, \code{\link{select_obs}},
+  \code{\link{select_taxa}}, \code{\link{transmute_obs}},
   \code{\link{transmute_taxa}}
 }
 

@@ -4,7 +4,7 @@
 \alias{sample_n_taxa}
 \title{Sample n taxa from \code{\link{taxmap}}}
 \usage{
-sample_n_taxa(.data, size, taxon_weight = NULL, item_weight = NULL,
+sample_n_taxa(.data, size, taxon_weight = NULL, obs_weight = NULL,
   use_subtaxa = TRUE, collapse_func = mean, ...)
 }
 \arguments{
@@ -15,18 +15,18 @@ sample_n_taxa(.data, size, taxon_weight = NULL, item_weight = NULL,
 \item{taxon_weight}{(\code{numeric}) Non-negative sampling weights of each taxon. The expression 
 given is evaluated in the context of \code{\link{taxon_data}}. In other words, any column name 
 that appears in \code{\link{taxon_data}(.data)} can be used as if it was a vector on its own. 
-If \code{item_weight} is also specified, the two weights are multiplied (after 
-\code{item_weight} for each taxon is calculated).}
+If \code{obs_weight} is also specified, the two weights are multiplied (after 
+\code{obs_weight} for each taxon is calculated).}
 
-\item{item_weight}{(\code{numeric}) Sampling weights of each item. The weights for each item 
+\item{obs_weight}{(\code{numeric}) Sampling weights of each item. The weights for each item 
 assigned to a given taxon are supplied to \code{collapse_func} to get the taxon weight. If 
 \code{use_subtaxa} is \code{TRUE} then the items assigned to every subtaxa are also used. The 
-expression given is evaluated in the context of \code{\link{item_data}}. In other words, any 
-column name that appears in \code{\link{item_data}(.data)} can be used as if it was a vector on
+expression given is evaluated in the context of \code{\link{obs_data}}. In other words, any 
+column name that appears in \code{\link{obs_data}(.data)} can be used as if it was a vector on
 its own. If \code{taxon_weight} is also specified, the two weights are multiplied (after 
-\code{item_weight} for each item is calculated).}
+\code{obs_weight} for each item is calculated).}
 
-\item{use_subtaxa}{(\code{logical} of length 1) Affects how the \code{item_weight} option is
+\item{use_subtaxa}{(\code{logical} of length 1) Affects how the \code{obs_weight} option is
 used. If \code{TRUE}, the weights for each taxon in an item's classification are multiplied to
 get the item weight. Otherwise, just the taxonomic level the item is assign to it considered.}
 
@@ -46,14 +46,14 @@ specified for taxa or the items assigned to them.
 See \link[dplyr]{sample_n} for the inspiration for this function.
 }
 \seealso{
-Other dplyr-like functions: \code{\link{arrange_items}},
-  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
-  \code{\link{filter_taxa}}, \code{\link{mutate_items}},
+Other dplyr-like functions: \code{\link{arrange_obs}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_obs}},
+  \code{\link{filter_taxa}}, \code{\link{mutate_obs}},
   \code{\link{mutate_taxa}},
-  \code{\link{sample_frac_items}},
+  \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_items}}, \code{\link{select_items}},
-  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{sample_n_obs}}, \code{\link{select_obs}},
+  \code{\link{select_taxa}}, \code{\link{transmute_obs}},
   \code{\link{transmute_taxa}}
 }
 

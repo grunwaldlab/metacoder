@@ -21,14 +21,14 @@ appears in \code{taxon_data(.data)} can be used as if it was a vector on its own
 \link[dplyr]{arrange} for more details.
 }
 \seealso{
-Other dplyr-like functions: \code{\link{arrange_items}},
-  \code{\link{filter_items}}, \code{\link{filter_taxa}},
-  \code{\link{mutate_items}}, \code{\link{mutate_taxa}},
-  \code{\link{sample_frac_items}},
+Other dplyr-like functions: \code{\link{arrange_obs}},
+  \code{\link{filter_obs}}, \code{\link{filter_taxa}},
+  \code{\link{mutate_obs}}, \code{\link{mutate_taxa}},
+  \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_items}},
-  \code{\link{sample_n_taxa}}, \code{\link{select_items}},
-  \code{\link{select_taxa}}, \code{\link{transmute_items}},
+  \code{\link{sample_n_obs}},
+  \code{\link{sample_n_taxa}}, \code{\link{select_obs}},
+  \code{\link{select_taxa}}, \code{\link{transmute_obs}},
   \code{\link{transmute_taxa}}
 }
 

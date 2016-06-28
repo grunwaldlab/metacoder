@@ -36,8 +36,8 @@ Database                                                      | locus         | 
 There are a large number of sequence header/metadata formats and most of them are specific to a particular database.
 This makes it difficult to compare and combine data from diverse sources. 
 Rather than exacerbating the syntactic pollution with another custom format or creating a parser for every database-specific format, the function `extract_taxonomy` parses taxonomy information from arbitrary characters strings (e.g. sequence headers) identified by a regex expression.
-Although the motivation for creating `extract_taxonomy` is to parse FASTA sequence headers, the function is not specific to FASTA or even to sequence information, so I will use the word "item" instead of "sequence header" from now on.
-Any list of strings that contain identity and taxonomy information of a set of "items" is valid.
+Although the motivation for creating `extract_taxonomy` is to parse FASTA sequence headers, the function is not specific to FASTA or even to sequence information, so I will use the word "observation" instead of "sequence header" from now on.
+Any list of strings that contain identity and taxonomy information of a set of "observations" is valid.
 
 The function communicates with online databases (principally implemented using `taxize`) to infer missing information from information supplied.
 For example, if a GenBank accession number was the only information available, the taxon id and classification would be retrieved from the NCBI databases.
@@ -70,29 +70,29 @@ See `?taxmap` for more details.
 FASTA files downloaded from GenBank custom queries contain the GenBank id and the accession number/version to identify sequences.
 Taxonomic information can be retrieved using either of these identifiers. 
 The following shows how to extract the GI numbers, accession id, and description from the headers. 
-The GenBank accession number is being used to look up the taxonomy information (hence `"item_id"` in `key` option), while the GI numbers and description are being returned without contributing taxonomic information (hence `"item_info"` in `key` option).
+The GenBank accession number is being used to look up the taxonomy information (hence `"obs_id"` in `key` option), while the GI numbers and description are being returned without contributing taxonomic information (hence `"obs_info"` in `key` option).
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
                                     regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-                                    key = c(gi_no = "item_info", "item_id", desc = "item_info"),
+                                    key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
                                     database = "ncbi")
 ```
 
 The sequence headers have the format:
 
 ```{r, echo=FALSE, comment=NA}
-head(item_data(genbank_ex_data, "input"))
+head(obs_data(genbank_ex_data, "input"))
 ```
 
 We can plot the result using `plot`:
 
 ```{r}
 plot(genbank_ex_data,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
@@ -115,21 +115,21 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
                             regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                            key = c(name = "item_info", "item_id",
-                                    other_id = "item_info", tax_string = "item_info"),
+                            key = c(name = "obs_info", "obs_id",
+                                    other_id = "obs_info", tax_string = "obs_info"),
                             database = "ncbi")
 ```
 
 The sequence headers have the format:
 
 ```{r, echo=FALSE, comment=NA}
-head(item_data(unite_ex_data_1, "input"))
+head(obs_data(unite_ex_data_1, "input"))
 ```
 
 ```{r}
 plot(unite_ex_data_1,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
@@ -138,15 +138,15 @@ plot(unite_ex_data_1,
 If you want to use the structure and names of the classification provided in the header, but still look up the official taxon id, you can provide `"class"` as the only key with taxonomic information.
 Since the UNITE classification also included the rank for each taxon, we will have to specify how to parse each taxon string using the `class_regex` and `class_key` options.
 These work the same as `regex` and `key`, except they apply to each element in a classification.
-You can still capture the sequence id or taxon id (assuming its present in the header) by using `"item_info"` or `"taxon_info"` where you would otherwise use `"item_id"` or `"taxon_id"`.
+You can still capture the sequence id or taxon id (assuming its present in the header) by using `"obs_info"` or `"taxon_info"` where you would otherwise use `"obs_id"` or `"taxon_id"`.
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_2 <- extract_taxonomy(sequences,
                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                                    key = c(name = "item_info", sequence_id = "item_info",
-                                            other_id = "item_info", "class"),
+                                    key = c(name = "obs_info", sequence_id = "obs_info",
+                                            other_id = "obs_info", "class"),
                                     class_regex = "^(.*)__(.*)$",
                                     class_key = c(unite_rank = "taxon_info", "name"),
                                     class_sep = ";",
@@ -155,12 +155,12 @@ unite_ex_data_2 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_2,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
-Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
+Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"obs_info"`, causing them to be interpreted as generic data.
 This means that only the classification string (e.g. `k__Fungi;p__Ascomycota;c__Leotiomycetes`) will be interpreted as having taxonomic information, but the other information will also be included in the output in columns named `name` and `sequence_id`.
 The unique taxon id for each taxon encountered will be looked up and taxa not found will be encoded as `NA`.
 
@@ -175,8 +175,8 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_3 <- extract_taxonomy(sequences,
                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                                    key = c(seq_name = "item_info", sequence_id = "item_info",
-                                            other_id = "item_info", "class"),
+                                    key = c(seq_name = "obs_info", sequence_id = "obs_info",
+                                            other_id = "obs_info", "class"),
                                     class_regex = "^(.*)__(.*)$",
                                     class_key = c(unite_rank = "taxon_info", "name"),
                                     class_sep = ";")
@@ -184,43 +184,43 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
 ### ITS1 DB FASTA headers
 
 The ITS1 database FASTA header includes the GenBank taxon id.
-In the example below, both the `"item_id"` and `"taxon_id"` keys are provided, but only the `"taxon_id"` is used to look up taxonomy information since it has precedence. 
+In the example below, both the `"obs_id"` and `"taxon_id"` keys are provided, but only the `"taxon_id"` is used to look up taxonomy information since it has precedence. 
 
 ```{r eval=FALSE}
 file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 its1_ex_data <- extract_taxonomy(sequences,
                                  regex = "^(.*)\\|(.*)\\|tax_id:(.*)\\|(.*)$",
-                                 key = c("item_id", taxon_name = "taxon_info",
-                                         "taxon_id", description = "item_info"),
+                                 key = c("obs_id", taxon_name = "taxon_info",
+                                         "taxon_id", description = "obs_info"),
                                  database = "ncbi")
 ```
 
 The sequence headers have the format:
 
 ```{r, echo=FALSE, comment=NA}
-head(item_data(its1_ex_data, "input"))
+head(obs_data(its1_ex_data, "input"))
 ```
 
 ```{r}
 plot(its1_ex_data,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      layout = "fruchterman-reingold")
 ```
 
 ### PR2 FASTA headers
 
-The first item in the header is sometimes a GenBank accession number, but not always.
+The first observation in the header is sometimes a GenBank accession number, but not always.
 Therefore, the best option is to use the included taxonomy information.
 Note that there is no rank information available. 
 
@@ -229,20 +229,20 @@ file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "
 sequences <- ape::read.FASTA(file_path)
 pr2_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*\\..*?)\\|(.*)$",
-                                key = c("item_id", "class"),
+                                key = c("obs_id", "class"),
                                 class_sep = "\\|")
 ```
 
 The sequence headers have the format:
 
 ```{r, echo=FALSE, comment=NA}
-head(item_data(pr2_ex_data, "input"))
+head(obs_data(pr2_ex_data, "input"))
 ```
 
 ```{r}
 plot(pr2_ex_data,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
@@ -257,13 +257,13 @@ file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package 
 sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
-                                key = c(id = "item_info", description = "item_info", "class"),
+                                key = c(id = "obs_info", description = "obs_info", "class"),
                                 class_regex = "(.+?);(.*?);",
                                 class_key = c("name", "taxon_info"))
 ```
 
 ```{r, echo=FALSE, comment=NA}
-head(item_data(rdp_ex_data, "input"))
+head(obs_data(rdp_ex_data, "input"))
 ```
 
 Note that the same character ( `;` ) is used to delineate different ranks and taxa.
@@ -273,8 +273,8 @@ Therefore, we can use a `class_regex` that matches two `;` to correctly parse th
 
 ```{r}
 plot(rdp_ex_data,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      layout = "fruchterman-reingold")
 ```
@@ -288,7 +288,7 @@ file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 silva_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)$",
-                                key = c(id = "item_info", "class"),
+                                key = c(id = "obs_info", "class"),
                                 class_sep = ";")
 ```
 
@@ -300,8 +300,8 @@ taxon_data(silva_ex_data)
 
 ```{r}
 plot(silva_ex_data,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      tree_label = name)
 ```

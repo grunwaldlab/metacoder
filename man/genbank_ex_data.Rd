@@ -25,7 +25,7 @@ file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "meta
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
                                     regex = "^.*\\\\|(.*)\\\\|.*\\\\|(.*)\\\\|(.*)$",
-                                    key = c(gi_no = "item_info", "item_id", desc = "item_info"),
+                                    key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
                                     database = "ncbi")
 }
 

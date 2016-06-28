@@ -20,8 +20,8 @@ file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = 
 sequences <- ape::read.FASTA(file_path)
 its1_ex_data <- extract_taxonomy(sequences,
                                  regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|(.*)$",
-                                 key = c("item_id", taxon_name = "taxon_info",
-                                         "taxon_id", description = "item_info"))
+                                 key = c("obs_id", taxon_name = "taxon_info",
+                                         "taxon_id", description = "obs_info"))
 }
 
 }

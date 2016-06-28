@@ -5,9 +5,9 @@
 \title{Create an instance of \code{taxmap}}
 \usage{
 taxmap(taxon_ids, parent_ids, taxa = taxon_ids,
-  item_taxon_ids = numeric(0), taxon_data = NULL, item_data = NULL,
-  taxon_funcs = list(n_items = n_items, taxon_levels = taxon_levels,
-  classifications = classifications), item_funcs = list())
+  obs_taxon_ids = numeric(0), taxon_data = NULL, obs_data = NULL,
+  taxon_funcs = list(n_obs = n_obs, taxon_levels = taxon_levels,
+  classifications = classifications), obs_funcs = list())
 }
 \arguments{
 \item{taxon_ids}{(\code{character}) 
@@ -24,7 +24,7 @@ Taxa without parents should be \code{NA}.}
 Objects representing taxa.
 Currently, these can be anything, but this might change in the future.}
 
-\item{item_taxon_ids}{(\code{character} OR (\code{numeric}))
+\item{obs_taxon_ids}{(\code{character} OR (\code{numeric}))
 Taxon assignments of items.
 Parent taxa (i.e. supertaxa) of \code{taxa}.
 If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
@@ -33,15 +33,15 @@ If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon
 \item{taxon_data}{(\code{data.frame})
 A table with rows pretaining to \code{taxa}}
 
-\item{item_data}{A (\code{data.frame})
-A table with rows pretaining to \code{item_taxa}}
+\item{obs_data}{A (\code{data.frame})
+A table with rows pretaining to \code{obs_taxa}}
 
 \item{taxon_funcs}{(\code{list} of named \code{function}s)
 These the values produced by these functions will be accessible as a column in \code{taxon_data}.
 The first parameter of each function should be a single \code{taxmap} object.}
 
-\item{item_funcs}{(\code{list} of named \code{function}s)
-These the values produced by these functions will be accessible as a column in \code{item_data}.
+\item{obs_funcs}{(\code{list} of named \code{function}s)
+These the values produced by these functions will be accessible as a column in \code{obs_data}.
 The first parameter of each function should be a single \code{taxmap} object.}
 }
 \value{

@@ -50,7 +50,7 @@ v35_data <- parse_hmp_qiime(otu_file = "http://downloads.hmpdacc.org/data/HMQCP/
 
 ```{r}
 calculate_abundance <- function(data) {
-  mutate_taxa(data, abundance = vapply(items(data), function(i) sum(data$item_data[i, colnames(data$item_data) %in% data$mapping$sample_id]), numeric(1)))
+  mutate_taxa(data, abundance = vapply(obs(data), function(i) sum(data$obs_data[i, colnames(data$obs_data) %in% data$mapping$sample_id]), numeric(1)))
 }
 
 v13_data <- calculate_abundance(v13_data)
@@ -61,7 +61,7 @@ plot_all <- function(data, output_name, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    plot(node_size = n_items,
+    plot(node_size = n_obs,
          node_size_axis_label = "Number of OTUs",
          node_color = abundance,
          node_color_trans = "area",
@@ -88,7 +88,7 @@ calculate_body_site_abundance <- function(data, site) {
   ab_col_name <- paste0(site, "_abun")
   prop_col_name <- paste0(site, "_prop")
   body_site_cols <- unlist(data$mapping[data$mapping$body_site == site, "sample_id"])
-  data$taxon_data[ab_col_name] <- vapply(items(data), function(i) sum(data$item_data[i, colnames(data$item_data) %in% body_site_cols]), numeric(1))
+  data$taxon_data[ab_col_name] <- vapply(obs(data), function(i) sum(data$obs_data[i, colnames(data$obs_data) %in% body_site_cols]), numeric(1))
   data$taxon_data[prop_col_name] <- data$taxon_data[[ab_col_name]] / max(data$taxon_data[[ab_col_name]])
   return(data)
 }
@@ -114,7 +114,7 @@ plot_body_site_diff <- function(data, site_1, site_2, output_name, seed = 1) {
     filter_taxa(abundance >= 100) %>%
     # filter_taxa(taxon_levels <= 5) %>%
     plot(node_size_axis_label = "Number of OTUs",
-         node_size = n_items,
+         node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
          node_color = scaled_prop_diff,
          node_color_range = diverging_palette(),
@@ -169,7 +169,7 @@ plot_body_site_diff_small <- function(data, site_1, site_2, seed = 1) {
     filter_taxa(abundance >= 100) %>%
     filter_taxa(taxon_levels <= 5) %>%
     plot(node_size_axis_label = "Number of OTUs",
-         node_size = n_items,
+         node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
          node_color = scaled_prop_diff,
          node_color_range = diverging_palette(),

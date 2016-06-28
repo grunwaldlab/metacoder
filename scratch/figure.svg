@@ -308,7 +308,7 @@
          id="flowPara4150"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">------------------- obs_data --------------------</flowPara><flowPara
          id="flowPara4152"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">   item_taxon_ids            seq_name sequence_id</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">   obs_taxon_ids            seq_name sequence_id</flowPara><flowPara
          id="flowPara4154"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:FreeMono;-inkscape-font-specification:'FreeMono Bold';text-align:center;text-anchor:middle">1             576 Russula_cyanoxantha    AB451977</flowPara><flowPara
          id="flowPara4156"

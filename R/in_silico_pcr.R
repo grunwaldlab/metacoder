@@ -141,7 +141,7 @@ primersearch <- function(...) {
 #'                        mismatch = 10)
 #'                        
 #' plot(result, 
-#'      node_size = n_items,
+#'      node_size = n_obs,
 #'      node_label = name,
 #'      node_color = prop_amplified,
 #'      node_color_range = c("red", "yellow", "green"),
@@ -198,7 +198,7 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5) {
 
 #' @method primersearch taxmap
 #' 
-#' @param sequence_col (\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.
+#' @param sequence_col (\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.
 #' @param result_cols (\code{character}) The names of columns to include in the output.
 #' By defualt, all output columns are included.
 #' 
@@ -206,10 +206,10 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5) {
 #' @export
 primersearch.taxmap <- function(input, forward, reverse, mismatch = 5,
                                     sequence_col = "sequence", result_cols = NULL) {
-  if (is.null(input$item_data[[sequence_col]])) {
+  if (is.null(input$obs_data[[sequence_col]])) {
     stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))
   }
-  result <- primersearch(input = input$item_data[[sequence_col]],
+  result <- primersearch(input = input$obs_data[[sequence_col]],
                          forward = forward, reverse = reverse, mismatch = mismatch)
   seq_id <- result$seq_id
   result <- result[, colnames(result) != "seq_id", drop = FALSE]
@@ -218,20 +218,20 @@ primersearch.taxmap <- function(input, forward, reverse, mismatch = 5,
     result <- result[, result_cols, drop = FALSE]
   }
   
-  overwritten_cols <-  colnames(input$item_data)[colnames(input$item_data) %in% colnames(result)]
+  overwritten_cols <-  colnames(input$obs_data)[colnames(input$obs_data) %in% colnames(result)]
   if (length(overwritten_cols) > 0) {
-    warning(paste0('The following item_data columns will be overwritten by primersearch:\n',
+    warning(paste0('The following obs_data columns will be overwritten by primersearch:\n',
                    paste0(collapse = "\n", "    ", overwritten_cols)))
   }
-  input$item_data[ , colnames(result)] <- NA
-  input$item_data[seq_id, colnames(result)] <- result
-  input$item_data$amplified <- ! is.na(input$item_data$length)
+  input$obs_data[ , colnames(result)] <- NA
+  input$obs_data[seq_id, colnames(result)] <- result
+  input$obs_data$amplified <- ! is.na(input$obs_data$length)
   input$taxon_funcs <- c(input$taxon_funcs,
                          count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]), numeric(1))
+                           vapply(obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]), numeric(1))
                          },
                          prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(items(obj, subset), function(x) sum(obj$item_data$amplified[x]) / length(x), numeric(1))
+                           vapply(obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]) / length(x), numeric(1))
                          })
   output <- input
   return(output)

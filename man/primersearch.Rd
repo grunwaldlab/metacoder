@@ -22,7 +22,7 @@ primersearch(...)
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
 
-\item{sequence_col}{(\code{character} of length 1) The name of the column in \code{item_data} that has the input sequences.}
+\item{sequence_col}{(\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.}
 
 \item{result_cols}{(\code{character}) The names of columns to include in the output.
 By defualt, all output columns are included.}
@@ -72,7 +72,7 @@ result <- primersearch(rdp_ex_data,
                        mismatch = 10)
                        
 plot(result, 
-     node_size = n_items,
+     node_size = n_obs,
      node_label = name,
      node_color = prop_amplified,
      node_color_range = c("red", "yellow", "green"),

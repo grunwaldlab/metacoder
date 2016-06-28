@@ -27,12 +27,12 @@ First, we will use a bar chart to display abundance of taxa at each rank:
 
 ```{r, echo = FALSE}
 data <- taxon_data(unite_ex_data_3)
-data$name <- factor(data$name, levels = unique(data$name[order(data$n_items, decreasing = TRUE)]), ordered = TRUE)
+data$name <- factor(data$name, levels = unique(data$name[order(data$n_obs, decreasing = TRUE)]), ordered = TRUE)
 data$unite_rank <- factor(data$unite_rank, levels = unique(data$unite_rank),
                     labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
                     ordered = TRUE)
 ggplot(data[!data$unite_rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
-  geom_bar(aes(x = name, y = n_items), stat = "identity") +
+  geom_bar(aes(x = name, y = n_obs), stat = "identity") +
   facet_wrap(~ unite_rank, scales = "free") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
@@ -48,7 +48,7 @@ Pie charts are also commonly used for this purpose, but they are just a less eff
 
 ```{r, echo = FALSE}
 ggplot(data[data$unite_rank == "Phylum", ]) + 
-  geom_bar(aes(x = factor(1), y = n_items, fill = name), stat = "identity") +
+  geom_bar(aes(x = factor(1), y = n_obs, fill = name), stat = "identity") +
   coord_polar(theta = "y") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
@@ -64,8 +64,8 @@ ggplot(data[data$unite_rank == "Phylum", ]) +
 
 ```{r, echo=FALSE}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
@@ -92,7 +92,7 @@ Below, the number of sequences for each taxon is used to determine node size.
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items)
+     node_size = n_obs)
 ```
 
 Note that it was not necessary to specify the absolute node size; the range of absolute node sizes is optimized for each graph so as to minimize overlap of nodes and maximize the ranges of sizes.
@@ -103,10 +103,10 @@ Too low of an `overlap_avoidance` can make the graph hard to read.
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
+     node_size = n_obs,
      overlap_avoidance = 10)
 plot(unite_ex_data_3,
-     node_size = n_items,
+     node_size = n_obs,
      overlap_avoidance = 0.1)
 ```
 
@@ -121,12 +121,12 @@ This argument take a list of colors in the form of names, hex color codes, or in
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items)
+     node_size = n_obs,
+     node_color = n_obs)
 
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_color_range = c("#FFFFFF", "darkorange3", "#4e567d", "gold"))
 ```
 
@@ -137,14 +137,14 @@ To only color nodes, you can set the lines to be a constant color or vise-versa.
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      edge_color = "grey")
 
 plot(unite_ex_data_3,
-     node_size = n_items,
+     node_size = n_obs,
      node_color = "grey",
-     edge_color = n_items)
+     edge_color = n_obs)
 ```
 
 You can also set the color palette used for the lines in the same way as you set it for the node using the argument `edge_color_range`. 
@@ -155,8 +155,8 @@ Labels can be added to nodes using the `node_label` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name)
 ```
 
@@ -166,14 +166,14 @@ The maximum number of labels that will be printed is controlled by the `node_lab
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      node_label_max = 5)
 
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      node_label_max = 200)
 ```
@@ -187,8 +187,8 @@ Lines can be labeled as well using the `edge_label` option, which works similarl
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      edge_label = name)
 ```
 
@@ -200,8 +200,8 @@ Other background colors can be specified using the `background_color` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      background_color = "grey")
 ```
 
@@ -210,15 +210,15 @@ Plots can be saved using `ggsave` from the `ggplot2` package or using the `outpu
 
 ```{r, eval = FALSE}
 my_plot <- plot(unite_ex_data_3,
-                node_size = n_items,
-                node_color = n_items)
+                node_size = n_obs,
+                node_color = n_obs)
 ggplot2::ggsave("path/to/my/output.png", my_plot, bg = "transparent")
 ```
 
 ```{r, eval = FALSE}
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      output_file = "path/to/my/output.png")
 ```
 
@@ -228,7 +228,7 @@ plot(unite_ex_data_3,
 ### Plotting with multiple taxonomy roots
 
 Sometimes a taxonomy has multiple roots.
-This occurs when there is not a common taxon all items are assigned to, like "Eukaryota" if all your items are associated with eukayotes.
+This occurs when there is not a common taxon all observations are assigned to, like "Eukaryota" if all your observations are associated with eukayotes.
 When plotting these type of data some might want all the data to share a common "life" root and be on the same tree, whereas others might think it more appropriate to plot each in different trees. 
 `metacoder` allows for both of these, but defaults to plotting taxonomies with multiple roots as multiple trees.
 
@@ -240,7 +240,7 @@ You could use the following code to get the taxonomic information.
 ```{r, eval=FALSE}
 raw <- "JQ086376.1 AM946981.2 JQ182735.1 CP001396.1 J02459.1 AC150248.3 X64334.1 CP001509.3 CP006698.1 AC198536.1 JF340119.2 KF771025.1 CP007136.1 CP007133.1 U39286.1 CP006584.1 EU421722.1 U03462.1 U03459.1 AC198467.1 V00638.1 CP007394.1 CP007392.1 HG941718.1 HG813083.1 HG813082.1 CP007391.1 HG813084.1 CP002516.1 KF561236.1 JX509734.1 AP010953.1 U39285.1 M15423.1 X98613.1 CP006784.1 CP007393.1 CU928163.2 AP009240.1 CP007025.1 CP006027.1 CP003301.1 CP003289.1 CP000946.1 CP002167.1 HG428755.1 JQ086370.1 CP001846.1 CP001925.1 X99439.1 AP010958.1 CP001368.1 AE014075.1 CP002212.1 CP003034.1 CP000243.1 AY940193.1 CP004009.1 JQ182732.1 U02453.1 AY927771.1 BA000007.2 CP003109.1 CP007390.1 U02426.1 U02425.1 CP006262.1 HG738867.1 U00096.3 FN554766.1 CP001855.1 L19898.1 AE005174.2 FJ188381.1 AK157373.1 JQ182733.1 U39284.1 U37692.1 AF129072.1 FM180568.1 CP001969.1 HE616528.1 CP002729.1 JF974339.1 AB248924.1 AB248923.1 CP002291.1 X98409.1 CU928161.2 CP003297.1 FJ797950.1 CP000038.1 U82598.1 CP002211.1 JQ806764.1 U03463.1 CP001665.1"
 ids <- strsplit(raw, " ")[[1]]
-contaminants <- extract_taxonomy(ids, key = "item_id", database = "ncbi")
+contaminants <- extract_taxonomy(ids, key = "obs_id", database = "ncbi")
 ```
 
 In order to avoid using the NCBI servers more than necessary (and to avoid waiting), I saved the result of above code in an included example data set called `contaminants`.
@@ -248,8 +248,8 @@ The code below will use the included data set if the code above is not run (you 
 
 ```{r}
 plot(contaminants,
-     node_size = n_items,
-     node_color = n_items,
+     node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      tree_label = name,
      layout = "fruchterman-reingold")

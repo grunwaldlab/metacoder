@@ -48,9 +48,9 @@ get_class_from_el <- function(taxa, parents) {
 
 
 #===================================================================================================
-#' Get distance from root of edgelist items
+#' Get distance from root of edgelist observations
 #' 
-#' Gets the number of ancestors/supergroups for items of an edge/adjacency list
+#' Gets the number of ancestors/supergroups for observations of an edge/adjacency list
 #' 
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
@@ -71,7 +71,7 @@ edge_list_depth <-  function(taxa, parents) {
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' Root taxa should have \code{NA} in this column.
-#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each observation in
 #' \code{taxa}.
 #' @param strict If \code{FALSE}, ranks with inconsistent levels will be allowed. Otherwise ranks 
 #' with overlapping level ranges will cause an error. 
@@ -105,7 +105,7 @@ taxonomy_ranks <- function(taxa, parents, rank, strict = TRUE) {
 #' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
 #' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
 #' @param level (\code{character} or \code{numeric} of length 1)
-#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each item in
+#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each observation in
 #' 
 #' @return a \code{list} of taxon id \code{character} vectors. 
 #' \code{taxa}.

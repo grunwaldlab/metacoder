@@ -25,8 +25,8 @@ mutate_taxa <- function(.data, ...) {
 
 #' Add columns to \code{\link{taxmap}} objects
 #' 
-#' Add columns to the \code{item_data} in \code{\link{taxmap}} objects. Any column name that
-#' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
+#' Add columns to the \code{obs_data} in \code{\link{taxmap}} objects. Any column name that
+#' appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{mutate}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{taxmap}}
@@ -38,11 +38,11 @@ mutate_taxa <- function(.data, ...) {
 #' @family dplyr-like functions
 #'   
 #' @export
-mutate_items <- function(.data, ...) {
-  my_item_data <- item_data(.data, col_subset = item_data_cols_used(.data, ...))
+mutate_obs <- function(.data, ...) {
+  my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_item_data), my_item_data)
-  .data$item_data <- dplyr::mutate(.data$item_data, ...)
+                   names(my_obs_data), my_obs_data)
+  .data$obs_data <- dplyr::mutate(.data$obs_data, ...)
   return(.data) 
 } 
 
@@ -74,8 +74,8 @@ transmute_taxa <- function(.data, ...) {
 
 #' Replace columns in \code{\link{taxmap}} objects
 #' 
-#' Replace columns of \code{item_data} in \code{\link{taxmap}} objects. Any column name that
-#' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
+#' Replace columns of \code{obs_data} in \code{\link{taxmap}} objects. Any column name that
+#' appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{transmute}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{taxmap}}
@@ -87,11 +87,11 @@ transmute_taxa <- function(.data, ...) {
 #' @family dplyr-like functions
 #'   
 #' @export
-transmute_items <- function(.data, ...) {
-  my_item_data <- item_data(.data, col_subset = item_data_cols_used(.data, ...))
+transmute_obs <- function(.data, ...) {
+  my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_item_data), my_item_data)
-  .data$item_data <- dplyr::bind_cols(.data$item_data[ , c("item_taxon_ids"), drop = FALSE],
-                                      dplyr::transmute(.data$item_data, ...))
+                   names(my_obs_data), my_obs_data)
+  .data$obs_data <- dplyr::bind_cols(.data$obs_data[ , c("obs_taxon_ids"), drop = FALSE],
+                                      dplyr::transmute(.data$obs_data, ...))
   return(.data) 
 } 

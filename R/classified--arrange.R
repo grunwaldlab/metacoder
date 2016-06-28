@@ -24,8 +24,8 @@ arrange_taxa <- function(.data, ...) {
 
 #' Sort columns of \code{\link{taxmap}} objects
 #' 
-#' Sort columns of \code{item_data} in \code{\link{taxmap}} objects. Any column name that
-#' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
+#' Sort columns of \code{obs_data} in \code{\link{taxmap}} objects. Any column name that
+#' appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See
 #' \link[dplyr]{arrange} for more details.
 #' 
 #' @param .data \code{\link{taxmap}}
@@ -37,10 +37,10 @@ arrange_taxa <- function(.data, ...) {
 #' @family dplyr-like functions
 #'   
 #' @export
-arrange_items <- function(.data, ...) {
-  my_item_data <- item_data(.data, col_subset = item_data_cols_used(.data, ...))
+arrange_obs <- function(.data, ...) {
+  my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
   unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_item_data), my_item_data)
-  .data$item_data <- dplyr::arrange(.data$item_data, ...)
+                   names(my_obs_data), my_obs_data)
+  .data$obs_data <- dplyr::arrange(.data$obs_data, ...)
   return(.data) 
 } 

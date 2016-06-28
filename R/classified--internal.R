@@ -92,9 +92,9 @@ taxon_data_cols_used <- function(obj, ...) {
   names_used[names_used %in% taxon_data_colnames(obj)]
 }
 
-#' Get names of item_data in an unevaluated expression
+#' Get names of obs_data in an unevaluated expression
 #' 
-#' Get names of item_data in an unevaluated expression
+#' Get names of obs_data in an unevaluated expression
 #' 
 #' @param obj a \code{taxmap} object
 #' @param ... unevaluated expression
@@ -102,9 +102,9 @@ taxon_data_cols_used <- function(obj, ...) {
 #' @return \code{character}
 #' 
 #' @keywords internal
-item_data_cols_used <- function(obj, ...) {
+obs_data_cols_used <- function(obj, ...) {
   names_used <- unlist(lapply(lazyeval::lazy_dots(...), function(x) as.character(x$expr)))
-  names_used[names_used %in% item_data_colnames(obj)]
+  names_used[names_used %in% obs_data_colnames(obj)]
 }
 
 
@@ -121,16 +121,16 @@ taxon_data_colnames <- function(obj) {
   c(colnames(obj$taxon_data), names(obj$taxon_funcs))
 }
 
-#' Get column names of item_data
+#' Get column names of obs_data
 #' 
-#' Get column names of item_data without calculating columns
+#' Get column names of obs_data without calculating columns
 #' 
 #' @param obj a \code{taxmap} object
 #' 
 #' @return \code{character}
 #' 
 #' @export
-item_data_colnames <- function(obj) {
-  c(colnames(obj$item_data), names(obj$item_funcs))
+obs_data_colnames <- function(obj) {
+  c(colnames(obj$obs_data), names(obj$obs_funcs))
 }
 

@@ -4,16 +4,16 @@
 \alias{recursive_sample}
 \title{Recursivly sample items with a heirarchical classification}
 \usage{
-recursive_sample(root_id, get_items, get_subtaxa, get_rank = NULL,
-  cat_items = unlist, max_counts = c(), min_counts = c(),
-  max_children = c(), min_children = c(), item_filters = list(),
+recursive_sample(root_id, get_obs, get_subtaxa, get_rank = NULL,
+  cat_obs = unlist, max_counts = c(), min_counts = c(),
+  max_children = c(), min_children = c(), obs_filters = list(),
   subtaxa_filters = list(), stop_conditions = list(), ...)
 }
 \arguments{
 \item{root_id}{(\code{character} of length 1) The taxon to sample. By default, the root of the
 taxonomy used.}
 
-\item{get_items}{(\code{function(character)}) A function that returns the items assigned to the
+\item{get_obs}{(\code{function(character)}) A function that returns the items assigned to the
 a given taxon. The function's first argument should be the taxon id and it should return a data
 structure possibly representing multiple items.}
 
@@ -25,9 +25,9 @@ taxon IDs.}
 id. The function's first argument should be the taxon id and it should return the rank of that
 taxon.}
 
-\item{cat_items}{(\code{function(list)}) A function that takes a list of whatever is returned by
-\code{get_items} and concatenates them into a single data structure of the type returned by
-\code{get_items}.}
+\item{cat_obs}{(\code{function(list)}) A function that takes a list of whatever is returned by
+\code{get_obs} and concatenates them into a single data structure of the type returned by
+\code{get_obs}.}
 
 \item{max_counts}{(\code{numeric}) A named vector that defines that maximum number of
 items in for each level specified. The names of the vector specifies that level each number
@@ -47,7 +47,7 @@ are randomly subsampled to this number of subtaxa.}
 subtaxa in for each level specified. The names of the vector specifies that level each number
 applies to.}
 
-\item{item_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
+\item{obs_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
 structure containing the information of multiple items and a taxon id.
 Returns a object of the same type with some of the items potentially removed.}
 

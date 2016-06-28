@@ -34,9 +34,9 @@ taxon_levels <- function(obj, subset = obj$taxon_data$taxon_ids) {
 }
 
 
-#' Count items in \code{\link{taxmap}}
+#' Count observations in \code{\link{taxmap}}
 #'
-#' Count items in \code{\link{taxmap}}
+#' Count observations in \code{\link{taxmap}}
 #'
 #' @param obj (\code{\link{taxmap}})
 #' @param subset (\code{character}) The \code{taxon_ids}s to get counts for.
@@ -44,14 +44,14 @@ taxon_levels <- function(obj, subset = obj$taxon_data$taxon_ids) {
 #' @return \code{numeric}
 #'
 #' @export
-n_items <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  vapply(items(obj, subset = subset, recursive = TRUE, simplify = FALSE), length, numeric(1))
+n_obs <- function(obj, subset = obj$taxon_data$taxon_ids) {
+  vapply(obs(obj, subset = subset, recursive = TRUE, simplify = FALSE), length, numeric(1))
 }
 
 
-#' Count item assigned in \code{\link{taxmap}}
+#' Count observation assigned in \code{\link{taxmap}}
 #'
-#' Count items assigned to a specific taxon in \code{\link{taxmap}}
+#' Count observations assigned to a specific taxon in \code{\link{taxmap}}
 #'
 #' @param obj (\code{\link{taxmap}})
 #' @param subset (\code{character}) The \code{taxon_ids}s to get counts for.
@@ -60,5 +60,5 @@ n_items <- function(obj, subset = obj$taxon_data$taxon_ids) {
 #'
 #' @export
 assigned <- function(obj, subset = obj$taxon_data$taxon_ids) {
-  vapply(items(obj, subset = subset, recursive = FALSE, simplify = FALSE), length, numeric(1))
+  vapply(obs(obj, subset = subset, recursive = FALSE, simplify = FALSE), length, numeric(1))
 }

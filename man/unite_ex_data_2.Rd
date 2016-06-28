@@ -20,8 +20,8 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_2 <- extract_taxonomy(names(sequences),
                                     regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                    key = c(name = "item_info", sequence_id = "item_info",
-                                            other_id = "item_info", "class_name"))
+                                    key = c(name = "obs_info", sequence_id = "obs_info",
+                                            other_id = "obs_info", "class_name"))
 }
 
 }

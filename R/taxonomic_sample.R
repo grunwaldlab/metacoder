@@ -1,15 +1,15 @@
 #===================================================================================================
 #' Recursivly sample a set of taxonomic assignments
 #' 
-#' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
+#' Recursivly sample a set of observations with taxonomic assignments and an associated taxonomy.
 #' 
 #' @param taxmap_data (An object of type \link{taxmap})
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
-#' items in for each level specified. The names of the vector specifies that level each number
-#' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
+#' observations in for each level specified. The names of the vector specifies that level each number
+#' applies to. If more than the maximum number of observations exist for a given taxon, it is randomly
 #' subsampled to this number. 
 #' @param min_counts (\code{numeric}) A named vector that defines that minimum number of
-#' items in for each level specified. The names of the vector specifies that level each number
+#' observations in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
 #' @param max_children (\code{numeric}) A named vector that defines that maximum number of
 #' subtaxa per taxon for each level specified. The names of the vector specifies that level each
@@ -18,16 +18,16 @@
 #' @param min_children (\code{numeric}) A named vector that defines that minimum number of
 #' subtaxa in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
-#' @param item_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
-#' structure containing the information of multiple items and a taxon id.
-#' Returns a object of the same type with some of the items potentially removed.  
-#' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' @param obs_filters  (\code{list} of \code{function(observations, id)}) A list of functions that take a data
+#' structure containing the information of multiple observations and a taxon id.
+#' Returns a object of the same type with some of the observations potentially removed.  
+#' @param subtaxa_filters  (\code{list} of \code{function(observations, id)}) A list of functions that take a data
 #' structure containing the information of multiple subtaxa IDs and the current taxon id.
 #' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
-#' \code{NULL}, then no items for the current taxon are returned.
+#' \code{NULL}, then no observations for the current taxon are returned.
 #' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
-#' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
-#' returned rather than looking for items of subtaxa, stopping the recursion.
+#' current taxon id. If any of the functions return \code{TRUE}, the observations for the current taxon are 
+#' returned rather than looking for observations of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @return Returns an object of type \code{taxmap}
@@ -37,26 +37,26 @@
 #' \dontrun{
 #' #Plot data before subsampling
 #' plot(unite_ex_data_3,
-#'      node_size = n_items,
-#'      node_color = n_items,
-#'      node_label = n_items)
+#'      node_size = n_obs,
+#'      node_color = n_obs,
+#'      node_label = n_obs)
 #'      
 #' # Subsampling
 #' subsampled <- taxonomic_sample(unite_ex_data_3,
 #'                                max_counts = c("4" = 20, "7" = 5),
 #'                                min_counts = c("7" = 3))
 #'      
-#' # Remove itemless taxa and plot
-#' plot(subset(subsampled, n_items > 0, itemless = FALSE),
-#'      node_size = n_items,
-#'      node_color = n_items,
-#'      node_label = n_items)
+#' # Remove unobserved taxa and plot
+#' plot(subset(subsampled, n_obs > 0, unobserved = FALSE),
+#'      node_size = n_obs,
+#'      node_color = n_obs,
+#'      node_label = n_obs)
 #' }
 #' 
 #' @export
 taxonomic_sample <- function(taxmap_data,
                              max_counts = c(), min_counts = c(), max_children = c(),
-                             min_children = c(), item_filters = list(), subtaxa_filters = list(),
+                             min_children = c(), obs_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
   process_one_tree <- function(root_taxon) {
     # subset for just tree with root
@@ -64,54 +64,54 @@ taxonomic_sample <- function(taxmap_data,
     # extract information from `taxmap` (This is a retrofit to use `classfied` objects)
     taxon_ids <- taxmap_data$taxon_data$taxon_ids
     parent_ids <- taxmap_data$taxon_data$parent_ids
-    item_ids <- taxmap_data$item_data$item_taxon_ids
+    obs_ids <- taxmap_data$obs_data$obs_taxon_ids
     ranks <- taxon_levels(taxmap_data)
     # Define functions to interact with the taxonomic information ------------------------------------
-    get_items_func <- function(id, ...) which(item_ids == id)
+    get_obs_func <- function(id, ...) which(obs_ids == id)
     get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(parent_ids) & parent_ids == id]
     get_rank_func <- function(id, ...) ranks[taxon_ids == id]
     # recursive sampling -----------------------------------------------------------------------------
-    recursive_sample(root_id = root_taxon, get_items = get_items_func, get_subtaxa = get_subtaxa_func,
-                     get_rank = get_rank_func, cat_items = unlist, max_counts = max_counts, 
+    recursive_sample(root_id = root_taxon, get_obs = get_obs_func, get_subtaxa = get_subtaxa_func,
+                     get_rank = get_rank_func, cat_obs = unlist, max_counts = max_counts, 
                      min_counts = min_counts, max_children = max_children, min_children = min_children, 
-                     item_filters = item_filters, subtaxa_filters = subtaxa_filters, 
+                     obs_filters = obs_filters, subtaxa_filters = subtaxa_filters, 
                      stop_conditions = stop_conditions)
   }
   
   root_taxa <- taxmap_data$taxon_data$taxon_ids[is.na(taxmap_data$taxon_data$parent_ids)]
-  item_indexes <- unlist(lapply(root_taxa, process_one_tree))
-  filter_items(taxmap_data, item = item_indexes)
+  obs_indexes <- unlist(lapply(root_taxa, process_one_tree))
+  filter_obs(taxmap_data, obs = obs_indexes)
 }
 
 
 
 #===================================================================================================
-#' Recursivly sample items with a heirarchical classification
+#' Recursivly sample observations with a heirarchical classification
 #' 
-#' Recursivly sample a set of items with a heirarchical classification.
+#' Recursivly sample a set of observations with a heirarchical classification.
 #' This function takes other functions as arguments and is intended to be used to make other more 
 #' user-friendly functions.
 #' 
 #' @param root_id (\code{character} of length 1) The taxon to sample. By default, the root of the
 #' taxonomy used.
-#' @param get_items (\code{function(character)}) A function that returns the items assigned to the
+#' @param get_obs (\code{function(character)}) A function that returns the observations assigned to the
 #' a given taxon. The function's first argument should be the taxon id and it should return a data
-#' structure possibly representing multiple items.
+#' structure possibly representing multiple observations.
 #' @param get_subtaxa (\code{function(character)}) A function that returns the sub taxa for a given
 #' taxon. The function's first argument should be the taxon id and it should return a vector of
 #' taxon IDs. 
 #' @param get_rank (\code{function(character)}) A function that returns the rank of a given taxon
 #' id. The function's first argument should be the taxon id and it should return the rank of that
 #' taxon.
-#' @param cat_items (\code{function(list)}) A function that takes a list of whatever is returned by
-#' \code{get_items} and concatenates them into a single data structure of the type returned by
-#' \code{get_items}.
+#' @param cat_obs (\code{function(list)}) A function that takes a list of whatever is returned by
+#' \code{get_obs} and concatenates them into a single data structure of the type returned by
+#' \code{get_obs}.
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
-#' items in for each level specified. The names of the vector specifies that level each number
-#' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
+#' observations in for each level specified. The names of the vector specifies that level each number
+#' applies to. If more than the maximum number of observations exist for a given taxon, it is randomly
 #' subsampled to this number. 
 #' @param min_counts (\code{numeric}) A named vector that defines that minimum number of
-#' items in for each level specified. The names of the vector specifies that level each number
+#' observations in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
 #' @param max_children (\code{numeric}) A named vector that defines that maximum number of
 #' subtaxa per taxon for each level specified. The names of the vector specifies that level each
@@ -120,23 +120,23 @@ taxonomic_sample <- function(taxmap_data,
 #' @param min_children (\code{numeric}) A named vector that defines that minimum number of
 #' subtaxa in for each level specified. The names of the vector specifies that level each number
 #' applies to. 
-#' @param item_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
-#' structure containing the information of multiple items and a taxon id.
-#' Returns a object of the same type with some of the items potentially removed.  
-#' @param subtaxa_filters  (\code{list} of \code{function(items, id)}) A list of functions that take a data
+#' @param obs_filters  (\code{list} of \code{function(observations, id)}) A list of functions that take a data
+#' structure containing the information of multiple observations and a taxon id.
+#' Returns a object of the same type with some of the observations potentially removed.  
+#' @param subtaxa_filters  (\code{list} of \code{function(observations, id)}) A list of functions that take a data
 #' structure containing the information of multiple subtaxa IDs and the current taxon id.
 #' Returns a object of the same type with some of the subtaxa potentially removed. If a function returns
-#' \code{NULL}, then no items for the current taxon are returned.
+#' \code{NULL}, then no observations for the current taxon are returned.
 #' @param stop_conditions (\code{list} of \code{function(id)}) A list of functions that take the
-#' current taxon id. If any of the functions return \code{TRUE}, the items for the current taxon are 
-#' returned rather than looking for items of subtaxa, stopping the recursion.
+#' current taxon id. If any of the functions return \code{TRUE}, the observations for the current taxon are 
+#' returned rather than looking for observations of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
 #' @seealso \code{\link{taxonomic_sample}}
 #' @keywords internal
-recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, cat_items = unlist,
+recursive_sample <- function(root_id, get_obs, get_subtaxa, get_rank = NULL, cat_obs = unlist,
                              max_counts = c(), min_counts = c(), max_children = c(),
-                             min_children = c(), item_filters = list(), subtaxa_filters = list(),
+                             min_children = c(), obs_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
   # Parse options ----------------------------------------------------------------------------------
   validate_filter_options <- function(filter) {
@@ -158,28 +158,28 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
   }
   # Make max filter function factory ---------------------------------------------------------------
   max_filter_factory <- function(filter_key) {
-    function(items, id, ...) {
+    function(observations, id, ...) {
       rank <- as.character(get_rank(id))
-      if (rank %in% names(filter_key) && length(items) > filter_key[rank]) {
-        items <- sample(items, filter_key[rank])
+      if (rank %in% names(filter_key) && length(observations) > filter_key[rank]) {
+        observations <- sample(observations, filter_key[rank])
       }
-      return(items)
+      return(observations)
     }
   }
   # Make min filter function factory ---------------------------------------------------------------
   min_filter_factory <- function(filter_key) {
-    function(items, id, ...) {
+    function(observations, id, ...) {
       rank <- as.character(get_rank(id))
-      if (rank %in% names(filter_key) && length(items) < filter_key[rank]) {
-        items <- NULL
+      if (rank %in% names(filter_key) && length(observations) < filter_key[rank]) {
+        observations <- NULL
       }
-      return(items)
+      return(observations)
     }
   }
   # Add standard filter functions ------------------------------------------------------------------
   subtaxa_filters <- c(subtaxa_filters, max_filter_factory(max_children), 
                        min_filter_factory(min_children))
-  item_filters <- c(item_filters, max_filter_factory(max_counts), min_filter_factory(min_counts))
+  obs_filters <- c(obs_filters, max_filter_factory(max_counts), min_filter_factory(min_counts))
   # Recursivly sample taxon ------------------------------------------------------------------------
   recursive_part <- function(id, depth = 1, ...) {
     # Determine if to stop search  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -196,18 +196,18 @@ recursive_sample <- function(root_id, get_items, get_subtaxa, get_rank = NULL, c
         }
       }
     }
-    # Get items for current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Get observations for current taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     if (stop_recursion) {
-      items <- get_items(id, ...)
+      observations <- get_obs(id, ...)
     } else {
-      items <- cat_items(lapply(sub_taxa, recursive_part, depth = depth + 1))
+      observations <- cat_obs(lapply(sub_taxa, recursive_part, depth = depth + 1))
     }
-    # Filter items - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    for (func in item_filters) {
-      items <- func(items, id, ...)
-      if (is.null(items) || length(items) == 0) break
+    # Filter observations - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    for (func in obs_filters) {
+      observations <- func(observations, id, ...)
+      if (is.null(observations) || length(observations) == 0) break
     }
-    return(items)
+    return(observations)
   }
   
   recursive_part(root_id, ...)

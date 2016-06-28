@@ -88,7 +88,7 @@ seqs <- ape::read.FASTA(unpacked_fasta_path)
 cat(names(seqs)[1])
 # Extract the taxonomic information of the sequences
 data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
-                         key = c(id = "item_info", "class"),
+                         key = c(id = "obs_info", "class"),
                          class_sep = ";")
 ```
 
@@ -100,14 +100,14 @@ The standard print method of the object shows a part of every kind of data it co
 data
 ```
 
-Note the `taxon_funcs` part contains function names (e.g. `n_items`) used to calculate   taxon statistics.
+Note the `taxon_funcs` part contains function names (e.g. `n_obs`) used to calculate   taxon statistics.
 You can see the results of these calculations using the `taxon_data` function:
 
 ```{r}
 taxon_data(data)
 ```
 
-There is corresponding `item_data` function and `item_funcs` list, but they are not used in this case.
+There is corresponding `obs_data` function and `obs_funcs` list, but they are not used in this case.
 
 ### Metadiversity Plots
 
@@ -116,7 +116,7 @@ Most often, bar charts, stacked bar charts, or pie graphs are used, but these ar
 MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity Plot**:
 
 ```{r}
-plot(data, node_size = n_items, node_label = name, node_color = n_items)
+plot(data, node_size = n_obs, node_label = name, node_color = n_obs)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -131,8 +131,8 @@ Only a few options are needed to make effective plots, yet many are available fo
 
 ```{r}
 set.seed(8)
-plot(data, node_size = n_items, edge_color = taxon_levels,
-     node_label = name, node_color = n_items,
+plot(data, node_size = n_obs, edge_color = taxon_levels,
+     node_label = name, node_color = n_obs,
      node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
      layout = "davidson-harel", overlap_avoidance = 0.5)
@@ -157,8 +157,8 @@ For example, `filter_taxa` can be used to look at just the Archaea:
 
 ```{r}
 set.seed(1)
-plot(filter_taxa(data, name == "Archaea"), node_size = n_items, 
-     node_label = name, node_color = n_items, layout = "fruchterman-reingold")
+plot(filter_taxa(data, name == "Archaea"), node_size = n_obs, 
+     node_label = name, node_color = n_obs, layout = "fruchterman-reingold")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -172,8 +172,8 @@ To make the Archaea-Bacteria division more clear, the "Root" taxon can be remove
 ```{r}
 subsetted <- filter_taxa(data, taxon_levels > 1)
 set.seed(2)
-plot(subsetted, node_size = n_items, node_label = name,
-     node_color = n_items, tree_label = name, layout = "davidson-harel")
+plot(subsetted, node_size = n_obs, node_label = name,
+     node_color = n_obs, tree_label = name, layout = "davidson-harel")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -181,19 +181,19 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subset_2.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Although items (information in `item_data`) are typically assinged to the tips of the taxonomy, they can also be assigned to any internal node.
+Although observations (information in `obs_data`) are typically assinged to the tips of the taxonomy, they can also be assigned to any internal node.
 When a tip taxon is removed by a filtering operation, the user has the option to reassign it a supertaxa that was not filtered out.
 This makes it easy to remove lower ranks of a taxonomy: 
 
 ```{r}
 set.seed(1)
 filter_taxa(data, taxon_levels < 5, subtaxa = FALSE) %>%
-plot(node_size = n_items, 
-     node_label = name, node_color = n_items)
+plot(node_size = n_obs, 
+     node_label = name, node_color = n_obs)
 
 ```
 
-There is also a `filter_items` function which can filter out items and the taxa they are assigned to.
+There is also a `filter_obs` function which can filter out observations and the taxa they are assigned to.
 
 ### Sampling
 
@@ -207,13 +207,13 @@ The code below samples the data such that rank 6 taxa will have 5 sequences and 
 ```{r}
 set.seed(1)
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- filter_taxa(sampled, n_items > 0, subtaxa = FALSE) 
+sampled <- filter_taxa(sampled, n_obs > 0, subtaxa = FALSE) 
 ```
 
 ```{r}
 set.seed(4)
-plot(sampled, node_size = n_items, node_label = n_items, overlap_avoidance = 0.5,
-     node_color = n_items)
+plot(sampled, node_size = n_obs, node_label = n_obs, overlap_avoidance = 0.5,
+     node_color = n_obs)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -221,13 +221,13 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subsample.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-This can also be accomplished using the `dplyr` equivalents to `sample_n` and `sample_frac` by weighting the probability of sampling items by the inverse of the number of items in taxa they are assigned to:
+This can also be accomplished using the `dplyr` equivalents to `sample_n` and `sample_frac` by weighting the probability of sampling observations by the inverse of the number of observations in taxa they are assigned to:
 
 ```{r}
 set.seed(4)
-sample_n_items(subsetted, size = 1000, taxon_weight = 1 / n_items, itemless = FALSE) %>%
-  plot(node_size = n_items, node_label = n_items, overlap_avoidance = 0.5,
-     node_color = n_items)
+sample_n_obs(subsetted, size = 1000, taxon_weight = 1 / n_obs, unobserved = FALSE) %>%
+  plot(node_size = n_obs, node_label = n_obs, overlap_avoidance = 0.5,
+     node_color = n_obs)
 ```
 
 
@@ -248,7 +248,7 @@ The proportion of sequences amplified can be represented by color in a metadiver
 
 ```{r}
 set.seed(1)
-plot(pcr, node_size = n_items, node_label = name, node_color = prop_amplified,
+plot(pcr, node_size = n_obs, node_label = name, node_color = prop_amplified,
      node_color_range =  c("red", "cyan"), node_color_trans = "radius", tree_label = name)
 ```
 
@@ -264,8 +264,8 @@ The data can also be subset to better see what did not get amplified:
 set.seed(7) 
 pcr %>%
   filter_taxa(name == "Bacteria") %>%
-  filter_taxa(count_amplified < n_items, subtaxa = FALSE) %>% 
-  plot(node_size = n_items, node_label = name, node_color = prop_amplified,
+  filter_taxa(count_amplified < n_obs, subtaxa = FALSE) %>% 
+  plot(node_size = n_obs, node_label = name, node_color = prop_amplified,
        node_color_range =  c("red", "cyan"),
        node_color_interval = c(0, 1), node_color_trans = "radius")
 ```
@@ -302,7 +302,7 @@ set.seed(2)
 pcr %>%
   subset(name == "Bacteria") %>%
   subset(abs(prop_diff) > 0.1, subtaxa = FALSE, supertaxa = TRUE) %>%
-  plot(node_size = n_items,
+  plot(node_size = n_obs,
        node_label = ifelse(abs(prop_diff) > 0.3, name, NA),
        node_color = prop_diff,
        node_color_range = diverging_palette(),

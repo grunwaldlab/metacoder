@@ -140,29 +140,29 @@ count_capture_groups <- function(regex) {
 #' Columns in the input not used to create the taxonomy are preserved in the output.
 #' Unique IDs can be assigned if the column used to create the taxonomy does not
 #' have unique values for place in the hierarchy (e.g. same species epithet in different phlya.)
-#' Missing data does not effect the taxonomy, but its positon is preserved in the item output. 
+#' Missing data does not effect the taxonomy, but its positon is preserved in the observation output. 
 #' 
 #' @param classifications (\code{list} of \code{data.frame}) 
-#' The classifications of a set of items.
+#' The classifications of a set of observations.
 #' Not necessarily unique.
 #' Rows should correspond to taxa and columns to information associated with those taxa.
 #' @param id_column (\code{character} of length 1)
 #' The name of the column present in each \code{data.frame} in \code{classifications} that will
 #' be used to infer the taxonomic tree structure.
-#' @param item_data (\code{data.frame}) 
+#' @param obs_data (\code{data.frame}) 
 #' Data associated with the \code{classifications}.
 #' 
 #' @return An object of type \code{taxmap}
 #' 
 #' @keywords internal
-class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
+class_to_taxonomy <- function(classifications, id_column, obs_data = NULL) {
   
   recursive_part <- function(group, level = 1, parent = NA) {
     # Remove taxa that do not have inforamtion for the current level
     finished <- vapply(group, nrow, numeric(1)) < level
     group <- group[! finished]
-    # Assign items to tip taxa
-    item_taxa <- stats::setNames(rep(parent, sum(finished)), names(finished[finished]))
+    # Assign observations to tip taxa
+    obs_taxa <- stats::setNames(rep(parent, sum(finished)), names(finished[finished]))
     # Split list of classifications based on level
     split_group <- split_class_list(group, level, id_column)
     # Make rows for current taxon-parent relationships
@@ -175,20 +175,20 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
       child_results <- mapply(recursive_part, SIMPLIFY = FALSE,
                            group = split_group, level = level + 1, parent = taxon_index)
       child_taxa <- unlist(lapply(child_results, function(x) x$taxon_data), recursive = FALSE, use.names = FALSE)
-      child_items <- unlist(stats::setNames(lapply(child_results, function(x) x$item_data), NULL))
+      child_obs <- unlist(stats::setNames(lapply(child_results, function(x) x$obs_data), NULL))
     } else {
       child_taxa <- NULL
-      child_items <- NULL
+      child_obs <- NULL
     }
     # Return the result of this instance of the function and the ones it makes
-    return(list(taxon_data = c(taxon_rows, child_taxa), item_data = c(item_taxa, child_items)))
+    return(list(taxon_data = c(taxon_rows, child_taxa), obs_data = c(obs_taxa, child_obs)))
   }
   
   # make index counter to be used inside the recursive part
   row_count <- 0
   
   # Remove invalid classifications
-  item_data <- item_data[!is.na(classifications), , drop = FALSE]
+  obs_data <- obs_data[!is.na(classifications), , drop = FALSE]
   classifications <- classifications[!is.na(classifications)]
   
   # Run recursive part of the function
@@ -196,23 +196,23 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   data <- recursive_part(classifications)
   taxonomy <- do.call(rbind, data$taxon_data)
   row.names(taxonomy) <- NULL
-  item_index <- data$item_data[order(as.numeric(names(data$item_data)))]
+  obs_index <- data$obs_data[order(as.numeric(names(data$obs_data)))]
   
   # Format the output into a taxmap object
   if (is.null(taxonomy))  {
     taxon_id <- character(0)
     parent_id <- integer(0)
-    item_id <- rep(NA, nrow(item_data))
+    obs_id <- rep(NA, nrow(obs_data))
   } else {
     taxon_id <- 1:nrow(taxonomy) 
     parent_id <- taxonomy$my_parent_
-    item_id <- unname(item_index)
+    obs_id <- unname(obs_index)
   }
   taxmap(taxon_ids = taxon_id,
              parent_ids = parent_id,
-             item_taxon_ids = item_id,
+             obs_taxon_ids = obs_id,
              taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],
-             item_data = item_data)
+             obs_data = obs_data)
 }
 
 
@@ -223,7 +223,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
 #' specific row/column.
 #' 
 #' @param classifications (\code{list} of \code{data.frame}) 
-#' The classifications of a set of items.
+#' The classifications of a set of observations.
 #' Not necessarily unique.
 #' Rows should correspond to taxa and columns to information associated with those taxa.
 #' @param row_index

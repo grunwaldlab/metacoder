@@ -13,8 +13,8 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 data <- extract_taxonomy(sequences,
                          regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                         key = c(seq_name = "item_info", sequence_id = "item_info",
-                                 other_id = "item_info", "class"),
+                         key = c(seq_name = "obs_info", sequence_id = "obs_info",
+                                 other_id = "obs_info", "class"),
                          class_regex = "^(.*)__(.*)$",
                          class_key = c(unite_rank = "taxon_info", "name"),
                          class_sep = ";")
@@ -22,12 +22,12 @@ data <- extract_taxonomy(sequences,
 
 ```{r}
 data %>%
-  filter_taxa(name %in% c("Russula"), subtaxa = TRUE, supertaxa = TRUE, taxonless = FALSE, reassign_items = FALSE) %>%
+  filter_taxa(name %in% c("Russula"), subtaxa = TRUE, supertaxa = TRUE, taxonless = FALSE, reassign_obs = FALSE) %>%
   filter_taxa(taxon_levels <= 6, taxonless = FALSE) %>%
-  filter_taxa(! grepl("[_0-9]+", name), taxonless = FALSE, reassign_items = FALSE) %>%
+  filter_taxa(! grepl("[_0-9]+", name), taxonless = FALSE, reassign_obs = FALSE) %>%
   arrange_taxa(c(p = 1, c = 2, o = 3, f = 4, g = 5, s = 6)[unite_rank])
-plot(node_size = n_items,
-     node_color = n_items,
+plot(node_size = n_obs,
+     node_color = n_obs,
      node_label = name,
      layout = "ka",
      make_legend = FALSE, 
@@ -48,7 +48,7 @@ plot(node_size = n_items,
 ...      ...        ...        ...            ...
 
 ------------------ obs_data --------------------
-   item_taxon_ids            seq_name sequence_id
+   obs_taxon_ids            seq_name sequence_id
 1             576 Russula_cyanoxantha    AB451977
 2             578          Russula_sp    DQ424937
 3             578          Russula_sp    HQ445312

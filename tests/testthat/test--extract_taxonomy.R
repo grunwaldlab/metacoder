@@ -7,10 +7,10 @@ context("Extracting taxonomic information")
 #|
 #| This data has every kind of field that `extract_taxonomy` can interprete, but only one field will be used in each test.
 #|
-test_data = c("item_id: FJ712037.1 - name: Panthera leo - taxon_id: 9689 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
-              "item_id: KC879292.1 - name: Panthera tigris - taxon_id: 9694 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
-              "item_id: HW243304.1 - name: Ursus americanus - taxon_id: 9643 - class_name: Carnivora;Caniformia;Ursidae;Ursus - class_id: 33554;379584;9632;9639") # oh my!
-test_regex <- "item_id: (.*) - name: (.*) - taxon_id: (.*) - class_name: (.*) - class_id: (.*)"
+test_data = c("obs_id: FJ712037.1 - name: Panthera leo - taxon_id: 9689 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+              "obs_id: KC879292.1 - name: Panthera tigris - taxon_id: 9694 - class_name: Carnivora;Feliformia;Felidae;Pantherinae;Panthera - class_id: 33554;379583;9681;338153;9688",
+              "obs_id: HW243304.1 - name: Ursus americanus - taxon_id: 9643 - class_name: Carnivora;Caniformia;Ursidae;Ursus - class_id: 33554;379584;9632;9639") # oh my!
+test_regex <- "obs_id: (.*) - name: (.*) - taxon_id: (.*) - class_name: (.*) - class_id: (.*)"
 
 check_for_internet <- function() {
   if (! is.character(RCurl::getURL("www.google.com"))) {
@@ -19,19 +19,19 @@ check_for_internet <- function() {
 }
 
 #|
-#| ### Exracting by item_id
-test_that("Exracting by item_id works", {
+#| ### Exracting by obs_id
+test_that("Exracting by obs_id works", {
   check_for_internet()
-  result <- extract_taxonomy(test_data, key = "item_id", regex = "item_id: (.*?) -", database = "ncbi")
+  result <- extract_taxonomy(test_data, key = "obs_id", regex = "obs_id: (.*?) -", database = "ncbi")
   expect_s3_class(result, "taxmap")
   expect_true("Eukaryota" %in% result$taxon_data$name)
 })
 test_that("Invalid IDs cause understandable errors", {
   check_for_internet()
   expect_error(extract_taxonomy(c("FJ712037.1", "notvalid", "HW243304.1"),
-                                key = "item_id", regex = "(.*)", database = "ncbi",
+                                key = "obs_id", regex = "(.*)", database = "ncbi",
                                 vigilance = "error"),
-               "3 item IDs failed to return classifications")
+               "3 observation IDs failed to return classifications")
 })
 
 #|
@@ -48,8 +48,8 @@ test_that("Looking up IDs for classification names works", {
                                "Myrmecridium_schulzeri|EU041774|SH189850.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_schulzeri", 
                                "Myrmecridium_sp|JX156014|SH189851.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_sp"),
                              regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-                             key = c(seq_name = "item_info", sequence_id = "item_info",
-                                     other_id = "item_info", "class"),
+                             key = c(seq_name = "obs_info", sequence_id = "obs_info",
+                                     other_id = "obs_info", "class"),
                              class_regex = "^(.*)__(.*)$",
                              class_key = c(unite_rank = "taxon_info", "name"),
                              class_sep = ";",
@@ -128,15 +128,15 @@ test_that("Taxon info columns from both key and class are added", {
 })
 
 #|
-#| ### Item info columns
-test_that("Item info columns are added", {
+#| ### observation info columns
+test_that("observation info columns are added", {
   result <- extract_taxonomy(test_data,
-                             key = c("item_info", my_custom_name = "item_info", "class", "item_info"),
-                             regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                             key = c("obs_info", my_custom_name = "obs_info", "class", "obs_info"),
+                             regex = "obs_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
                              class_key = "name", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "taxmap")
-  expect_equal(result$item_data$my_custom_name, c("9689", "9694", "9643"))
-  expect_equal(result$item_data$item_info_1, c("FJ712037.1", "KC879292.1", "HW243304.1"))
+  expect_equal(result$obs_data$my_custom_name, c("9689", "9694", "9643"))
+  expect_equal(result$obs_data$obs_info_1, c("FJ712037.1", "KC879292.1", "HW243304.1"))
 })
 
 
@@ -144,8 +144,8 @@ test_that("Item info columns are added", {
 #| ### Invalid keys give warnings
 test_that("Invalid keys give warnings", {
   expect_error(extract_taxonomy(test_data,
-                                 key = c("item_info", "invalid", "class", "item_info"),
-                                 regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                                 key = c("obs_info", "invalid", "class", "obs_info"),
+                                 regex = "obs_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
                                  class_key = "name", class_regex = "(.*)", class_sep = ";"),
                'Invalid key value "invalid" given.')
   
@@ -154,8 +154,8 @@ test_that("Invalid keys give warnings", {
 #| ### Only specified keys can be duplicated
 test_that("Only specified keys can be duplicated", {
   expect_error(extract_taxonomy(test_data,
-                                key = c("item_info", "class", "class", "item_info"),
-                                regex = "item_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                                key = c("obs_info", "class", "class", "obs_info"),
+                                regex = "obs_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
                                 class_key = "name", class_regex = "(.*)", class_sep = ";"),
                "have been used more than once:")
 })

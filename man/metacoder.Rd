@@ -36,19 +36,19 @@ To learn how to use the package and what it can do view the package vignettes by
 \strong{Dplyr-style manipulations of taxonomic data:}
 
 \itemize{
-  \item \code{\link{arrange_items}}
+  \item \code{\link{arrange_obs}}
   \item \code{\link{arrange_taxa}}
-  \item \code{\link{filter_items}}
+  \item \code{\link{filter_obs}}
   \item \code{\link{filter_taxa}}
-  \item \code{\link{mutate_items}}
+  \item \code{\link{mutate_obs}}
   \item \code{\link{mutate_taxa}}
-  \item \code{\link{transmute_items}}
+  \item \code{\link{transmute_obs}}
   \item \code{\link{transmute_taxa}}
-  \item \code{\link{sample_n_items}}
+  \item \code{\link{sample_n_obs}}
   \item \code{\link{sample_n_taxa}}
-  \item \code{\link{sample_frac_items}}
+  \item \code{\link{sample_frac_obs}}
   \item \code{\link{sample_frac_taxa}}
-  \item \code{\link{select_items}}
+  \item \code{\link{select_obs}}
   \item \code{\link{select_taxa}}
 }
 

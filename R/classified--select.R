@@ -26,8 +26,8 @@ select_taxa <- function(.data, ...) {
 
 #' Subset columns in a \code{\link{taxmap}} object
 #' 
-#' Subsets \code{item_data} columns in a \code{\link{taxmap}} object. Takes and returns a
-#' \code{\link{taxmap}} object. Any column name that appears in \code{item_data(.data)} can be
+#' Subsets \code{obs_data} columns in a \code{\link{taxmap}} object. Takes and returns a
+#' \code{\link{taxmap}} object. Any column name that appears in \code{obs_data(.data)} can be
 #' used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more information.
 #' 
 #' @param .data \code{\link{taxmap}}
@@ -43,8 +43,8 @@ select_taxa <- function(.data, ...) {
 #' @family dplyr-like functions
 #'   
 #' @export
-select_items <- function(.data, ...) {
-  .data$item_data <- dplyr::bind_cols(.data$item_data[ , c("item_taxon_ids"), drop = FALSE],
-                                      dplyr::select(.data$item_data, ...))
+select_obs <- function(.data, ...) {
+  .data$obs_data <- dplyr::bind_cols(.data$obs_data[ , c("obs_taxon_ids"), drop = FALSE],
+                                      dplyr::select(.data$obs_data, ...))
   return(.data)
 }

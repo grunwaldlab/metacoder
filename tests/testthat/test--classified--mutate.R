@@ -7,10 +7,10 @@ context("Adding columns to `taxmap` objects")
 #|
 #| ####  Code shared by tests
 obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
-                  item_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
+                  obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],
                                           stringsAsFactors = FALSE),
-                  item_data = data.frame(item_attr = LETTERS[1:10],
+                  obs_data = data.frame(obs_attr = LETTERS[1:10],
                                          stringsAsFactors = FALSE))
 #|
 #| ####  Adding taxon_data columns
@@ -38,30 +38,30 @@ test_that("Adding taxon_data columns by referencing new columns works", {
 })
 
 #|
-#| ### Add `item_data` columns
+#| ### Add `obs_data` columns
 #|
-#| ####  Adding item_data columns
-test_that("Adding item_data columns works", {
-  result <- mutate_items(obj, new_name = tolower(item_attr))
+#| ####  Adding obs_data columns
+test_that("Adding obs_data columns works", {
+  result <- mutate_obs(obj, new_name = tolower(obs_attr))
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name", "item_attr", "item_taxon_ids") %in% colnames(result$item_data)))
+  expect_true(all(c("new_name", "obs_attr", "obs_taxon_ids") %in% colnames(result$obs_data)))
 })
 #|
-#| ####  Adding item_data columns without using column names
-test_that("Adding item_data columns without using column names works", {
+#| ####  Adding obs_data columns without using column names
+test_that("Adding obs_data columns without using column names works", {
   stored_in_var = letters[1:10]
-  result <- mutate_items(obj, new_name = 1:10, new_name2 = stored_in_var)
+  result <- mutate_obs(obj, new_name = 1:10, new_name2 = stored_in_var)
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name", "new_name2", "item_taxon_ids") %in% colnames(result$item_data)))
-  expect_equal(result$item_data$new_name2, stored_in_var)
+  expect_true(all(c("new_name", "new_name2", "obs_taxon_ids") %in% colnames(result$obs_data)))
+  expect_equal(result$obs_data$new_name2, stored_in_var)
 })
 #|
-#| ####  Adding item_data columns by referencing new columns
-test_that("Adding item_data columns by referencing new columns works", {
-  result <- mutate_items(obj, new_name = toupper(item_attr),
+#| ####  Adding obs_data columns by referencing new columns
+test_that("Adding obs_data columns by referencing new columns works", {
+  result <- mutate_obs(obj, new_name = toupper(obs_attr),
                          newest_name = paste0(new_name, "!"))
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name", "item_attr", "item_taxon_ids") %in% colnames(result$item_data)))
+  expect_true(all(c("new_name", "obs_attr", "obs_taxon_ids") %in% colnames(result$obs_data)))
 })
 
 #|
@@ -94,31 +94,31 @@ test_that("Replacing taxon_data columns by referencing new columns works", {
   expect_false(all(c("name") %in% colnames(result$taxon_data)))
 })
 #|
-#| ### Replace `item_data` columns
+#| ### Replace `obs_data` columns
 #|
-#| ####  Replacing item_data columns
-test_that("Replacing item_data columns works", {
-  result <- transmute_items(obj, new_name = toupper(item_attr))
+#| ####  Replacing obs_data columns
+test_that("Replacing obs_data columns works", {
+  result <- transmute_obs(obj, new_name = toupper(obs_attr))
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name","item_taxon_ids") %in% colnames(result$item_data)))
-  expect_false(all(c("item_attr") %in% colnames(result$item_data)))
+  expect_true(all(c("new_name","obs_taxon_ids") %in% colnames(result$obs_data)))
+  expect_false(all(c("obs_attr") %in% colnames(result$obs_data)))
 })
 #|
-#| ####  Replacing item_data columns without using column names
-test_that("Replacing item_data columns without using column names works", {
+#| ####  Replacing obs_data columns without using column names
+test_that("Replacing obs_data columns without using column names works", {
   stored_in_var = letters[1:10]
-  result <- transmute_items(obj, new_name = 1:10, new_name2 = stored_in_var)
+  result <- transmute_obs(obj, new_name = 1:10, new_name2 = stored_in_var)
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name", "new_name2", "item_taxon_ids") %in% colnames(result$item_data)))
-  expect_false(all(c("item_attr") %in% colnames(result$item_data)))
-  expect_equal(result$item_data$new_name2, stored_in_var)
+  expect_true(all(c("new_name", "new_name2", "obs_taxon_ids") %in% colnames(result$obs_data)))
+  expect_false(all(c("obs_attr") %in% colnames(result$obs_data)))
+  expect_equal(result$obs_data$new_name2, stored_in_var)
 })
 #|
-#| ####  Replacing item_data columns by referencing new columns
-test_that("Replacing item_data columns by referencing new columns works", {
-  result <- transmute_items(obj, new_name = toupper(item_attr),
+#| ####  Replacing obs_data columns by referencing new columns
+test_that("Replacing obs_data columns by referencing new columns works", {
+  result <- transmute_obs(obj, new_name = toupper(obs_attr),
                            newest_name = paste0(new_name, "!"))
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("new_name", "newest_name", "item_taxon_ids") %in% colnames(result$item_data)))
-  expect_false(all(c("item_attr") %in% colnames(result$item_data)))
+  expect_true(all(c("new_name", "newest_name", "obs_taxon_ids") %in% colnames(result$obs_data)))
+  expect_false(all(c("obs_attr") %in% colnames(result$obs_data)))
 })

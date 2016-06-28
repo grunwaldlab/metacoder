@@ -25,15 +25,15 @@ Subsets \code{taxon_data} columns in a \code{\link{taxmap}} object. Takes and re
 used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more information.
 }
 \seealso{
-Other dplyr-like functions: \code{\link{arrange_items}},
-  \code{\link{arrange_taxa}}, \code{\link{filter_items}},
-  \code{\link{filter_taxa}}, \code{\link{mutate_items}},
+Other dplyr-like functions: \code{\link{arrange_obs}},
+  \code{\link{arrange_taxa}}, \code{\link{filter_obs}},
+  \code{\link{filter_taxa}}, \code{\link{mutate_obs}},
   \code{\link{mutate_taxa}},
-  \code{\link{sample_frac_items}},
+  \code{\link{sample_frac_obs}},
   \code{\link{sample_frac_taxa}},
-  \code{\link{sample_n_items}},
-  \code{\link{sample_n_taxa}}, \code{\link{select_items}},
-  \code{\link{transmute_items}},
+  \code{\link{sample_n_obs}},
+  \code{\link{sample_n_taxa}}, \code{\link{select_obs}},
+  \code{\link{transmute_obs}},
   \code{\link{transmute_taxa}}
 }
 

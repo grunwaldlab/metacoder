@@ -34,7 +34,7 @@ ids <- c("JQ086376.1", "AM946981.2", "JQ182735.1", "CP001396.1", "J02459.1",
          "AB248923.1", "CP002291.1", "X98409.1", "CU928161.2", "CP003297.1", 
          "FJ797950.1", "CP000038.1", "U82598.1", "CP002211.1", "JQ806764.1", 
          "U03463.1", "CP001665.1")
-contaminants <- extract_taxonomy(ids, key = "item_id", database = "ncbi")
+contaminants <- extract_taxonomy(ids, key = "obs_id", database = "ncbi")
 }
 
 }

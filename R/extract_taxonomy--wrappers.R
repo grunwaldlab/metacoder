@@ -37,22 +37,22 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
                                class_regex = "([a-z]{0,1})_{0,2}(.*)$",
                                class_key = c(rank = "taxon_info", "name"),
                                class_sep = ";")
-  # Add OTU counts to item data
-  otu_data$item_data <- dplyr::bind_cols(otu_data$item_data, convert_numeric_cols(otu_raw[ , -ncol(otu_raw)]))
+  # Add OTU counts to observation data
+  otu_data$obs_data <- dplyr::bind_cols(otu_data$obs_data, convert_numeric_cols(otu_raw[ , -ncol(otu_raw)]))
   # # Convert to long format
   # gather_one <- function(index) {
-  #   part <- tidyr::gather(otu_data$item_data[index, ], key = sample_id, value = abundance, 3:ncol(otu_data$item_data[index, ]))
+  #   part <- tidyr::gather(otu_data$obs_data[index, ], key = sample_id, value = abundance, 3:ncol(otu_data$obs_data[index, ]))
   #   part[part$abundance >= min_abundance, ] 
   # }
   # 
-  # # otu_data$item_data <- dplyr::bind_rows(lapply(1:nrow(otu_data$item_data[1:10, ]), gather_one))
+  # # otu_data$obs_data <- dplyr::bind_rows(lapply(1:nrow(otu_data$obs_data[1:10, ]), gather_one))
   # 
   # 
   # 
   # # Add taxon column generators
   # taxon_abundance <- function(obj, subset = 1:nrow(obj$taxon_data)) {
-  #   vapply(items(obj, subset = subset, recursive = TRUE, simplify = FALSE, index = TRUE), FUN.VALUE = numeric(1), 
-  #          function(x) sum(obj$item_data[x, ]))
+  #   vapply(obs(obj, subset = subset, recursive = TRUE, simplify = FALSE, index = TRUE), FUN.VALUE = numeric(1), 
+  #          function(x) sum(obj$obs_data[x, ]))
   # }
   # otu_data$taxon_funcs <- c(otu_data$taxon_funcs, list(taxon_abundance = taxon_abundance))
   

@@ -20,7 +20,7 @@ file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package 
 sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)\\\\tLineage=(.*)",
-                                key = c(id = "item_info", description = "item_info", "class_name"),
+                                key = c(id = "obs_info", description = "obs_info", "class_name"),
                                 class_tax_sep = ";",
                                 class_rank_sep = ";", 
                                 class_rank_rev = TRUE,

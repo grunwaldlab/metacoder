@@ -5,7 +5,7 @@
 \title{Recursivly sample a set of taxonomic assignments}
 \usage{
 taxonomic_sample(taxmap_data, max_counts = c(), min_counts = c(),
-  max_children = c(), min_children = c(), item_filters = list(),
+  max_children = c(), min_children = c(), obs_filters = list(),
   subtaxa_filters = list(), stop_conditions = list(), ...)
 }
 \arguments{
@@ -29,7 +29,7 @@ are randomly subsampled to this number of subtaxa.}
 subtaxa in for each level specified. The names of the vector specifies that level each number
 applies to.}
 
-\item{item_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
+\item{obs_filters}{(\code{list} of \code{function(items, id)}) A list of functions that take a data
 structure containing the information of multiple items and a taxon id.
 Returns a object of the same type with some of the items potentially removed.}
 
@@ -55,9 +55,9 @@ Recursivly sample a set of items with taxonomic assignments and an associated ta
 \dontrun{
 #Plot data before subsampling
 plot(unite_ex_data_3,
-     node_size = n_items,
-     node_color = n_items,
-     node_label = n_items)
+     node_size = n_obs,
+     node_color = n_obs,
+     node_label = n_obs)
      
 # Subsampling
 subsampled <- taxonomic_sample(unite_ex_data_3,
@@ -65,10 +65,10 @@ subsampled <- taxonomic_sample(unite_ex_data_3,
                                min_counts = c("7" = 3))
      
 # Remove itemless taxa and plot
-plot(subset(subsampled, n_items > 0, itemless = FALSE),
-     node_size = n_items,
-     node_color = n_items,
-     node_label = n_items)
+plot(subset(subsampled, n_obs > 0, itemless = FALSE),
+     node_size = n_obs,
+     node_color = n_obs,
+     node_label = n_obs)
 }
 
 }

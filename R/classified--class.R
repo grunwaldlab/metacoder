@@ -1,6 +1,6 @@
 #' Create an instance of \code{taxmap}
 #'
-#' Create an instance of \code{taxmap} containing items taxmap by a taxonomy.
+#' Create an instance of \code{taxmap} containing observations taxmap by a taxonomy.
 #'
 #' @param taxon_ids (\code{character}) 
 #' These are unique identifiers for taxa.
@@ -13,20 +13,20 @@
 #' @param taxa (\code{character})
 #' Objects representing taxa.
 #' Currently, these can be anything, but this might change in the future.
-#' @param item_taxon_ids (\code{character} OR (\code{numeric}))
-#' Taxon assignments of items.
+#' @param obs_taxon_ids (\code{character} OR (\code{numeric}))
+#' Taxon assignments of observations.
 #' Parent taxa (i.e. supertaxa) of \code{taxa}.
 #' If a \code{character} vector, then these should be in the same format as \code{taxon_ids}.
 #' If a \code{numeric} vector, then it is interpreted as the indexes of \code{taxon_ids}.
 #' @param taxon_data (\code{data.frame})
 #' A table with rows pretaining to \code{taxa}
-#' @param item_data A (\code{data.frame})
-#' A table with rows pretaining to \code{item_taxa}
+#' @param obs_data A (\code{data.frame})
+#' A table with rows pretaining to \code{obs_taxa}
 #' @param taxon_funcs (\code{list} of named \code{function}s)
 #' These the values produced by these functions will be accessible as a column in \code{taxon_data}.
 #' The first parameter of each function should be a single \code{taxmap} object.
-#' @param item_funcs (\code{list} of named \code{function}s)
-#' These the values produced by these functions will be accessible as a column in \code{item_data}.
+#' @param obs_funcs (\code{list} of named \code{function}s)
+#' These the values produced by these functions will be accessible as a column in \code{obs_data}.
 #' The first parameter of each function should be a single \code{taxmap} object.
 #' 
 #' @return An object of type \code{taxmap}
@@ -34,12 +34,12 @@
 #' @export
 taxmap <- function(taxon_ids, parent_ids,
                        taxa = taxon_ids,
-                       item_taxon_ids = numeric(0),
-                       taxon_data = NULL, item_data = NULL,
-                       taxon_funcs = list(n_items = n_items,
+                       obs_taxon_ids = numeric(0),
+                       taxon_data = NULL, obs_data = NULL,
+                       taxon_funcs = list(n_obs = n_obs,
                                           taxon_levels = taxon_levels,
                                           classifications = classifications),
-                       item_funcs = list()) {
+                       obs_funcs = list()) {
   # Validate `taxon_ids` ---------------------------------------------------------------------------
   # Coerce into character vector
   taxon_ids <- as.character(taxon_ids)
@@ -63,23 +63,23 @@ taxmap <- function(taxon_ids, parent_ids,
   } 
   parent_ids[! parent_ids %in% taxon_ids] <- NA
   
-  # Validate `item_taxon_ids` ---------------------------------------------------------------------------
-  # Check that all `item_taxon_ids` are in `taxon_ids`
-  if (is.character(item_taxon_ids)) {
-    item_taxon_ids[! item_taxon_ids %in% taxon_ids] <- NA
-    if (any(is.na(item_taxon_ids))) {
-      warning("Some `item_taxon_ids` could not be found in `taxon_ids`. They will be `NA`. ")
+  # Validate `obs_taxon_ids` ---------------------------------------------------------------------------
+  # Check that all `obs_taxon_ids` are in `taxon_ids`
+  if (is.character(obs_taxon_ids)) {
+    obs_taxon_ids[! obs_taxon_ids %in% taxon_ids] <- NA
+    if (any(is.na(obs_taxon_ids))) {
+      warning("Some `obs_taxon_ids` could not be found in `taxon_ids`. They will be `NA`. ")
     }
   } 
   # Convert indexes to values of `taxon_ids`
-  if (is.numeric(item_taxon_ids)) {
-    item_taxon_ids <- taxon_ids[item_taxon_ids]
+  if (is.numeric(obs_taxon_ids)) {
+    obs_taxon_ids <- taxon_ids[obs_taxon_ids]
   }
   
-  # Validate `taxon_data` and `item_data` ----------------------------------------------------------
+  # Validate `taxon_data` and `obs_data` ----------------------------------------------------------
   # Check that the tables are structured correctly
   validate_table <- function(data, ids, ...) {
-    reserved_col_names = c("taxon_ids", "parent_ids", "item_taxon_ids")
+    reserved_col_names = c("taxon_ids", "parent_ids", "obs_taxon_ids")
     result <- dplyr::tbl_df(as.data.frame(list(...), stringsAsFactors = FALSE))
     if (! is.null(data)) {
       data <- as.data.frame(data)
@@ -98,11 +98,11 @@ taxmap <- function(taxon_ids, parent_ids,
   }
   taxon_data <- validate_table(taxon_data, taxon_ids, taxon_ids = taxon_ids, 
                               parent_ids = parent_ids)
-  item_data <- validate_table(item_data, item_taxon_ids, item_taxon_ids = item_taxon_ids)
+  obs_data <- validate_table(obs_data, obs_taxon_ids, obs_taxon_ids = obs_taxon_ids)
   # Check that tables do not share column names
-  all_col_names <- c(colnames(taxon_data), colnames(item_data))
+  all_col_names <- c(colnames(taxon_data), colnames(obs_data))
   if (length(unique(all_col_names)) != length(all_col_names)) {
-    stop("'taxon_data' and 'item_data' can not share column names.")
+    stop("'taxon_data' and 'obs_data' can not share column names.")
   }
 
   # Validate column-generating functions -----------------------------------------------------------
@@ -113,14 +113,14 @@ taxmap <- function(taxon_ids, parent_ids,
     }
   }
   validate_col_funcs(taxon_funcs, "taxon_funcs") 
-  validate_col_funcs(item_funcs, "item_funcs")
+  validate_col_funcs(obs_funcs, "obs_funcs")
 
   # Make object
   output <- list(taxa = taxa,
                  taxon_data = taxon_data,
-                 item_data = item_data,
+                 obs_data = obs_data,
                  taxon_funcs = taxon_funcs,
-                 item_funcs = item_funcs)
+                 obs_funcs = obs_funcs)
   class(output) <- "taxmap"
   return(output)
 }
@@ -180,20 +180,20 @@ print.taxmap <- function(x, max_rows = 7, ...) {
   
   
   cat(paste0('`taxmap` object with data for ', nrow(x$taxon_data),
-             ' taxa and ', nrow(x$item_data), ' items/observations:\n'))
+             ' taxa and ', nrow(x$obs_data), ' observations:\n'))
   print_header("taxa")
   print_chars(names(x$taxa))
   print_header("taxon_data")
   print(x$taxon_data, n = max_rows)
-  print_header("item_data")
-  print(x$item_data, n = max_rows)
+  print_header("obs_data")
+  print(x$obs_data, n = max_rows)
   if (length(x$taxon_funcs) > 0) {
     print_header("taxon_funcs")
     print_chars(names(x$taxon_funcs))
   }
-  if (length(x$item_funcs) > 0) {
-    print_header("item_funcs")
-    print_chars(names(x$item_funcs))
+  if (length(x$obs_funcs) > 0) {
+    print_header("obs_funcs")
+    print_chars(names(x$obs_funcs))
   }
   invisible(x)
 }
@@ -288,24 +288,24 @@ taxon_data <- function(obj,
 }
 
 
-#' Return item data from \code{\link{taxmap}}
+#' Return observation data from \code{\link{taxmap}}
 #'
 #' Return a table of data associated with taxa of and object of type
 #' \code{\link{taxmap}}.
 #'
 #' @param obj (\code{\link{taxmap}})
 #' @param row_subset (\code{character})
-#' The item_ids of a subset of \code{obj}.
+#' The obs_ids of a subset of \code{obj}.
 #' Default: All rows.
 #' @param col_subset (\code{character})
-#' The names of columns, either user defined or generated using \code{item_funcs}.
+#' The names of columns, either user defined or generated using \code{obs_funcs}.
 #' Default: All columns.
 #' @param calculated_cols (\code{logical} of length 1)
-#' If \code{TRUE}, return calculated columns using  functions in \code{\link{taxmap}$item_funcs}.
-#' These values are calculated each time \code{item_data} is called since their values can change if 
+#' If \code{TRUE}, return calculated columns using  functions in \code{\link{taxmap}$obs_funcs}.
+#' These values are calculated each time \code{obs_data} is called since their values can change if 
 #' the data is subset.
 #' @param sort_by (\code{character} of length 1)
-#' The name of a column in \code{obj$item_data} or a function name in  \code{obj$item_funcs}.
+#' The name of a column in \code{obj$obs_data} or a function name in  \code{obj$obs_funcs}.
 #' This column will be used to sort the output rows.
 #' If \code{NULL}, no sorting will be done.
 #' @param decreasing (\code{logical} of length 1)
@@ -317,7 +317,7 @@ taxon_data <- function(obj,
 #' @return A \code{data.frame} or \code{vector} with rows corresponding to taxa in input
 #'
 #' @export
-item_data <- function(obj,
+obs_data <- function(obj,
                       row_subset = NULL,
                       col_subset = NULL,
                       calculated_cols = TRUE,
@@ -326,22 +326,22 @@ item_data <- function(obj,
                       drop = FALSE) {
   # Parse options
   if (is.null(row_subset)) {
-    row_subset <- 1:nrow(obj$item_data)
+    row_subset <- 1:nrow(obj$obs_data)
   }
   if (is.null(col_subset)) {
-    col_subset <- c(colnames(obj$item_data), names(obj$item_funcs))
+    col_subset <- c(colnames(obj$obs_data), names(obj$obs_funcs))
   }
   
   # Check that the user is making sense
-  if (calculated_cols == FALSE && any(col_subset %in% names(obj$item_funcs))) {
+  if (calculated_cols == FALSE && any(col_subset %in% names(obj$obs_funcs))) {
     stop("Cannot use a calculated column when `calculated_cols = FALSE`.")
   }
-  # Make copy of item data
-  data <- obj$item_data
+  # Make copy of observation data
+  data <- obj$obs_data
   # Remove any user-defined rows not specified
   data <- data[row_subset, , drop = FALSE]
   # Check if any of the column-generating functions are needed
-  functions <- obj$item_funcs[names(obj$item_funcs) %in% col_subset]
+  functions <- obj$obs_funcs[names(obj$obs_funcs) %in% col_subset]
   # Apply column-generating functions and append to output
   if (calculated_cols && length(functions) > 0) {
     calculated_data <- lapply(functions, function(f) f(obj, row_subset))
@@ -358,10 +358,10 @@ item_data <- function(obj,
       sort_by_col <- data[ , sort_by]
     } else if (is.function(sort_by) && all(c("obj", "subset") %in% names(formals(sort_by)))) {
       sort_by_col <- sort_by(obj, row_subset)
-    } else if (sort_by %in% names(obj$item_funcs)) {
-      sort_by_col <- obj$item_funcs[[sort_by]](obj, row_subset)
+    } else if (sort_by %in% names(obj$obs_funcs)) {
+      sort_by_col <- obj$obs_funcs[[sort_by]](obj, row_subset)
     } else {
-      stop("Could not identify `sort_by` value. It must be a column displayed by `item_data`, a function to has `obj` and `subset` arguments, or a function in `obj$item_funcs`.")
+      stop("Could not identify `sort_by` value. It must be a column displayed by `obs_data`, a function to has `obj` and `subset` arguments, or a function in `obj$obs_funcs`.")
     }
     data <- data[order(sort_by_col, decreasing = decreasing), ]
   }

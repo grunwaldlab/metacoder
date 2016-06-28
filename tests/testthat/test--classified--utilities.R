@@ -7,10 +7,10 @@ context("Utility methods for `taxmap` objects")
 #|
 #| ####  Code shared by tests
 obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
-                  item_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
+                  obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],  stringsAsFactors = FALSE),
-                  item_data = data.frame(item_attr = letters[1:10],  stringsAsFactors = FALSE))
-original_plot <- plot(obj, node_label = paste(name, n_items), node_color = n_items, layout = "fr")
+                  obs_data = data.frame(obs_attr = letters[1:10],  stringsAsFactors = FALSE))
+original_plot <- plot(obj, node_label = paste(name, n_obs), node_color = n_obs, layout = "fr")
 #|
 #| ####  Immediate supertaxa
 test_that("Getting immediate supertaxa works", {

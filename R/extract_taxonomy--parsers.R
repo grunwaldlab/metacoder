@@ -1,9 +1,9 @@
-#' Retrieve classifications from item IDs
+#' Retrieve classifications from observation IDs
 #' 
-#' Retrieve taxonomic classifications from item (e.g. sequence) IDs using a specified database.
+#' Retrieve taxonomic classifications from observation (e.g. sequence) IDs using a specified database.
 #' 
-#' @param item_id (\code{character})
-#' An unique item (e.g. sequence) identifier for a particular \code{database}.
+#' @param obs_id (\code{character})
+#' An unique observation (e.g. sequence) identifier for a particular \code{database}.
 #' Requires an internet connection. 
 #' @param database (\code{character} of length 1)
 #' The name of the database that patterns given in  \code{parser} will apply to.
@@ -15,27 +15,27 @@
 #' @return \code{list} of \code{data.frame}
 #' 
 #' @keywords internal
-class_from_item_id <- function(item_id, database = c("ncbi", "none"), ...) {
+class_from_obs_id <- function(obs_id, database = c("ncbi", "none"), ...) {
   
-  using_ncbi <- function(item_id) {
-    taxize::classification(taxize::genbank2uid(item_id))
+  using_ncbi <- function(obs_id) {
+    taxize::classification(taxize::genbank2uid(obs_id))
   }
   
-  using_none <- function(item_id) {
-    rep(NA, length(item_id))
+  using_none <- function(obs_id) {
+    rep(NA, length(obs_id))
   }
   
   # Look up classifications
   database <- match.arg(database)
-  result <- suppressWarnings(map_unique(item_id, get(paste0("using_", database))))
+  result <- suppressWarnings(map_unique(obs_id, get(paste0("using_", database))))
   # Check for errors
   error_indexes <- is.na(result)
   if (sum(error_indexes) > 0) {
-    invalid_list <- paste("   ", which(error_indexes), ": ", item_id[error_indexes], "\n")
+    invalid_list <- paste("   ", which(error_indexes), ": ", obs_id[error_indexes], "\n")
     if (length(invalid_list) > 10) { invalid_list <- c(invalid_list[1:10], "    ...") }
     vigilant_report(paste0(collapse = "",
                            c("The queries to '", database, "' for the following ", sum(error_indexes),
-                             " of ", length(item_id), " item IDs failed to return classifications:\n",
+                             " of ", length(obs_id), " observation IDs failed to return classifications:\n",
                              invalid_list,
                              "NOTE: The function that get classifications from IDs works in batches. ",
                              "If any of the IDs in a batch is invalid, the whole batch fails. ",

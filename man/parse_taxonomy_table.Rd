@@ -4,7 +4,7 @@
 \alias{parse_taxonomy_table}
 \title{Parse taxonomic data in a tsv/csv file}
 \usage{
-parse_taxonomy_table(file_path, taxon_col, other_col_type = "item_info",
+parse_taxonomy_table(file_path, taxon_col, other_col_type = "obs_info",
   header = TRUE, sep = "\\t", max_lines = NULL, comment_prefix = "#",
   ...)
 }
@@ -28,7 +28,7 @@ The name of the column can have to following values:
  }}
 
 \item{other_col_type}{(\code{character}) 
-The type of the other columns no specified by \code{taxon_col}. Can be \code{"taxon_info"} or \code{"item_info"}.}
+The type of the other columns no specified by \code{taxon_col}. Can be \code{"taxon_info"} or \code{"obs_info"}.}
 
 \item{header}{(\code{logical} of length 1)
 If \code{TRUE}, the first row of the file is the column names.}

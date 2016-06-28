@@ -12,7 +12,7 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' genbank_ex_data <- extract_taxonomy(sequences,
 #'                                     regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-#'                                     key = c(gi_no = "item_info", "item_id", desc = "item_info"),
+#'                                     key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
 #'                                     database = "ncbi")
 #' }
 #' 
@@ -48,7 +48,7 @@
 #'          "AB248923.1", "CP002291.1", "X98409.1", "CU928161.2", "CP003297.1", 
 #'          "FJ797950.1", "CP000038.1", "U82598.1", "CP002211.1", "JQ806764.1", 
 #'          "U03463.1", "CP001665.1")
-#' contaminants <- extract_taxonomy(ids, key = "item_id", database = "ncbi")
+#' contaminants <- extract_taxonomy(ids, key = "obs_id", database = "ncbi")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -65,8 +65,8 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "taxon_name",  sequence_id = "item_id",
-#'                                             other_id = "item_info", tax_string = "item_info"))
+#'                                     key = c(name = "taxon_name",  sequence_id = "obs_id",
+#'                                             other_id = "obs_info", tax_string = "obs_info"))
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -84,8 +84,8 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' unite_ex_data_2 <- extract_taxonomy(names(sequences),
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "item_info", sequence_id = "item_info",
-#'                                             other_id = "item_info", "class_name"))
+#'                                     key = c(name = "obs_info", sequence_id = "obs_info",
+#'                                             other_id = "obs_info", "class_name"))
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -103,8 +103,8 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' unite_ex_data_3 <- extract_taxonomy(sequences,
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(seq_name = "item_info", sequence_id = "item_info",
-#'                                             other_id = "item_info", "class"),
+#'                                     key = c(seq_name = "obs_info", sequence_id = "obs_info",
+#'                                             other_id = "obs_info", "class"),
 #'                                     class_regex = "^(.*)__(.*)$",
 #'                                     class_key = c(unite_rank = "taxon_info", "name"),
 #'                                     class_sep = ";")
@@ -126,7 +126,7 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' pr2_ex_data <- extract_taxonomy(sequences,
 #'                                 regex = "^(.*\\..*?)\\|(.*)$",
-#'                                 key = c("item_id", "class_name"),
+#'                                 key = c("obs_id", "class_name"),
 #'                                 class_tax_sep = "|",
 #'                                 database = "none")
 #' }
@@ -146,7 +146,7 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' rdp_ex_data <- extract_taxonomy(sequences,
 #'                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
-#'                                 key = c(id = "item_info", description = "item_info", "class_name"),
+#'                                 key = c(id = "obs_info", description = "obs_info", "class_name"),
 #'                                 class_tax_sep = ";",
 #'                                 class_rank_sep = ";", 
 #'                                 class_rank_rev = TRUE,
@@ -168,8 +168,8 @@
 #' sequences <- ape::read.FASTA(file_path)
 #' its1_ex_data <- extract_taxonomy(sequences,
 #'                                  regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)$",
-#'                                  key = c("item_id", taxon_name = "taxon_info",
-#'                                          "taxon_id", description = "item_info"))
+#'                                  key = c("obs_id", taxon_name = "taxon_info",
+#'                                          "taxon_id", description = "obs_info"))
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}

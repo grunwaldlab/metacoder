@@ -20,7 +20,7 @@ file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "
 sequences <- ape::read.FASTA(file_path)
 pr2_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*\\\\..*?)\\\\|(.*)$",
-                                key = c("item_id", "class_name"),
+                                key = c("obs_id", "class_name"),
                                 class_tax_sep = "|",
                                 database = "none")
 }

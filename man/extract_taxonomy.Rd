@@ -10,7 +10,7 @@
 extract_taxonomy(input, ...)
 
 \method{extract_taxonomy}{default}(input, key = c("class", "taxon_id", "name",
-  "taxon_info", "item_id", "item_info"), regex = "(.*)",
+  "taxon_info", "obs_id", "obs_info"), regex = "(.*)",
   class_key = c("name", "taxon_id", "taxon_info"), class_regex = "(.*)",
   class_sep = NULL, class_rev = FALSE, database = c("none", "ncbi",
   "itis", "eol", "col", "tropicos", "nbn"), allow_na = TRUE,
@@ -31,7 +31,7 @@ extract_taxonomy(input, ...)
 \item{key}{(\code{character}) The identity of the capturing groups defined using \code{regex}.
 The length of \code{key} must be equal to the number of capturing groups specified in \code{regex}.
 Any names added to the terms will be used as column names in the output.
-Only \code{"taxon_info"} and \code{"item_info"} can be used multiple times.
+Only \code{"taxon_info"} and \code{"obs_info"} can be used multiple times.
 Each term must be one of those decribed below:
 \describe{
   \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
@@ -43,9 +43,9 @@ Each term must be one of those decribed below:
         from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
         are separated by the \code{class_sep} argument and the information is parsed by the
         \code{class_regex} and \code{class_key} arguments.}
-  \item{\code{item_id}}{An unique item (e.g. sequence) identifier for a particular \code{database}.
+  \item{\code{obs_id}}{An unique item (e.g. sequence) identifier for a particular \code{database}.
         Requires an internet connection.}
-  \item{\code{item_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
+  \item{\code{obs_info}}{Arbitrary item info you want included in the output. Can be used more than once.}
 }}
 
 \item{regex}{(\code{character; length == 1}) A regular expression with capturing groups
@@ -137,14 +137,14 @@ file_path <- system.file("extdata", "unite_general_release.fasta", package = "me
 sequences <- ape::read.FASTA(file_path)
 unite_ex_data_3 <- extract_taxonomy(sequences,
                                     regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                    key = c(name = "item_info", seq_id = "item_info",
-                                            other_id = "item_info", "class_name"),
+                                    key = c(name = "obs_info", seq_id = "obs_info",
+                                            other_id = "obs_info", "class_name"),
                                     database = "none")
 # Look up taxonomic data online using sequence ID
 unite_ex_data <- extract_taxonomy(sequences,
                                   regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                key = c(name = "name", seq_id = "item_id",
-                                       other_id = "item_info", tax_string = "item_info"))
+                                key = c(name = "name", seq_id = "obs_id",
+                                       other_id = "obs_info", tax_string = "obs_info"))
 }
 
 }
