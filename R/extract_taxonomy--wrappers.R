@@ -18,7 +18,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   download_if_url <- function(path) {
     if (grepl(pattern = "^http[s]?://", path)) {
       temp_file_path <- file.path(tempdir(), basename(path))
-      download.file(url = path, destfile = temp_file_path, quiet = TRUE)
+      utils::download.file(url = path, destfile = temp_file_path, quiet = TRUE)
       path <- temp_file_path
     }
     return(path)
@@ -27,7 +27,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   mapping_file <- download_if_url(mapping_file)
   
   # Parse OTU table
-  otu_raw <- read.table(otu_file, header = TRUE, skip = 1, comment.char = "",
+  otu_raw <- utils::read.table(otu_file, header = TRUE, skip = 1, comment.char = "",
                         stringsAsFactors = FALSE, sep = "\t", nrows = max_otus)
   # Fix header problems
   colnames(otu_raw) <- gsub(colnames(otu_raw), pattern = "^X\\.?", replacement = "")
@@ -58,7 +58,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   
   
   # Parse mapping table 
-  mapping_data <- read.table(mapping_file, header = TRUE, comment.char = "",
+  mapping_data <- utils::read.table(mapping_file, header = TRUE, comment.char = "",
                              stringsAsFactors = FALSE, sep = "\t")[1:7]
   colnames(mapping_data) <- c("sample_id", "rsid", "visit_no", "sex", "run_center", "body_site", "description")
   otu_data$mapping <- dplyr::tbl_df(mapping_data)
