@@ -8,7 +8,7 @@
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
 #' @param graph (\code{igraph}) The graph to generate the layout for.
-#' @param intitial_coords (\code{matrix}) Initial vertex layout to bawse new layout off of.
+#' @param intitial_coords (\code{matrix}) Initial node layout to bawse new layout off of.
 #' @param effort  (\code{numeric} of length 1) The amount of effort to put into layouts. Typically
 #' determines the the number of iterations. 
 #' @param ... (other arguments) Passed to igraph layout function used.
@@ -49,7 +49,7 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                                              maxiter = 10 * effort,
                                              fineiter = max(10, log2(igraph::vcount(graph))) * effort,
                                              cool.fact = 0.75 - effort * 0.1,
-                                             weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out vertexes 
+                                             weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out nodes 
                                              weight.border = 0,
                                              weight.edge.lengths = 0.5, #* ifelse(is.null(e_weight), 1, list(rescale(e_weight, c(10, 1))))[[1]], # higher number spread the graph out more
                                              weight.edge.crossings = 100,

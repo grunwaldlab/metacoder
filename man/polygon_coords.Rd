@@ -7,7 +7,7 @@
 polygon_coords(n = 5, x = 0, y = 0, radius = 1, angle = 0)
 }
 \arguments{
-\item{n}{(\code{numeric} of length 1) The number of vertices in the polygon.}
+\item{n}{(\code{numeric} of length 1) The number of nodes in the polygon.}
 
 \item{x}{(\code{numeric} of length 1) x coordinate of center}
 

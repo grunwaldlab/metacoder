@@ -61,13 +61,13 @@ plot_all <- function(data, output_name, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    plot(vertex_size = item_counts,
-         vertex_size_axis_label = "Number of OTUs",
-         vertex_color = abundance,
-         vertex_color_trans = "area",
-         vertex_color_axis_label = "Number of reads",
-         vertex_label = name,
-         vertex_label_max = 100,
+    plot(node_size = n_items,
+         node_size_axis_label = "Number of OTUs",
+         node_color = abundance,
+         node_color_trans = "area",
+         node_color_axis_label = "Number of reads",
+         node_label = name,
+         node_label_max = 100,
          overlap_avoidance = 1,
          # initial_layout = "re", layout = "da",
          output_file = file.path(output_folder, paste0(output_name, "--seed_", seed, output_format)))
@@ -112,17 +112,17 @@ plot_body_site_diff <- function(data, site_1, site_2, output_name, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    # filter_taxa(taxon_ranks <= 5) %>%
-    plot(vertex_size_axis_label = "Number of OTUs",
-         vertex_size = item_counts,
-         vertex_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
-         vertex_color = scaled_prop_diff,
-         vertex_color_range = diverging_palette(),
-         vertex_color_trans = "area",
-         vertex_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
+    # filter_taxa(taxon_levels <= 5) %>%
+    plot(node_size_axis_label = "Number of OTUs",
+         node_size = n_items,
+         node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
+         node_color = scaled_prop_diff,
+         node_color_range = diverging_palette(),
+         node_color_trans = "area",
+         node_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
          edge_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
-         vertex_label = name,
-         vertex_label_max = 150,
+         node_label = name,
+         node_label_max = 150,
          overlap_avoidance = 1,
          # initial_layout = "re", layout = "da",
          # maxiter = 20, fineiter = 20,
@@ -167,17 +167,17 @@ plot_body_site_diff_small <- function(data, site_1, site_2, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    filter_taxa(taxon_ranks <= 5) %>%
-    plot(vertex_size_axis_label = "Number of OTUs",
-         vertex_size = item_counts,
-         vertex_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
-         vertex_color = scaled_prop_diff,
-         vertex_color_range = diverging_palette(),
-         vertex_color_trans = "area",
-         vertex_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
+    filter_taxa(taxon_levels <= 5) %>%
+    plot(node_size_axis_label = "Number of OTUs",
+         node_size = n_items,
+         node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
+         node_color = scaled_prop_diff,
+         node_color_range = diverging_palette(),
+         node_color_trans = "area",
+         node_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
          edge_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
-         vertex_label = name,
-         vertex_label_max = 50,
+         node_label = name,
+         node_label_max = 50,
          overlap_avoidance = 1)
          # initial_layout = "re", layout = "da",
          # maxiter = 20, fineiter = 20,

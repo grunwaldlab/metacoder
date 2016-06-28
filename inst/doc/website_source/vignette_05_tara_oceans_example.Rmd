@@ -86,26 +86,26 @@ background_color <- "#ccfff7"
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
   plot(title = "Plankton diversity in the sunlit ocean",
        title_size = 0.03,
-       vertex_color_axis_label = "Number of reads (Abundance)",
-       vertex_size_axis_label = "Number of species (OTUs)",
-       vertex_size = item_counts,
-       vertex_size_range = c(0.0012, NA),
-       vertex_color = read_counts,
-       vertex_color_range = c("grey", "#80cdc1", "#018571", "#dfc27d", "#a6611a"),
-       vertex_color_trans = "log10 radius",
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+       node_color_axis_label = "Number of reads (Abundance)",
+       node_size_axis_label = "Number of species (OTUs)",
+       node_size = n_items,
+       node_size_range = c(0.0012, NA),
+       node_color = read_counts,
+       node_color_range = c("grey", "#80cdc1", "#018571", "#dfc27d", "#a6611a"),
+       node_color_trans = "log10 radius",
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)) &
                                read_counts > 10000,
                              name, NA),
-       vertex_label_color = "#000000",
-       vertex_label_color_trans = "area",
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.001, NA),
-       vertex_label_max = 1000,
+       node_label_color = "#000000",
+       node_label_color_trans = "area",
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_size_range = c(0.001, NA),
+       node_label_max = 1000,
        tree_label = name,
        tree_label_color = "#00806c",
        tree_label_max = 100,
@@ -137,8 +137,8 @@ data <- mutate_taxa(data, dcm_taxon_counts = vapply(items(data),
                                                     function(x) sum(data$item_data$dcm_counts[x]), numeric(1)))
 
 data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / read_counts)
-total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[taxon_ranks(data) == 1])
-total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[taxon_ranks(data) == 1])
+total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[taxon_levels(data) == 1])
+total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[taxon_levels(data) == 1])
 total_reads <- total_dcm_reads + total_sur_reads
 
 
@@ -164,24 +164,24 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
-       vertex_color_axis_label = "DCM only        Both       Surface only",
-       vertex_size_axis_label = "Number of species (OTUs)",
-       vertex_size = item_counts,
-       vertex_size_range = c(0.0012, NA),
-       vertex_color = depth_prop_dcm,
-       vertex_color_range = diverging_palette(),
-       vertex_color_trans = "radius",
-       vertex_color_interval = c(0, 1),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+       node_color_axis_label = "DCM only        Both       Surface only",
+       node_size_axis_label = "Number of species (OTUs)",
+       node_size = n_items,
+       node_size_range = c(0.0012, NA),
+       node_color = depth_prop_dcm,
+       node_color_range = diverging_palette(),
+       node_color_trans = "radius",
+       node_color_interval = c(0, 1),
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.001, NA),
-       vertex_label_max = 1000,
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_size_range = c(0.001, NA),
+       node_label_max = 1000,
        tree_label = name,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
@@ -200,25 +200,25 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
-       vertex_color_axis_label = "DCM only        Both       Surface only",
-       vertex_size_axis_label = "Number of species (OTUs)",
-       vertex_size = item_counts,
-       vertex_size_range = c(0.0012, NA),
-       vertex_color = depth_prop_diff,
-       vertex_color_range = diverging_palette(),
-       vertex_color_trans = "radius",
-       vertex_color_interval = c(-2, 2),
+       node_color_axis_label = "DCM only        Both       Surface only",
+       node_size_axis_label = "Number of species (OTUs)",
+       node_size = n_items,
+       node_size_range = c(0.0012, NA),
+       node_color = depth_prop_diff,
+       node_color_range = diverging_palette(),
+       node_color_trans = "radius",
+       node_color_interval = c(-2, 2),
        edge_color_interval = c(-2, 2),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.001, NA),
-       vertex_label_max = 1000,
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_size_range = c(0.001, NA),
+       node_label_max = 1000,
        tree_label = name,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
@@ -236,25 +236,25 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
-       vertex_color_axis_label = "DCM only        Both       Surface only",
-       vertex_size_axis_label = "Number of species (OTUs)",
-       vertex_size = item_counts,
-       vertex_size_range = c(0.0012, NA),
-       vertex_color = depth_diff_test_stat,
-       vertex_color_range = diverging_palette(),
-       vertex_color_trans = "area",
-       vertex_color_interval = c(-1000, 1000),
+       node_color_axis_label = "DCM only        Both       Surface only",
+       node_size_axis_label = "Number of species (OTUs)",
+       node_size = n_items,
+       node_size_range = c(0.0012, NA),
+       node_color = depth_diff_test_stat,
+       node_color_range = diverging_palette(),
+       node_color_trans = "area",
+       node_color_interval = c(-1000, 1000),
        edge_color_interval = c(-1000, 1000),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.001, NA),
-       vertex_label_max = 1000,
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_size_range = c(0.001, NA),
+       node_label_max = 1000,
        tree_label = name,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
@@ -286,24 +286,24 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_ranks <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
   plot(title = "Poportion of OTUs not well identified",
        title_size = 0.03,
-       vertex_color_axis_label = "Percent of species (OTUs) identified",
-       vertex_size_axis_label = "Number of species (OTUs)",
-       vertex_size = item_counts,
-       vertex_size_range = c(0.0012, NA),
-       vertex_color = percent_known,
-       vertex_color_range = c("red", "orange", "yellow", "green", "cyan"),
-       vertex_color_trans = "radius",
-       vertex_color_interval = c(0, 100),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+       node_color_axis_label = "Percent of species (OTUs) identified",
+       node_size_axis_label = "Number of species (OTUs)",
+       node_size = n_items,
+       node_size_range = c(0.0012, NA),
+       node_color = percent_known,
+       node_color_range = c("red", "orange", "yellow", "green", "cyan"),
+       node_color_trans = "radius",
+       node_color_interval = c(0, 100),
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_size_range = c(0.001, NA),
-       vertex_label_max = 1000,
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_size_range = c(0.001, NA),
+       node_label_max = 1000,
        tree_label = name,
        tree_label_max = 100,
        initial_layout = "re", layout = "da",
@@ -324,19 +324,19 @@ data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
   filter_taxa(name == "Metazoa", subtaxa = TRUE) %>%
-  plot(vertex_color_axis_label = "Percent of OTUs identified",
-       vertex_size_axis_label = "Number of OTUs",
-       vertex_size = item_counts,
-       vertex_color = percent_known,
-       vertex_color_range = c("red", "orange", "yellow", "green", "cyan"),
-       vertex_color_trans = "radius",
-       vertex_color_interval = c(0, 100),
-       vertex_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
+  plot(node_color_axis_label = "Percent of OTUs identified",
+       node_size_axis_label = "Number of OTUs",
+       node_size = n_items,
+       node_color = percent_known,
+       node_color_range = c("red", "orange", "yellow", "green", "cyan"),
+       node_color_trans = "radius",
+       node_color_interval = c(0, 100),
+       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       vertex_label_size = (item_counts / taxon_ranks) ^ 0.5,
-       vertex_label_size_trans = "area",
-       vertex_label_max = 1000,
+       node_label_size = (n_items / taxon_levels) ^ 0.5,
+       node_label_size_trans = "area",
+       node_label_max = 1000,
        initial_layout = "re", layout = "da",
        overlap_avoidance = .65,
        maxiter = 50, fineiter = 50,

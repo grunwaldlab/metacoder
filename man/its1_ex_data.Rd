@@ -4,7 +4,7 @@
 \name{its1_ex_data}
 \alias{its1_ex_data}
 \title{Example of ITS1 fungal data}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \source{
 \url{http://itsonedb.ba.itb.cnr.it:8080/ITS1}
 }

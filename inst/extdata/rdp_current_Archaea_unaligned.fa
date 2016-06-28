@@ -1,4 +1,4 @@
->S001191995 uncultured archaeon; LCDARCH35	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;unclassified_Methanosarcinales;
+>S001191995 uncultured archaeon; LCDARCH35	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;untaxmap_Methanosarcinales;
 tccggttgat cctgccggag gctactgcta tcggggtccg actaagccat gcgagttgag
 aggggtaagc cctcggcata ttgctcagta acacgcggat aacctgccct tgggttcggg
 ataaccccgg gaaactggga ctaataccgg atagatcaaa gaaactggaa tgttctctgg
@@ -14,7 +14,7 @@ aaggcatccc accagaacgg gtccgacggt gagggacgaa agctgggggc acgaaccgga
 ttagataccc gggtagtccc agccgtaaac gatgctcgct aggtgtcagg tgcggtgcga
 ccgcatctgg tgccgcagtg aaaacttgaa gcgagtcacc tgggaagtac ggtcgcaagg
 ctgaaactta aaggaat
->S002342293 uncultured archaeon; Arch-2	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002342293 uncultured archaeon; Arch-2	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 acggggtcag caggcgcgaa acctctgcaa tgcgggaaac cgtgacaggg ggatcccaag
 tgctcatgca ttgcatgggc tgttctttgg tctaagtaac cagaggagta agggctgggc
 aagaccggtg ccagccgccg cggtaatacc ggcagctcaa gtggtagccg cgattattgg
@@ -41,7 +41,7 @@ ctgggggagc aaaccggatt agatacccgg gtagtcccag ctgtaaacta tgcaaactca
 gtgatgcatt ggcttgtggc caatgcagtg ctgcagggaa gccgttaagt ttgccgcctg
 ggaagtacgt acgcaagtat gaagcttaaa ggaattggcg ggggagcacc acaaggggtg
 aagcctgcgg ttcaattgga gtcaacgccg gaaa
->S002934720 uncultured archaeon; A0423R002_A13	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;unclassified_"Methanomicrobia";
+>S002934720 uncultured archaeon; A0423R002_A13	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;untaxmap_"Methanomicrobia";
 cgcgaattcg cccttcgggg tgcagcaggc gcgaaaactt tacactgcgg gaaacctcga
 taaggggacc ccgagtgcca tcacctaatg atggctgtcc agttgtctaa ataacatctg
 taatcaaggg acgggcaata ccggtgccac ccgccgcggt aacaccggtc gcccaagtgg
@@ -52,7 +52,7 @@ gcatcccacc agaacggctc agacggtaag gaacgaaatc tggggagcac aaaccgatat
 tatatacccg ggtactccca gctgtaaaca tatgctctct agtgtgtcag gtgcggtgcg
 accgtttttg gtgccgcagt gaatacttga agctgagtca cctgggaatt acagtcgcaa
 ggttgaaact taaaggaatt ggcggggaag cac
->S003785628 uncultured archaeon; PC500-1A66	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003785628 uncultured archaeon; PC500-1A66	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cgctcttcag ctatgtagag agcgcggcga acggctcaat aacacgtagt taacctaccc
 tcgggatggg aataaccccg ggaaactggg attaataccc actagatgat tatacctgga
 atggcttatc atcgaaagag tctggaaaca tgcttccagc gtcgcccgag gatgggaccg
@@ -189,7 +189,7 @@ acggatccga cggtgaggga cgaaagctag gggcacgaac cggattagat acccgggtag
 tcctagccgt aaacgatgcg agctaggtgt cagttttact gcgagtaaaa ctggtgccgt
 agggaagccg tgaagctcgc cacctgggaa gtacggccgc aaggctgaaa cttaaaggaa
 ttggcggggg agcaccacaa cgggtggagc ctgcggttca
->S001337476 uncultured archaeon; SGYG406	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;unclassified_Methanosarcinaceae;
+>S001337476 uncultured archaeon; SGYG406	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;untaxmap_Methanosarcinaceae;
 gtctaaaggg tccgtagccg gtttaatcag tcttctggga aatctaatcg cttaactatt
 aggcttccag gggatactgt tagacttggg accgggagag gtaagaggta ctgcaggggt
 aggagtgaaa tcttgtaatc cctgtgagac caccagtggc gaaggcgtct taccagaacg
@@ -204,7 +204,7 @@ gctgctgcta aagcagagga aggtgcgggc tacggtaggt cagtatgccc cgaatctccc
 gggctacacg cgggctacaa tggttgggac aatgggtatc tactccgaaa ggagttggca
 atctcttaaa cccaatcgta gtttgaattg agggctgtaa ctcgccctca tgaagctgga
 atccgtagta atcgcgtttc aacatagcgc gg
->S002303396 uncultured soil archaeon; 2cArq2C09	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002303396 uncultured soil archaeon; 2cArq2C09	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cgtagcgcac agctcagtag cacgtggcca acctgccctt gggacggaag caaccccggg
 aaactggggc taatttccga taggggaaga ctcctggaat ggattttcgc ctaaaaggcg
 cttagagcat gcttctaggt gttgcccaag gatggggccg cggccgatca ggttgttggt
@@ -244,7 +244,7 @@ taatctcgaa acccgtccgt agttcggatt gagggttgta actcaccctc atgaagctgg
 attccgtagt aatcgcgaat caacaactcg cggtgaatat gcccctgctc cttgcacaca
 ccgcccgtca aaccacctga gttgggtttc agtgaggctg ccttttactg gggttgtcga
 actgagattt agcaaggagg gtt
->S003245533 uncultured marine archaeon; SGSB535	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003245533 uncultured marine archaeon; SGSB535	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cggttgatcc tgccggaggc taccgctatt ggagttcgat taagccatgc gagtcgcgag
 tcttagggac tcggcgtacc gctcagtaac acgtgggtaa cctgccctat gctgggagat
 aacctcggga aactgagaat aataccccat agttcactac gcctggaacg gtgagtggat
@@ -302,7 +302,7 @@ attgagggct gaaactcgcc ctcatgaagc tggattcggt agtaatcgcg cctcagaagg
 gcgcggtgaa tacgtccctg ctccttgcac acaccgcccg tcaaagcacc cgagtggggt
 ccggatgagg ccgacgcaac gtcggtcgaa tctgggctcc gcaagggggc ttaagtcgta
 acaaggtagc cgtaggggaa tctgcggctg gatcacctcc t
->S001755455 uncultured archaeon; MD3057B-15	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S001755455 uncultured archaeon; MD3057B-15	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tcctgccgga ccccactgct atcggggtgg gactaaaaca tgcaagtcga
 gcgcctccaa gctatggtga aggcgcggca aacggctcag taacacgtgg ccaacctacc
 cttaggacgg ggacaacccc gggaaactgg ggctaatacc cgataggtga ggaggcctgg
@@ -354,7 +354,7 @@ cggacttggt gtgagggtgg ctttgagccg tcctggtgcc gaagggaagc tgttaagtcc
 gccgcctggg aagtacggtc gcaagactga aacttaaagg aattggcggg ggagcaccac
 aacgcgtgga gcctgcggtt taattggatt caacgccgga gatctcacca gcggcgacag
 cagtatgatg accaggttga tgactttgtt tgacaagctg agaggtggtg catgg
->S001079035 uncultured Thermoplasmatales archaeon; C8_5c	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001079035 uncultured Thermoplasmatales archaeon; C8_5c	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ggttgatcct gccggaggtc actgctattg ggattcgatt aagccatgcg agtcgagagg
 gttcggccct cggcggactg ctcagtaaca cgtggataat ctgcccttag gtggagcata
 acctcgggaa actgagaata atactccata ggtttaggat gctggaacgc gcctaaactg
@@ -371,7 +371,7 @@ gatacccggg tagtccaggg tgtaaacgct gcttgcttga tgttagtcgg gctccgagcc
 cgattagtgt cggagagaag ttgttaagca agctgcctgg gaagtacggc cgcaaggctg
 aaacttaaag gaattggcgg gggagcacag caacgggtgg agcgtgcggt ttaattggat
 tc
->S003243402 uncultured marine archaeon; F9P41000_Arc_2_E12	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003243402 uncultured marine archaeon; F9P41000_Arc_2_E12	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggctaccgct attggagttc gattaagcca tgcgagtcgc
 gagtcctagg gactcggcgt accgctcagt aacacgtggg taacctgccc tatgctgggg
 gataacctcg ggaaactgag aataataccc catagttcac cacgcctgga acggtgggtg
@@ -388,7 +388,7 @@ attagatacc cgggtagtcc taggtgtaaa cgctgtggac ttgatgttgg gggcgctccg
 agcgcactca gtgtcgaagc gaaggtgata agtccactgc ctggggagta cggtcgcaag
 gctgaaactt aaaggaattg gcgggggagc accgcaacct gaggattgtg cggtttaatt
 ggagtcaacg ccgg
->S002920429 uncultured crenarchaeote; A2-0	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S002920429 uncultured crenarchaeote; A2-0	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 taagccatgc gagtcgaatg gaatgccctg tattccatgg cgactgctca gtaacaagtg
 atccaactta accttcagaa gtgcataacc tcgggaaact gaggataata cgctatattt
 ggaaaagtct ggaacgattt tccattcaaa gagttttcta attggggaaa atttcgctga
@@ -433,7 +433,7 @@ ccctgggcta cacgcgggct acaatggttg ggacaatggg ttccgacgcc gaaaggcgga
 ggtaatcttt taaaccttgt cgtagttcgg attgagggct gtaactcgcc ctcatgaagc
 tggaatgcgt agtaatcgcg tgtcacaatc gcgcggtgag tacgtccctg ctccttgcac
 acaccg
->S003250155 uncultured archaeon; KJ-UA-197	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003250155 uncultured archaeon; KJ-UA-197	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 actgctatcg gggtgggact aaggcatgct agtttgcgtt tttaagctat ggtgaaaacg
 tggcagacgg ctcagtaaca cgtagtcaac ctaccctcag gacagggata accccggaaa
 actggggaca atacctgata ggtgagaata cctggaatgg ttttactcct aaaggaaaag
@@ -459,7 +459,7 @@ atcctggacg gaccaccggt ggcgaaagcg cctcaggaag acggatccga cggtgaggga
 cgaaagctcg ggtcacgaac cggattagat acccgggtag tccgagctgt aaacgatgtc
 tgctaggtgt gacacaggct acgagcctgt gttgtgccgt agggaagccg tgaagcagac
 cgcctgggaa gtacgtccgc aaggatgaaa cttaa
->S001599847 uncultured archaeon; TWP3-39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001599847 uncultured archaeon; TWP3-39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggtcactgct attgggattc gactaagcca tgcgagtcga
 gagggttcgg ccctcggctg acggctcagt aacacgtgga taatctgccc ttaggtggag
 gatactctcg ggaaactgag aataatactc cataggtcta ggatgctgga atgcatctag
@@ -502,7 +502,7 @@ cctaccccag ttgtgattga gggctgcaac tcgccctcat gaatctggaa tccctagtaa
 ccgcgtgtca acatcgcgcg gtgaatacgt ccctgctcct tgcacacacc gcccgtcgct
 tcacccgagt tgggtttggg agagatagtg tctctttgac attatcgaac ctaggttcga
 caagggggga gaagtcgtaa caaggtaacc
->S003309693 uncultured Thermoplasmatales archaeon; Kam37_plA_lr140206e12	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Thermoplasmata;class;Thermoplasmatales;order;unclassified_Thermoplasmatales;
+>S003309693 uncultured Thermoplasmatales archaeon; Kam37_plA_lr140206e12	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Thermoplasmata;class;Thermoplasmatales;order;untaxmap_Thermoplasmatales;
 taatacccca tagatattca atgctggaag gcttggatat cgaaagcgca agcgccagag
 ggtgagtctg cggcctatca ggtagtaggt ggtgtaacgg accacctagc ctaagacggg
 tacgggcctt gagagaggga gcccggagat gggttctgag acacgaaccc aggccctacg
@@ -541,7 +541,7 @@ gcaatctcct aaacccgatc gtagttcgaa ttgggggctg caacttgtcc ccatgaagat
 ggaatccgta gtaatcgcgt ctcaagatgg cgcggtgaat acgtccctgc tccttgcaca
 caccgcccgt caaaccaccc gagtgaggtc tagatgaggc cgctctcttt ggagcgttcg
 aatctgggtt ttgcaagggg ggtt
->S000665474 uncultured archaeon; WN-UWA-151	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S000665474 uncultured archaeon; WN-UWA-151	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 gtgggcgtcc agcggaaact gtccggcttg gggccggaag actcgagggg tacgtccggg
 gtaggagtga aatcccgtaa ttcctggacg gaccgccggt agcgaaagcg cctcgagagg
 acggacccga cggtgaggaa cgaaagccag ggtctcgaac cggattagat acccgggtag
@@ -557,7 +557,7 @@ caatccccaa acccggtcgt agttcggatt gagggctgaa actcgccctc atgaagctgg
 attcggtagt aatcccgtgt cagaagcgcg cggtgaatac gtccctgctc cttgcacaca
 ccgcccgtca aagcacccga gtgaggtccg gatgaggccc agttcctggg tcgaatctgg
 gcttcgcaag ggggcttaag tcgtaacaag gtagccgtaa agggc
->S003601591 uncultured archaeon; 4559-4-C2-104	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003601591 uncultured archaeon; 4559-4-C2-104	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tcctgcggac cccactgcta tcggggtggg actaagccat gcaagtcgaa
 ggtccccggc tccgggggcc tggcagacgg ctcagtaaca cgtggccaac ctgccctcgg
 gagggggata accccgggaa actggggtta aaccccccat aggcggcggg atctggaagg
@@ -584,7 +584,7 @@ atcctggacg gaccgccgat ggcgaaagca cgtcgcgaag acggatccga cagtgaggga
 cgaaagctag ggtctcgaac cggattagat acccgggtag tcctagccgt aaacaatgcc
 tgctaggtgt ggctcccact acgagtgggt gctgtgccgt agggaagccg ctaagcaggc
 cgcctgggaa gtacgtccgc aaggatgaaa cttaa
->S003243792 uncultured marine archaeon; F9P4500_Arc_1_B04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003243792 uncultured marine archaeon; F9P4500_Arc_1_B04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 tcggttgatc ctgccggagg ctaccgctat tggagttcga ttaagccatg cgagtcgaga
 gtcttaggga ctcggcgtac cgctcagtaa cacgtgggta acctgcccta tgctggggaa
 taacctcggg aaactgagaa taatacccca tagcccacca tgcctggaac ggttggtgga
@@ -601,7 +601,7 @@ tagatacccg ggtagtccta ggtgtaaacg ctgtggactt ggtgttgggg attctccgag
 gattctcagt gccgaagcga aggtgataag tccactgcct ggggagtacg gtcgcaaggc
 tgaaacttaa aggaattggc gggggagcac cgcaacctga ggattgtgcg gtttaattgg
 attcaacgcc gga
->S001449118 uncultured methanogenic archaeon; PASLSS0.5m_2	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;unclassified_Methanosarcinales;
+>S001449118 uncultured methanogenic archaeon; PASLSS0.5m_2	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;untaxmap_Methanosarcinales;
 tttccggttg atcctgccag aggctactgc tatcggggtc cgactaagcc atgcgagttg
 agaggggtaa gccctcggca tattgctcag taacacgcgg ataacctgcc cttgggtttg
 ggataacccc gggaaactgg gactaatacc ggatagacca aagatactgg aatgttcttt
@@ -650,7 +650,7 @@ ggggtaggag tgaaatcttg taatccctgt gggaccacct gtggcgaagg cgtcttacca
 gaacgggttc gacggtgggg gacgaaagct gggggcacga accggattag atacccgggt
 agtcccagcc gtaaacgatg ctcgctaggt gtcaggcatg gcgcgaccgt gtctggtgcc
 gcagggaagc cgtgaagcga gccacctggg aagtacggcc gcaaggctga aacttaa
->S003061209 uncultured archaeon; M04_F-G2_0239GSNP001F_P6	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S003061209 uncultured archaeon; M04_F-G2_0239GSNP001F_P6	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 aaaccccccc ctggccaaag ggttaccccc aggggccccc ggaaaaaggg ggtttttcct
 gggcctaaaa ccccaaggga atagaggggg ggcagaatgg gtgtcagccg ccgcggtaac
 cccagcccct cgagtggtgg ggatgattat ttggcctaaa gcgtccgtag cctgccgggg
@@ -683,7 +683,7 @@ tgggcaacac gcgggctaca atggctaaga caatgggttc cgacaccgaa aggtggaggt
 aatcctctaa acttagtcgt agttcggatt gaggactgta actcgttctc atgaagctgg
 aatgcgtagt aatcgcgtat cactattgcg cggtgaatac gtccctgctc cttgcacaca
 ccga
->S000565691 uncultured archaeon; ODP1227A18.20	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000565691 uncultured archaeon; ODP1227A18.20	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 agtcactgct attgggattc gactaagcca tgcgagtcga gagggttcgg ccctcggctg
 acggctcagt aacacgtgga taatctgccc ttaggtggag gataccctcg ggaaactgag
 aataatactc cataggtcta ggatgctgga atgcatctag actgaaaact ccggtgccta
@@ -699,7 +699,7 @@ gatctgacgg tgagggacga agccctgggg cgcaaaccgg attagatacc cgggtagtcc
 agggtgtaaa cgctgcttgc ctgatgttag ttgggctccg agcccaatta gtgtcggaga
 gaagttgtta agcaagctgc ctgggaagta cggtcgcaag actgaaactt aaaggaattg
 gcgggggagc acagcaacgg gtggagcgtg cggttta
->S001201092 uncultured haloarchaeon; SFG1F121	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S001201092 uncultured haloarchaeon; SFG1F121	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 atcccgccgg aggccattgc tatcggaatc cgatttagcc atgctagtcg cacgggtcag
 acccgtggcg aacagctcag taacacgtgg ccaaactacc ctgtggacga ggataatctc
 gggaaactga ggtcaatcct tgatagggct tccatcctgg agtggaggaa gtccaaaagt
@@ -723,7 +723,7 @@ tatgccccga atgtgccggg caacacgcgg gctacaatgg ccgagacaat gggaggctat
 cccgagaggg ggcgctaatc ccctaaaccc ggtcgtagtt cggattgagg gctgcaactc
 gccctcatga agctggattc ggtagtagtc gcgcgtcagt agcacgcggc gaatacgtcc
 ctgctccttg tacacaccgc ccgtca
->S002469026 uncultured crenarchaeote; TKTMmvi-A3	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002469026 uncultured crenarchaeote; TKTMmvi-A3	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ccccactgct atcgggatgg gactaagaca tgctagtcgt gcgcttccaa gccacggtgg
 aagcgcggcg cacagctcag tagcacgtgg ctaacctgcc cttgggacgg aaataacccc
 gggaaactgg ggctaatttc cgataggtga agactcctgg aatgggtctt cgccgaaagg
@@ -761,7 +761,7 @@ cgagagggga tggaaatctc ctaaaaccgg tcgtagttcg gattgagggc tgcaactcgc
 cctcatgaag ctggaatccg tagtaatcgc gtttcaacag aacgcggtga atacgtccct
 gctccttgca cacaccgccc gtcaaaccac ccgagtaggg tctggataag ggtgcgccat
 gttgacgcat tcgaatctgg gctttgcaag gggggttaag tcgtaacaag gtaacc
->S004051237 Halorientalis sp. CBA1106	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S004051237 Halorientalis sp. CBA1106	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 gaggccattg ctatcggagt ccgatttagc catgctagtc gcacgggttt agacccgtgg
 cagatagctc agtaacacgt ggccaaactg ccctatggac actgataacc tcgggaaact
 gaggctaata agtgatacag ctctcatcct ggagtggaga gagctggaaa cgctccggcg
@@ -912,7 +912,7 @@ ctatgataaa taggaggaag gagtggacga cggtaggtcc gtatgccccg aatcctctgg
 gcgacacgcg ggctacaatg gctgagacaa tgggttccga caccgaaagg tggaggtaat
 cctctaaact tagtcgtagt tcggattgag gactgtaact cgttctcatg aagctggaat
 gtgtagtaat cgcgtatcac tattgcgcgg tgaatacgtc cctgctcctt gcacacaccg
->S002493408 uncultured archaeon; GBX-A-COQ1-136	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;unclassified_"Thaumarchaeota";
+>S002493408 uncultured archaeon; GBX-A-COQ1-136	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;untaxmap_"Thaumarchaeota";
 gcccttactg ctcagtaaca cgtagtcaac ctaactcgtg gacgtggata acctcgggaa
 actgagaata aaccacgata gatcatagtg cctggaatgg cttatggtcc aaacagttta
 ctgccatggg atgggactgc ggcctatcag cttgttggtg aggtaatggc ccaccaaggc
@@ -990,7 +990,7 @@ cagtgataaa ctggaggagg gagtggacga cggtaggtcc gtatgccccg aatcccctgg
 gctacacgcg ggctacaatg gctgggacaa tgggttccga cgccgaaagg cggaggtaat
 cttttaaacc tagtcgtagt tcggattgag ggctgtaact cgccctcatg aagctggaat
 gcgtagtaat cgcgtgtcac aatcgcgcgg tgaatacgtc cctgctcctt gcacacaccg
->S003246617 uncultured marine archaeon; SGSN661	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003246617 uncultured marine archaeon; SGSN661	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ccttcggttg atcctgccag aggcgaccgc ttttggagtt cgattaagcc atgcgagtcg
 agagccttag gggctcggca tactgctcag taacacgtgg ataacctgcc ctattgtctg
 gaataacctc gggaaactga gaacaaggcc ggataaccca ctatgcctgg aacggtttgt
@@ -1108,7 +1108,7 @@ ggaattgctg gagatactat tagacttgag accgggagag gttagaggta ctcccagggt
 agaggtgaaa ttctgtaatc ctgggaggac cgcctgttgc gaaggcgtct aactggaacg
 gttctgacgg tgagggacga aagttagggg cgcgaaccgg attagatacc cgggtagtcc
 taactgtaaa cgatgcggac ttggtgttg
->S000399066 uncultured archaeon; ALIA-152	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S000399066 uncultured archaeon; ALIA-152	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 gggaccggga gaggttcggg ggctactcca gggggtagcg ggtaaaatgc tgtaatcctn
 ggaggagcgc ctgtggngaa agcgcccggc tggaacggct ccgacggtga gggacgaaag
 cctgggtagc gaaggggatt agataccccc gtagtccagg ctgttaacat tgcccgtttg
@@ -1159,7 +1159,7 @@ gggcaacacg cgggctacaa tggctaagac aatgggttcc gacaccgaaa ggtggaggta
 atcctctaaa cttagtcgta gttcggattg aggactgtaa ctcgttctca tgaagctgga
 atgcgtagta atcgcgtatc actattgcgc ggtgaatacg tccctgctcc ttgcacacac
 cg
->S000668640 uncultured marine archaeon; SCS-D8-48	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000668640 uncultured marine archaeon; SCS-D8-48	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 agaaattaga ttctcggcgt accgctcagt aaagtgggta acctgcccta tgctggataa
 taacctcggg aaactgagta taatgatcca tagttcacta cgcctggaac ggtgagtgga
 tgaaagctcc ggcggcatag gatgggcctg cggcgtatca ggttgtaggg ggtgtaacgt
@@ -1172,7 +1172,7 @@ atcaaccagc tcaactgatt gaattctgcg agcacggcca gacttgggac cgggagaggt
 gtggggtacg ctcagggtag gggtaaaatc ctgtcatcct gagcggacca cctgttgcga
 aggcgccaca ctagaacgga tccgacggtc agggacgaag cctaggggca cgaaccggat
 tagatacccg ggtagtccta ggtgtaaac
->S000772769 uncultured methanogenic archaeon; bog3_2	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S000772769 uncultured methanogenic archaeon; bog3_2	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 atggatagca tgcgagttgt atgtccctag actgctgggg gcatagcgaa cggctcagta
 acacgtggct aacctaccct cgagacgtgg ataaccccgg gaaactggga ttaagccgcg
 ataggtccag aattctggaa ttgaatctgg actgaaaggt tgtgtaagca tgttttacat
@@ -1196,7 +1196,7 @@ ggcggcttgc cagaatgcgc tcgacggtga gggatgaaag ctgggggagc aaaccggatt
 agatacccgg gtagtcccag ccgtaaacga tgcagactcg gtgatgggtt ggcttcgcgc
 taacccagtg ccgcagggaa gccgttaagt ctgccgcctg ggtagtacgg tcgcaagact
 gaaacttaaa ggaattggcg ggggagca
->S000879400 uncultured archaeon; BR-WJ11	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S000879400 uncultured archaeon; BR-WJ11	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 gcagcaggcg cgaaacctcc tcaatgcact cacgtgcgaa ggggttacct cgagtgccat
 ctgaagaagg tggcttttcc ttggtttaaa tagcctaggg aataagaggg gggcaagact
 ggtgtcagcc gccgcggtaa caccagcccc tcgagtggtg gggatgatta tttggcctaa
@@ -1298,7 +1298,7 @@ cgagggacca cctgtggcga aggcgcctca ccagaacggc ttcgacagtg agggacgaaa
 gctgggggag caaaccggat tagatacccg ggtagtccca gccgtaaacg atgtgcgtta
 ggtgtatcaa cgaccacgag tcgttgaggt gccgaaggga aaccgtgaaa cgtaccgcct
 gggaagtacg gtcgcaaggc tgaaacttaa aggaattggc gggggagca
->S001337350 uncultured archaeon; SGXU541	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;unclassified_Methanosarcinaceae;
+>S001337350 uncultured archaeon; SGXU541	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;untaxmap_Methanosarcinaceae;
 tttccggttg atcctgccag aggtcactgc tatcagtgtt cgattaagcc atgcgagtta
 aatgttcttc gtgaacatag cagactgctc agtaacacgt ggataacctg cccttaggac
 tggcataacc ccgggaaact ggggataatt ccggatagat cataaatgct ggaatgcttt
@@ -1430,7 +1430,7 @@ gggtagtccc agccgtaaac tatgtgcgtt aggtgtatcg acgaccacga gtcgtcgagg
 tgccgaaggg gaaccgtgaa acgtaccgcc tgggaagtac ggtcgcaagg ctgaaactta
 aaggaattgg cgggggagca ccacaacagg tggagcctgc ggtttaattg attcaacgcc
 gga
->S001255395 uncultured archaeon; ZM202_55	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001255395 uncultured archaeon; ZM202_55	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ccgctattgg agttcgatta agccatgcga gtcgcgagaa attagattct cggcgtaccg
 ctcagtaaca cgtgggtaac ctgccctatg ctggataata acctcgggaa actgagtata
 atgatccata gttcactacg cctggaacgg tgagtggatg aaagctccgg cggcatagga
@@ -1685,7 +1685,7 @@ cccgaaactc tggggccaca cgcgggctgc aatggtaacg acaattggtt tcgaatccga
 aaggatgagg taatcctcaa acgttaccac agttatgact gagggctgca actcgccctc
 acgaatatgg aatccctagt aactgcgtgt cattatcgcg cggtgaatac gtccctgctc
 cttgcacaca ccgcccgt
->S001932312 uncultured crenarchaeote; P14A5RS49	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S001932312 uncultured crenarchaeote; P14A5RS49	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 gctaacctac ccttgggacg gaaacaaccc cgggaaactg gggctaattt ccgataggtg
 aagactcctg gaatgggtct tcgcccaaaa ggcgtttaga ccatgcttct aaacgccgcc
 caaggatggg gccgcggccg atcaggttgt tggtgaggta acggctcacc aagcctataa
@@ -1741,7 +1741,7 @@ atgaaagctg ggggagcaaa ccggattaga tacccgggta gtcccagctg taaacgatgc
 aaactcggtg atgcattggc ttatggccaa tgcagtgccg cagggaagcc gttaantttg
 ccgcctggga agtacggacg caagtctgaa acttaaagga attggcgggg gagcaccaca
 aggggtgaag cctgcggttc anttggattc aacgccggga a
->S000878749 uncultured archaeon; Hua-s-70	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S000878749 uncultured archaeon; Hua-s-70	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 ttccggttga tcctgccgga ggtcattgct attggagtcc gatttagcca tgctagttgt
 acgagtttgg actcgtagca gatagctcag taacacgtgg ccaagctccc cttcagacca
 gaataacctc gggaaactga ggctaagact ggatacggta tgtatgctgg aatgcgacat
@@ -1847,7 +1847,7 @@ ggcggcttgc cagaacgcgc tcgacggtga gggatgaaag ctgggggagc aaaccggatt
 agatacccgg gtagtcccag ctgtaaacga tgcagactcg gtgatgagtt ggcttcttgc
 caactcagtg ccgcagggaa gccgttaagt ttgccgcctg gggagtacgg tcgcaagact
 gaaacttaaa ggaattggcg ggggagca
->S003477660 uncultured archaeon; kmc085	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003477660 uncultured archaeon; kmc085	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 tccggttgat cctgccggac ctgactgcta tcgggatgag gctaagccat ggaagtcgac
 gtgcgccctt gcgcacgtgg cgtacggctc agtaacgcgt ggctaacctg ccctcgcgac
 ggggataacc tcgggaaact gaggataatc cccgataggc gagcggcttt ggaagaaccg
@@ -1879,7 +1879,7 @@ gtccgacggt gagggacgaa agctaggggc acgaaccgga ttagataccc gggtagtcct
 agccgtaaac gatgcccgct aggtgtcacg acagtcgtga attatcgtgg tgccgtaggg
 aagccgcgaa gcgggccact tgggaagtac gaccgcaagg ttgaaactta aaggaattgg
 cgggggagca c
->S002948998 uncultured archaeon; 87B915r12	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002948998 uncultured archaeon; 87B915r12	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cccactgcta tcgaggtggg actaatccat gctagtcgaa cgaacccgga ccatggcggg
 ggagtggcac actgctcagt aacacgtagc taacctaccc tcgggacggg ggcaaccccg
 ggaaactggg gctaataccc gataggcgtg ggctcctgga atggttccac gccgaaaggt
@@ -1941,7 +1941,7 @@ ggcggtggta atcttttaaa ccttgtcgta gttcggattg agggctgtaa ctcgccctca
 tgaagctgga atgcgtagta atcgcgtgtc acaatcgcgc ggtgaatacg tccctgctcc
 ttgcacacac cgcccgtcac accacccaaa aagggctggg atgaggatat ggtcgttggt
 tgtattcgaa tctcggtttt ttgaggaggg tgaagtcgta acaaggtaac c
->S003235730 uncultured haloarchaeon; MG19	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S003235730 uncultured haloarchaeon; MG19	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 cggttgatcc cgccggaggc cattgctatc ggagtccgat ttagccatgc tagttgtacg
 agttcagact cgtagcatat agctcagtaa cacgtggcca aactacccta tggacagcga
 cactctcggg aaactgaggc caatcgcgga tacggttctc acgctggagt gcagagaacc
@@ -1966,7 +1966,7 @@ tgaagcgagc cacctgggaa gtacggccgc aaggctgaaa cttaaaggaa ttggcggggg
 gagcacaaca acgggtggag accctgcggt ttaattggac tcaacgccgg acaactcacc
 gggggcgaca gcaatatgta ggccaagcta gaagactttg cctgaatcgc ctgagtggag
 gtgcatgg
->S004195164 uncultured archaeon; BH3-39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S004195164 uncultured archaeon; BH3-39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 aacctttaca ctgcacgaca gtgcgatagg gggactccga gtgcgagggc atagagccct
 cgcttttgta caccgtaagg tggtgtacga ataagaactg ggcaagaccg gtgccagccg
 ccgcggtaat accggcagtt cgagtgatgg ccgattttat tgggcctaaa gcgttcgtag
@@ -2028,7 +2028,7 @@ gggatgcaac gccgaaaggc gacgctaatc tccgaaactt ggtcgtagtt cggattgagg
 gctgaaactc gccctcatga agctggattc ggtagtaatc gcgcctcaga agggcgcggt
 gaatacgtcc ctgctccttg cacacaccgc ccgtcaaagc acccgagtgg ggtccggatg
 aggcccggtt tccgggtcga atctgggctc cgcaaggggg cttaagtcgt aacaaggta
->S000565801 uncultured archaeon; ODP1230A34.18	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000565801 uncultured archaeon; ODP1230A34.18	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ggccactgct attgggatcg gcattaagcc atgccgaagt cgaagagggt tcgggccctc
 gggcagactg ctcagtaaca cgtggataac ctaaccttag gtggaaaata acctcgggaa
 actgagaata atattccata gatctaggat gctggaatgc atctagattg aaagttccga
@@ -2077,7 +2077,7 @@ gatggctttt cttaagtgta aaaagctttt ggaataagag ctgggcaaga ccggtgccag
 ccgccgcggt aacaccggca gctctagtgg tagctgtttt tattgggcct aaagcgttcg
 tagccggttt gataagtcac tggtgaaatc ctgtagctta actgtgggaa ttgctggtga
 tactgttgaa cttgaggtcg ggagaggtta gcggtactc
->S002936875 uncultured archaeon; A0618R002_F10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002936875 uncultured archaeon; A0618R002_F10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cgcgaattcg cccttcgggg tgcccaggcg cgaaaacttt acactgcacg aaagtgtgat
 aagggaaccc agagtgctta tgttttacat aggcttttgc caagagtaaa tatcttggag
 aataagtagt gggtaagact ggtgccagca gccgcggtaa ccccatcgct acaagtggtg
@@ -2190,7 +2190,7 @@ gatacccggg tagtcccagc tgtaaacgat gcaaactcgg tgatgcattg gcttatggcc
 aatgcagtgc cgcagggaag ccgttaagtt tgccgcctgg gaagtacgga cgcaagtctg
 aaacttaaag gaattggcgg gggagcacca caaggggtga agcctgcggt tcaattggat
 tcaacgccgg a
->S002934578 uncultured archaeon; A0423R002_F11	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S002934578 uncultured archaeon; A0423R002_F11	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 cgaaacctct gcaccgcgcg aaagcgtgac aggggaagtc tgagtggcgg aaacttagtt
 tccgtctttt gccaagtgta aacagcttgg agaataaggg tgtgggcaag actggtggca
 gccgccgcgg taacaccagc gcctcgagtg gtacccacga atattgggcc taaagcgtcc
@@ -2210,7 +2210,7 @@ tctgagacaa gattccgggc cctacggggc gcagcaggcg cgaaaccttt acactgcacg
 ccagtgcgat aaggggatcc caagtgcgca ggcatagagc ctgcgctttt gttcacccta
 gggaggtgac cgaataaggg ctgggcaaga ccggtgccag ccgccgcggt aataccggca
 gcccgagtga tggccgatct tattgggcct aaagcgtccg tagct
->S002436695 uncultured archaeon; LTA23	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;unclassified_Methanomicrobiales;
+>S002436695 uncultured archaeon; LTA23	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;untaxmap_Methanomicrobiales;
 tacggctcag taacacgtgg ataacctgac ctagggtgga ggataacccc gggaaactgg
 ggataatact ccataggcta cggaagctgg aatgctctgt aaccgaaagt tccggcgccc
 taggatgggt ctgcggccga ttaggttgtt gttggggtaa cggcccaaca agccgatcat
@@ -2228,7 +2228,7 @@ cggggggagc accacaacgg gtggagcctg cggtttaatt ggactcaacg ccgggaagct
 caccgggtaa gacagcggag tgatagccag gctgaagact ttgcttgacc agctgagagg
 aggtgcatgg ccgtcgtcag ttcgtactgt gaagcatcct gttaagtcag gcaacgagcg
 agacccgtgc c
->S003062525 uncultured archaeon; H10-A-55	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003062525 uncultured archaeon; H10-A-55	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gggataactc gggaaactga gaataatacc ccatagttca ccacgcctgg aacggtgggt
 ggaccaaagc tccggcggca taggatgggc ctgcggcgta tcaggttgta gggggtgtaa
 tgtaccctct agccctctac gcgtacgggt gttgagagac atcgcccgga gatggattct
@@ -2305,7 +2305,7 @@ tagacggtac tcggtaggaa ggggtaaaat cctttgatct attgatgacc acctgtggcg
 aaggcggtct accagaacac gtccgacggt gagggatgaa agctggggga gcaaaccgga
 ttagataccc gggtagtccc agctgtaaac tatgcaaact cagtgatgca ttggcttgat
 gccaatgcag tgctgcaggg aagccgttaa gtttg
->S003599023 uncultured archaeon; WOR2-32_36-54	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003599023 uncultured archaeon; WOR2-32_36-54	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cggttgatcc tgccggaccc tactgctatc ggggtgggac taagacatgc aagttgtgcg
 tctctaggct atggtagaga cgcggcgtac ggctcagtaa cacgtggcta acctaccctt
 aggacgggga cagccccggg aaactggggc taatacccga taggtgagga ggcctgaaat
@@ -2321,7 +2321,7 @@ tataatcccg ggaggaccac cagtggcgaa ggctgtcggc tagaacgcgc tcgacggtga
 gggacgaaag ctgggggagc gaaccggatt agatacccgg gtagtcccag ctgtaaacga
 tgcgggctag gtgttggggt ggctacgagc cacttcagtg ccgcagggaa gccattaagc
 ccgccgcctg gggagtacgg ccgcaaggct gaaacttaaa ggaattggcg ggggagcac
->S000983388 uncultured archaeon; Amb_16S_arch_873	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;unclassified_"Thaumarchaeota";
+>S000983388 uncultured archaeon; Amb_16S_arch_873	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;untaxmap_"Thaumarchaeota";
 ctccggttga ttcttgcgga cctgactgct atcggattgg tactaaggca tgcgagtcat
 tgtaacaata caaggcggac ggctcagtaa cacgtagtca acctaactcg tggacgcgga
 taacctcggg aaactgagaa taaaccgcga tagatcatta tgcctggaat ggcttatggt
@@ -2448,7 +2448,7 @@ ttagataccc gggtagtccc agctgtaaac tatgcaaact cagtgatgca ttggcttgtg
 gccaatgcag tgctgcaggg aagccgttaa gtttgccgcc tgggaagtac gtacgcaagt
 atgaaactta aaggaattgg cgggggagca ccacaagggg tgaagcctgc ggttcaattg
 gattcaacgc cggg
->S001150651 uncultured archaeon; Musk-A-33	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Methanobacteria;class;Methanobacteriales;order;Methanobacteriaceae;family;unclassified_Methanobacteriaceae;
+>S001150651 uncultured archaeon; Musk-A-33	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Methanobacteria;class;Methanobacteriales;order;Methanobacteriaceae;family;untaxmap_Methanobacteriaceae;
 tcgtggcgaa cggctcagta acacgtggat aacctaccct taggaccggt ataaccctgg
 gaaactgggg acaatcccgg ataggtgatt ttttctgtaa tgatttttca tttaaatgct
 ctggcgcctg aggatgggtc tgcggcagat taggtagttg gtagggtaat ggcctaccaa
@@ -2544,7 +2544,7 @@ ctatgataaa taggaggaag gagtggacga cggtaggtcc gtatgccccg aatcctctgg
 gcaacacgcg ggctacaatg gctgagacaa tgggttccga caccgaaagg tggaggtaat
 cctctaaact cagtcgtagt tcggattgag gactgtaact cgttctcatg aagctggaat
 gcgtagtaat cgcgtatcac tattgcgcgg tgaatacgtc cctgctcctt gcacacaccg
->S001868757 uncultured archaeon; ZSA18	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001868757 uncultured archaeon; ZSA18	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 acggggcgca gcaggcgcga aaccttttca atgcgcgcaa gcgtgagaag ggaattccaa
 gtgctcaagt tttacttggg cttttgctaa gtgtaaaaag cttggcgaat aaggggtggg
 caagactggt gccagccgcc gcggtaacac cagcgcctcg agtggggatc gcgattattg
@@ -2555,7 +2555,7 @@ ggttctgact gtgagggacg aaagctaggg gagcaaaacg gattagatac ccgagtagtc
 ctagccgtaa acgctgtgag caaggtattg cgcctcctac gaggatgcgc agtgtcgaaa
 tgaagatgtt aagctcacca ccagggaagt acggtcgcaa ggctgaaact ttaaggaatt
 ggcgggggag cac
->S000532675 uncultured crenarchaeote; BS1-1-52	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S000532675 uncultured crenarchaeote; BS1-1-52	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 actgctatcg ggatgggact aagacatgct agtcgtgcgt ctccaagcta tgatggagaa
 gcggcgtaca gctcagtaac acgtggctaa cctaccctca ggatgggaac acctccggga
 aactggagtt aattccaaat aggtgatgaa tactggaatg tgtcatcgcc caaagggcat
@@ -2614,7 +2614,7 @@ ggacctgacg gcaagggacg aaagctaggg gcacgaaccg gattagatac ccgggtagtc
 ctagccgtaa acgatactcg ctaggtgtcg gccacggtgc gaccgttgtc ggtgccgtag
 ggaagccgtg aagcgagcca cctgggaagt acggccgcaa ggctgaaact taaaggaatt
 ggcgggggag caccacaacg ggtggagctt gcggttt
->S001567945 uncultured archaeon; LC1443_886F_19	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;unclassified_Methanosarcinaceae;
+>S001567945 uncultured archaeon; LC1443_886F_19	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;untaxmap_Methanosarcinaceae;
 gagtacggcc gcaaggctga aacttaaagg aattggcggg ggagcactac aacgggtgga
 gcctgcggtt taattggact caacgccgga aaactcaccg ggggcgacag caatatgtag
 gtcaggttaa aggtcttacc tggatcgctg agaggaggtg catggccgtc gtcagttcgt
@@ -2626,7 +2626,7 @@ aattgagggc tgtaactcgc cctcatgaag ctggaatccg tagtaatcgc gttccaacat
 agcgcggtga atctgtccct gctccttgca cacaccgccc gtcaaaccat ccgagtgagg
 tatgggtgag ggcacgaact tagtgtcgtg ctcgaaccta aatttcgcaa ggagggttaa
 gtcgtaacaa ggtagccgta ggggaatctg cggctggatc acctcct
->S003620484 uncultured archaeon; MTS5	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;unclassified_"Thaumarchaeota";
+>S003620484 uncultured archaeon; MTS5	Lineage=Root;rootrank;Archaea;domain;"Thaumarchaeota";phylum;untaxmap_"Thaumarchaeota";
 acacgtagtc aacctaactc gtggacgtgg ataacctcgg gaaactgaga ataaaccacg
 atagatcata gtgcctggaa tggcttatgg tccaaacagt ttactgccat gggatgggac
 tgcggcctat cagcttgttg gtgaggtaat ggcccaccaa ggcgattaca ggtacgggct
@@ -2638,7 +2638,7 @@ tccgtagccg gctctgcaag tcttcggtta aatccacctg ctcaacagat gggctgctgg
 agatactaca gagctaggga gtgggagagg cagacggtat tcagtgggta ggggtaaaat
 cctctgatcc attgaggacc accagtggcg aaggcggtct gccagaacac gttcgacggt
 gagggatgaa agctggggga gcaaaccgga ttagata
->S003248760 uncultured marine archaeon; SHZU454	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003248760 uncultured marine archaeon; SHZU454	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gaggctaccg ctattggagt tcgattaagc catgcgagtc gcgagaaatt agattctcgg
 cgtaccgctc agtaacacgt gggtaacctg ccctatgctg gataataacc tcgggaaact
 gagaataatg atccatagtt cactacgcct ggaacggtga gtggatgaaa gctccggcgg
@@ -2808,7 +2808,7 @@ gtctaaggga tactgttagt ctagggaccg ggagaggtga gaggtactcc gggggtagga
 gtgaaatcct gtaatccccg ggggaccacc gatggcgaag gcatctcacc agaacggctc
 cgacagtgag ggacgaaagc tgggggagcg aaccggatta gatacccggg tagtcccagc
 cgtaaactat gcgcgttagg tgt
->S001238587 uncultured archaeon; BA_63f10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;unclassified_"Methanomicrobia";
+>S001238587 uncultured archaeon; BA_63f10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;untaxmap_"Methanomicrobia";
 ccgacggtga gggatgaagc tgggggcgca aaccggatta gatacccggg tagtccccag
 cagtaaacga tgccgctatg tgtgctggaa ccatgggtcc agcatgccga gggaagccgt
 gaagctggcc acctgggaag tacggtcgca aggctgaaac ttaaaggaat tggcggggga
@@ -2831,7 +2831,7 @@ agcgagccac ctgggaagta cggccgcaag gctgaaactt aaaggaattg gcgggggagc
 acaacaaacc ggggtggagc ctgcggttta attggaccca acgccggaca actcaccggg
 ggcgacagca atatgtaggc caagctgaag actttgcctg aatcgctgag aagaggtgca
 tgg
->S000619804 uncultured archaeon; NO27FW100501SAB169	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S000619804 uncultured archaeon; NO27FW100501SAB169	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttctggttga tcctgccgga cccccactgc tatcgggatg ggaataagac atgctagtcg
 tgcgcctccc agccatggcg gaggcgcggc gcacagctca gtagcacgtg gctaacctac
 ccttgggacg gaaacaaccc cgggaaactg gggctaattt tcgataggtg aagacccctg
@@ -2977,7 +2977,7 @@ cgaacctgac ggtgagtaac gaaagccagg ggcgcgaacc ggattagata cccgggtagt
 cctggccgta aacgatgtgg acttggtgtt gggatggctt cgagctgctc cagtgccgaa
 gggaagctgt taagtccacc gcctgggaag tacggtcgca agactgaaac ttaaaggaat
 tggcggggga gcac
->S000592201 uncultured archaeon; ss077a	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000592201 uncultured archaeon; ss077a	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 aacctcttca atgcacgaca gtgtgaaagg ggaatcctac gtgcttaggc tttgcctagg
 cttttgcata gtgtaaataa ctatgcgaat aaggggtggg aaagaccggt gccagcagcc
 gcggtaacac cggcgcccca agtggcaatc ataattattg ggcctaaagc gtccgtagcc
@@ -3001,7 +3001,7 @@ agtgggactg ccgtcgctaa gacggaggaa ggagggggct acggcaggtc agtatgcccc
 gaaactcctg ggccacacgc gggctgcaat ggtagagaca atgggttcca acctcgaaag
 agggaggcaa tccccaaacc ntaccccagt tgtgattgag ggctgcaacc cgccctcatg
 aatctggaat ccgtagtaac cgcgtgtcac catcgcgcgg tg
->S002470412 uncultured archaeon; IMCUGWAF12	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002470412 uncultured archaeon; IMCUGWAF12	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cgctatcggg atgggattaa gacatgttag tcgtgcgctt cctagccatg atggaggcgc
 ggcgcacagc tcagtatcac gtggctaacc taaccttagg acgggggcac ccccgggaaa
 ctggggctaa tttccgatag gtgaagattc ctggaatgga tttttgccta aagggcactt
@@ -3072,7 +3072,7 @@ cgaaaggtga aggcaatctc ctaaacctgt ccgtagttcg gattgcgggc tgtaactcgc
 ccacatgaag ctggaatctg tagtaatcgc gtttcaaaat aacgcggtga atgtgtccct
 gctccttgca cacaccgccc gtcaaaccac cctagtgggg tttggatgag cctgcggtcg
 ttgccgcagt cgaatctagg ttccgcaagg ggggttaagt cgtaaca
->S002995640 uncultured archaeon; A3-21	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S002995640 uncultured archaeon; A3-21	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 ttggagtgac aaggcctgca agtcgaatgg gatacctaaa tttcccatgg caagactgct
 cagtaacaca tgatcaactt cccctataga gagatataac ctcgggaaac tgaggataat
 atttcatagt tgaattggct tggaaaagtt tttcaataaa aggaataaga aaaatggttc
@@ -3214,7 +3214,7 @@ ctgaaactta aaggaattgg cgggggagca ccacaacggg tggagcttgc ggtttaattg
 gattcaacgc cggaaatctt accgggaccg acagcaatat gaaggccagg ctgaagactt
 tgccggatta gctgagaggt ggtgcatggc cgtcgtcagt tcgtactgtg aagcatcctg
 ttaagtcagg taacgagcga gaccca
->S003435930 uncultured archaeon; PM-152-13-M13R	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003435930 uncultured archaeon; PM-152-13-M13R	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cggttgatcc tgccggaggt cactgctatt gggattcgan taagccatgc gagtcgagag
 ggttcggccc tcggcagacg gctcagtaac acgtggataa tctgnccttn aggtggagga
 taatctcggg aaactgagaa taatactcca taggtctaga ctgctggaat gcatttaggc
@@ -3265,7 +3265,7 @@ cgaaagggga agggaatccc ctaaacccgc ccccagttcg gattgcgggc tgcaactcgc
 ccgcatgaag ctggaatccc tagtacccgc gtgtcatcat cgcgcggcga atacgtccct
 gctccttgca cacaccgccc gtcactccac ccgagcgggg tccgggtgag gcctgatctc
 ccttcgggga ggtcgggtcg agcctgggct ccgtgagggg ggagaa
->S002938578 uncultured archaeon; A0610D001_P16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;unclassified_Methanosarcinales;
+>S002938578 uncultured archaeon; A0610D001_P16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;untaxmap_Methanosarcinales;
 ccgcgatcag gggaccccga gtgccagcac ctagtgctgg ctgtccagtt gtccaaataa
 caactgttag caagggccgg gcaagaccgg tgccagccgc cgcggtaaca ccggcggccc
 gagtggtagc cgctattatt gggtttaaag ggtccgtagc cggcttatta agtcttttgg
@@ -3455,7 +3455,7 @@ ctcctaaacc tggccttagt tcggattgag ggctgtaact cgccctcatg aagctggaat
 gcgtagtaat cgcgtgtcat aaccgcgcgg tgaatacgtc cctgctcctt gcacacaccg
 cccgtcacgc cacccaaaaa gggtttggat gaggccctaa tctttggtta gggtcgaatc
 tgggttcttt gaggagggcg aagtcgtaac aaggtagcca agggcga
->S002872866 uncultured archaeon; IG8ARCG07	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002872866 uncultured archaeon; IG8ARCG07	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 tggagtcatt agccatgcga gtccagagct ttcggagctc ggcgtaccgc tcagtaacac
 gtgggtaacc tcacctatgc aggggaataa cctcgggaaa ctgagtataa tgccccatag
 tccactacgc ctggaacggt gagtggatca aagctcaggc ggcataggat gggcctgcgg
@@ -3561,7 +3561,7 @@ aagcgagcca cctgggaagt acggccgcaa ggctgaaact taaaggaatt ggcgggggag
 cacaacaacg ggtggagccc tgcggtttaa ttggactcaa cgccggacaa ctcaccgggg
 gcgacagcaa tatgtaggcc aagctgaaga ctttgcctga atcgctgagt ggtggtgcat
 gg
->S004096670 uncultured archaeon; NA_NW150_A39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S004096670 uncultured archaeon; NA_NW150_A39	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 ttccggttga tcctgccgga ggccattgct atcggagtcc gatttagcca tgctagttgc
 acgggtttag acccgtggcg acaagctcag taacacgtgg ccaagctacc ctgtggaccg
 gaataacctc gggaaactga ggacaattcc gggtaacgct cccctattgg aatatgggga
@@ -3630,7 +3630,7 @@ aatctcctaa acctagtctt agttcggatt gagggctgta actcgccctc atgaagctgg
 aatgcgtagt aatcgcgtgt cataaccgcg cggtgaatac gtccctgctc cttgcacaca
 ccgcccgtca cgccacccaa aaagggtttg gatgaggcct tagtcttagg ctaaggtcga
 atctgggttc tttgaggagg gcgaagtcgt aacaaggtag ccg
->S003311462 uncultured archaeon; B3 NEREIS-BAL T270d	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S003311462 uncultured archaeon; B3 NEREIS-BAL T270d	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 ttccggttga tcccgccggg accccactgc tatcgaggtg ggacttagcc atgctagtcg
 aacgaccaga actatgtctg ggagtggcac actgctcagt aacacgtagc taacctaccc
 ttaggacgtg gatacccccg agaaattggg gttaatccgc gatagatgta atgtcctgga
@@ -3683,7 +3683,7 @@ actcgccctc gtgaaaatgg attccgtagt aatcgcgggt caacatcccg cggtgaatgt
 gcccctgctc tttgcacaca ccgcccgtca agtcatccga gttgggtcgg agtgagggtg
 actcatttgg gtcgctcgaa cttcggttca gcaaggggga ctaagtcgta acaaggtagc
 ca
->S000267350 uncultured prokaryote; DGGE band GW4g1-2(A)	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S000267350 uncultured prokaryote; DGGE band GW4g1-2(A)	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 aggtgccttg ggaactccaa ttgcgctcgg gcagacgagt gcttatgcag agtgcaaagc
 agtgtctgac aaataaaagg cggggtaaga ccggtgccag ccgccgcggt aacaccggcc
 gcttgagtgg tgaccactat tattgggcct aaagcgtccg tagccggttt ggtaagtcct
@@ -3821,7 +3821,7 @@ cgatgctcgc taggtgtcag gcatggcgcg accgtgtctg gtgccgcagg gaagccgtga
 agcgagccac ctgggaagta cggccgcaag gctgaaactt aaaggaattg gcgggggagc
 acaacaacgg gtggagcctg cggtttaatt ggactcaacg ccggacaact cgccgggggc
 gacagcaata tgtaggccaa gctgaagact ttgcctgaat cgctgagaag aggtgcatgg
->S000827906 uncultured euryarchaeote; NE42C06cA	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S000827906 uncultured euryarchaeote; NE42C06cA	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 cgtagccggt ttgttaaatt ttctgtgaaa ttggtgggcc taacccatca gcgtgcagga
 aagactggca aacttggaac cgggagaagt tagaggtatt tctggggaag cggtaaaatg
 ctataatccc aggaggacca ccaatggcga aggcatctaa ctagaacgga ttcgacggtg
@@ -3860,7 +3860,7 @@ cccgggtagt cctaactgta aacgatgcgg acttggtgtt gggatggctt tgagctgtct
 cagtgccgaa gggaagctgt taagtccgcc gcctgggaag tacggtcgca agactgaaac
 ttaaaggaat tggcggggga gcaccacaac gcgtggagcc tgcggtttaa ttggactcaa
 cgccggt
->S002406580 uncultured archaeon; M2-6Ar08	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S002406580 uncultured archaeon; M2-6Ar08	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 ttccggttga tcctgccgga ccttactgct atcgagatgg gactaagcca ggccagtcga
 acgacccgaa ctaaggcggg aagtggcata ctgctcagca acacgtagct aacctaacct
 caagacggaa acaaccccgg gaaactgggg tcaatttccg atagatgtga aatcctggaa
@@ -3908,7 +3908,7 @@ acctgacggt gagggacgaa agctaggggc gcgaaccgga ttagataccc gggtagtcct
 agccgtaaac gatgcggact tggtgttggg atagctttga gccgctccgg tgccgaaggg
 aagctgttaa gtccgccgcc tgggaagtac ggtcgcaaga ctgaaactta aaggaattgg
 cgggggagca c
->S002935994 uncultured archaeon; A0610R003_K24	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002935994 uncultured archaeon; A0610R003_K24	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ggcgcgaaac ctttacaatg cgggaaagtg tgatagggtg atctggagtg ggaagagcac
 aagtcgtatc tgcaaccggg taaagatcac ccgataacaa aggagaggcc aggccggttg
 ccgccgccgc ggtaaaaccc acgtcttgaa tggttcccga taataatggg tctaaagggt
@@ -3919,7 +3919,7 @@ gagggacgaa agctagggga gcgaacggga tcagataccc cggtagtcct agcctgtaaa
 cgatgcacgc tagggtctgg cacggttgtg aatcagtatg tagtgccgta gggaaactgt
 taagcacgcc gcctgggaag tacgctcgca agagtgaaac ttaaaggaat tggcggggga
 gcacaa
->S000335986 uncultured archaeon Arc.212	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S000335986 uncultured archaeon Arc.212	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tccagccata ccctactgct atcggggtgg gactaagcaa tgcaagtcga
 gtgcctcaag ctatggtgag gcgcggcaaa cggctcagta acacgtggct aacctgccct
 taggacgggg gacaaccccg ggaaactggg gctaatcccc gataggcgaa gaggcctgga
@@ -3936,7 +3936,7 @@ gagggacgaa agctggggga gcgaaccgga ttagataccc gggtagtccc agctgtaaac
 gatgcgggct gggtgtcaaa gcggccacga gccgctttgg tgccgcaggg aaaccgttaa
 gcccgccgct tgggaagtac ggtcgcaagg ctgaaactta aaggaatggg cgggggaaga
 ct
->S003482259 uncultured microorganism; GJ0EXAY04JTH6K	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S003482259 uncultured microorganism; GJ0EXAY04JTH6K	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 gcgcaccagg cgagaaacct tcgcaatgca ggaaactgcg acgagggaac tccaagtgcc
 tacgctcagc gtaggctgtt ctcaagccta gaaagcttga ggagtaaggg ctgggtaaga
 cgggtgccat ctgtggtagc agtcaataga ttcgatttgt tactgcaagg cataagccgc
@@ -3992,7 +3992,7 @@ tgggcaacac gcgggctaca atggctgaga caatgggttc cgacaccgaa aggtggaggt
 aatcctctaa acttagtcgt agttcggatt gaggactgta actcgttctc atgaagctgg
 aatgcgtagt aatcgcgtat cactattgcg cggtgaatac gtccctgctc cttgcaacac
 accgaat
->S000798925 uncultured Halobacteria archaeon; OR06U78	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S000798925 uncultured Halobacteria archaeon; OR06U78	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 tcgggaaatc catcggctca accgatgggc gtccggcgga aactgcgtgg cttgggaccg
 gaaggctcga ggggtacgtc cggggtagga gtgaaatccc gtaatcctgg acggaccacc
 gatggcgaaa gcacctcgag aagacggatc cgacagtgag ggacgaaagc tggggtctcg
@@ -4029,7 +4029,7 @@ ttggaggaag gagtggacga cggtaggtcc gtatgccccg aatcccctgg gctacacgcg
 ggctacaatg gctgggacaa tgggttccga cgccgaaagg cggtggtaat cttttaaacc
 tagtcgtagc tcggattgag ggctgtaact cgccctcatg aagctggaat gcgtagtaat
 cgcgtgtcac aatcgcgcgg tgaatacgtc cctgctcctt gcacacaccg c
->S000604230 uncultured archaeon; WT_A10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;Methanomicrobiales_incertae_sedis;family;unclassified_Methanomicrobiales_incertae_sedis;
+>S000604230 uncultured archaeon; WT_A10	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;Methanomicrobiales_incertae_sedis;family;untaxmap_Methanomicrobiales_incertae_sedis;
 gtctcctggg gaatccctcg gctcaaccga tgggcgttca ggagatactg gcaacctagc
 gtaccgggag aggtgagagg tactccaggg gtaggagtga tatcctgtaa tccttggggg
 accacctgtg gcgaaggcgt ctcactagaa cggctccgac agtgagggac gaaagctggg
@@ -4062,7 +4062,7 @@ tgagggatga aagctggggg agcgaaccgg attagatacc cgggtagtcc cagccgtaaa
 cgatgctagc tagatgattc attcgcaagt cgcgaatgaa gtgtcgcagg gaagccgtta
 agctagccgc ctggggagta cggtcgcaag actgaaactt aaaggaattg gcgggggagc
 accacaaggg gtgaagcctg cggttcaatt ggagtcaacg ccgggaaggg c
->S001943512 uncultured archaeon; Ta14	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001943512 uncultured archaeon; Ta14	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gggcgtgccg gagatactgg tgtatcttga gaccgggagg agtcagaagt atgcctaagg
 gagcggtaaa atgctgtaat cttaggtaga ctaccggtgg cgaaggcgtc tgactagaac
 gggtctgacg gtgagggatg aaagctaggg gagcgagccg gattagatat caagaaccat
@@ -4074,7 +4074,7 @@ gaagcgacag caggatgaag gtcatattga aggtattact cgacacgctg agaggtggtg
 catggccgcc gtcagctcgt gccgtgaggt gttcggttaa gtccgagaac gagcgagacc
 tatgccctct gttgctaatg ttctcaaaga gagcaagcac accgagggga ctgcctgcgt
 aagca
->S003550874 uncultured archaeon; AWET3cm39	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S003550874 uncultured archaeon; AWET3cm39	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 cggctcagta acacgtagct aacctaccct ctggacagag acacccccgg gaaactgggg
 ctaatccctg ataggtatgg aggcctggaa tggttccacg cccaaaagca taacgaccat
 gttcgttatg tgccagagga tggggctgcg gccgatcagg ccgttggcga ggtaacggct
@@ -4161,7 +4161,7 @@ aatgctacct cagttatgac tgagggctgt aactcgccct cacgaatatg gaatccctag
 taattgcgtg tcattaccgc gcggtgaata agtccttgct ccttgcacac accgcccgtc
 gtttcattga agtttgtttt tagcgaggtg acgtcatttt ggcgttattg aacttgaggt
 aagcaacaag ggaaaagttg taac
->S002938040 uncultured archaeon; A1001R003_B16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;unclassified_Methanosarcinales;
+>S002938040 uncultured archaeon; A1001R003_B16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;untaxmap_Methanosarcinales;
 ggggtgcacc aggcgcgaaa actttacact gcgggaaacc gcgataaggg gaccccgagt
 gccagcacct agtgctggct gtccagctgt tcaaataaca gttgttagca agggccgggc
 aagaccggtg ccagccgccg cggtaacacc ggcggcccga gtggtagccg ttattattgg
@@ -4183,7 +4183,7 @@ aggtccgacg gtgagggacg aaagctaggg gcacgaaccg gattagatac ccgggtagtc
 ctagccgtaa acgatgctcg ctaggtgtca caacagtcgt gaactgttgt ggtgccgtag
 ggaagccgtg aagcgagcca cttgggaagt acgaccgcaa ggttgaaact taaaggaatt
 ggcgggggag c
->S003700449 uncultured archaeon; AMD-archD28	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Thermoplasmata;class;Thermoplasmatales;order;Ferroplasmaceae;family;unclassified_Ferroplasmaceae;
+>S003700449 uncultured archaeon; AMD-archD28	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Thermoplasmata;class;Thermoplasmatales;order;Ferroplasmaceae;family;untaxmap_Ferroplasmaceae;
 tttccggttg atcctgccgc cggccaccgc tatcaagttc cgactaagcc atgcgagtca
 aggtatcgta agatgccggc aaactgctca gtaacacgtg gataatctaa ccttgagtaa
 gggataacct cgggaaactg aggataatac cttataattg cttaaaactg gaatgtttaa
@@ -4200,7 +4200,7 @@ gattagatac ccgggtagtc ctagctgtaa acattgccca cttgatgttg cttttccgat
 gagggaaggc agtgtcggag cgaaggtgtt aagtgggtcg cttgggaagt atggtcgcaa
 gactgaaact taaaggaatt ggcgggggag caccgcaacg ggaggaatgt gcggtttaat
 tggattcaac gccgga
->S004131496 uncultured archaeon; A-2-10Surface-22	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S004131496 uncultured archaeon; A-2-10Surface-22	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 ttccggttga tcccgccgga ccttactgct atcgggacga gactaaaaca tgctagttgt
 gcgcacccta gccacgttgg gagcgcagca aacggctccg taacacgtag tcaatctaac
 cttaggacgg ggataacccc cgggaaactg gggctaatac cgataggcga taaaagcctg
@@ -4227,7 +4227,7 @@ gtaaacgatg cagactcggt gatgagttgg cttattgcta actcagtgcc gcagggaagc
 cgttaagttt gccgcctggg gagtacggtc gcaagactga aacttaaagg aattggcggg
 ggagcaccac aaggggtgaa gcctgcggtt caattggagt caacgccgga aatcttaccg
 ggggcgacag cagagtgaag gtcaagctga agactttacc agacaagct
->S001791776 uncultured archaeon; WSP50_D09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001791776 uncultured archaeon; WSP50_D09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gcccgtcgtc agttcgtact gtaaagcgtt ctgttaagtc agataacgaa cgagaccctc
 atctctattt gctacctggt tctccggaac cagcgcacta tagggagacc gctggtgtga
 aaccagagga aggggagggc aacgacaggt cagtatgccc cgaatgtctt gggctacacg
@@ -4236,7 +4236,7 @@ acctgttcat agttcggatt gagggctgta actcgccctc atgaagctgg attccgtagt
 aatcgtgttt caatatagca cggtgaatat gcccctgctc cttgcacaca ccgcccgtca
 aaccatctta gttgggggtg ggtgaggctg cgctttatgg cgtattcgag cctgccttcg
 acaaggaggg ttaagtcgta acaaggtaac c
->S000970909 uncultured archaeon; 3A065	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S000970909 uncultured archaeon; 3A065	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 tttccgggtt gatcctgccg gaccctactg ctatcggggt gggactaaga catgcgagtc
 gagcgtctct agctatgttg agacgcggca gacggctcag taacacgtgg ctaacctacc
 ctcaggacag ggacaaaccc gggaaactgg ggctaatacc agataggcga ggatgcctgg
@@ -4253,7 +4253,7 @@ agggacgaaa gctgggggag cgaaccggat tagatacccg ggtagtccca gctgtaaacg
 atgcgagcta ggtgttgggg tggctacgtg ccacttcagt gccgcaggga agccattaag
 ctcgccgcct ggggagtacg gccgcaaggc tgaaacttaa aggaattggc gggggagcac
 a
->S000592243 uncultured archaeon; ss045	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000592243 uncultured archaeon; ss045	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggccaccgct attgggattc gactaagcca tgcgagttga
 gagggttcgg ccctcagcag actgctcagt aacacgtaga taacctaccc ttaggaggag
 aataacctcg ggaaactgag aataatactc catagatcta gaaggctgga atgcatctag
@@ -4270,7 +4270,7 @@ attagatacc cgggtagtcc agggtgtaaa cgctgcttgc ttgatgttag ttgggctccg
 agccccacta gtgtcggaga gaagttgtta agcaagctgc ctgggaagta cggtcgcaag
 actgaaactt aaaggaattg gcgggggagc acagcaacgg gtggagcgtg cggtttaatt
 ggattcaacg ccgga
->S003597868 uncultured archaeon; MIARCCf05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003597868 uncultured archaeon; MIARCCf05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttacggctca gtaacacgtg gataatctgc cataggtgga ggataacctc gggaaactga
 gaataatact ccataggttt aggatgctgg aatgctccta aactcaaaga tttatcgcct
 aaggatgagt ctgcggacta tcaggtagta gtcagggtaa agacctgact agcctacaac
@@ -4466,7 +4466,7 @@ cccagctgta aacgatgcag actcggtgat gaattggctt attgctaatt cagtgccgca
 gggaagccgt taagtttgcc gcctggggag tacggtcgca agactgaaac ttaaaggaat
 tggcggggga gcaccacaag gggtgaagcc tgcggttcaa ttggagtcaa cgccggaaat
 cttaccgggg gcgacagcag agtgaaggtc aagctgaaga ctttaccaga caagctgag
->S000561627 uncultured archaeon AM-15	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;Thermoproteales;order;unclassified_Thermoproteales;
+>S000561627 uncultured archaeon AM-15	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;Thermoproteales;order;untaxmap_Thermoproteales;
 gcaccaccag gggtgaagct tgcggtttaa ttggagtcaa caccggaaac cttaccggga
 gcgacagcaa gagtgaaggc cagattgagg gtcttgccag acaagctgag aggaggtgca
 tggccgtcgc cagttcgtgc cgtgaggtgt cctgttaagt caggcaacga tcgagaccca
@@ -4501,7 +4501,7 @@ tgcggacttg gtgttggggt ggctttgagc tgcttcagtg ccgaagggaa gctgttaagt
 ccgccgcctg ggaagtacgg tcgcaagact gaaacttaag gaattggcgg gggagcacca
 caacgcgtgg agcctgccgg tttaactgga ttcaacgccg gacatctcac cagaggcgac
 agctgtatga tagccaggtt gatgactttg cttgactagc tgagaggtgg tgcatgg
->S002023225 uncultured euryarchaeote; OTRo_B1_11	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002023225 uncultured euryarchaeote; OTRo_B1_11	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 taccctcggg aaactgagaa taatactcca tagatcctaa actgcctgga atgctttaga
 ttgaaagatt tatcgcctaa ggataagtct gcggactatc aggttgtagt tagggtaaat
 acctgactag cctacgacgg atacgggtag tgagagcttt agcccggaga tgatatctga
@@ -4514,7 +4514,7 @@ ctagaggtac tcctggggta gaggtgaaat tctgtaatcc tagggggacc accagtggcg
 aaggcgtcta gctagaacgg gtctgacggt gagggacgaa gccctgggga gcaaacggga
 ttagataccc cggtagtcca gggtgtaaac gctgctcgct tgatgttagt cgggctccga
 gcccaactag tgtc
->S003673836 uncultured archaeon; AU1370-28	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003673836 uncultured archaeon; AU1370-28	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggcgaccgct tttggagttc gattaagcca tgcgagtcta
 aggggtactt gtacccctgg cataatgctc agtaacacgt ggataatcta cccttaggtg
 gggcataaac ccgggaaact ggggctaata ccccatagat acagaaggct ggaacgcctc
@@ -4531,7 +4531,7 @@ ggattagata ccccggtagt ccagggcgta aacgctgctg acttggtgtt ggagatccta
 cgagggtgtc cagtgctggc gcgaaggtat taagtcagcc gcctggggag tacggtcgca
 agactgaaac ttaaaggaat tggcggggga gcactgcaac gtgtggagcg tgcggtttaa
 ttggatcaac gccgga
->S002046302 uncultured archaeon; NapMat-0_4-rtG08	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002046302 uncultured archaeon; NapMat-0_4-rtG08	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ccctacgggg tgcagcaggc gcgaaacctt tacaatgcac gaaagtgtga taagggaacc
 ccaagtgctc atgtatgaca tgggcttttg ccaagtgtaa atagcttgga gaataagtgg
 tgggtaaggc tggtgccagc agccgcggta acaccagcgc cacgagtggg aaccacattt
@@ -4542,7 +4542,7 @@ gaacggttct gacagtgagg gacgaaagct aggggagcga tccggattag atacccgagt
 agtcctagcc gtaaacgctg cgagcaaggc gttgcgtgtt ccacgagaat acgcagtgtc
 gaagagaaat cgttaagctc gccgcctggg aagtatggtc gcaagactga aacttaaagg
 aattggcggg ggagcac
->S001378634 uncultured archaeon; Z273FA16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001378634 uncultured archaeon; Z273FA16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 acgaaaccca ggggagcgag ccggattaga tacccggcta gtcctgggcg taaatcatgc
 ggataaagtg tggcattatc tacgagataa tgctgtgccg tagggaagcc gttaagtccg
 ccgttgggga gtacggtcgc aaggctgaaa cttaaaggaa ttgccggggg agcaccacaa
@@ -4636,7 +4636,7 @@ gtaaacgatg cagactcggt gatggactag ctttatgctg gtccagtgcc gcagggaagc
 cgttaagtct gccgcctggg tagtacggtc gcaagactga aacttaaagg aattggcggg
 ggagcaccac aaggggtgaa gcctgcggtt caattggagt caacgccggg aatcttaccg
 ggggcgacag caggatgaag gtcaggctga agactttact agacaagct
->S002163528 uncultured archaeon; N8-E1	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002163528 uncultured archaeon; N8-E1	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 tccggttgat cctgccggac cccactgcta tcggggatag gactaagaca tgctagttga
 gcgcttccag ccaacacggg agcgcagcgc acagctcagt aacacgtggc taatctgccc
 ttgggaccgg aacacccccg ggaaactggg gctaattctc gataggtgaa gaactctgga
@@ -4652,7 +4652,7 @@ cctataatcc cgggaagacc accagtggcg aaggctgtct gctagaacgc gcccgacggt
 gagggatgaa agctggggga gcgaaccgga ttagataccc gggtagtccc agctgtaaac
 gatgcaggct aggtgtttgg acggcacgtg ccgttctagt gccgcaggaa gctgttaagc
 ctgccgcctg ggagtacgat cgcaag
->S003641713 uncultured archaeon; H11_4a_2	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003641713 uncultured archaeon; H11_4a_2	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ccttactgct atcggggtga gactaagcca tgcaagttgt gcgtttctaa gccatggtag
 agaagcagcg caaagctcag taaaacatgg ataatttacc ctcgagacgg ggataccccc
 gggaaactgg ggttaaaccc cgattgatga gatggtctgg aatgatatct catctaaaaa
@@ -4695,7 +4695,7 @@ gatgcggact tggtgttggg gtggctttga gctgcttcag tgccgaaggg aagctgttaa
 gtccgccgcc tgggaagtac ggtcgcaaga ctgaaactta aaggaattgg cgggggagca
 ccacaacgcg tggagcctgc cggtttaatt ggattcaacg ccggacatct caccagaggc
 gacagctgta tgatagccag gttgatgact ttgcttgact agctgaggag tggtgcatgg
->S002468820 uncultured crenarchaeote; HTM1036S-A28	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002468820 uncultured crenarchaeote; HTM1036S-A28	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 cccgactgct atcggagtga gactaagcca tgcgagtcgt gcgccccggg ctggcggggc
 gcggcgtacg gctcagtagc acgtggtcaa cctaccctgc ggacggctat aaccccggga
 aactggggct aatagccgat aggggatggg tgctggaagg ccctgtcccc gaaaggccca
@@ -4712,7 +4712,7 @@ atccggatta gatacccggg tagtcccagc cgtaaacgat gcaggctagg tgtgtggacg
 ccttaggggc gtccatgtgc cgaagggaaa ccgttaagcc tgccgcctgg ggagtacggc
 cgcaaggctg aaactctagg ctgtctccaa tggctggagg ctgtcctagg gcagcatact
 taaaggaatt ggcgggggag caccacaagg ggtggagcct gcggttc
->S003543304 uncultured archaeon; OTU-G2-8	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003543304 uncultured archaeon; OTU-G2-8	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 attttccggt tgatcctgcc ggacaaggtg caatcgggat gggactaaga catgctagtt
 gagcgccttc cagccaggtg ggaggcgcag cgcacagctc agtaacacgt ggctaacctg
 cccttaggac gagaccaacc ccgggaaact ggggataatc ctcgataggt gaagaactct
@@ -4771,7 +4771,7 @@ gcgcgaccgt gtctggtgcc gcacggaagc cgtgaagcga gccacctggg aagtacggcc
 gcaaggctga aacttaaagg attggcgggg gagcacaaca acgggtggag cctgcggttt
 aattggactc aacgccggac aactcaccgg ggacgacaac aaaatgtagg ccaggctgaa
 gaccttgcct gaatcgctga gaggaggtgc at
->S001255077 uncultured archaeon; XM202_48	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001255077 uncultured archaeon; XM202_48	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cggaggctac cgctattgga gtccgattaa gacatgcgag tcgagagctt tcggagctcg
 gcataccgct cagtaacacg tgggtaacct gccctgtgct gggggataac ctcgggaaac
 tgagaacaat accccatagt ccactacgcc tggaacggtg agtggatgaa agccccggcg
@@ -4803,7 +4803,7 @@ gaaggcggtc taccagaaca cgttcgacgg tgagggatga aagctggggg agcaaaccgg
 attagatacc cgggtagtcc cagctgtaaa ctatgcaaac tcagtgatgc attggcatgt
 agctaatgca gtgccgcagg gaagccgtta agttgccgcc tgggaagtac gtacgcaagt
 aga
->S000573325 uncultured archaeon; Milano-WF1A-26	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;unclassified_Methanosarcinaceae;
+>S000573325 uncultured archaeon; Milano-WF1A-26	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;Methanosarcinaceae;family;untaxmap_Methanosarcinaceae;
 ggactgctca gtaacacgtg gataacctac ccttgggact ggaataaccc cgggaaacgg
 gggataatac cggatagatc agggatgctg gaatgcacct tgatccaaag ctccggcgcc
 taaggatgga tctgcggtct atcaggttgt agtgggtgta acgtacctac tagccgacga
@@ -4823,7 +4823,7 @@ aggaggtgca tggccgtcgt cagttcgtac tgtgaagcat cctattaagt caggcaacga
 gcgagacccg cgcccacagt tgccagcatg ttctccggaa cgatgggtac actgtgggga
 ccgccgctgc taaagcggag gaaggaacgg gctacggtag gtcagtatgc cccgaatctc
 ccgggctaca cgcgggctac aatggttggg a
->S000409709 uncultured euryarchaeote; NANK-A122	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000409709 uncultured euryarchaeote; NANK-A122	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ggccactgct attgggatcc gaccaagcca tgcgagtcga gagggttcgg ccctcggcag
 actgctcagt aacacgtaga taacctaacc ttaggtggaa gataacctcg ggaaactgag
 aataatattc catagatcta ggatgctgga atgcatctag attgaaagtt ccgacgccta
@@ -4852,7 +4852,7 @@ tctaccccga aaggggacgg gaatctccta aaaccaatct tagttcggat tgagggctgc
 aactcgccct catgaagctg gaatccgtag taatcgcgtt tcaacagaac gcggtgaata
 cgtccctgct ccttgcacac accgcccgtc aaaccacccg agtagggtct gaatgagagc
 gctttctttg gaggcgttcg aatttgggct ttgcaagggg ggttaagtcg taacaag
->S004194945 uncultured archaeon; AH3-40	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S004194945 uncultured archaeon; AH3-40	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 aacctttaca ctgcacgaca gtgcgatagg gggactccga gtgcgagggc atatagtcct
 cgcttttctg taccgtaagg tggtacagga acaagtgctg ggcaagaccg gtgccagccg
 ccgcggtaat accggcagca cgagtgatgg ccgatattat tgggcctaaa gcgttcgtag
@@ -4921,7 +4921,7 @@ gatgctcgct aggtgtcagg catggcgcga ccgtgtctgg tgccgcaggg aagccgtgaa
 gcgagccacc tgggaagtac ggccgcaagg ctgaaactta aaggaattgg cgggggagca
 caacaacggg tggaagcctg cggtttaatt ggactcaacg ccggacaact caccgggggc
 gacagcaata tgtaggccaa gctgaagact ttgcctgaat cgctgagaag tggtgcatgg
->S003436052 uncultured archaeon; PM-154-45-M13R	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003436052 uncultured archaeon; PM-154-45-M13R	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cggttgatcc tgccggaggt cactgctatt gggattcgac taagccatgc gagtcgagag
 ggttcggccc tcggctgacg gctcagtaac acgtggataa tctgcccttt aggtggagga
 taatctcggg aaactgagga taatactcca tagatctagg atgctggaat gcatctagat
@@ -4952,7 +4952,7 @@ gctcgacggt gagggatgaa agctggggga gcaaaccgga ttagataccc gggtagtccc
 agctgtaaac gatgcagact cggtgatgag ttggcttctc gccaactcag tgccgcaggg
 aagccgttaa gtttgccgcc tggggagtac ggtcgcaaga ctgaaactta aaggaattgg
 cgggggagca c
->S001053682 uncultured archaeon; 113A30	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;unclassified_Methanosarcinales;
+>S001053682 uncultured archaeon; 113A30	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanosarcinales;order;untaxmap_Methanosarcinales;
 gaactgggna tatcccgata agccataaaa gctggaatnc cctatgnttc aagntccggc
 ncctaaggat ggatttgngg tctatcaggt tgtagtgggt gtaacgtacc tactagccga
 cgacggatac gggttgtgag agcaagagcc cggagatgga ttctgagaca cgaatccagg
@@ -4966,7 +4966,7 @@ agaacgggtc cgacggtgag ggacgaaagc taggggagca aaccggatta gatacccggg
 tagtcctagc tgtaaacgat gctcgctagg tgtcagacac ggtgcgaccg tgtttggtgc
 cgcagggaag ccgttaagcg agccacctgg gaagtacggt cgcaaggctg aaacttaaag
 gaattggcgg gggagcac
->S002765799 uncultured archaeon; 15-10-C32	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002765799 uncultured archaeon; 15-10-C32	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ccacacgtgg cgagaacccc gggaactggg gctaatcccc gatagacgaa gaatcctgga
 atgggttttc gtccaaaagg catcaaggtc atgcttcttg atatcgctca aggatgaggc
 cgcggccgat caggctgttg gtgaggtaat ggctcaccaa acctataacc ggtacgggcc
@@ -4981,7 +4981,7 @@ tgagggacga aagctggggg agcaaaccgg attagatacc cggatagtcc cagctgtaaa
 cgatgcgggc taggtgttgg agcggccacg agccgcttca gtgccgcagg aaaaccatta
 agcccgccgc ctggggagta cggccgcaag gctgaaactt aaaggaattg gcgggggagc
 ac
->S003439896 uncultured archaeon; ORI-961-19-1-P_S068-070_19-12A09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003439896 uncultured archaeon; ORI-961-19-1-P_S068-070_19-12A09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 aggccactgc cattgggatc cgactaagcc atgcgagtcg agagggttcg gccctcggca
 gactgctcag taacacgtgg ataacctaac cttaggtgga agataacctc gggaaactga
 gaataatatt ccatagatct aggatgctgg aatgcatcta gattgaaagt tccgacgcct
@@ -5014,7 +5014,7 @@ gttcgacggt gagggatgaa agctggggga gcagaccgga ttagataccc gggtagtccc
 agctgtaaac gatgcagact cgatgatgca ttggcatata gccagtgcag tgtcgcaggg
 aagccgttaa gtctgccgcc tgggaagtac gtacgcaagt atgaaactta aaggaattgg
 cgggggagca ccacaagggg tgaagcctgc ggttc
->S001268357 uncultured euryarchaeote; MOBQ4318593	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;Methanomicrobiales_incertae_sedis;family;unclassified_Methanomicrobiales_incertae_sedis;
+>S001268357 uncultured euryarchaeote; MOBQ4318593	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;Methanomicrobiales;order;Methanomicrobiales_incertae_sedis;family;untaxmap_Methanomicrobiales_incertae_sedis;
 atggggcgca ccaggcgcga aaactttaca atgcgagaaa tcgtgataag ggaaccccga
 gtgcccgtaa attcgggctg tccntcagtg taaataactg gtgaagaaag ggccgggcaa
 gaccggtgcc agccgccgcg gtaataccgg cggctcgagt ggtggccact attactgggc
@@ -5067,7 +5067,7 @@ acggacctga cggcaaggga cgaaagctag gggcacgaac cggattagat acccgggtag
 tcctagccgt aaacgatact cgctaggtgt cggccacggt gcgaccgttg tcggtgccgt
 agggaagccg tgaagcgagc cacctgggaa gtacggccgc aaggctgaaa cttaaaggaa
 ttggcggggg agcaccacaa cgggtggagc ttgcggttta attggattca acgccgga
->S000971007 uncultured archaeon; 5A073	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S000971007 uncultured archaeon; 5A073	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tcctgccgga ccctactgct atcggggtgg gactaagaca tgcgagtcgt
 gcgtctctaa gctatggtgg agacgcggca tacggctcag taacacgtgg ctaacctacc
 cttaggacgg agacaacccc gggaaactgg ggctaatacc cgataagtga ggaggcctgg
@@ -5084,7 +5084,7 @@ tgagggacga aagctggggg agcgaaccgg attagatacc cgggtagtcc cagctgtaaa
 cgatgcgggc taggtgttgg ggtggctacg agccacttca gtgccgcagg gaagccatta
 agcccgccgc ctggggagta cggccgcaag gctgaaactt aaaggaattg gcgggggagc
 ac
->S000634313 uncultured marine group II euryarchaeote HF500_26A05; fosmid HF500_26A05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000634313 uncultured marine group II euryarchaeote HF500_26A05; fosmid HF500_26A05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 tcgattaagc catgcgagtc gcgagtctta gggactcggc gtaccgctca gtaacacgtg
 ggtaacctgc cctatgctgg gggataacct cgggaaactg agaataatac cccatagttc
 accacgcctg gaacggtggg tggaccaaag ctccggcggc ataggatggg cctgcggcgt
@@ -5157,7 +5157,7 @@ tgctcgctag gtgtcaggca tggcgcgacc gtgtctggtg ccgcagggaa gccgtgaagc
 gagccacctg ggaagtacgg ccgcaaggct gaaacttaaa ggaattggcg ggggagcaca
 acaacgggtg gagcctgcgg tttaattgga ctcaacgccg gacaactcac cgggggcgac
 agcaatatgt aggccaagct gaagactttg cctgaatcgc tgagtagagg tgcatgg
->S000634315 uncultured marine group II euryarchaeote HF500_47D04; fosmid HF500_47D04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000634315 uncultured marine group II euryarchaeote HF500_47D04; fosmid HF500_47D04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gcgaccgcta ttggaattcg attaagccat gcgagtcgag agtcttaggg actcggcgta
 ccgctcagta acacgtgggt aacctgccct gtgctgggga ataacctcgg gaaactgaga
 ataatgcccc ataattcact acgcctggaa cggtgggtgg atcaaagctc cggcggcaca
@@ -5180,7 +5180,7 @@ ggcgtgaagt cagaggaagg tgggggcaac gacaggtcag tatgctccga atgctctggg
 ctacacgcgc gctacaaagg ccaggacaat gggtttgcca ctctgagagg aggcgctatc
 ccgaaacctg gtcgtagttc ggatcgaggg ctgtaattcg ccctcgtgaa gctggatttc
 gtagtaatcg cgcctcaaa
->S003243600 uncultured marine archaeon; F9P410_Arc_1_H04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003243600 uncultured marine archaeon; F9P410_Arc_1_H04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggctaccgct attggagttc gattaagcca tgcgagtcca
 gagctttcgg agctcggcgt accgctcagt aacacgtggg taacctaacc tatgcagggg
 aataacctcg ggaaactgag aataatgccc catagtccac tacgcctgga acggtgagtg
@@ -5242,7 +5242,7 @@ agtccgccgc ctgggaagta cggtcgcaag actgaaactt aaaggaattg gcgggggagc
 accacaacgc gtggagcctg ccggtttaat tggattcaac gccggacatc tcaccagagg
 cgacagctgt atgatagcca ggttgatgac tttgcttgac tagctgagga gaggtgcatg
 g
->S001740865 uncultured archaeon; MD3052R3	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S001740865 uncultured archaeon; MD3052R3	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 ttccggttga tcctgccgga cccgactgct atttgggtga gaataagcca tgcgagttga
 atgggatacc taaagttccc atagcaaact gctcagtaac acatgatcaa cttaccctat
 agagaaaaat aacctcggga aactgaggat aatgtttcat aattgaattg gcttggaaaa
@@ -5293,7 +5293,7 @@ tctgagacaa gattccgggc cctacggggc gcagcaggcg cgaaaccttt acactgcacg
 cacgtgcgat aaggggactc cgagtgcgag ggcatatcgt cctcgctttc gtgtaccgta
 gggtggtaca ccaacaaggg ctgggcaaga ccggtgccag ccgccgcggt aataccggca
 gcccgagtga tggccgatct tattgggcct aaagcgtccg tagct
->S003244441 uncultured marine archaeon; SHBB385	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003244441 uncultured marine archaeon; SHBB385	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cctgccggag gctaccgcta ttggagttcg attaagccat gcgagtcgcg agaaattaga
 ttctcggcgt accgctcagt aacacgtggg taacctgccc tatgctggat aataacctcg
 ggaaactgag aataatgatc cacagttcac tacgcctgga acggtgagtg gatgaaagct
@@ -5425,7 +5425,7 @@ ttagataccc gggtagtccc agctgtaaac tatgcaaact cagtgatgca ttgacttgtg
 gtcaatgcag cgctgcaggg aagccgttaa gtttgccgcc tgggaagtac gtacgcaagt
 atgaaactta aaggaattgg cgggggagca ccacaagggg tgaagcctgc ggttcaattg
 gagtcaacgc cggg
->S002939038 uncultured archaeon; A0610D001_B04	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S002939038 uncultured archaeon; A0610D001_B04	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 cggggtgcag caggcgcgaa aactttgcaa tacacgaaag tgtgacaggg tcatcccgag
 tgccgaccgc tgaggttggc ttttacccag tctagaaagc tgggggaata aggagagggc
 aagtctggtg tcagccgccg cggtaatacc agctctccga gtggtgtgga cgtttattgg
@@ -5462,7 +5462,7 @@ tccagccgct caacggatgg gccgcggagg atactacagg actaggaggc gggagaggca
 agcggtactc gatgggtagg ggtaaaatcc gttgatccat tgaagaccac cagtggcgaa
 ggcggcttgc cagaacgcgc tcgacggtga gggatgaaag ctgggggagc aaaccggatt
 agatacccgg gtagtcccag
->S001378479 uncultured crenarchaeote; Z195MC87	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S001378479 uncultured crenarchaeote; Z195MC87	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 gcccaggccc tacggggcgc agcagctgcg aaacctctag aatgcgcgaa agcgggtcag
 ggctaccccc gagtgccgtc cgctgaggat ggcttttctc tggtgtaatg agccggagga
 ataaggggag ggcaagcctg gtgtcagccg ccgcggtaat accagctccc cgagtggtgg
@@ -5514,7 +5514,7 @@ attagatacc cgggtagtcc cagccgtaaa ccatgcaaac tcagtgatgc attggcttgt
 ggccaatgca gtgctgcagg gaagccgtta agtttgccgc ctgggaagta cgtacgcaag
 tatgaaactt aaaggaattg gcgggggagc accacaaggg gtgaagcctg cggttcaatt
 ggagtcaacg ccggg
->S003247979 uncultured marine archaeon; SHAA701	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003247979 uncultured marine archaeon; SHAA701	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gaggcgaccg cttttggagt tcgattaagc catgcgagta gaaagaaatt agattctttg
 caaactgctc agtaacacgt ggataacctg ccctatgctc cggaataacc tcgggaaact
 gagaataata ccggatagat cacaacgcct ggaacggtgt gtggttcaaa ggtcacggca
@@ -5561,7 +5561,7 @@ tgccccgaat taactgggct acacgcgggc tacaatgggt gggacaatgg gtatcgacac
 cgaaaggtga aggcaatctc ctaaacccat ccgtagttcg gattgtgggc tgcaactcgc
 ccacatgaag ctggaatccg tagtaatcgt gtctcaaaat ggcacggtga atatgtccct
 gctccttgca cacaccg
->S003439953 uncultured archaeon; ORI-961-19-1-P_S248-250_19-15A09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003439953 uncultured archaeon; ORI-961-19-1-P_S248-250_19-15A09	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 aggtcactgc tattgggatt cggctaagcc atgcaagcgg agggcgcggt cgaaagatcg
 tggccccgca cactgctcag taacacgtag tcaacctacc cttgggacgg ggacaacctc
 gggaaactga ggctaatccc cgataggtga gggacgctgg aatgcctcct cgcccaaagc
@@ -5640,7 +5640,7 @@ ctgtggcgaa ggcggtctac cagaacacgt ccgacggtga gggatgaaag ctgggggagc
 aaaccggatt agatacccgg gtagtcccag ctgtaaacta tgcaaactca gtgatgcatt
 ggcttgtggc caatgcagtg ctgcagggaa agccgttaag tttgccgcct gggaagtacg
 tacgcaagta tgaaactcaa aggaattgac ggaat
->S002159720 uncultured archaeon; kaa14	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002159720 uncultured archaeon; kaa14	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 tccggttgat cctgccggac cccactgcta tcgggatggg actaagacat gctagtcgtg
 cgcttccaag ccatggtgga agcgcggcgc acggctcagt aacacgtggc taacctaccc
 ttgggacggg gacaaccccg ggaaactggg gctaatcccc gataggtgag ggctcctgga
@@ -5681,7 +5681,7 @@ ctgtgataaa caggaggaag gagtggacga cggtaggtcc gtatgccccg aatcctctgg
 gcaacacgcg ggctacaatg gctaagacaa tgggttccga caccgaaagg tggaggtaat
 cctctaaact tggtcgtagt tcggattgag gactgtaact cgttctcatg aagctggaat
 gcgtagtaat cgcgtatcac tattgcgcgg tgaatacgtc cctgctcctt gcacacaccg
->S002468828 uncultured euryarchaeote; HTM1036S-A112	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002468828 uncultured euryarchaeote; HTM1036S-A112	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 agcgaccgct attggaattc gattaagcca tgcgagtcga gagtcttagg gactcggcgt
 accgctcagt aacacgtggg taacctgccc tgtgctgggg aataacctcg ggaaactgag
 aataatgccc catagttcac tacgcctgga acggtgggtg gatcaaagct ccggcggcac
@@ -5725,7 +5725,7 @@ agggacgaaa gctaggggcg cgaaccggat tagatacccg ggtagtccta gccgtaaacg
 atgcggactt ggtgttagga tggctctgag ccgccctagt gccgaaggga agctgttaag
 tccgccgcct gggaagtacg gtcgcaagac tgaaacttaa aggaattggc ggggagcacc
 acaacgcgtg gagcctgcgg ttt
->S001755441 uncultured archaeon; MD3057A-27	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S001755441 uncultured archaeon; MD3057A-27	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tcctgccgga ccctactgct atcggggtgg gactaagaca tgcaagttgt
 gcgtctctga gctatggtag agacgcggcg tacggctcag taacacgtgg ctaacctacc
 cttaggacgg ggacaacccc gggaaactgg ggctaatatc tgataggtga ggaggcctgg
@@ -5742,7 +5742,7 @@ tgagggacga aagctggggg agcgaaccgg attagatacc cgggtagtcc cagctgtaaa
 cgatgcgggc tagtgttgag gtggttacga accacttcag tgccgcagga agccattaag
 cccgccgcct ggggagtacg gccgcaaggc tgaaacttaa aggaatggcg gggggagcac
 acaagcgtga agcttgcgtt cattggattc a
->S002045341 uncultured Thermoplasmatales archaeon; OP1_6_8_C08	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002045341 uncultured Thermoplasmatales archaeon; OP1_6_8_C08	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 aggccactgc tattgggatt cgattaagcc atgcgagtcg aatggtgccc gcaagggtaa
 ccatggcgta cggctcagta aaacatggat aacctgccct caggtggggg ataacctcgg
 gaaactgagg ataatacccc ataggtctgg gaagctggaa cgctcccagg ctgaaagcgt
@@ -5758,7 +5758,7 @@ gaccataacg gctttgacgg taagggatga agccctgggg cgcgaaccgg attagatacc
 cgggtagtcc agggtgtaaa cgctgctggc ttggtgttgg gcaatccatg tggttgctca
 gtgccggagt gaagatgtta agccagctac ctggggagta ctgtcgcaag actgaaactt
 aaagggattg gcgggggagc accgcaacgg gtggagcgta cggttt
->S003478132 uncultured archaeon; kuc161	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;Thermoproteales;order;unclassified_Thermoproteales;
+>S003478132 uncultured archaeon; kuc161	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;Thermoproteales;order;untaxmap_Thermoproteales;
 tccggttgat cctgccggac cccactgcta tcggggtgag gctaagccat gcaagtcgaa
 ggtccccagc ttccgggggc ctggcagacg gctcagtaac acgtggccaa cctaccctag
 ggaggtagat aacccctggg aaactggggt taaactacca taggaggcgg gatctggaaa
@@ -5802,7 +5802,7 @@ aacgtaccgc ctgggaagta cggtcgacaa ggctgaaact taaaggaatt ggcgggggag
 caccacaaca ggtggagcct gcggtttaat tggactcaac gccgggaagc tcaccggata
 agacagctga atgattgccg ggctgaagac tctgcatgac tagctgagtg gtggtgcatg
 g
->S001739242 uncultured archaeon; GOM-16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S001739242 uncultured archaeon; GOM-16	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggctaccgct attggagttc gattaagcca tgcgagtcga
 gagtcctcgg gactcggcgt accgctcagt aacacgtggg taacctgccc tatgctgggg
 aataacctcg ggaaactgag aataatgccc catagcccac tacgcctgga acggtgagtg
@@ -5861,7 +5861,7 @@ gaatgcgctc gacggtgagg gatgaaagct gggggagcaa accggattag atacccgggt
 agtcccagct gtaaacgatg cagactcggt gatgggttgg cttcgagcca acccagtgcc
 gcagggaagc cgttaagtct gccgcctggg gagtacggtc gcaagactga aacttaaagg
 aattggcggg ggagcaccac aaggggtgaa gcctgcggtt caattggatt caacgccgga
->S003249566 uncultured marine archaeon; SIAB722	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003249566 uncultured marine archaeon; SIAB722	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gaggctaccg ctattggagt tcgattaagc catgcgagtc gcgagtctta gggactcggc
 gtaccgctca gtaacacgtg ggtaacctgc cctatgctgg gagataacct cgggaaactg
 agaataatac cccatagttc actacgcctg gaacggtgag tggatgaaag ctccggcggc
@@ -5924,7 +5924,7 @@ accacctgtg gcgaaggcgg tctaccagaa cacgttcgac ggtgagggat gaaagctggg
 ggagcaaacc ggattagata cccgggtagt cccagctgta aacgatgcag actcggtgat
 gccctggctt gtggccagtg cagtgccgca gggaagccgt taagtttgcc gcctgggaag
 tacgtacgca agtatgaaac ttaaaggaat tg
->S001599858 uncultured archaeon; TWP3-76	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S001599858 uncultured archaeon; TWP3-76	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ttccggttga tcctgccgga ccccactgct atcggggtgg gactaaaaca tgcaagtcga
 gcgcctccaa gctatggtga aggcgcggca aacggctcag taacacgtgg ccaacctacc
 cttgggacgg agacaacccc gggaaactgg ggctaatccc cgataggtga ggaatcctgg
@@ -5964,7 +5964,7 @@ cggtacacta cggggactgc cggggaaacc cggaggaagg cgcgggcgac ggcaagtccg
 catgccccga atctcccggg ctacacgcgc gcaacaatgg gcgggacaat gggagccgac
 cccgaaaggg gaaggaaatc ccctaaaccc gctctcagtc cagattgagg gctgcaactc
 gccctcatga cggtggaatc cctagtaatc gggggtcact attcccccgg t
->S002986002 uncultured euryarchaeote; C9001C_A25_6_C005	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S002986002 uncultured euryarchaeote; C9001C_A25_6_C005	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 gccctcggct gacggctcag taacacgtgg ataatctgcc cttaggtgga ggatccctcg
 ggaaactgag aataatactc cataggtcta ggatgctgga atgcatcaag actgaaaact
 ccggtgccta aggatgagtc tgcggactat caggttgtag tcagggtaaa gacctgacta
@@ -5979,7 +5979,7 @@ tagctagaac ggatctgacg gtgagggacg aagccctggg gcgcaaaccg gattagatac
 ccgggtagtc cagggtgtaa acgctgcttg cttgatgtta gtcgggctcc gagccgatta
 gtgtcggaga gaagttgtta agcaagctgc ctgggaagta cggtcgcaag actgaaactt
 aaaggaattg gcgggggagc acagcaacgg gtggagcctg cggttca
->S004195493 uncultured archaeon; CH3-50	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;unclassified_Halobacteriaceae;
+>S004195493 uncultured archaeon; CH3-50	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;Halobacteria;class;Halobacteriales;order;Halobacteriaceae;family;untaxmap_Halobacteriaceae;
 aacctttaca ctgcacgaca gtgcgataag gggactccga gtgcgagggc atacagtcct
 cgcttttctg taccgtaggg tggtacagga acaagtgctg ggcaagaccg gtgccagccg
 ccgcggtaat accggcagca cgagtgatgg ccgatattat tgggcctaaa gcgtccgtag
@@ -5999,7 +5999,7 @@ ctataatcct gggaggacca cctgtggcga aggcggctaa ctggaacgga cctgacggtg
 agtaacgaaa gccaggggcg cgaaccggat tagatacccg ggtagtcctg gccgtaaacg
 atgtggactt ggtgttggga tggctccgag ctgccccagt gccgaaggga agctgttaag
 tccaccgcct gggaagtacg gtcgcaagac tgaaacttaa aggaattggc gggg
->S003060939 uncultured archaeon; B15_C-A8_0239GSNP001F_P3	Lineage=Root;rootrank;Archaea;domain;unclassified_Archaea;
+>S003060939 uncultured archaeon; B15_C-A8_0239GSNP001F_P3	Lineage=Root;rootrank;Archaea;domain;untaxmap_Archaea;
 cccccaaaaa ccaaaaatgt gataggggtt acccaaagtg gtcaatttga actgggggag
 gtgagtaatg tcccccactt gaaaggagag gggaagggtg gtgccagccg ccgcggtaaa
 accagctctt caagtggtcg ggataattat tgggcttaaa gtgtccgtag ccggtttagt
@@ -6009,7 +6009,7 @@ accaccagtg gcgaaggcgt cagactggaa cgcgcctgac ggtgagggac gaaagccagg
 ggagcgaacc ggattagata cccgggtagt cctggccgta aacgatgcat actaggtgat
 ggtacggcca tgagccgtat cagtgccgta gggaaaccgt taagtgtgcc gcctgggaag
 tacggtcgca aggctaaaac ttaaaggaat tggcggggga
->S003439822 uncultured archaeon; ORI-934-19-3-P_S208-210_19-35A05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003439822 uncultured archaeon; ORI-934-19-3-P_S208-210_19-35A05	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 aggtcactgc tattgggatt cggctaagcc atgcaagcgg agggcgcggt cgaaagatcg
 tggccccgca cactgctcag taacacgtag tcaacctacc cttgggacgg ggacaacctc
 gggaaactga ggctaatccc cgataggtga gggacgctgg gatgcctcct cgcccaaagc
@@ -6034,7 +6034,7 @@ ggggaagcca aacccttaaa cctgcgctcg gttcggatcg agggccgtaa ctcgccctcg
 tgaagctgga atctctagta atcgcgtgcc aacaccgcgc ggtgaatacg tccctgctcc
 ttgcacacac cgcccgtcaa gccactcgag tggggtttgg atgaggtcag ctcaagttgg
 gctgctcgaa tccgagttct gcaagagggg ctaagtcgta acaaggtaac c
->S003471426 uncultured marine group II euryarchaeote; PU009100arc1bG3	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S003471426 uncultured marine group II euryarchaeote; PU009100arc1bG3	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 ttccggttga tcctgccgga ggctaccgct attggagttc gattaagcca tgcgagtcga
 gagtcttagg gactcggcgt accgctcagt aacacgtggg taacctgccc catgctgggg
 aataacctcg ggaaactgag aataataccc catagttcac cacgcctgga acggtgggtg
@@ -6058,7 +6058,7 @@ cgacggtgag ggacaaaagc cagggtctcg aaccggatta gatacccggg tagtcccggc
 tgtaaacgat gcctgttagg tatgcaccgc gccacgagcg cgttgtgtgc cgaagtgaag
 acgataaaca ggccgcctgg gaagtacgtc cgcaaggatg aaacttaaag gaattggcgg
 gggagcacta caaccggagg agcctgcggt ttaattggat tcaacgccgg
->S003508074 uncultured archaeon; BOT_AR_1	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003508074 uncultured archaeon; BOT_AR_1	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 gacatgctag tcaagcgctc tccagccaaa ggagagtgcg gcgcacagct cagtaacacg
 tggctaacct gcccttggga tagggacaac cccgggaaac tggggctaat cctcaatagg
 tgaagtgctc tggaatgagc cttcgcccga aaggatactt gcgctatgct cgcaagcttc
@@ -6086,7 +6086,7 @@ tccttgaagg accaccagtg gcgaaggcgt ctcaccagaa cggacctgac ggcaagggac
 gaaagctagg ggcacgaacc ggattagata cccgggtagt cctagccgta aacgatactc
 gctaggtgtc ggcaacggtg cgaccgttgt cggtgccgta gggaagccgt gaagcgagcc
 acctgggaag tacggccgca aggctgaaac ttaaaggaat tggcggggga gcac
->S000576282 uncultured euryarchaeote; HPDOMI1F06	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000576282 uncultured euryarchaeote; HPDOMI1F06	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 tgtcctgtga aatcgtctcg cccaacggga cggcgcgcag gacacactac cggacttggg
 accgggagag gaaggcagta ttctcggggg agcggtaaaa tgttataatc ccgagaggac
 taccgatggc gaaggcagcc ttctagaacg gatccggcgg tgagggatga aagctagggg
@@ -6100,7 +6100,7 @@ gcaagggtga gcgagcacac tgtggagact gccttcgaaa ggaggaggaa ggcgcaggct
 acggtaggtc tgtatgtccc gaatcttctg ggctacacgc gcgcaacaat ggtcgtgaca
 atgggctgcc acaccgaaag gtgaagcgaa tcctcgaaac acgaccttag tattaattga
 gggctgcaac tcg
->S002174973 uncultured archaeon; MC10+_E01	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S002174973 uncultured archaeon; MC10+_E01	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 ctcgccagct aaaggtgagt gcggcgcaca gctcagtaac gcgtggctaa cctgcccttg
 ggacggggac accccgggaa actggggtta atccccgata ggcgaagaac tctggaatga
 gtctccacct aaaaggcgct tatactatgc ttgtaggtgt cgcccaagga tggggccgcg
@@ -6211,7 +6211,7 @@ ttgagggctg taactcgccc tcatgaatct ggattccgta gtaatcgcgg gtcaacaacc
 cgcggtgaac atgcccctgc tccttgcaca caccgcccgt caaaccatcc gagttggtgt
 tggatgaggt ttaattcgag agggttaaat caaatctgat gtcggtgagg agggttaagt
 cgtaacaagg tagccgta
->S000346864 uncultured euryarchaeote; 480; MERTZ_21CM_5	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;unclassified_"Euryarchaeota";
+>S000346864 uncultured euryarchaeote; 480; MERTZ_21CM_5	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;untaxmap_"Euryarchaeota";
 cagcagccgc ggtaataccg gcagctcgag tggtcgtcgc ttttataggg cctaaaacgt
 ccgtagccgg tttggtaaat ctgtgggtaa atcaactagc ttaactagtt gaattctgca
 gagactgcca gactaggaac cgggagaggt gtggggtact caaggggtag gggtaaaatc
@@ -6229,7 +6229,7 @@ gttcatagtt cggattgtgg gctgtaactc gcccacatga agctggattg cgtagtaatc
 gtgtttcaac atagcacggt gaatatgccc ctgctccttg cacacaccgc ccgtcaaacc
 atcttagttg ggggtgggtg aggctgcgct ttatggcgta ttcgagcctg tctttgacaa
 ggagggttaa gtcgtaacaa ggtaaccgta
->S001238638 uncultured archaeon; BA_65f04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;unclassified_"Methanomicrobia";
+>S001238638 uncultured archaeon; BA_65f04	Lineage=Root;rootrank;Archaea;domain;"Euryarchaeota";phylum;"Methanomicrobia";class;untaxmap_"Methanomicrobia";
 ccgacggtga ggggtgaagc tgggggcgca aaccggatta gatacccggg tagtcccagc
 agtaaacgat gccagctatg tgttgctgga accatgggtt ccacagtgcc gaaggaagcc
 gtgaagctgg ccacctggga agtacggtcg caaggctgaa acttaaagga attggcgggg
@@ -6241,7 +6241,7 @@ gctaagctgg aggaaggagc gggctacggt aggtcagcat gccccgaatc ctccgggata
 cacgcgggct acaatggtca ggacaaaagg taccgacctc gaaagagtga ggtaatccac
 aaacctgatc tcagtccgga tcgaaggctg caactcgcct tcgtgaagat ggaatcggta
 gtaatcgtga ctcaaaagtg tcacggtgaa tatgtccctg ctccttgcac agaccggcc
->S003554492 uncultured archaeon; ORI-902A-09-P_S008-010_091A01	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;unclassified_Thermoprotei;
+>S003554492 uncultured archaeon; ORI-902A-09-P_S008-010_091A01	Lineage=Root;rootrank;Archaea;domain;"Crenarchaeota";phylum;Thermoprotei;class;untaxmap_Thermoprotei;
 accctactgc tatcggggga ggactaaaac atgcaagtcg tgcgcctcca agctatggtg
 gagacgcggc atacggctca gtaacacgtg gctaacccac ccttgagacg gagaaaaccc
 cgggaaactg gggttaatcc ccgataggag aagacacctg gaatgggtct tttcccaaaa

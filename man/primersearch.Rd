@@ -3,14 +3,14 @@
 \name{primersearch}
 \alias{primersearch}
 \alias{primersearch.character}
-\alias{primersearch.classified}
+\alias{primersearch.taxmap}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
 primersearch(...)
 
 \method{primersearch}{character}(input, forward, reverse, mismatch = 5)
 
-\method{primersearch}{classified}(input, forward, reverse, mismatch = 5,
+\method{primersearch}{taxmap}(input, forward, reverse, mismatch = 5,
   sequence_col = "sequence", result_cols = NULL)
 }
 \arguments{
@@ -28,7 +28,7 @@ primersearch(...)
 By defualt, all output columns are included.}
 }
 \value{
-An object of type \code{\link{classified}}
+An object of type \code{\link{taxmap}}
 }
 \description{
 A pair of primers are aligned against a set of sequences.
@@ -72,12 +72,12 @@ result <- primersearch(rdp_ex_data,
                        mismatch = 10)
                        
 plot(result, 
-     vertex_size = item_count,
-     vertex_label = name,
-     vertex_color = prop_amplified,
-     vertex_color_range = c("red", "yellow", "green"),
-     vertex_color_trans = "radius",
-     vertex_color_interval = c(0, 1),
+     node_size = n_items,
+     node_label = name,
+     node_color = prop_amplified,
+     node_color_range = c("red", "yellow", "green"),
+     node_color_trans = "radius",
+     node_color_interval = c(0, 1),
      layout = "fruchterman-reingold")
 }
 

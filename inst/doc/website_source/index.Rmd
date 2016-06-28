@@ -100,7 +100,7 @@ The standard print method of the object shows a part of every kind of data it co
 data
 ```
 
-Note the `taxon_funcs` part contains function names (e.g. `item_counts`) used to calculate   taxon statistics.
+Note the `taxon_funcs` part contains function names (e.g. `n_items`) used to calculate   taxon statistics.
 You can see the results of these calculations using the `taxon_data` function:
 
 ```{r}
@@ -116,7 +116,7 @@ Most often, bar charts, stacked bar charts, or pie graphs are used, but these ar
 MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity Plot**:
 
 ```{r}
-plot(data, vertex_size = item_counts, vertex_label = name, vertex_color = item_counts)
+plot(data, node_size = n_items, node_label = name, node_color = n_items)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -126,14 +126,14 @@ ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transpare
 
 Note, that this command can take a few minutes. 
 The default size range displayed is optimized for each plot.
-The legend represents the number of sequences for each taxon as both a color gradient and width of vertices.
+The legend represents the number of sequences for each taxon as both a color gradient and width of nodes.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ```{r}
 set.seed(8)
-plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
-     vertex_label = name, vertex_color = item_counts,
-     vertex_color_range = c("cyan", "magenta", "green"),
+plot(data, node_size = n_items, edge_color = taxon_levels,
+     node_label = name, node_color = n_items,
+     node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
@@ -157,8 +157,8 @@ For example, `filter_taxa` can be used to look at just the Archaea:
 
 ```{r}
 set.seed(1)
-plot(filter_taxa(data, name == "Archaea"), vertex_size = item_counts, 
-     vertex_label = name, vertex_color = item_counts, layout = "fruchterman-reingold")
+plot(filter_taxa(data, name == "Archaea"), node_size = n_items, 
+     node_label = name, node_color = n_items, layout = "fruchterman-reingold")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -170,10 +170,10 @@ Any column displayed by `taxon_data` can be used with `filter_taxa` (and most ot
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ```{r}
-subsetted <- filter_taxa(data, taxon_ranks > 1)
+subsetted <- filter_taxa(data, taxon_levels > 1)
 set.seed(2)
-plot(subsetted, vertex_size = item_counts, vertex_label = name,
-     vertex_color = item_counts, tree_label = name, layout = "davidson-harel")
+plot(subsetted, node_size = n_items, node_label = name,
+     node_color = n_items, tree_label = name, layout = "davidson-harel")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -187,9 +187,9 @@ This makes it easy to remove lower ranks of a taxonomy:
 
 ```{r}
 set.seed(1)
-filter_taxa(data, taxon_ranks < 5, subtaxa = FALSE) %>%
-plot(vertex_size = item_counts, 
-     vertex_label = name, vertex_color = item_counts)
+filter_taxa(data, taxon_levels < 5, subtaxa = FALSE) %>%
+plot(node_size = n_items, 
+     node_label = name, node_color = n_items)
 
 ```
 
@@ -207,13 +207,13 @@ The code below samples the data such that rank 6 taxa will have 5 sequences and 
 ```{r}
 set.seed(1)
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- filter_taxa(sampled, item_counts > 0, subtaxa = FALSE) 
+sampled <- filter_taxa(sampled, n_items > 0, subtaxa = FALSE) 
 ```
 
 ```{r}
 set.seed(4)
-plot(sampled, vertex_size = item_counts, vertex_label = item_counts, overlap_avoidance = 0.5,
-     vertex_color = item_counts)
+plot(sampled, node_size = n_items, node_label = n_items, overlap_avoidance = 0.5,
+     node_color = n_items)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -225,9 +225,9 @@ This can also be accomplished using the `dplyr` equivalents to `sample_n` and `s
 
 ```{r}
 set.seed(4)
-sample_n_items(subsetted, size = 1000, taxon_weight = 1 / item_counts, itemless = FALSE) %>%
-  plot(vertex_size = item_counts, vertex_label = item_counts, overlap_avoidance = 0.5,
-     vertex_color = item_counts)
+sample_n_items(subsetted, size = 1000, taxon_weight = 1 / n_items, itemless = FALSE) %>%
+  plot(node_size = n_items, node_label = n_items, overlap_avoidance = 0.5,
+     node_color = n_items)
 ```
 
 
@@ -248,8 +248,8 @@ The proportion of sequences amplified can be represented by color in a metadiver
 
 ```{r}
 set.seed(1)
-plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
+plot(pcr, node_size = n_items, node_label = name, node_color = prop_amplified,
+     node_color_range =  c("red", "cyan"), node_color_trans = "radius", tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -264,10 +264,10 @@ The data can also be subset to better see what did not get amplified:
 set.seed(7) 
 pcr %>%
   filter_taxa(name == "Bacteria") %>%
-  filter_taxa(count_amplified < item_counts, subtaxa = FALSE) %>% 
-  plot(vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
-       vertex_color_range =  c("red", "cyan"),
-       vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
+  filter_taxa(count_amplified < n_items, subtaxa = FALSE) %>% 
+  plot(node_size = n_items, node_label = name, node_color = prop_amplified,
+       node_color_range =  c("red", "cyan"),
+       node_color_interval = c(0, 1), node_color_trans = "radius")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -302,15 +302,15 @@ set.seed(2)
 pcr %>%
   subset(name == "Bacteria") %>%
   subset(abs(prop_diff) > 0.1, subtaxa = FALSE, supertaxa = TRUE) %>%
-  plot(vertex_size = item_counts,
-       vertex_label = ifelse(abs(prop_diff) > 0.3, name, NA),
-       vertex_color = prop_diff,
-       vertex_color_range = diverging_palette(),
-       vertex_color_interval = c(-1, 1),
-       vertex_color_trans = "radius",
-       vertex_label_max = 200,
-       vertex_color_axis_label = "Difference in proportion amplified",
-       vertex_size_axis_label = "Sequence count",
+  plot(node_size = n_items,
+       node_label = ifelse(abs(prop_diff) > 0.3, name, NA),
+       node_color = prop_diff,
+       node_color_range = diverging_palette(),
+       node_color_interval = c(-1, 1),
+       node_color_trans = "radius",
+       node_label_max = 200,
+       node_color_axis_label = "Difference in proportion amplified",
+       node_size_axis_label = "Sequence count",
        title = "Comparison of two universal primer pairs using in silico PCR",
        title_size = 0.03)
 ```

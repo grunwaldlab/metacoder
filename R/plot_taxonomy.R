@@ -3,7 +3,7 @@
 #' 
 #' Plots the distribution of values associated with a taxonomic classification.
 #' Taxonomic classifications can have multiple roots, resulting in multiple trees on the same plot.
-#' Sizes and colors of vertexes, edges, labels, and individual trees can be displayed relative to
+#' Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
 #' numbers (e.g. taxon statistics, such as abundance).
 #' The displayed range of colors and sizes can be explicitly defined or automatically genereated.
 #' Various transforamtions can be applied to numbers sizes/colors are mapped to.
@@ -12,7 +12,7 @@
 #' @param taxon_id The unique ids of taxa.
 #' @param parent_id The unique id of supertaxon \code{taxon_id} is a part of.
 #' 
-#' @param vertex_label See details on labels.
+#' @param node_label See details on labels.
 #' Default: no labels.
 #' @param edge_label See details on labels.
 #' Default: no labels.
@@ -21,105 +21,105 @@
 #' The value of the root of each graph will be used.
 #' Default: None.
 #' 
-#' @param vertex_size See details on size.
+#' @param node_size See details on size.
 #' Default: constant size.
 #' @param edge_size See details on size.
-#' Default: relative to vertex size. 
+#' Default: relative to node size. 
 # #' @param tree_size See details on size.
 # #' The value of the root of each graph will be used.
-# #' This scales the space used to display graphs, but does not effect vertex/edge size.
+# #' This scales the space used to display graphs, but does not effect node/edge size.
 # #' Default: Not used. 
 #' 
-#' @param vertex_label_size See details on size.
+#' @param node_label_size See details on size.
 #' Default: relative to veterx size.
 #' @param edge_label_size See details on size.
 #' Default: relative to edge size.
 #' @param tree_label_size See details on size.
 #' Default: relative to graph size.
 #' 
-#' @param vertex_color See details on colors.
+#' @param node_color See details on colors.
 #' Default: grey.
 #' @param edge_color See details on colors.
-#' Default: same as vertex color.
+#' Default: same as node color.
 #' @param tree_color See details on colors.
 #' The value of the root of each graph will be used.
-#' Overwrites the vertex and edge color if specified.
+#' Overwrites the node and edge color if specified.
 #' Default: Not used.
 #' 
-#' @param vertex_label_color See details on colors.
+#' @param node_label_color See details on colors.
 #' Default: black.
 #' @param edge_label_color See details on colors.
 #' Default: black.
 #' @param tree_label_color See details on colors.
 #' Default: black.
 #' 
-#' @param vertex_size_trans See details on transformations.
+#' @param node_size_trans See details on transformations.
 #' Default: \code{"area"}.
 #' @param edge_size_trans See details on transformations. 
-#' Default: same as \code{vertex_size_trans}. 
+#' Default: same as \code{node_size_trans}. 
 # #' @param tree_size_trans See details on transformations.
 # #' Default: \code{"area"}.
 #' 
-#' @param vertex_label_size_trans See details on transformations. 
-#' Default: same as \code{vertex_size_trans}.
+#' @param node_label_size_trans See details on transformations. 
+#' Default: same as \code{node_size_trans}.
 #' @param edge_label_size_trans See details on transformations. 
 #' Default: same as \code{edge_size_trans}.
 #' @param tree_label_size_trans See details on transformations.
 #' Default: \code{"area"}.
 #' 
-#' @param vertex_color_trans See details on transformations. 
+#' @param node_color_trans See details on transformations. 
 #' Default: \code{"area"}.
 #' @param edge_color_trans See details on transformations.
-#' Default: same as vertex color transformation.
+#' Default: same as node color transformation.
 #' @param tree_color_trans See details on transformations.
 #' Default: \code{"area"}.
 #' 
-#' @param vertex_label_color_trans See details on transformations.
+#' @param node_label_color_trans See details on transformations.
 #' Default: \code{"area"}.
 #' @param edge_label_color_trans See details on transformations.
 #' Default: \code{"area"}.
 #' @param tree_label_color_trans See details on transformations. 
 #' Default: \code{"area"}.
 #' 
-#' @param vertex_size_range See details on ranges.
+#' @param node_size_range See details on ranges.
 #' Defualt: Optimize to balance overlaps and range size.
 #' @param edge_size_range See details on ranges.
-#' Default: relative to vertex size range. 
+#' Default: relative to node size range. 
 # #' @param tree_size_range See details on ranges.
 # #' Default: Not set.
 #' 
-#' @param vertex_label_size_range See details on ranges.
-#' Default: relative to vertex size. 
+#' @param node_label_size_range See details on ranges.
+#' Default: relative to node size. 
 #' @param edge_label_size_range See details on ranges.
 #' Default: relative to edge size.
 #' @param tree_label_size_range See details on ranges.
 #' Default: relative to tree size.
 #' 
-#' @param vertex_color_range See details on ranges.
+#' @param node_color_range See details on ranges.
 #' Default: Color-blind friendly palette. 
 #' @param edge_color_range See details on ranges.
-#' Default: same as vertex color.
+#' Default: same as node color.
 #' @param tree_color_range See details on ranges.
 #' Default: Color-blind friendly palette. 
 #' 
-#' @param vertex_label_color_range See details on ranges.
+#' @param node_label_color_range See details on ranges.
 #' Default: Color-blind friendly palette. 
 #' @param edge_label_color_range See details on ranges.
 #' Default: Color-blind friendly palette.
 #' @param  tree_label_color_range See details on ranges.
 #' Default: Color-blind friendly palette. 
 #' 
-#' @param vertex_size_interval See details on intervals.
-#' Default: The range of values in \code{vertex_size}. 
-#' @param vertex_color_interval See details on intervals.
-#' Default: The range of values in \code{vertex_color}. 
+#' @param node_size_interval See details on intervals.
+#' Default: The range of values in \code{node_size}. 
+#' @param node_color_interval See details on intervals.
+#' Default: The range of values in \code{node_color}. 
 #' @param edge_size_interval See details on intervals.
 #' Default: The range of values in \code{edge_size}. 
 #' @param edge_color_interval See details on intervals.
 #' Default: The range of values in \code{edge_color}. 
 #' 
 #' 
-#' @param vertex_label_max The maximum number of vertex labels.
+#' @param node_label_max The maximum number of node labels.
 #' Default: 20.
 #' @param edge_label_max The maximum number of edge labels.
 #' Default: 20.
@@ -128,28 +128,28 @@
 #' 
 #' @param overlap_avoidance (\code{numeric})
 #' The relative importance of avoiding overlaps vs maximizing size range.
-#' Higher numbers will cause vertex size optimazation to avoid overlaps more.
+#' Higher numbers will cause node size optimazation to avoid overlaps more.
 #' Default: \code{1}.
 #' 
 #' @param margin_size (\code{numeric} of length 2)
 #' The horizontal and vertical margins.
 #' Default: \code{0, 0}.
 #' 
-#' @param layout The layout algorithm used to position vertexes.
+#' @param layout The layout algorithm used to position nodes.
 #' See details on layouts.
 #' Default: \code{"reingold-tilford"}.
 #' @param initial_layout he layout algorithm used to set the initial position
-#' of vertexes, passed as input to the \code{layout} algorithm.
+#' of nodes, passed as input to the \code{layout} algorithm.
 #' See details on layouts.
 #' Default: Not used.
 #' @param make_legend if TRUE...
 #' @param title Name to print above the graph.
 #' @param title_size The size of the title realtive to the rest of the graph. 
 #' 
-#' @param vertex_color_axis_label The label on the scale axis corresponding to \code{vertex_color}.
-#' Default: The expression given to \code{vertex_color}.
-#' @param vertex_size_axis_label The label on the scale axis corresponding to \code{vertex_size}.
-#' Default: The expression given to \code{vertex_size}.
+#' @param node_color_axis_label The label on the scale axis corresponding to \code{node_color}.
+#' Default: The expression given to \code{node_color}.
+#' @param node_size_axis_label The label on the scale axis corresponding to \code{node_size}.
+#' Default: The expression given to \code{node_size}.
 #' @param edge_color_axis_label The label on the scale axis corresponding to \code{edge_color}.
 #' Default: The expression given to \code{edge_color}.
 #' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
@@ -168,7 +168,7 @@
 #' @section size:
 #' 
 #' 
-#' The size of vertexes, edges, labels, and trees can be mapped to arbitrary numbers.
+#' The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for displaying statistics for taxa, such as abundance.
 #' Only the relative size of numbers is used, not the values themeselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
@@ -179,7 +179,7 @@
 #' 
 #' @section colors:
 #' 
-#' The colors of vertexes, edges, labels, and trees can be mapped to arbitrary numbers.
+#' The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for highlighting groups of taxa.
 #' Only the relative size of numbers is used, not the values themeselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
@@ -191,8 +191,8 @@
 #' 
 #' @section labels:
 #' 
-#' The labels of vertexes, edges, and trees can be added.
-#' Vertex labels are centered over their vertex.
+#' The labels of nodes, edges, and trees can be added.
+#' Node labels are centered over their node.
 #' Edge labels are displayed over edges, in the same orientation.
 #' Tree labels are displayed over their tree.
 #' 
@@ -206,7 +206,7 @@
 #' A customized function can also be supplied to do the transformation.
 #' 
 #' \describe{
-#'   \item{"radius"}{Proprotional to radius/diameter of vertex}
+#'   \item{"radius"}{Proprotional to radius/diameter of node}
 #'   \item{"area"}{circular area; better perceptual accuracy than \code{"radius"}}
 #'   \item{"log10 radius"}{Log base 10 of radius}
 #'   \item{"log2 radius"}{Log base 2 of radius}
@@ -229,7 +229,7 @@
 #' 
 #' @section layout:
 #' 
-#' Layouts determine the position of vertexes on the graph.
+#' Layouts determine the position of nodes on the graph.
 #' The are implemented using the \code{\link{igraph}} package.
 #' Any additional arguments passed to \code{plot_taxonomy} are passed to the  \code{\link{igraph}}
 #' function used.
@@ -261,73 +261,73 @@
 #'  
 #' @examples 
 #' plot(contaminants,
-#'      vertex_size = item_counts,
-#'      vertex_color = item_counts,
-#'      vertex_label = name,
+#'      node_size = n_items,
+#'      node_color = n_items,
+#'      node_label = name,
 #'      tree_label = name,
 #'      layout = "fruchterman-reingold")
 #' 
 #' @keywords internal
 #' @rdname plot_taxonomy
 plot_taxonomy <- function(taxon_id, parent_id, 
-                          vertex_label = NA,
+                          node_label = NA,
                           edge_label = NA,
                           tree_label = NA,
                           
-                          vertex_size = 1,
-                          edge_size = vertex_size,
+                          node_size = 1,
+                          edge_size = node_size,
                           # tree_size = 1,
                           
-                          vertex_label_size = vertex_size,
+                          node_label_size = node_size,
                           edge_label_size = edge_size,
                           tree_label_size = as.numeric(NA), 
                           
-                          vertex_color = "#999999",
-                          edge_color = vertex_color,
+                          node_color = "#999999",
+                          edge_color = node_color,
                           tree_color = NA,
                           
-                          vertex_label_color = "#000000",
+                          node_label_color = "#000000",
                           edge_label_color = "#000000",
                           tree_label_color = "#000000",
                           
-                          vertex_size_trans = "area",
-                          edge_size_trans = vertex_size_trans,
+                          node_size_trans = "area",
+                          edge_size_trans = node_size_trans,
                           # tree_size_trans = "area",
                           
-                          vertex_label_size_trans = vertex_size_trans,
+                          node_label_size_trans = node_size_trans,
                           edge_label_size_trans = edge_size_trans,
                           tree_label_size_trans = "area",
                           
-                          vertex_color_trans = "area",
-                          edge_color_trans = vertex_color_trans,
+                          node_color_trans = "area",
+                          edge_color_trans = node_color_trans,
                           tree_color_trans = "area",
                           
-                          vertex_label_color_trans = "area",
+                          node_label_color_trans = "area",
                           edge_label_color_trans = "area",
                           tree_label_color_trans = "area",
                           
-                          vertex_size_range = c(NA, NA),
+                          node_size_range = c(NA, NA),
                           edge_size_range = c(NA, NA),
                           # tree_size_range = c(NA, NA),
                           
-                          vertex_label_size_range = c(NA, NA),
+                          node_label_size_range = c(NA, NA),
                           edge_label_size_range = c(NA, NA),
                           tree_label_size_range = c(NA, NA),
                           
-                          vertex_color_range = quantative_palette(),
-                          edge_color_range = vertex_color_range,
+                          node_color_range = quantative_palette(),
+                          edge_color_range = node_color_range,
                           tree_color_range = quantative_palette(),
                           
-                          vertex_label_color_range = quantative_palette(),
+                          node_label_color_range = quantative_palette(),
                           edge_label_color_range = quantative_palette(),
                           tree_label_color_range = quantative_palette(),
                           
-                          vertex_size_interval = range(vertex_size, na.rm = TRUE, finite = TRUE),
-                          vertex_color_interval = NULL,
+                          node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
+                          node_color_interval = NULL,
                           edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
-                          edge_color_interval = vertex_color_interval,
+                          edge_color_interval = node_color_interval,
                           
-                          vertex_label_max = 40,
+                          node_label_max = 40,
                           edge_label_max = 40,
                           tree_label_max = 40,
                           
@@ -339,8 +339,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                           title = NULL,
                           title_size = 0.08,
                           
-                          vertex_color_axis_label = NULL, 
-                          vertex_size_axis_label = NULL,
+                          node_color_axis_label = NULL, 
+                          node_size_axis_label = NULL,
                           edge_color_axis_label = NULL, 
                           edge_size_axis_label = NULL,
                           
@@ -358,23 +358,23 @@ plot_taxonomy <- function(taxon_id, parent_id,
   if (length(unique(taxon_id)) != length(taxon_id)) {
     stop("All values of 'taxon_id' are not unique.")
   }
-  check_element_length(c("vertex_size", "edge_size",# "tree_size",
-                         "vertex_label_size", "edge_label_size",  "tree_label_size",
-                         "vertex_color", "edge_color", "tree_color",
-                         "vertex_label_color", "edge_label_color", "tree_label_color",
-                         "vertex_label", "edge_label", "tree_label"))
-  verify_size(c("vertex_size", "edge_size", #"tree_size",
-                "vertex_label_size", "edge_label_size", "tree_label_size"))
-  verify_size_range(c("vertex_size_range",  "edge_size_range", # "tree_size_range",
-                      "vertex_label_size_range", "edge_label_size_range", "tree_label_size_range",
-                      "vertex_size_interval", "edge_size_interval"))
-  verify_trans(c("vertex_size_trans", "edge_size_trans", #"tree_size_trans",
-                 "vertex_color_trans", "edge_color_trans", "tree_color_trans",
-                 "vertex_label_size_trans", "edge_label_size_trans", "tree_label_size_trans", 
-                 "vertex_label_color_trans", "edge_label_color_trans", "tree_label_color_trans"))
-  verify_color_range(c("vertex_color_range", "edge_color_range", "tree_color_range",
-                       "vertex_label_color_range", "edge_label_color_range", "tree_label_color_range"))
-  verify_label_count(c("vertex_label_max", "edge_label_max", "tree_label_max"))
+  check_element_length(c("node_size", "edge_size",# "tree_size",
+                         "node_label_size", "edge_label_size",  "tree_label_size",
+                         "node_color", "edge_color", "tree_color",
+                         "node_label_color", "edge_label_color", "tree_label_color",
+                         "node_label", "edge_label", "tree_label"))
+  verify_size(c("node_size", "edge_size", #"tree_size",
+                "node_label_size", "edge_label_size", "tree_label_size"))
+  verify_size_range(c("node_size_range",  "edge_size_range", # "tree_size_range",
+                      "node_label_size_range", "edge_label_size_range", "tree_label_size_range",
+                      "node_size_interval", "edge_size_interval"))
+  verify_trans(c("node_size_trans", "edge_size_trans", #"tree_size_trans",
+                 "node_color_trans", "edge_color_trans", "tree_color_trans",
+                 "node_label_size_trans", "edge_label_size_trans", "tree_label_size_trans", 
+                 "node_label_color_trans", "edge_label_color_trans", "tree_label_color_trans"))
+  verify_color_range(c("node_color_range", "edge_color_range", "tree_color_range",
+                       "node_label_color_range", "edge_label_color_range", "tree_label_color_range"))
+  verify_label_count(c("node_label_max", "edge_label_max", "tree_label_max"))
   if (length(overlap_avoidance) == 0 || ! is.numeric(overlap_avoidance)) {
     stop("Argument 'overlap_avoidance' must be a numeric of length 1.")
   }
@@ -388,8 +388,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Parse arguments
   
-  if (is.null(vertex_color_interval)) {
-    vertex_color_interval <- range(vertex_color, na.rm = TRUE, finite = TRUE)
+  if (is.null(node_color_interval)) {
+    node_color_interval <- range(node_color, na.rm = TRUE, finite = TRUE)
   }
   if (is.null(edge_color_interval)) {
     edge_color_interval <- range(edge_color, na.rm = TRUE, finite = TRUE)
@@ -400,32 +400,32 @@ plot_taxonomy <- function(taxon_id, parent_id,
                      tid_user = as.character(taxon_id),
                      pid_user = as.character(parent_id),
                      
-                     vl_user = as.character(vertex_label),
+                     vl_user = as.character(node_label),
                      el_user = as.character(edge_label),
                      tl_user = as.character(tree_label),
                      
-                     vs_user = as.numeric(vertex_size),
+                     vs_user = as.numeric(node_size),
                      es_user = as.numeric(edge_size),
                      # ts_user = as.numeric(tree_size),
                      
-                     vls_user = as.numeric(vertex_label_size),
+                     vls_user = as.numeric(node_label_size),
                      els_user = as.numeric(edge_label_size),
                      tls_user = as.numeric(tree_label_size),
                      
-                     vc_user = vertex_color,
+                     vc_user = node_color,
                      ec_user = edge_color,
                      tc_user = tree_color,
                      
-                     vlc_user = vertex_label_color,
+                     vlc_user = node_label_color,
                      elc_user = edge_label_color,
                      tlc_user = tree_label_color)
   row.names(data) <- data$tid_user
   
   #| #### Apply statistic transformations =========================================================
-  trans_key <- c(vs_user = vertex_size_trans, es_user = edge_size_trans, #ts_user = tree_size_trans,
-                 vls_user = vertex_label_size_trans, els_user = edge_label_size_trans,  tls_user = tree_label_size_trans,
-                 vc_user = vertex_color_trans, ec_user = edge_color_trans, tc_user = edge_color_trans,
-                 vlc_user = vertex_label_color_trans, elc_user = edge_label_color_trans, tlc_user = tree_label_color_trans)
+  trans_key <- c(vs_user = node_size_trans, es_user = edge_size_trans, #ts_user = tree_size_trans,
+                 vls_user = node_label_size_trans, els_user = edge_label_size_trans,  tls_user = tree_label_size_trans,
+                 vc_user = node_color_trans, ec_user = edge_color_trans, tc_user = edge_color_trans,
+                 vlc_user = node_label_color_trans, elc_user = edge_label_color_trans, tlc_user = tree_label_color_trans)
   transformed_names <- gsub(pattern = "_user$", x = names(trans_key), replacement = "_trans")
   apply_trans <- function(col_name) {
     if (is.numeric(data[ , col_name])) { 
@@ -436,9 +436,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
   }
   data[, transformed_names] <- lapply(names(trans_key), apply_trans)
   # transform intervals
-  vertex_size_interval_trans <- transform_data(vertex_size_trans, vertex_size_interval)
+  node_size_interval_trans <- transform_data(node_size_trans, node_size_interval)
   edge_size_interval_trans <- transform_data(edge_size_trans, edge_size_interval)
-  vertex_color_interval_trans <- transform_data(vertex_color_trans, vertex_color_interval)
+  node_color_interval_trans <- transform_data(node_color_trans, node_color_interval)
   edge_color_interval_trans <- transform_data(edge_color_trans, edge_color_interval)
   
   
@@ -450,7 +450,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Make a graph for each root in the graph -------------------------------------------------
   get_sub_graphs <- function(taxa) {
     if (length(taxa) == 1) {
-      # Make a graph with only a single vertex
+      # Make a graph with only a single node
       adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
       sub_graph <- igraph::graph.adjacency(adj_matrix)
     } else {
@@ -467,8 +467,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
       sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
     igraph::V(sub_graph)$weight_factor <- data[taxa, c("vs_trans")]
-    edge_end_vertex <- gsub("^[0-9]+\\|", "", attr(igraph::E(sub_graph), "vnames"))
-    igraph::E(sub_graph)$weight_factor <- data[edge_end_vertex, c("vs_trans")]
+    edge_end_node <- gsub("^[0-9]+\\|", "", attr(igraph::E(sub_graph), "vnames"))
+    igraph::E(sub_graph)$weight_factor <- data[edge_end_node, c("vs_trans")]
     return(sub_graph)
   }
   data$is_root <- !(data$pid_user %in% data$tid_user)
@@ -507,7 +507,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
   #|
-  coords <- igraph::merge_coords(sub_graphs, sub_coords) # merge vertex coordinates for each tree
+  coords <- igraph::merge_coords(sub_graphs, sub_coords) # merge node coordinates for each tree
   graph <- igraph::disjoint_union(sub_graphs) # merge graphs of each tree
   row.names(coords) <- names(igraph::V(graph))
   data$vx_plot <- coords[data$tid_user, 1]
@@ -515,23 +515,23 @@ plot_taxonomy <- function(taxon_id, parent_id,
   
   #| ### Core plot data ===========================================================================
   #|
-  #| #### Optimize vertex size range --------------------------------------------------------------
+  #| #### Optimize node size range --------------------------------------------------------------
   #|
-  # Get range of potential vertex size ranges - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Get range of potential node size ranges - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (nrow(data) > 1) {
-    all_pairwise <- molten_dist(x = data$vx_plot, y = data$vy_plot) # get distance between all vertexes
+    all_pairwise <- molten_dist(x = data$vx_plot, y = data$vy_plot) # get distance between all nodes
     x_diff <- max(data$vx_plot) - min(data$vx_plot)
     y_diff <- max(data$vy_plot) - min(data$vy_plot)
     square_side_length <- sqrt(x_diff * y_diff)
-    if (is.na(vertex_size_range[1])) { # if minimum vertex size not set
+    if (is.na(node_size_range[1])) { # if minimum node size not set
       min_range <- c(square_side_length / 1000, min(all_pairwise$distance))
     } else {
-      min_range <- rep(vertex_size_range[1], 2) * square_side_length
+      min_range <- rep(node_size_range[1], 2) * square_side_length
     }
-    if (is.na(vertex_size_range[2])) { # if maximum vertex size not set
+    if (is.na(node_size_range[2])) { # if maximum node size not set
       max_range <- c(min_range[1], square_side_length / 4)
     } else {
-      max_range <- c(vertex_size_range[2], 2) * square_side_length
+      max_range <- c(node_size_range[2], 2) * square_side_length
     }
     # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     max_important_pairs <- 2000 # Takes into account both size and distance
@@ -546,7 +546,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
                        order(all_pairwise$distance)[1:max_closest_pairs])
       all_pairwise <- all_pairwise[pair_subset, ]
     }
-    # Define search space for potential vertex size ranges  - - - - - - - - - - - - - - - - - - - - -
+    # Define search space for potential node size ranges  - - - - - - - - - - - - - - - - - - - - -
     get_search_space <- function(min_range, max_range, breaks_per_dim) {
       min_breaks <- seq(from = min_range[1], to = min_range[2], length.out = breaks_per_dim)
       max_breaks <- seq(from = max_range[1], to = max_range[2], length.out = breaks_per_dim)
@@ -557,9 +557,9 @@ plot_taxonomy <- function(taxon_id, parent_id,
     }
     search_space <- get_search_space(min_range, max_range, breaks_per_dim = 35)
     search_space$range_size <- search_space$max - search_space$min
-    # Calculate vertex overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
+    # Calculate node overlap resulting from possible ranges - - - - - - - - - - - - - - - - - - - -
     find_overlap <- function(a_min, a_max, distance) {
-      scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = vertex_size_interval_trans)
+      scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = node_size_interval_trans)
       names(scaled_vs) <- data$tid_user
       gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
       gap <- ifelse(gap < 0, abs(gap), 0)
@@ -582,7 +582,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     square_side_length = 1
     vsr_plot <- rep(square_side_length / 4, 2)
   }
-  data$vs_plot <- rescale(data$vs_t, to = vsr_plot, from = vertex_size_interval_trans)
+  data$vs_plot <- rescale(data$vs_t, to = vsr_plot, from = node_size_interval_trans)
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
@@ -621,7 +621,7 @@ plot_taxonomy <- function(taxon_id, parent_id,
     data$tls_user <- sqrt(data$tree_area)
     data$tls_trans <- apply_trans("tls_user") 
   }
-  vlsr_plot <- infer_size_range(vertex_label_size_range, vsr_plot, defualt_scale = 0.8)
+  vlsr_plot <- infer_size_range(node_label_size_range, vsr_plot, defualt_scale = 0.8)
   elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.8)
   tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
   data$vls_plot <- rescale(data$vls_trans, to = vlsr_plot)
@@ -631,10 +631,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| #### Assign color scales ---------------------------------------------------------------------
   #|
   
-  color_colume_key <- list("ec_trans" = edge_color_range, "vc_trans" = vertex_color_range, 
-                           "tc_trans" = tree_color_range, "vlc_trans" = vertex_label_color_range,
+  color_colume_key <- list("ec_trans" = edge_color_range, "vc_trans" = node_color_range, 
+                           "tc_trans" = tree_color_range, "vlc_trans" = node_label_color_range,
                            "elc_trans" = edge_label_color_range, "tlc_trans" = tree_label_color_range)
-  color_interval_key <- list("ec_trans" = edge_color_interval_trans, "vc_trans" = vertex_color_interval_trans)
+  color_interval_key <- list("ec_trans" = edge_color_interval_trans, "vc_trans" = node_color_interval_trans)
   plot_value_names <- gsub(pattern = "_trans$", x = names(color_colume_key), replacement = "_plot")
   data[, plot_value_names] <- lapply(names(color_colume_key),
                                      function(x) apply_color_scale(data[ , x],
@@ -649,10 +649,10 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #| ### Secondary plot data ======================================================================
   #|
   #| #### Calculate coordinants of graph elements -------------------------------------------------
-  #| The vertexes and edges must be specified by a dataframe of coordinates, with a colume 
+  #| The nodes and edges must be specified by a dataframe of coordinates, with a colume 
   #| grouping the coordinates of each shape.
   #| These shapes must be added to the graph in a specific order.
-  #| A list of vertexes is sorted by first vertex depth in the heirarchy and then by vertex size.
+  #| A list of nodes is sorted by first node depth in the heirarchy and then by node size.
   taxon_elements <- function(tid) {
     circle_resolution <- 35
     edge_data <- line_coords(x1 = data[tid, 'vx_plot'],
@@ -662,13 +662,13 @@ plot_taxonomy <- function(taxon_id, parent_id,
                              width = data[tid, 'es_plot'] * 2)
     edge_data$group <- paste0(tid, "_edge")
     edge_data$color <- rep(data[tid, 'ec_plot'], each = 4)
-    vertex_data <- polygon_coords(n = circle_resolution,
+    node_data <- polygon_coords(n = circle_resolution,
                                   x = data[tid, 'vx_plot'],
                                   y = data[tid, 'vy_plot'],
                                   radius = data[tid, 'vs_plot'])
-    vertex_data$group <- paste0(tid, "_vertex")
-    vertex_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
-    output <- rbind(edge_data, vertex_data)
+    node_data$group <- paste0(tid, "_node")
+    node_data$color <- rep(data[tid, 'vc_plot'], each = circle_resolution + 1)
+    output <- rbind(edge_data, node_data)
     # output$tid_user <- tid
     return(output[stats::complete.cases(output),])
   }
@@ -679,8 +679,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
   #|
   #| #### Make text data ------------------------------------------------------------------
   #|
-  # Get vertex label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  data$vl_is_shown <- select_labels(data, vertex_label_max,
+  # Get node label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  data$vl_is_shown <- select_labels(data, node_label_max,
                                     sort_by_column = c("vls_plot", "vs_plot"),
                                     label_column = "vl_user")
   if (any(data$vl_is_shown)) {
@@ -755,36 +755,36 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                   justification = "center"))
   }
   #|
-  #| #### Make vertex legend -----------------------------------------------------------------------
+  #| #### Make node legend -----------------------------------------------------------------------
   #|
   if (make_legend) {
     legend_length <- square_side_length * 0.3 
     
   
-    y_in_legend_space <-  (!missing(vertex_size) & element_data$y <  min(element_data$y) + legend_length) | 
+    y_in_legend_space <-  (!missing(node_size) & element_data$y <  min(element_data$y) + legend_length) | 
       (!missing(edge_size) & element_data$y >  max(element_data$y) - legend_length)
     legend_min_x <- max(element_data$x[y_in_legend_space])  # The furthest left allowed by graph components
     legend_ideal_x <- max(element_data$x) - diff(range(data$vs_plot) * 2) # The ideal position of the legend
     
     # right_plot_boundry <- max(c(legend_min_x, legend_ideal_x))
     right_plot_boundry <- legend_min_x + diff(range(element_data$y)) * 0.1 # needs to be changed; hackish
-    vertex_legend <- make_plot_legend(x = right_plot_boundry,
+    node_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y), 
                                     length = legend_length, 
                                     width_range = range(data$vs_plot) * 2, 
                                     width_trans_range = range(data$vs_trans) * 2,
-                                    width_stat_range =  vertex_size_interval,
-                                    group_prefix = "vertex_legend",
-                                    width_stat_trans = transform_data(func = vertex_size_trans, inverse = TRUE),
-                                    color_range = vertex_color_range,
-                                    color_trans_range = vertex_color_interval_trans,
-                                    color_stat_range = vertex_color_interval, 
-                                    color_stat_trans =  transform_data(func = vertex_color_trans, inverse = TRUE),
-                                    title = "Vertices",
-                                    color_axis_label = vertex_color_axis_label,
-                                    size_axis_label = vertex_size_axis_label,
-                                    hide_size = missing(vertex_size),
-                                    hide_color = missing(vertex_color))
+                                    width_stat_range =  node_size_interval,
+                                    group_prefix = "node_legend",
+                                    width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
+                                    color_range = node_color_range,
+                                    color_trans_range = node_color_interval_trans,
+                                    color_stat_range = node_color_interval, 
+                                    color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
+                                    title = "Nodes",
+                                    color_axis_label = node_color_axis_label,
+                                    size_axis_label = node_size_axis_label,
+                                    hide_size = missing(node_size),
+                                    hide_color = missing(node_color))
   #|
   #| #### Make edge legend -----------------------------------------------------------------------
   #|
@@ -805,8 +805,8 @@ plot_taxonomy <- function(taxon_id, parent_id,
                                     size_axis_label = edge_size_axis_label,
                                     hide_size = missing(edge_size),
                                     hide_color = missing(edge_color))
-    element_data <- rbind(element_data, vertex_legend$shapes, edge_legend$shapes)
-    text_data <- rbind(text_data, vertex_legend$labels, edge_legend$labels)
+    element_data <- rbind(element_data, node_legend$shapes, edge_legend$shapes)
+    text_data <- rbind(text_data, node_legend$labels, edge_legend$labels)
   } else {
     legend_data <- NULL
   }
@@ -897,12 +897,12 @@ plot_taxonomy <- function(taxon_id, parent_id,
 }
 
 
-#' @param x An object of type \code{\link{classified}}
+#' @param x An object of type \code{\link{taxmap}}
 #' 
-#' @method plot classified
+#' @method plot taxmap
 #' @export
 #' @rdname plot_taxonomy
-plot.classified <- function(x, ...) {
+plot.taxmap <- function(x, ...) {
   # Non-standard argument evaluation
   data <- taxon_data(x, sort_by = classifications, 
                      col_subset = unique(c(taxon_data_cols_used(x, ...), "taxon_ids", "parent_ids")))
@@ -910,11 +910,11 @@ plot.classified <- function(x, ...) {
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
   # Use variable name for scale axis labels
-  if (! "vertex_color_axis_label" %in% names(arguments)) {
-    arguments$vertex_color_axis_label <- deparse(as.list(match.call())$vertex_color)
+  if (! "node_color_axis_label" %in% names(arguments)) {
+    arguments$node_color_axis_label <- deparse(as.list(match.call())$node_color)
   }
-  if (! "vertex_size_axis_label" %in% names(arguments)) {
-    arguments$vertex_size_axis_label <- deparse(as.list(match.call())$vertex_size)
+  if (! "node_size_axis_label" %in% names(arguments)) {
+    arguments$node_size_axis_label <- deparse(as.list(match.call())$node_size)
   }
   if (! "edge_color_axis_label" %in% names(arguments)) {
     arguments$edge_color_axis_label <- deparse(as.list(match.call())$edge_color)

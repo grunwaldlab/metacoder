@@ -45,7 +45,7 @@ The maximum number of lines to read from the file.}
 \item{...}{Passed to \code{\link{extract_taxonomy}}.}
 }
 \value{
-\code{\link{classified}}
+\code{\link{taxmap}}
 }
 \description{
 Parse taxonomic data in a tsv/csv file

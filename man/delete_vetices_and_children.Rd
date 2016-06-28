@@ -4,7 +4,7 @@
 \alias{delete_vetices_and_children}
 \title{delete_vetices_and_children}
 \usage{
-delete_vetices_and_children(graph, vertices)
+delete_vetices_and_children(graph, nodes)
 }
 \description{
 delete_vetices_and_children

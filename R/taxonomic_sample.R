@@ -3,7 +3,7 @@
 #' 
 #' Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
 #' 
-#' @param classified_data (An object of type \link{classified})
+#' @param taxmap_data (An object of type \link{taxmap})
 #' @param max_counts (\code{numeric}) A named vector that defines that maximum number of
 #' items in for each level specified. The names of the vector specifies that level each number
 #' applies to. If more than the maximum number of items exist for a given taxon, it is randomly
@@ -30,16 +30,16 @@
 #' returned rather than looking for items of subtaxa, stopping the recursion.
 #' @param ... Additional parameters are passed to all of the function options.
 #' 
-#' @return Returns an object of type \code{classified}
+#' @return Returns an object of type \code{taxmap}
 #' 
 #' @examples
 #' 
 #' \dontrun{
 #' #Plot data before subsampling
 #' plot(unite_ex_data_3,
-#'      vertex_size = item_count,
-#'      vertex_color = item_count,
-#'      vertex_label = item_count)
+#'      node_size = n_items,
+#'      node_color = n_items,
+#'      node_label = n_items)
 #'      
 #' # Subsampling
 #' subsampled <- taxonomic_sample(unite_ex_data_3,
@@ -47,25 +47,25 @@
 #'                                min_counts = c("7" = 3))
 #'      
 #' # Remove itemless taxa and plot
-#' plot(subset(subsampled, item_count > 0, itemless = FALSE),
-#'      vertex_size = item_count,
-#'      vertex_color = item_count,
-#'      vertex_label = item_count)
+#' plot(subset(subsampled, n_items > 0, itemless = FALSE),
+#'      node_size = n_items,
+#'      node_color = n_items,
+#'      node_label = n_items)
 #' }
 #' 
 #' @export
-taxonomic_sample <- function(classified_data,
+taxonomic_sample <- function(taxmap_data,
                              max_counts = c(), min_counts = c(), max_children = c(),
                              min_children = c(), item_filters = list(), subtaxa_filters = list(),
                              stop_conditions = list(), ...) {
   process_one_tree <- function(root_taxon) {
     # subset for just tree with root
-    # tree <- subset(classified_data, root_taxon)
-    # extract information from `classified` (This is a retrofit to use `classfied` objects)
-    taxon_ids <- classified_data$taxon_data$taxon_ids
-    parent_ids <- classified_data$taxon_data$parent_ids
-    item_ids <- classified_data$item_data$item_taxon_ids
-    ranks <- taxon_ranks(classified_data)
+    # tree <- subset(taxmap_data, root_taxon)
+    # extract information from `taxmap` (This is a retrofit to use `classfied` objects)
+    taxon_ids <- taxmap_data$taxon_data$taxon_ids
+    parent_ids <- taxmap_data$taxon_data$parent_ids
+    item_ids <- taxmap_data$item_data$item_taxon_ids
+    ranks <- taxon_levels(taxmap_data)
     # Define functions to interact with the taxonomic information ------------------------------------
     get_items_func <- function(id, ...) which(item_ids == id)
     get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(parent_ids) & parent_ids == id]
@@ -78,9 +78,9 @@ taxonomic_sample <- function(classified_data,
                      stop_conditions = stop_conditions)
   }
   
-  root_taxa <- classified_data$taxon_data$taxon_ids[is.na(classified_data$taxon_data$parent_ids)]
+  root_taxa <- taxmap_data$taxon_data$taxon_ids[is.na(taxmap_data$taxon_data$parent_ids)]
   item_indexes <- unlist(lapply(root_taxa, process_one_tree))
-  filter_items(classified_data, item = item_indexes)
+  filter_items(taxmap_data, item = item_indexes)
 }
 
 

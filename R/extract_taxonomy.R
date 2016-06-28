@@ -4,7 +4,7 @@
 #' Extracts the taxonomy from metadata (e.g. sequence headers) or parsed sequence data. 
 #' The location and identity of important information in the input is specified using a regular expression
 #' with capture groups and an corresponding key.
-#' An object of type \code{\link{classified}} is returned containing the specifed information.
+#' An object of type \code{\link{taxmap}} is returned containing the specifed information.
 #' Taxa are translated into unique codes if they are not already encoded this way.
 #' 
 #' @param input A vector from which to extract taxonomy information or an object of class
@@ -92,7 +92,7 @@
 #'  } 
 #' @param ... Not used.
 #'  
-#' @return Returns an object of type \code{classified}
+#' @return Returns an object of type \code{taxmap}
 #'
 #' @examples
 #' \dontrun{
@@ -196,7 +196,7 @@ extract_taxonomy.default <- function(input,
   my_print(level = "high", "Inferring taxonomic structure ---------------------")
   class_precedence <- c("taxon_id", "name")
   class_source <- class_precedence[class_precedence %in% class_key][1]
-  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `classified` object with no item data
+  taxonomy <- class_to_taxonomy(item_classifications, id_column = class_source, item_data = item_data) # returns an `taxmap` object with no item data
 
   # Remove redundant taxon names ------------------------------------------------------------------
   if (! redundant_names && "name" %in% colnames(taxonomy$taxon_data)) {
@@ -309,7 +309,7 @@ extract_taxonomy.list <- function(input, ...) {
 #' @param ...
 #' Passed to \code{\link{extract_taxonomy}}. 
 #' 
-#' @return \code{\link{classified}}
+#' @return \code{\link{taxmap}}
 #' 
 #' @export
 parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "item_info", header = TRUE, sep = "\t",  max_lines = NULL,

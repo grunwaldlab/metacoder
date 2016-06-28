@@ -4,7 +4,7 @@
 \name{rdp_ex_data}
 \alias{rdp_ex_data}
 \title{Example of RDP Archea data}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \source{
 \url{https://rdp.cme.msu.edu/}
 }

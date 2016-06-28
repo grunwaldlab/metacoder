@@ -1,10 +1,10 @@
 #' Filter taxa with a list of conditions
 #' 
-#' Filter taxa in a \code{\link{classified}} object with a list of conditions. Any column name that
+#' Filter taxa in a \code{\link{taxmap}} object with a list of conditions. Any column name that
 #' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{filter}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more filtering conditions. This can be one of three things: \describe{
 #'   \item{\code{character}}{One or more \code{taxon_id}s} \item{\code{integer}}{One or more indexes
 #'   of \code{taxon_data}} \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal
@@ -24,7 +24,7 @@
 #' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, children of removed taxa will
 #'   be reassigned to the closest supertaxon that passed the filter.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -107,11 +107,11 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
 
 #' Filter items with a list of conditions
 #' 
-#' Filter items in a \code{\link{classified}} object with a list of conditions. Any column name that
+#' Filter items in a \code{\link{taxmap}} object with a list of conditions. Any column name that
 #' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See 
 #' \code{\link[dplyr]{filter}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more filtering conditions. This can be one of two things: \describe{ 
 #'   \item{\code{integer}}{One or more indexes of \code{item_data}} \item{\code{logical}}{A 
 #'   \code{TRUE}/\code{FALSE} vector of length equal to the number of rows in \code{item_data}} } 
@@ -122,7 +122,7 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
 #'   Note that only taxa that are itemless due to this filtering will be removed; there might be 
 #'   other taxa without items to begin with that will not be removed.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -156,7 +156,7 @@ filter_items <- function(.data, ..., itemless = TRUE) {
   
   # Remove itemless taxa ---------------------------------------------------------------------------
   if (! itemless) {
-    taxa_to_remove <- 1:nrow(.data$taxon_data) %in% itemless_taxa & item_counts(.data) == 0
+    taxa_to_remove <- 1:nrow(.data$taxon_data) %in% itemless_taxa & n_items(.data) == 0
     .data$taxon_data <- .data$taxon_data[! taxa_to_remove, , drop = FALSE]
     .data$taxon_data[! .data$taxon_data$parent_ids %in% .data$taxon_data$taxon_ids, "parent_ids"] <- as.character(NA)
   }

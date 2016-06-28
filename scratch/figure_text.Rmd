@@ -23,12 +23,12 @@ data <- extract_taxonomy(sequences,
 ```{r}
 data %>%
   filter_taxa(name %in% c("Russula"), subtaxa = TRUE, supertaxa = TRUE, taxonless = FALSE, reassign_items = FALSE) %>%
-  filter_taxa(taxon_ranks <= 6, taxonless = FALSE) %>%
+  filter_taxa(taxon_levels <= 6, taxonless = FALSE) %>%
   filter_taxa(! grepl("[_0-9]+", name), taxonless = FALSE, reassign_items = FALSE) %>%
   arrange_taxa(c(p = 1, c = 2, o = 3, f = 4, g = 5, s = 6)[unite_rank])
-plot(vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
+plot(node_size = n_items,
+     node_color = n_items,
+     node_label = name,
      layout = "ka",
      make_legend = FALSE, 
      output_file = "figure_plot.pdf")

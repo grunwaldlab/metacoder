@@ -27,12 +27,12 @@ First, we will use a bar chart to display abundance of taxa at each rank:
 
 ```{r, echo = FALSE}
 data <- taxon_data(unite_ex_data_3)
-data$name <- factor(data$name, levels = unique(data$name[order(data$item_counts, decreasing = TRUE)]), ordered = TRUE)
+data$name <- factor(data$name, levels = unique(data$name[order(data$n_items, decreasing = TRUE)]), ordered = TRUE)
 data$unite_rank <- factor(data$unite_rank, levels = unique(data$unite_rank),
                     labels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"), 
                     ordered = TRUE)
 ggplot(data[!data$unite_rank  %in% c("Kingdom", "Species", "Genus"), ]) + 
-  geom_bar(aes(x = name, y = item_counts), stat = "identity") +
+  geom_bar(aes(x = name, y = n_items), stat = "identity") +
   facet_wrap(~ unite_rank, scales = "free") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
@@ -48,7 +48,7 @@ Pie charts are also commonly used for this purpose, but they are just a less eff
 
 ```{r, echo = FALSE}
 ggplot(data[data$unite_rank == "Phylum", ]) + 
-  geom_bar(aes(x = factor(1), y = item_counts, fill = name), stat = "identity") +
+  geom_bar(aes(x = factor(1), y = n_items, fill = name), stat = "identity") +
   coord_polar(theta = "y") +
   labs(x = "Taxon", y = "Abundance", title = "Abundance of taxa in a sample of the UNITE database") +
   theme_minimal() +  
@@ -64,9 +64,9 @@ ggplot(data[data$unite_rank == "Phylum", ]) +
 
 ```{r, echo=FALSE}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 In this example, both size and color are being used to represent the abundance of taxa.
@@ -75,7 +75,7 @@ Using this method, it is clear how child taxa are distributed within their paren
 
 ## Basic usage
 
-Although there are many options that can be used to make highly customized graphs, `plot_taxonomy` only needs one argument to function: an object of type `classified`.
+Although there are many options that can be used to make highly customized graphs, `plot_taxonomy` only needs one argument to function: an object of type `taxmap`.
 We can see the default appearance of the data used in the introduction using the code below:
 
 ```{r}
@@ -83,99 +83,99 @@ taxon_data(unite_ex_data_3)
 plot(unite_ex_data_3)
 ```
 
-Each vertex (i.e. circle) in the graph represents a taxon and each line represents its membership in a lower taxon. 
+Each node (i.e. circle) in the graph represents a taxon and each line represents its membership in a lower taxon. 
 
-### Vertex/Line size
+### Node/Line size
 
-The size of vertices and lines can be scaled to a number associated with each taxon using the `vertex_size` and `edge_size` parameters. 
-Below, the number of sequences for each taxon is used to determine vertex size.
+The size of nodes and lines can be scaled to a number associated with each taxon using the `node_size` and `edge_size` parameters. 
+Below, the number of sequences for each taxon is used to determine node size.
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts)
+     node_size = n_items)
 ```
 
-Note that it was not necessary to specify the absolute vertex size; the range of absolute vertex sizes is optimized for each graph so as to minimize overlap of vertices and maximize the ranges of sizes.
+Note that it was not necessary to specify the absolute node size; the range of absolute node sizes is optimized for each graph so as to minimize overlap of nodes and maximize the ranges of sizes.
 The argument `overlap_avoidance` is used to determine how much overlaps are avoided. 
-Higher values mean more importance is given to avoiding overlapping vertices than to maximizing the ranges of sizes.
-A high `overlap_avoidance` makes the connections between taxa more clear, but diminishes the visual effect of vertex size.
+Higher values mean more importance is given to avoiding overlapping nodes than to maximizing the ranges of sizes.
+A high `overlap_avoidance` makes the connections between taxa more clear, but diminishes the visual effect of node size.
 Too low of an `overlap_avoidance` can make the graph hard to read.
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
+     node_size = n_items,
      overlap_avoidance = 10)
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
+     node_size = n_items,
      overlap_avoidance = 0.1)
 ```
 
 
-### Vertex color
+### Node color
 
-The `vertex_color` argument works in a similar way to `vertex_size`.
+The `node_color` argument works in a similar way to `node_size`.
 Numeric values are translated to a range of colors.
 Below the abundance of samples for each taxon is used to determine color instead of size.
-The range of color used can be set using the `vertex_color_range` argument. 
+The range of color used can be set using the `node_color_range` argument. 
 This argument take a list of colors in the form of names, hex color codes, or integers. 
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts)
+     node_size = n_items,
+     node_color = n_items)
 
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_color_range = c("#FFFFFF", "darkorange3", "#4e567d", "gold"))
+     node_size = n_items,
+     node_color = n_items,
+     node_color_range = c("#FFFFFF", "darkorange3", "#4e567d", "gold"))
 ```
 
 ### Line color
 
-Like `vertex_size`, the color of lines can be set independently of vertices, although the default behavior is for the lines to have the same color as the vertices. 
-To only color vertices, you can set the lines to be a constant color or vise-versa.
+Like `node_size`, the color of lines can be set independently of nodes, although the default behavior is for the lines to have the same color as the nodes. 
+To only color nodes, you can set the lines to be a constant color or vise-versa.
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
+     node_size = n_items,
+     node_color = n_items,
      edge_color = "grey")
 
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = "grey",
-     edge_color = item_counts)
+     node_size = n_items,
+     node_color = "grey",
+     edge_color = n_items)
 ```
 
-You can also set the color palette used for the lines in the same way as you set it for the vertex using the argument `edge_color_range`. 
+You can also set the color palette used for the lines in the same way as you set it for the node using the argument `edge_color_range`. 
 
-### Vertex labels 
+### Node labels 
 
-Labels can be added to vertices using the `vertex_label` option:
+Labels can be added to nodes using the `node_label` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
-Label sizes are proportional to vertex size by default. 
+Label sizes are proportional to node size by default. 
 By default, only a maximum number of labels are printed to avoid excessive crowding. 
-The maximum number of labels that will be printed is controlled by the `vertex_label_max` option:
+The maximum number of labels that will be printed is controlled by the `node_label_max` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
-     vertex_label_max = 5)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
+     node_label_max = 5)
 
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
-     vertex_label_max = 200)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
+     node_label_max = 200)
 ```
 
 Note that the labels are a special kind that scales with the size of the graph. 
@@ -183,12 +183,12 @@ This means that the text size will always be proportional to the graph size rega
 
 ### Line labels 
 
-Lines can be labeled as well using the `edge_label` option, which works similarly to the `vertex_label` option:
+Lines can be labeled as well using the `edge_label` option, which works similarly to the `node_label` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
+     node_size = n_items,
+     node_color = n_items,
      edge_label = name)
 ```
 
@@ -200,8 +200,8 @@ Other background colors can be specified using the `background_color` option:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
+     node_size = n_items,
+     node_color = n_items,
      background_color = "grey")
 ```
 
@@ -210,15 +210,15 @@ Plots can be saved using `ggsave` from the `ggplot2` package or using the `outpu
 
 ```{r, eval = FALSE}
 my_plot <- plot(unite_ex_data_3,
-                vertex_size = item_counts,
-                vertex_color = item_counts)
+                node_size = n_items,
+                node_color = n_items)
 ggplot2::ggsave("path/to/my/output.png", my_plot, bg = "transparent")
 ```
 
 ```{r, eval = FALSE}
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
+     node_size = n_items,
+     node_color = n_items,
      output_file = "path/to/my/output.png")
 ```
 
@@ -248,9 +248,9 @@ The code below will use the included data set if the code above is not run (you 
 
 ```{r}
 plot(contaminants,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
      tree_label = name,
      layout = "fruchterman-reingold")
 ```

@@ -1,6 +1,6 @@
-#' Create an instance of \code{classified}
+#' Create an instance of \code{taxmap}
 #'
-#' Create an instance of \code{classified} containing items classified by a taxonomy.
+#' Create an instance of \code{taxmap} containing items taxmap by a taxonomy.
 #'
 #' @param taxon_ids (\code{character}) 
 #' These are unique identifiers for taxa.
@@ -24,20 +24,20 @@
 #' A table with rows pretaining to \code{item_taxa}
 #' @param taxon_funcs (\code{list} of named \code{function}s)
 #' These the values produced by these functions will be accessible as a column in \code{taxon_data}.
-#' The first parameter of each function should be a single \code{classified} object.
+#' The first parameter of each function should be a single \code{taxmap} object.
 #' @param item_funcs (\code{list} of named \code{function}s)
 #' These the values produced by these functions will be accessible as a column in \code{item_data}.
-#' The first parameter of each function should be a single \code{classified} object.
+#' The first parameter of each function should be a single \code{taxmap} object.
 #' 
-#' @return An object of type \code{classified}
+#' @return An object of type \code{taxmap}
 #'
 #' @export
-classified <- function(taxon_ids, parent_ids,
+taxmap <- function(taxon_ids, parent_ids,
                        taxa = taxon_ids,
                        item_taxon_ids = numeric(0),
                        taxon_data = NULL, item_data = NULL,
-                       taxon_funcs = list(item_counts = item_counts,
-                                          taxon_ranks = taxon_ranks,
+                       taxon_funcs = list(n_items = n_items,
+                                          taxon_levels = taxon_levels,
                                           classifications = classifications),
                        item_funcs = list()) {
   # Validate `taxon_ids` ---------------------------------------------------------------------------
@@ -121,14 +121,14 @@ classified <- function(taxon_ids, parent_ids,
                  item_data = item_data,
                  taxon_funcs = taxon_funcs,
                  item_funcs = item_funcs)
-  class(output) <- "classified"
+  class(output) <- "taxmap"
   return(output)
 }
 
 
-#' Print a \code{\link{classified}} object
+#' Print a \code{\link{taxmap}} object
 #' 
-#' Print a \code{\link{classified}} object
+#' Print a \code{\link{taxmap}} object
 #' 
 #' @param x
 #' object to print
@@ -137,7 +137,7 @@ classified <- function(taxon_ids, parent_ids,
 #' @param ... Not used
 #' 
 #' @export
-print.classified <- function(x, max_rows = 7, ...) {
+print.taxmap <- function(x, max_rows = 7, ...) {
   loadNamespace("dplyr") # used for print methods
   max_chars <- getOption("width") - 12
   
@@ -179,7 +179,7 @@ print.classified <- function(x, max_rows = 7, ...) {
    }
   
   
-  cat(paste0('`classified` object with data for ', nrow(x$taxon_data),
+  cat(paste0('`taxmap` object with data for ', nrow(x$taxon_data),
              ' taxa and ', nrow(x$item_data), ' items/observations:\n'))
   print_header("taxa")
   print_chars(names(x$taxa))
@@ -199,12 +199,12 @@ print.classified <- function(x, max_rows = 7, ...) {
 }
 
 
-#' Return taxon data from \code{\link{classified}}
+#' Return taxon data from \code{\link{taxmap}}
 #'
 #' Return a table of data associated with taxa of and object of type
-#' \code{\link{classified}}.
+#' \code{\link{taxmap}}.
 #'
-#' @param obj (\code{\link{classified}})
+#' @param obj (\code{\link{taxmap}})
 #' @param row_subset (\code{character})
 #' The taxon_ids of a subset of \code{obj}.
 #' Default: All rows.
@@ -212,7 +212,7 @@ print.classified <- function(x, max_rows = 7, ...) {
 #' The names of columns, either user defined or generated using \code{taxon_funcs}.
 #' Default: All columns.
 #' @param calculated_cols (\code{logical} of length 1)
-#' If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$taxon_funcs}.
+#' If \code{TRUE}, return calculated columns using  functions in \code{\link{taxmap}$taxon_funcs}.
 #' These values are calculated each time \code{taxon_data} is called since their values can change if 
 #' the data is subset.
 #' @param sort_by (\code{character} of length 1)
@@ -288,12 +288,12 @@ taxon_data <- function(obj,
 }
 
 
-#' Return item data from \code{\link{classified}}
+#' Return item data from \code{\link{taxmap}}
 #'
 #' Return a table of data associated with taxa of and object of type
-#' \code{\link{classified}}.
+#' \code{\link{taxmap}}.
 #'
-#' @param obj (\code{\link{classified}})
+#' @param obj (\code{\link{taxmap}})
 #' @param row_subset (\code{character})
 #' The item_ids of a subset of \code{obj}.
 #' Default: All rows.
@@ -301,7 +301,7 @@ taxon_data <- function(obj,
 #' The names of columns, either user defined or generated using \code{item_funcs}.
 #' Default: All columns.
 #' @param calculated_cols (\code{logical} of length 1)
-#' If \code{TRUE}, return calculated columns using  functions in \code{\link{classified}$item_funcs}.
+#' If \code{TRUE}, return calculated columns using  functions in \code{\link{taxmap}$item_funcs}.
 #' These values are calculated each time \code{item_data} is called since their values can change if 
 #' the data is subset.
 #' @param sort_by (\code{character} of length 1)

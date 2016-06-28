@@ -14,20 +14,20 @@ get_edge_children <- function(graph) {
 }
 
 
-#' get_vertex_children
+#' get_node_children
 #' 
 #' @keywords internal
-get_vertex_children <- function(graph, vertex) {
-  which(igraph::shortest.paths(graph, igraph::V(graph)[vertex], mode="out") != Inf)
+get_node_children <- function(graph, node) {
+  which(igraph::shortest.paths(graph, igraph::V(graph)[node], mode="out") != Inf)
 }
 
 
 #' delete_vetices_and_children
 #' 
 #' @keywords internal
-delete_vetices_and_children <- function(graph, vertices) {
-  vertices <- unlist(sapply(vertices, function(x) get_vertex_children(graph, x)))
-  graph <- igraph::delete.vertices(graph, vertices)
+delete_vetices_and_children <- function(graph, nodes) {
+  nodes <- unlist(sapply(nodes, function(x) get_node_children(graph, x)))
+  graph <- igraph::delete.nodes(graph, nodes)
   return(graph)
 }
 

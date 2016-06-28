@@ -60,8 +60,8 @@ Some will be explained in the examples below.
 
 ### Output
 
-An object of type `classified` is returned.
-See `?classified` for more details.
+An object of type `taxmap` is returned.
+See `?taxmap` for more details.
 
 ## Common usage examples
 
@@ -91,9 +91,9 @@ We can plot the result using `plot`:
 
 ```{r}
 plot(genbank_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 
@@ -128,9 +128,9 @@ head(item_data(unite_ex_data_1, "input"))
 
 ```{r}
 plot(unite_ex_data_1,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 #### Using included classification names to look up the taxon id
@@ -155,9 +155,9 @@ unite_ex_data_2 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_2,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 Note that the taxon name (entry 1) and the sequence id (entry 2) are now encoded as `"item_info"`, causing them to be interpreted as generic data.
@@ -184,9 +184,9 @@ unite_ex_data_3 <- extract_taxonomy(sequences,
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 ### ITS1 DB FASTA headers
@@ -212,9 +212,9 @@ head(item_data(its1_ex_data, "input"))
 
 ```{r}
 plot(its1_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
      layout = "fruchterman-reingold")
 ```
 
@@ -241,9 +241,9 @@ head(item_data(pr2_ex_data, "input"))
 
 ```{r}
 plot(pr2_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 ### RDP FASTA headers
@@ -273,9 +273,9 @@ Therefore, we can use a `class_regex` that matches two `;` to correctly parse th
 
 ```{r}
 plot(rdp_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
      layout = "fruchterman-reingold")
 ```
 
@@ -300,9 +300,9 @@ taxon_data(silva_ex_data)
 
 ```{r}
 plot(silva_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name,
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name,
      tree_label = name)
 ```
 

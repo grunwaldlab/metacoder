@@ -4,7 +4,7 @@
 \name{bryophytes_ex_data}
 \alias{bryophytes_ex_data}
 \title{Example dataset of bryophytes}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \usage{
 bryophytes_ex_data
 }

@@ -4,12 +4,12 @@
 \alias{taxonomic_sample}
 \title{Recursivly sample a set of taxonomic assignments}
 \usage{
-taxonomic_sample(classified_data, max_counts = c(), min_counts = c(),
+taxonomic_sample(taxmap_data, max_counts = c(), min_counts = c(),
   max_children = c(), min_children = c(), item_filters = list(),
   subtaxa_filters = list(), stop_conditions = list(), ...)
 }
 \arguments{
-\item{classified_data}{(An object of type \link{classified})}
+\item{taxmap_data}{(An object of type \link{taxmap})}
 
 \item{max_counts}{(\code{numeric}) A named vector that defines that maximum number of
 items in for each level specified. The names of the vector specifies that level each number
@@ -45,7 +45,7 @@ returned rather than looking for items of subtaxa, stopping the recursion.}
 \item{...}{Additional parameters are passed to all of the function options.}
 }
 \value{
-Returns an object of type \code{classified}
+Returns an object of type \code{taxmap}
 }
 \description{
 Recursivly sample a set of items with taxonomic assignments and an associated taxonomy.
@@ -55,9 +55,9 @@ Recursivly sample a set of items with taxonomic assignments and an associated ta
 \dontrun{
 #Plot data before subsampling
 plot(unite_ex_data_3,
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = item_count)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = n_items)
      
 # Subsampling
 subsampled <- taxonomic_sample(unite_ex_data_3,
@@ -65,10 +65,10 @@ subsampled <- taxonomic_sample(unite_ex_data_3,
                                min_counts = c("7" = 3))
      
 # Remove itemless taxa and plot
-plot(subset(subsampled, item_count > 0, itemless = FALSE),
-     vertex_size = item_count,
-     vertex_color = item_count,
-     vertex_label = item_count)
+plot(subset(subsampled, n_items > 0, itemless = FALSE),
+     node_size = n_items,
+     node_color = n_items,
+     node_label = n_items)
 }
 
 }

@@ -54,7 +54,7 @@
 #' \strong{Plotting taxonomic distribution of data:}
 #' 
 #' \itemize{
-#'   \item \code{\link{plot.classified}}
+#'   \item \code{\link{plot.taxmap}}
 #' }
 #'
 #' \strong{In silico PCR:}

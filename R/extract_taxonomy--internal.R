@@ -152,7 +152,7 @@ count_capture_groups <- function(regex) {
 #' @param item_data (\code{data.frame}) 
 #' Data associated with the \code{classifications}.
 #' 
-#' @return An object of type \code{classified}
+#' @return An object of type \code{taxmap}
 #' 
 #' @keywords internal
 class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
@@ -198,7 +198,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
   row.names(taxonomy) <- NULL
   item_index <- data$item_data[order(as.numeric(names(data$item_data)))]
   
-  # Format the output into a classified object
+  # Format the output into a taxmap object
   if (is.null(taxonomy))  {
     taxon_id <- character(0)
     parent_id <- integer(0)
@@ -208,7 +208,7 @@ class_to_taxonomy <- function(classifications, id_column, item_data = NULL) {
     parent_id <- taxonomy$my_parent_
     item_id <- unname(item_index)
   }
-  classified(taxon_ids = taxon_id,
+  taxmap(taxon_ids = taxon_id,
              parent_ids = parent_id,
              item_taxon_ids = item_id,
              taxon_data = taxonomy[ , ! colnames(taxonomy) %in% c("my_parent_"), drop = FALSE],

@@ -1,14 +1,14 @@
-#' Add columns to \code{\link{classified}} objects
+#' Add columns to \code{\link{taxmap}} objects
 #' 
-#' Add columns to the \code{taxon_data} in \code{\link{classified}} objects. Any column name that
+#' Add columns to the \code{taxon_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{mutate}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to add to the new object. Newly created columns can be
 #'   referenced in the same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -23,17 +23,17 @@ mutate_taxa <- function(.data, ...) {
 
 
 
-#' Add columns to \code{\link{classified}} objects
+#' Add columns to \code{\link{taxmap}} objects
 #' 
-#' Add columns to the \code{item_data} in \code{\link{classified}} objects. Any column name that
+#' Add columns to the \code{item_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{mutate}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to add to the new object. Newly created columns can be
 #'   referenced in the same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -47,17 +47,17 @@ mutate_items <- function(.data, ...) {
 } 
 
 
-#' Replace columns in \code{\link{classified}} objects
+#' Replace columns in \code{\link{taxmap}} objects
 #' 
-#' Replace columns of \code{taxon_data} in \code{\link{classified}} objects. Any column name that
+#' Replace columns of \code{taxon_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{transmute}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to add to the new object. Newly created columns can be
 #'   referenced in the same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -72,17 +72,17 @@ transmute_taxa <- function(.data, ...) {
 } 
 
 
-#' Replace columns in \code{\link{classified}} objects
+#' Replace columns in \code{\link{taxmap}} objects
 #' 
-#' Replace columns of \code{item_data} in \code{\link{classified}} objects. Any column name that
+#' Replace columns of \code{item_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
 #' \code{\link[dplyr]{transmute}} for inspiration and more information.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to add to the new object. Newly created columns can be
 #'   referenced in the same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   

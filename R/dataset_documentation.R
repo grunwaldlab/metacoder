@@ -16,7 +16,7 @@
 #'                                     database = "ncbi")
 #' }
 #' 
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://www.ncbi.nlm.nih.gov/nuccore}
 "genbank_ex_data"
 
@@ -51,7 +51,7 @@
 #' contaminants <- extract_taxonomy(ids, key = "item_id", database = "ncbi")
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 "contaminants"
 
 
@@ -69,7 +69,7 @@
 #'                                             other_id = "item_info", tax_string = "item_info"))
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}
 "unite_ex_data_1"
 
@@ -88,7 +88,7 @@
 #'                                             other_id = "item_info", "class_name"))
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}
 "unite_ex_data_2"
 
@@ -110,7 +110,7 @@
 #'                                     class_sep = ";")
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}
 "unite_ex_data_3"
 
@@ -131,7 +131,7 @@
 #'                                 database = "none")
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://5.196.17.195/pr2/index.html}
 "pr2_ex_data"
 
@@ -153,7 +153,7 @@
 #'                                 database = "none")
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://rdp.cme.msu.edu/}
 "rdp_ex_data"
 
@@ -172,7 +172,7 @@
 #'                                          "taxon_id", description = "item_info"))
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://itsonedb.ba.itb.cnr.it:8080/ITS1}
 "its1_ex_data"
 
@@ -194,5 +194,5 @@
 #' bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name", database = "itis")
 #' }
 #'
-#' @format An object of type \code{\link{classified}}
+#' @format An object of type \code{\link{taxmap}}
 "bryophytes_ex_data"

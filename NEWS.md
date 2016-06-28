@@ -4,8 +4,8 @@
 
 ### New features
 
-* dplyr functions for `classified` objects!
-* Added a `print` method for `classified` objects
+* dplyr functions for `taxmap` objects!
+* Added a `print` method for `taxmap` objects
 * new SILVA example dataset
 * `extract_taxonomy` works on `SeqFastadna` class from `seqinr`
 * `parse_mothur_summary` function: parses the mothur summary table

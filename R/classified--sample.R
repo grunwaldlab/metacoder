@@ -1,10 +1,10 @@
-#' Sample n items from \code{\link{classified}}
+#' Sample n items from \code{\link{taxmap}}
 #' 
-#' Randomly sample some number of items from a \code{\link{classified}} object. Weights can be 
-#' specified for items or the taxa they are classified by.
+#' Randomly sample some number of items from a \code{\link{taxmap}} object. Weights can be 
+#' specified for items or the taxa they are taxmap by.
 #' See \link[dplyr]{sample_n} for the inspiration for this function.
 #' 
-#' @param .data (\code{\link{classified}}) The object to sample from.
+#' @param .data (\code{\link{taxmap}}) The object to sample from.
 #' @param size (\code{numeric} of length 1) The number of items to sample.
 #' @param replace (\code{logical} of length 1) If \code{TRUE}, sample with replacement.
 #' @param taxon_weight (\code{numeric}) Non-negative sampling weights of each taxon. If 
@@ -28,7 +28,7 @@
 #'   vector and return a single number.
 #' @param ... Additional options are passed to \code{\link{filter_items}}.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -67,16 +67,16 @@ sample_n_items <- function(.data, size, replace = FALSE, taxon_weight = NULL, it
   filter_items(.data, sampled_rows, ...)
 }
 
-#' Sample a proportion of items from \code{\link{classified}}
+#' Sample a proportion of items from \code{\link{taxmap}}
 #' 
-#' Randomly sample some propoortion of items from a \code{\link{classified}} object. Weights can be 
-#' specified for items or the taxa they are classified by.
+#' Randomly sample some propoortion of items from a \code{\link{taxmap}} object. Weights can be 
+#' specified for items or the taxa they are taxmap by.
 #' See \link[dplyr]{sample_frac} for the inspiration for this function.
 #' 
 #' @inheritParams sample_n_items
 #' @param size (\code{numeric} of length 1) The proportion of items to sample.
 #' 
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -89,13 +89,13 @@ sample_frac_items <- function(.data, size = 1, replace = FALSE, taxon_weight = N
 }
 
 
-#' Sample n taxa from \code{\link{classified}}
+#' Sample n taxa from \code{\link{taxmap}}
 #' 
-#' Randomly sample some number of taxa from a \code{\link{classified}} object. Weights can be 
+#' Randomly sample some number of taxa from a \code{\link{taxmap}} object. Weights can be 
 #' specified for taxa or the items assigned to them.
 #' See \link[dplyr]{sample_n} for the inspiration for this function.
 #' 
-#' @param .data (\code{\link{classified}}) The object to sample from.
+#' @param .data (\code{\link{taxmap}}) The object to sample from.
 #' @param size (\code{numeric} of length 1) The number of taxa to sample.
 #' @param taxon_weight (\code{numeric}) Non-negative sampling weights of each taxon. The expression 
 #'   given is evaluated in the context of \code{\link{taxon_data}}. In other words, any column name 
@@ -118,7 +118,7 @@ sample_frac_items <- function(.data, size = 1, replace = FALSE, taxon_weight = N
 #'   vector and return a single number.
 #' @param ... Additional options are passed to \code{\link{filter_taxa}}.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -155,16 +155,16 @@ sample_n_taxa <- function(.data, size, taxon_weight = NULL, item_weight = NULL,
 }
 
 
-#' Sample a proportion of taxa from \code{\link{classified}}
+#' Sample a proportion of taxa from \code{\link{taxmap}}
 #' 
-#' Randomly sample some propoortion of taxa from a \code{\link{classified}} object. Weights can be 
+#' Randomly sample some propoortion of taxa from a \code{\link{taxmap}} object. Weights can be 
 #' specified for taxa or the items assigned to them. See \link[dplyr]{sample_frac} for the
 #' inspiration for this function.
 #' 
 #' @inheritParams sample_n_taxa
 #' @param size (\code{numeric} of length 1) The proportion of taxa to sample.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   

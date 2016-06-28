@@ -42,9 +42,9 @@ The overrepresentation of Agaricales is likely a bigger problem.
 
 ```{r all_data}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 To try to reduce the Agaricales overrepresentation, we will sub-sample any order with greater than 20 sequences to 20 sequences.
@@ -65,21 +65,21 @@ We can now view the difference between the original and sub-sampled data sets us
 
 ```{r}
 plot(subsampled,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
-     edge_label = ifelse(taxon_ranks == 4, name, NA))
+     node_size = n_items,
+     node_color = n_items,
+     node_label = ifelse(taxon_levels %in% c(7, 4), n_items, NA),
+     edge_label = ifelse(taxon_levels == 4, name, NA))
 ```
 
 Note how the taxonomy information for taxa with no items is preserved. 
 This can be removed using `subset`:
 
 ```{r}
-filter_taxa(subsampled, item_counts > 0, subtaxa = FALSE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = ifelse(taxon_ranks %in% c(7, 4), item_counts, NA),
-       edge_label = ifelse(taxon_ranks == 4, name, NA))
+filter_taxa(subsampled, n_items > 0, subtaxa = FALSE) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = ifelse(taxon_levels %in% c(7, 4), n_items, NA),
+       edge_label = ifelse(taxon_levels == 4, name, NA))
 ```
 
 
@@ -88,11 +88,11 @@ filter_taxa(subsampled, item_counts > 0, subtaxa = FALSE) %>%
 If you want to have the random sample be a specified number of items or want more control over how often different items or taxa get sampled, you can use `sample_n_items` and `sample_n_taxa`.
 
 ```{r}
-sample_n_items(unite_ex_data_3, size = 100, taxon_weight = 1 / item_counts)
+sample_n_items(unite_ex_data_3, size = 100, taxon_weight = 1 / n_items)
 ```
 
 These functions also support sampling with repacement: 
 
 ```{r}
-sample_n_items(unite_ex_data_3, size = 10000, taxon_weight = 1 / item_counts, replace = TRUE)
+sample_n_items(unite_ex_data_3, size = 10000, taxon_weight = 1 / n_items, replace = TRUE)
 ```

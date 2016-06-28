@@ -1,14 +1,14 @@
-#' Sort columns of \code{\link{classified}} objects
+#' Sort columns of \code{\link{taxmap}} objects
 #' 
-#' Sort columns of \code{taxon_data} in \code{\link{classified}} objects. Any column name that
+#' Sort columns of \code{taxon_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
 #' \link[dplyr]{arrange} for more details.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to sort on. Newly created columns can be referenced in the
 #'   same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
@@ -22,17 +22,17 @@ arrange_taxa <- function(.data, ...) {
 } 
 
 
-#' Sort columns of \code{\link{classified}} objects
+#' Sort columns of \code{\link{taxmap}} objects
 #' 
-#' Sort columns of \code{item_data} in \code{\link{classified}} objects. Any column name that
+#' Sort columns of \code{item_data} in \code{\link{taxmap}} objects. Any column name that
 #' appears in \code{item_data(.data)} can be used as if it was a vector on its own. See
 #' \link[dplyr]{arrange} for more details.
 #' 
-#' @param .data \code{\link{classified}}
+#' @param .data \code{\link{taxmap}}
 #' @param ... One or more column names to sort on. Newly created columns can be referenced in the
 #'   same function call.
 #'   
-#' @return An object of type \code{\link{classified}}
+#' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   

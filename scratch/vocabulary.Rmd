@@ -2,7 +2,7 @@
 
 
 ```{r}
-obj <- classified(taxon_ids = LETTERS[1:18],
+obj <- taxmap(taxon_ids = LETTERS[1:18],
                   parent_ids = c(NA, "A", "A", "A", "B", "B", "C", "C", "D", "F", "F", "K", 
 "J", "J", "H", "H", "I", "G"))
 
@@ -14,15 +14,15 @@ plot_one <- function(obj, subset, highlight, title = deparse(match.call()[[3]]))
   vc[ids %in% subset[[1]]] <- "lightblue"
   obj$taxon_data$my_vc <- vc
   
-  plot(obj, vertex_label = taxon_ids,
-     vertex_color = my_vc, 
+  plot(obj, node_label = taxon_ids,
+     node_color = my_vc, 
      make_legend = FALSE,
      edge_color = "#EEEEEE",
-     vertex_size = 1 / taxon_ranks,
-     vertex_size_range = c(0.06, NA),
+     node_size = 1 / taxon_levels,
+     node_size_range = c(0.06, NA),
      title = title,
      title_size = 0.05, 
-     vertex_color_range = c("#555555", "#EEEEEE"))
+     node_color_range = c("#555555", "#EEEEEE"))
 }
 
 

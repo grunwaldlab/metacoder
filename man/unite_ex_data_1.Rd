@@ -4,7 +4,7 @@
 \name{unite_ex_data_1}
 \alias{unite_ex_data_1}
 \title{Example of UNITE fungal ITS data}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \source{
 \url{https://unite.ut.ee/}
 }

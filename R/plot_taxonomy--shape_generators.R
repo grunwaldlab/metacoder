@@ -7,7 +7,7 @@
 #' Inspired by (i.e. stolen from) https://gist.github.com/baptiste/2224724, which was
 #' itself inspired from a post by William Dunlap on r-help (10/09/09)
 #' 
-#' @param n (\code{numeric} of length 1) The number of vertices in the polygon.
+#' @param n (\code{numeric} of length 1) The number of nodes in the polygon.
 #' @param x (\code{numeric} of length 1) x coordinate of center
 #' @param y (\code{numeric} of length 1) y coordinate of center
 #' @param radius (\code{numeric} of length 1) The diameter of the circle.

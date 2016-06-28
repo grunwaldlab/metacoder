@@ -1,9 +1,9 @@
 #' Get all supertaxa of a taxon
 #' 
 #' Return the taxon IDs or \code{taxon_data} indexes of all supertaxa (i.e. all taxa the target taxa
-#' are a part of) in an object of type \code{classified}.
+#' are a part of) in an object of type \code{taxmap}.
 #' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be 
+#' @param obj (\code{taxmap}) The \code{taxmap} object containing taxon information to be 
 #'   queried.
 #' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
 #'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
@@ -24,7 +24,7 @@
 #' \dontrun{
 #' supertaxa(contaminants, subset = 1:10)}
 #'   
-#' @family classified taxonomy functions
+#' @family taxmap taxonomy functions
 #'   
 #' @export
 supertaxa <- function(obj, subset = NULL, recursive = TRUE,
@@ -75,10 +75,10 @@ supertaxa <- function(obj, subset = NULL, recursive = TRUE,
 
 #' Get root taxa
 #' 
-#' Return the root taxa for a \code{\link{classified}} object. Can also be used to get the roots of
+#' Return the root taxa for a \code{\link{taxmap}} object. Can also be used to get the roots of
 #' a subset of taxa.
 #' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be
+#' @param obj (\code{taxmap}) The \code{taxmap} object containing taxon information to be
 #'   queried.
 #' @param subset (\code{character}) Taxon IDs for which supertaxa will be returned. Default: All
 #'   taxon in \code{obj} will be used.
@@ -87,7 +87,7 @@ supertaxa <- function(obj, subset = NULL, recursive = TRUE,
 #'   
 #' @return \code{character}
 #'   
-#' @family classified taxonomy functions
+#' @family taxmap taxonomy functions
 #'   
 #' @export
 roots <- function(obj, subset = NULL, index = FALSE) {
@@ -115,9 +115,9 @@ roots <- function(obj, subset = NULL, index = FALSE) {
 
 #' Get all subtaxa of a taxon
 #' 
-#' Return the taxon IDs or \code{taxon_data} indexes of all subtaxa in an object of type \code{classified}
+#' Return the taxon IDs or \code{taxon_data} indexes of all subtaxa in an object of type \code{taxmap}
 #' 
-#' @param obj (\code{classified}) The \code{classified} object containing taxon information to be
+#' @param obj (\code{taxmap}) The \code{taxmap} object containing taxon information to be
 #'   queried.
 #' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
 #'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
@@ -137,7 +137,7 @@ roots <- function(obj, subset = NULL, index = FALSE) {
 #' \dontrun{
 #' subtaxa(contaminants, subset = 1:10)}
 #' 
-#' @family classified taxonomy functions
+#' @family taxmap taxonomy functions
 #' 
 #' @export
 subtaxa <- function(obj, subset = NULL, recursive = TRUE,
@@ -196,11 +196,11 @@ subtaxa <- function(obj, subset = NULL, recursive = TRUE,
 
 #' Get items associated with taxa
 #'
-#' Given one or more taxa IDs and a \code{\link{classified}} object, return the item indexes
+#' Given one or more taxa IDs and a \code{\link{taxmap}} object, return the item indexes
 #' (e.g. sequence information) associated with each taxon.
 #'
-#' @param obj (\code{classified})
-#' The \code{classified} object containing taxon information to be queried.
+#' @param obj (\code{taxmap})
+#' The \code{taxmap} object containing taxon information to be queried.
 #' @param subset (\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
 #'   supertaxa will be returned. Default: All taxa in \code{obj} will be used.
 #' @param recursive (\code{logical})
@@ -213,7 +213,7 @@ subtaxa <- function(obj, subset = NULL, recursive = TRUE,
 #'   corresponding to the \code{target} argument. If \code{simplify = TRUE}, then the item indexes
 #'   for all \code{target} taxa are returned in a single vector.
 #'
-#' @family classified taxonomy functions
+#' @family taxmap taxonomy functions
 #'
 #' @export
 items <- function(obj, subset = NULL, recursive = TRUE, simplify = FALSE) {

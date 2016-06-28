@@ -1,12 +1,12 @@
-#| ## Testing column subset for `classified` objects
+#| ## Testing column subset for `taxmap` objects
 #|
 library(metacoder)
-context("Subsetting columns of `classified` objects")
+context("Subsetting columns of `taxmap` objects")
 #|
 #| ### Select `taxon_data` columns
 #|
 #| ####  Code shared by tests
-obj <- classified(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
+obj <- taxmap(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1), 
                   item_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
                   taxon_data = data.frame(name = letters[1:5],
                                           other_col = 1:5,
@@ -20,7 +20,7 @@ obj <- classified(taxon_ids = LETTERS[1:5], parent_ids = c(NA, 1, 2, 2, 1),
 #| ####  Selecting taxon_data with unquoted column names
 test_that("Selecting taxon_data with unquoted column names works", {
   result <- select_taxa(obj, name)
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
   expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
 })
@@ -28,7 +28,7 @@ test_that("Selecting taxon_data with unquoted column names works", {
 #| ####  Selecting taxon_data using dplyr functions
 test_that("Selecting taxon_data with dplyr functions works", {
   result <- select_taxa(obj, matches("name"))
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
   expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
 })
@@ -36,7 +36,7 @@ test_that("Selecting taxon_data with dplyr functions works", {
 #| ####  Selecting taxon_data with index
 test_that("Selecting taxon_data with index works", {
   result <- select_taxa(obj, which("name" == colnames(obj$taxon_data)))
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_col" %in% colnames(result$taxon_data))
   expect_true(all(c("name", "taxon_ids", "parent_ids") %in% colnames(result$taxon_data)))
 })
@@ -45,7 +45,7 @@ test_that("Selecting taxon_data with index works", {
 test_that("Selecting taxon_data with multiple types works", {
   result <- select_taxa(obj, which("name" == colnames(obj$taxon_data)),
                         other_col, 2)
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("yet_another" %in% colnames(result$taxon_data))
   expect_true(all(c("name", "taxon_ids", "parent_ids", "other_col") %in% colnames(result$taxon_data)))
 })
@@ -57,7 +57,7 @@ test_that("Selecting taxon_data with multiple types works", {
 #| ####  Selecting item_data with unquoted column names
 test_that("Selecting item_data with unquoted column names works", {
   result <- select_items(obj, item_attr)
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_item_col" %in% colnames(result$item_data))
   expect_true(all(c("item_attr", "item_taxon_ids") %in% colnames(result$item_data)))
 })
@@ -65,7 +65,7 @@ test_that("Selecting item_data with unquoted column names works", {
 #| ####  Selecting item_data with  dplyr functions
 test_that("Selecting item_data with  dplyr functionsworks", {
   result <- select_items(obj, matches("item_attr"))
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_item_col" %in% colnames(result$item_data))
   expect_true(all(c("item_attr", "item_taxon_ids") %in% colnames(result$item_data)))
 })
@@ -73,7 +73,7 @@ test_that("Selecting item_data with  dplyr functionsworks", {
 #| ####  Selecting item_data with index
 test_that("Selecting item_data with index works", {
   result <- select_items(obj, which("item_attr" == colnames(obj$item_data)))
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("other_item_col" %in% colnames(result$item_data))
   expect_true(all(c("item_attr", "item_taxon_ids") %in% colnames(result$item_data)))
 })
@@ -82,7 +82,7 @@ test_that("Selecting item_data with index works", {
 test_that("Selecting item_data with multiple types works", {
   result <- select_items(obj, which("item_attr" == colnames(obj$item_data)),
                         other_item_col)
-  expect_s3_class(result, "classified")
+  expect_s3_class(result, "taxmap")
   expect_false("another_item_col" %in% colnames(result$item_data))
   expect_true(all(c("item_attr", "item_taxon_ids", "other_item_col") %in% colnames(result$item_data)))
 })

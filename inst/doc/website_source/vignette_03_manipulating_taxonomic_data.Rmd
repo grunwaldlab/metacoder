@@ -34,22 +34,22 @@ Often, there are many shared ranks in the taxonomic hierarchy that can prevent e
 
 ```{r}
 plot(genbank_ex_data,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
 ```
 
 `filter_taxa` can easily remove these taxa by filtering by rank or selecting the root taxon by name:
 
 ```{r}
-filter_taxa(genbank_ex_data, taxon_ranks > 5) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+filter_taxa(genbank_ex_data, taxon_levels > 5) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 filter_taxa(genbank_ex_data, name == "Basidiomycota", subtaxa = TRUE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -59,22 +59,22 @@ You can also remove subtaxa by filtering with a specified level/rank:
 
 ```{r}
 plot(unite_ex_data_3,
-     vertex_size = item_counts,
-     vertex_color = item_counts,
-     vertex_label = name)
-filter_taxa(unite_ex_data_3, taxon_ranks <= 4) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+     node_size = n_items,
+     node_color = n_items,
+     node_label = name)
+filter_taxa(unite_ex_data_3, taxon_levels <= 4) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 Or we can filter by the number of items assigned to each taxon:
 
 ```{r}
-filter_taxa(unite_ex_data_3, item_counts >= 3) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name,
+filter_taxa(unite_ex_data_3, n_items >= 3) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name,
        tree_label = name)
 ```
 
@@ -83,10 +83,10 @@ Note that items assigned to removed subtaxa are reassigned to the closest parent
 You can prevent this by setting the `reassign_items` option to `FALSE`, but when most items are assigned to tip taxa, this is rarely useful:
 
 ```{r}
-filter_taxa(unite_ex_data_3, taxon_ranks < 5, reassign_items = FALSE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+filter_taxa(unite_ex_data_3, taxon_levels < 5, reassign_items = FALSE) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -96,9 +96,9 @@ You can also remove internal taxa:
 
 ```{r}
 filter_taxa(unite_ex_data_3, unite_rank != "c") %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 Note that the above result has no fungal classes anymore (taxa with names ending in "mycetes").
@@ -107,9 +107,9 @@ Although it usually does not make much sense to not reassign taxa, it is possibl
 
 ```{r}
 filter_taxa(unite_ex_data_3, unite_rank != "c", reassign_taxa = FALSE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -120,18 +120,18 @@ The code below removes all taxa with `sequence_id`s that do not start with "A".
 
 ```{r}
 filter_items(unite_ex_data_3, grepl("^A",  sequence_id)) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 You can remove any taxa that are made itemless by the filtering using the `itemless` option: 
 
 ```{r}
 filter_items(unite_ex_data_3, grepl("^A",  sequence_id), itemless = FALSE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -147,9 +147,9 @@ Sampling items is useful for making a subset of a large data set (not that the e
 
 ```{r}
 sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 Weights can be assigned to items to determine how likely each is to be sampled:
@@ -157,19 +157,19 @@ Weights can be assigned to items to determine how likely each is to be sampled:
 ```{r}
 sample_n_items(unite_ex_data_3, size = 50, itemless = FALSE,
                item_weight = ifelse(grepl("Agaricales", seq_name), 100, 1)) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 You can also assign weights to items based on the taxon they are assigned to: 
 
 ```{r}
 sample_n_items(unite_ex_data_3, size = 100, itemless = FALSE, 
-               taxon_weight = 1 / item_counts) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+               taxon_weight = 1 / n_items) %>%
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -182,9 +182,9 @@ The code below randomly selects 5 taxa of rank "class":
 set.seed(1)
 sample_n_taxa(unite_ex_data_3, size = 5, subtaxa = TRUE, 
                taxon_weight = ifelse(unite_rank == "c", 1, 0)) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name, tree_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name, tree_label = name)
 ```
 
 When randomly subsetting taxa, pay special attention to the options of `filter_taxa` since excluding them can have a drastic effect:
@@ -192,9 +192,9 @@ When randomly subsetting taxa, pay special attention to the options of `filter_t
 ```{r}
 set.seed(1)
 sample_n_taxa(unite_ex_data_3, size = 100) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 #### Sampling a fraction of the total
@@ -204,9 +204,9 @@ sample_n_taxa(unite_ex_data_3, size = 100) %>%
 ```{r}
 set.seed(1)
 sample_frac_items(unite_ex_data_3, size = 0.1) %>%
-  plot(vertex_size = item_counts,
-       vertex_color = item_counts,
-       vertex_label = name)
+  plot(node_size = n_items,
+       node_color = n_items,
+       node_label = name)
 ```
 
 
@@ -261,7 +261,7 @@ transmute_taxa(unite_ex_data_3,
 
 ### Reordering rows: `arrange_taxa` and `arrange_items`
 
-The way `classified` objects are defined, the order of all of the components do not matter.
+The way `taxmap` objects are defined, the order of all of the components do not matter.
 This means its easy to reorder them to fit your needs:
 
 ```{r}

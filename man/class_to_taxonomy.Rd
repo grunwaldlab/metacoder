@@ -20,7 +20,7 @@ be used to infer the taxonomic tree structure.}
 Data associated with the \code{classifications}.}
 }
 \value{
-An object of type \code{classified}
+An object of type \code{taxmap}
 }
 \description{
 Convert a list of classifications to a taxonomic tree structure.

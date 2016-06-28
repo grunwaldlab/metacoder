@@ -4,7 +4,7 @@
 \name{genbank_ex_data}
 \alias{genbank_ex_data}
 \title{Fungal ITS Genbank refseq}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \source{
 \url{http://www.ncbi.nlm.nih.gov/nuccore}
 }

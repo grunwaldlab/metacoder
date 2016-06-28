@@ -9,7 +9,7 @@
 #' @param min_abundance (\code{numeric} of length 1) Do not return rows less abundance. This can make the output object much smaller. 
 #' @param max_otus (\code{numeric} of length 1) Only parse some number of OTUs. Useful for making small datasets for testing.
 #' 
-#' @return A \code{\link{classified}} object
+#' @return A \code{\link{taxmap}} object
 #' 
 #' @export
 parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus = -1) {

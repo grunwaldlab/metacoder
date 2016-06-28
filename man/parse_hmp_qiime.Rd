@@ -16,7 +16,7 @@ parse_hmp_qiime(otu_file, mapping_file, min_abundance = 1, max_otus = -1)
 \item{max_otus}{(\code{numeric} of length 1) Only parse some number of OTUs. Useful for making small datasets for testing.}
 }
 \value{
-A \code{\link{classified}} object
+A \code{\link{taxmap}} object
 }
 \description{
 NOTE: Not extensivley tested

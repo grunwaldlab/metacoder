@@ -4,7 +4,7 @@
 \name{contaminants}
 \alias{contaminants}
 \title{Example dataset of comtamination}
-\format{An object of type \code{\link{classified}}}
+\format{An object of type \code{\link{taxmap}}}
 \usage{
 contaminants
 }

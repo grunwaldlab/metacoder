@@ -121,13 +121,13 @@ The following values are possible:
  }}
 }
 \value{
-Returns an object of type \code{classified}
+Returns an object of type \code{taxmap}
 }
 \description{
 Extracts the taxonomy from metadata (e.g. sequence headers) or parsed sequence data. 
 The location and identity of important information in the input is specified using a regular expression
 with capture groups and an corresponding key.
-An object of type \code{\link{classified}} is returned containing the specifed information.
+An object of type \code{\link{taxmap}} is returned containing the specifed information.
 Taxa are translated into unique codes if they are not already encoded this way.
 }
 \examples{

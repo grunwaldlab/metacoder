@@ -84,7 +84,7 @@ Note, that this command will take a while to process. The resulting object conta
 taxon_data(data, row_subset = 1:10) 
 ```
 
-    ##    taxon_ids parent_ids              name item_counts taxon_ranks
+    ##    taxon_ids parent_ids              name n_items taxon_levels
     ## 1          1       <NA>              Root       10650           1
     ## 2          2          1           Archaea         410           2
     ## 3          3          1          Bacteria       10240           2
@@ -103,17 +103,17 @@ Columns such as "item\_counts" and "taxon\_ranks" are calculated each time the f
 The hierarchical nature of taxonomic data makes it difficult to plot effectively. Most often, bar charts, stacked bar charts, or pie graphs are used, but these are ineffective when plotting many taxa or multiple ranks. MetacodeR maps taxonomic data (e.g. sequence abundance) to color/size of tree components in what we call a **Metadiversity Plot**:
 
 ``` r
-plot(data, vertex_size = item_counts, vertex_label = name, vertex_color = item_counts)
+plot(data, node_size = n_items, node_label = name, node_color = n_items)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
-Note, that this command can take a few minutes. The default size range displayed is optimized for each plot. The legend represents the number of sequences for each taxon as both a color gradient and width of vertices. Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
+Note, that this command can take a few minutes. The default size range displayed is optimized for each plot. The legend represents the number of sequences for each taxon as both a color gradient and width of nodes. Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
 
 ``` r
-plot(data, vertex_size = item_counts, edge_color = taxon_ranks,
-     vertex_label = name, vertex_color = item_counts,
-     vertex_color_range = c("cyan", "magenta", "green"),
+plot(data, node_size = n_items, edge_color = taxon_levels,
+     node_label = name, node_color = n_items,
+     node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
      layout = "davidson-harel", overlap_avoidance = 0.5)
 ```
@@ -129,8 +129,8 @@ Note that `plot` is a generic R function that works differently depending on wha
 Taxonomic data can be easily subset using the **subset** function. The user can choose preserve or remove the subtaxa, supertaxa, and sequence data of the subset. For example, `subset` can be used to look at just the Archaea:
 
 ``` r
-plot(subset(data, name == "Archaea"), vertex_size = item_counts, 
-     vertex_label = name, vertex_color = item_counts, layout = "fruchterman-reingold")
+plot(subset(data, name == "Archaea"), node_size = n_items, 
+     node_label = name, node_color = n_items, layout = "fruchterman-reingold")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
@@ -138,9 +138,9 @@ plot(subset(data, name == "Archaea"), vertex_size = item_counts,
 Any column displayed by `taxon_data` can be used with `subset` as if it were a variable on its own. To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ``` r
-subsetted <- subset(data, taxon_ranks > 1)
-plot(subsetted, vertex_size = item_counts, vertex_label = name,
-     vertex_color = item_counts, tree_label = name, layout = "davidson-harel")
+subsetted <- subset(data, taxon_levels > 1)
+plot(subsetted, node_size = n_items, node_label = name,
+     node_color = n_items, tree_label = name, layout = "davidson-harel")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
@@ -151,12 +151,12 @@ When calculating statistics for taxa, the amount of data should be balanced acro
 
 ``` r
 sampled <- taxonomic_sample(subsetted, max_counts = c("3" = 100, "6" = 5), min_counts = c("6" = 5))
-sampled <- subset(sampled, item_counts > 0, itemless = FALSE) 
+sampled <- subset(sampled, n_items > 0, itemless = FALSE) 
 ```
 
 ``` r
-plot(sampled, vertex_size = item_counts, vertex_label = item_counts, overlap_avoidance = 0.5,
-     vertex_color = item_counts, layout = "davidson-harel")
+plot(sampled, node_size = n_items, node_label = n_items, overlap_avoidance = 0.5,
+     node_color = n_items, layout = "davidson-harel")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)
@@ -171,7 +171,7 @@ pcr <- primersearch(sampled, forward = "CTCCTACGGGAGGCAGCAG", reverse = "GWATTAC
 taxon_data(pcr, row_subset = 1:10)
 ```
 
-    ##    taxon_ids parent_ids              name item_counts taxon_ranks count_amplified prop_amplified
+    ##    taxon_ids parent_ids              name n_items taxon_levels count_amplified prop_amplified
     ## 2          2       <NA>           Archaea         135           1               0      0.0000000
     ## 3          3       <NA>          Bacteria        1881           1            1656      0.8803828
     ## 4          4          2   "Crenarchaeota"          10           2               0      0.0000000
@@ -186,8 +186,8 @@ taxon_data(pcr, row_subset = 1:10)
 The proportion of sequences amplified can be represented by color in a metadiversity plot:
 
 ``` r
-plot(pcr, vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
-     vertex_color_range =  c("red", "cyan"), vertex_color_trans = "radius", tree_label = name)
+plot(pcr, node_size = n_items, node_label = name, node_color = prop_amplified,
+     node_color_range =  c("red", "cyan"), node_color_trans = "radius", tree_label = name)
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-27-1.png)
@@ -198,10 +198,10 @@ This plot makes it apparent that no Archaea were amplified and most Bacteria wer
 library(magrittr) # Adds optional %>% operator for chaining commands
 pcr %>%
   subset(name == "Bacteria") %>%
-  subset(count_amplified < item_counts, subtaxa = FALSE) %>% 
-  plot(vertex_size = item_counts, vertex_label = name, vertex_color = prop_amplified,
-       vertex_color_range =  c("red", "cyan"),
-       vertex_color_interval = c(0, 1), vertex_color_trans = "radius")
+  subset(count_amplified < n_items, subtaxa = FALSE) %>% 
+  plot(node_size = n_items, node_label = name, node_color = prop_amplified,
+       node_color_range =  c("red", "cyan"),
+       node_color_interval = c(0, 1), node_color_trans = "radius")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-30-1.png)
@@ -227,10 +227,10 @@ Then, taxa that are not amplified by both pairs can be subset and the difference
 ``` r
 pcr %>%
   subset(name == "Bacteria") %>%
-  subset(count_amplified < item_counts | count_amplified_2 < item_counts, subtaxa = FALSE) %>%
-  plot(vertex_size = item_counts, vertex_label = name,
-       vertex_color = prop_diff, vertex_color_range = diverging_palette(),
-       vertex_color_interval = c(-1, 1), vertex_color_trans = "radius")
+  subset(count_amplified < n_items | count_amplified_2 < n_items, subtaxa = FALSE) %>%
+  plot(node_size = n_items, node_label = name,
+       node_color = prop_diff, node_color_range = diverging_palette(),
+       node_color_interval = c(-1, 1), node_color_trans = "radius")
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-34-1.png)
