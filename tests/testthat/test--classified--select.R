@@ -63,7 +63,7 @@ test_that("Selecting obs_data with unquoted column names works", {
 })
 #|
 #| ####  Selecting obs_data with  dplyr functions
-test_that("Selecting obs_data with  dplyr functionsworks", {
+test_that("Selecting obs_data with  dplyr functions works", {
   result <- select_obs(obj, matches("obs_attr"))
   expect_s3_class(result, "taxmap")
   expect_false("other_obs_col" %in% colnames(result$obs_data))
