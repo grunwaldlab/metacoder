@@ -39,7 +39,7 @@ plot(genbank_ex_data,
 `filter_taxa` can easily remove these taxa by filtering by rank or selecting the root taxon by name:
 
 ```{r}
-filter_taxa(genbank_ex_data, taxon_levels > 5) %>%
+filter_taxa(genbank_ex_data, n_supertaxa > 4) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
        node_label = name)
@@ -59,7 +59,7 @@ plot(unite_ex_data_3,
      node_size = n_obs,
      node_color = n_obs,
      node_label = name)
-filter_taxa(unite_ex_data_3, taxon_levels <= 4) %>%
+filter_taxa(unite_ex_data_3, n_supertaxa <= 3) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
        node_label = name)
@@ -80,7 +80,7 @@ Note that observations assigned to removed subtaxa are reassigned to the closest
 You can prevent this by setting the `reassign_obs` option to `FALSE`, but when most observations are assigned to tip taxa, this is rarely useful:
 
 ```{r}
-filter_taxa(unite_ex_data_3, taxon_levels < 5, reassign_obs = FALSE) %>%
+filter_taxa(unite_ex_data_3, n_supertaxa < 4, reassign_obs = FALSE) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
        node_label = name)

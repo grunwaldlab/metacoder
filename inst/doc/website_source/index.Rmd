@@ -128,7 +128,7 @@ Only a few options are needed to make effective plots, yet many are available fo
 
 ```{r}
 set.seed(8)
-plot(data, node_size = n_obs, edge_color = taxon_levels,
+plot(data, node_size = n_obs, edge_color = n_supertaxa,
      node_label = name, node_color = n_obs,
      node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
@@ -169,7 +169,7 @@ Any column displayed by `taxon_data` can be used with `filter_taxa` (and most ot
 To make the Archaea-Bacteria division more clear, the "Root" taxon can be removed, resulting in two separate trees:
 
 ```{r}
-subsetted <- filter_taxa(data, taxon_levels > 1)
+subsetted <- filter_taxa(data, n_supertaxa > 0)
 set.seed(2)
 plot(subsetted, node_size = n_obs, node_label = name,
      node_color = n_obs, tree_label = name)
@@ -186,7 +186,7 @@ This makes it easy to remove lower ranks of a taxonomy without discarding oberse
 
 ```{r}
 set.seed(1)
-filter_taxa(data, taxon_levels < 5) %>%
+filter_taxa(data, n_supertaxa < 4) %>%
   plot(node_size = n_obs, node_label = name, node_color = n_obs)
 ```
 

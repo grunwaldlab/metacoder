@@ -65,7 +65,7 @@ taxonomic_sample <- function(taxmap_data,
     taxon_ids <- taxmap_data$taxon_data$taxon_ids
     supertaxon_ids <- taxmap_data$taxon_data$supertaxon_ids
     obs_ids <- taxmap_data$obs_data$obs_taxon_ids
-    ranks <- taxon_levels(taxmap_data)
+    ranks <- n_supertaxa(taxmap_data)
     # Define functions to interact with the taxonomic information ------------------------------------
     get_obs_func <- function(id, ...) which(obs_ids == id)
     get_subtaxa_func <- function(id, ...) taxon_ids[!is.na(supertaxon_ids) & supertaxon_ids == id]

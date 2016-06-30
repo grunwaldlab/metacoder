@@ -57,8 +57,8 @@ For this reason, we will use the option `min_counts = c("7" = 3)`, so observatio
 
 ```{r}
 subsampled <- taxonomic_sample(unite_ex_data_3,
-                               max_counts = c("4" = 20, "7" = 5),
-                               min_counts = c("7" = 3))
+                               max_counts = c("3" = 20, "6" = 5),
+                               min_counts = c("6" = 3))
 ```
 
 We can now view the difference between the original and sub-sampled data sets using `plot_taxonomy` again.
@@ -67,8 +67,8 @@ We can now view the difference between the original and sub-sampled data sets us
 plot(subsampled,
      node_size = n_obs,
      node_color = n_obs,
-     node_label = ifelse(taxon_levels %in% c(7, 4), n_obs, NA),
-     edge_label = ifelse(taxon_levels == 4, name, NA))
+     node_label = ifelse(n_supertaxa %in% c(6, 3), n_obs, NA),
+     edge_label = ifelse(n_supertaxa == 3, name, NA))
 ```
 
 Note how the taxonomy information for taxa with no observations is preserved. 
@@ -78,8 +78,8 @@ This can be removed using `subset`:
 filter_taxa(subsampled, n_obs > 0, subtaxa = FALSE) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
-       node_label = ifelse(taxon_levels %in% c(7, 4), n_obs, NA),
-       edge_label = ifelse(taxon_levels == 4, name, NA))
+       node_label = ifelse(n_supertaxa %in% c(6, 3), n_obs, NA),
+       edge_label = ifelse(n_supertaxa == 3, name, NA))
 ```
 
 

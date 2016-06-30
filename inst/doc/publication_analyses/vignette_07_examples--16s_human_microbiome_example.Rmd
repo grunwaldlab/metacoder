@@ -112,7 +112,7 @@ plot_body_site_diff <- function(data, site_1, site_2, output_name, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    # filter_taxa(taxon_levels <= 5) %>%
+    # filter_taxa(n_supertaxa <= 4) %>%
     plot(node_size_axis_label = "Number of OTUs",
          node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
@@ -167,7 +167,7 @@ plot_body_site_diff_small <- function(data, site_1, site_2, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    filter_taxa(taxon_levels <= 5) %>%
+    filter_taxa(n_supertaxa <= 4) %>%
     plot(node_size_axis_label = "Number of OTUs",
          node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),

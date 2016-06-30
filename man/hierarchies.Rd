@@ -22,4 +22,9 @@ The character(s) to place between taxon IDs}
 Get classification strings of taxa in an object of type \code{\link{taxmap}}.
 Each classification is constructed by concatenating the taxon ids of the given taxon and its supertaxa.
 }
+\seealso{
+Other taxon_funcs: \code{\link{n_obs_1}},
+  \code{\link{n_obs}}, \code{\link{n_subtaxa_1}},
+  \code{\link{n_subtaxa}}, \code{\link{n_supertaxa}}
+}
 

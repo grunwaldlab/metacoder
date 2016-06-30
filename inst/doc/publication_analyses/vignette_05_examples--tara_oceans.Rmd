@@ -86,7 +86,7 @@ background_color <- "#ccfff7"
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
   plot(title = "Plankton diversity in the sunlit ocean",
        title_size = 0.03,
        node_color_axis_label = "Number of reads (Abundance)",
@@ -102,7 +102,7 @@ data %>%
                              name, NA),
        node_label_color = "#000000",
        node_label_color_trans = "area",
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_size_range = c(0.001, NA),
        node_label_max = 1000,
@@ -137,8 +137,8 @@ data <- mutate_taxa(data, dcm_taxon_counts = vapply(obs(data),
                                                     function(x) sum(data$obs_data$dcm_counts[x]), numeric(1)))
 
 data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / read_counts)
-total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[taxon_levels(data) == 1])
-total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[taxon_levels(data) == 1])
+total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[n_supertaxa(data) == 0])
+total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[n_supertaxa(data) == 0])
 total_reads <- total_dcm_reads + total_sur_reads
 
 
@@ -164,7 +164,7 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
        node_color_axis_label = "DCM only        Both       Surface only",
@@ -178,7 +178,7 @@ data %>%
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_size_range = c(0.001, NA),
        node_label_max = 1000,
@@ -200,7 +200,7 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
        node_color_axis_label = "DCM only        Both       Surface only",
@@ -215,7 +215,7 @@ data %>%
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_size_range = c(0.001, NA),
        node_label_max = 1000,
@@ -236,7 +236,7 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
   plot(title = "Location of taxa in water column",
        title_size = 0.03,
        node_color_axis_label = "DCM only        Both       Surface only",
@@ -251,7 +251,7 @@ data %>%
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_size_range = c(0.001, NA),
        node_label_max = 1000,
@@ -286,7 +286,7 @@ taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\
 data %>%
   filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
   filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & taxon_levels <= 2)) %>%
+  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
   plot(title = "Poportion of OTUs not well identified",
        title_size = 0.03,
        node_color_axis_label = "Percent of species (OTUs) identified",
@@ -300,7 +300,7 @@ data %>%
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_size_range = c(0.001, NA),
        node_label_max = 1000,
@@ -334,7 +334,7 @@ data %>%
        node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
                                ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
                              name, NA),
-       node_label_size = (n_obs / taxon_levels) ^ 0.5,
+       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
        node_label_size_trans = "area",
        node_label_max = 1000,
        initial_layout = "re", layout = "da",

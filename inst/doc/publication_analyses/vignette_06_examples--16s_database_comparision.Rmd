@@ -18,7 +18,7 @@ source("knitr_settings.R")
 input_folder <- "../../../big_data"
 output_folder <- "16s_database_comparison_results"
 output_format <- ".pdf"
-max_taxonomy_depth <- 8
+max_taxonomy_depth <- 7
 min_seq_count <- 10
 max_mismatch <- 10 # percentage mismatch tolerated in pcr
 pcr_success_cutoff <- 0.95 # Used to subset for graphing
@@ -46,7 +46,7 @@ system.time(silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
               extract_taxonomy(regex = "^(.*?) (.*)$",
                                key = c(id = "obs_info", "class"),
                                class_sep = ";") %>% 
-              filter_taxa(taxon_levels <= max_taxonomy_depth) %>%
+              filter_taxa(n_supertaxa <= max_taxonomy_depth) %>%
               filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
               filter_taxa(n_obs >= min_seq_count))
 ```
@@ -54,7 +54,7 @@ system.time(silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
 #### Plot data
 
 ```{r}
-system.time(filter_taxa(silva, taxon_levels <= 5) %>%
+system.time(filter_taxa(silva, n_supertaxa <= 4) %>%
               plot(node_size = n_obs,
                    node_color = n_obs,
                    node_label = name,
@@ -76,7 +76,7 @@ system.time(pcr <- primersearch(silva,
 ```
 
 ```{r}
-system.time(filter_taxa(pcr, taxon_levels <= 5) %>%
+system.time(filter_taxa(pcr, n_supertaxa <= 4) %>%
               plot(node_size = n_obs,
                    node_label = name,
                    node_color = prop_amplified,
@@ -91,7 +91,7 @@ system.time(filter_taxa(pcr, taxon_levels <= 5) %>%
 ```
 
 ```{r}
-system.time(filter_taxa(pcr, taxon_levels <= 5) %>%
+system.time(filter_taxa(pcr, n_supertaxa <= 4) %>%
               filter_taxa(prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
               plot(node_size = n_obs,
                    node_label = name,
@@ -130,7 +130,7 @@ system.time(rdp <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
                                key = c("class"),
                                class_regex = "[;=](.+?);(.+?)",
                                class_key = c("name", rdp_rank = "taxon_info")) %>% 
-              filter_taxa(taxon_levels <= max_taxonomy_depth) %>%
+              filter_taxa(n_supertaxa <= max_taxonomy_depth) %>%
               filter_taxa(name == "Bacteria", subtaxa = TRUE) %>%
               filter_taxa(n_obs >= min_seq_count))
 ```
@@ -139,7 +139,7 @@ system.time(rdp <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
 #### Plot data
 
 ```{r}
-system.time(filter_taxa(rdp, taxon_levels <= 5) %>%
+system.time(filter_taxa(rdp, n_supertaxa <= 4) %>%
               plot(node_size = n_obs,
                  node_color = n_obs,
                  node_label = name,
@@ -173,7 +173,7 @@ system.time(pcr <- primersearch(rdp,
 ```
 
 ```{r}
-system.time(filter_taxa(pcr, taxon_levels <= 5) %>%
+system.time(filter_taxa(pcr, n_supertaxa <= 4) %>%
               plot(node_size = n_obs,
                  node_label = name,
                  node_color = prop_amplified,
@@ -206,7 +206,7 @@ system.time(plot(pcr,
 
 ```{r}
 system.time(filter_taxa(pcr, prop_amplified < pcr_success_cutoff, supertaxa = TRUE) %>%
-              filter_taxa(taxon_levels <= 5) %>%
+              filter_taxa(n_supertaxa <= 4) %>%
               plot(node_size = n_obs,
                    node_label = name,
                    node_color = prop_amplified,

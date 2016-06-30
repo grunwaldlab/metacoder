@@ -10,6 +10,8 @@
 #' The character(s) to place between taxon IDs
 #'
 #' @return \code{character} of length equal to \code{subset}
+#' 
+#' @family taxon_funcs
 #'
 #' @export
 hierarchies <- function(obj, subset = 1:nrow(obj$taxon_data), sep = ";") {
@@ -18,18 +20,55 @@ hierarchies <- function(obj, subset = 1:nrow(obj$taxon_data), sep = ";") {
 }
 
 
-#' Get rank of taxa 
+#' Get number of supertaxa 
 #'
-#' Get rank of taxa in an object of type \code{\link{taxmap}}
+#' Get  number of supertaxa for each taxon in an object of type \code{\link{taxmap}}
 #'
 #' @param obj (\code{\link{taxmap}})
-#' @param subset (\code{character}) The \code{taxon_ids}s or indexes in \code{taxon_data} to get ranks for.
+#' @param subset (\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data}.
+#'
+#' @return \code{numeric}
+#' 
+#' @family taxon_funcs
+#'
+#' @export
+n_supertaxa <- function(obj, subset = 1:nrow(obj$taxon_data)) {
+  vapply(supertaxa(obj, subset = subset, recursive = TRUE, include_input = FALSE, index = TRUE, na = FALSE),
+         length, numeric(1))
+}
+
+#' Get number of subtaxa 
+#'
+#' Get number of subtaxa for each taxon in an object of type \code{\link{taxmap}}
+#'
+#' @param obj (\code{\link{taxmap}})
+#' @param subset (\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data}.
+#'
+#' @return \code{numeric}
+#' 
+#' @family taxon_funcs
+#'
+#' @export
+n_subtaxa <- function(obj, subset = 1:nrow(obj$taxon_data)) {
+  vapply(subtaxa(obj, subset = subset, recursive = TRUE, include_input = FALSE, index = TRUE),
+         length, numeric(1))
+}
+
+#' Get number of subtaxa 
+#'
+#' Get number of subtaxa for each taxon in an object of type \code{\link{taxmap}}, not including subtaxa of subtaxa etc. 
+#' This does not include subtaxa assigned to subtaxa.
+#'
+#' @param obj (\code{\link{taxmap}})
+#' @param subset (\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data}.
 #'
 #' @return \code{numeric}
 #'
+#' @family taxon_funcs
+#' 
 #' @export
-taxon_levels <- function(obj, subset = 1:nrow(obj$taxon_data)) {
-  vapply(supertaxa(obj, subset = subset, recursive = TRUE, include_input = TRUE, index = TRUE, na = FALSE),
+n_subtaxa_1 <- function(obj, subset = 1:nrow(obj$taxon_data)) {
+  vapply(subtaxa(obj, subset = subset, recursive = FALSE, include_input = FALSE, index = TRUE),
          length, numeric(1))
 }
 
@@ -40,9 +79,11 @@ taxon_levels <- function(obj, subset = 1:nrow(obj$taxon_data)) {
 #' This includes observations for the specific taxon and its subtaxa.
 #'
 #' @param obj (\code{\link{taxmap}})
-#' @param subset (\code{character}) The \code{taxon_ids}s or indexes in \code{taxon_data} to get counts for.
+#' @param subset (\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data} to get counts for.
 #'
 #' @return \code{numeric}
+#' 
+#' @family taxon_funcs
 #'
 #' @export
 n_obs <- function(obj, subset = 1:nrow(obj$taxon_data)) {
@@ -56,9 +97,11 @@ n_obs <- function(obj, subset = 1:nrow(obj$taxon_data)) {
 #' This does not include observations assigned to subtaxa.
 #'
 #' @param obj (\code{\link{taxmap}})
-#' @param subset (\code{character}) The \code{taxon_ids}s or indexes in \code{taxon_data} to get counts for.
+#' @param subset (\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data} to get counts for.
 #'
 #' @return \code{numeric}
+#' 
+#' @family taxon_funcs
 #'
 #' @export
 n_obs_1 <- function(obj, subset = 1:nrow(obj$taxon_data)) {
