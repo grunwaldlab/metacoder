@@ -10,3 +10,5 @@ trainset10_082014.rdp.fasta
 inst/doc/vignettes_info.*
 .pdf
 big_data/**
+scratch/*.pdf
+scratch/*.svg
