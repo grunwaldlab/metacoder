@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for metabarcoding experiment planning
-Version: 0.1.0.576
+Version: 0.1.0.577
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
