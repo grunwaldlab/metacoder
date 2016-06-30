@@ -4,12 +4,12 @@
 \alias{taxon_levels}
 \title{Get rank of taxa}
 \usage{
-taxon_levels(obj, subset = obj$taxon_data$taxon_ids)
+taxon_levels(obj, subset = 1:nrow(obj$taxon_data))
 }
 \arguments{
 \item{obj}{(\code{\link{taxmap}})}
 
-\item{subset}{(\code{character}) The \code{taxon_ids}s to get ranks for.}
+\item{subset}{(\code{character}) The \code{taxon_ids}s or indexes in \code{taxon_data} to get ranks for.}
 }
 \value{
 \code{numeric}

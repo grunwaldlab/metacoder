@@ -21,6 +21,7 @@ A dataset containing information for 299 sequences obtained form NCBI using the 
 }
 \examples{
 \dontrun{
+
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 genbank_ex_data <- extract_taxonomy(sequences,
@@ -28,7 +29,6 @@ genbank_ex_data <- extract_taxonomy(sequences,
                                     key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
                                     database = "ncbi")
 }
-
 }
 \keyword{datasets}
 

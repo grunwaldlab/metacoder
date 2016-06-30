@@ -16,13 +16,13 @@ A dataset containing information from 249 Stramenopile sequences from the PR2 re
 }
 \examples{
 \dontrun{
+
 file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 pr2_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*\\\\..*?)\\\\|(.*)$",
-                                key = c("obs_id", "class_name"),
-                                class_tax_sep = "|",
-                                database = "none")
+                                key = c("obs_id", "class"),
+                                class_sep = "\\\\|")
 }
 
 }

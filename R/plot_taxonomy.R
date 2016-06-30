@@ -325,7 +325,7 @@ plot_taxonomy <- function(taxon_id, supertaxon_id,
                           node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
                           node_color_interval = NULL,
                           edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
-                          edge_color_interval = node_color_interval,
+                          edge_color_interval = NULL,
                           
                           node_label_max = 40,
                           edge_label_max = 40,
@@ -910,7 +910,7 @@ plot_taxonomy <- function(taxon_id, supertaxon_id,
 #' @rdname plot_taxonomy
 plot.taxmap <- function(x, ...) {
   # Non-standard argument evaluation
-  data <- taxon_data(x, sort_by = classifications, 
+  data <- taxon_data(x, sort_by = hierarchies, 
                      col_subset = unique(c(taxon_data_cols_used(x, ...), "taxon_ids", "supertaxon_ids")))
   arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))

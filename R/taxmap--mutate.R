@@ -14,11 +14,14 @@
 #'   
 #' @export
 mutate_taxa <- function(.data, ...) {
-  my_taxon_data <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
-  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_taxon_data), my_taxon_data)
-  .data$taxon_data <- dplyr::mutate(.data$taxon_data, ...)
-  return(.data) 
+  data_used <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
+  # unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+  #                  names(my_taxon_data), my_taxon_data)
+  calculated_cols <- names(.data$taxon_funcs)
+  modified_data <- dplyr::mutate(data_used, ...)
+  new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data, modified_data[, new_cols])
+  return(.data)
 } 
 
 
@@ -39,11 +42,14 @@ mutate_taxa <- function(.data, ...) {
 #'   
 #' @export
 mutate_obs <- function(.data, ...) {
-  my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
-  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_obs_data), my_obs_data)
-  .data$obs_data <- dplyr::mutate(.data$obs_data, ...)
-  return(.data) 
+  data_used <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
+  # unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+  #                  names(my_obs_data), my_obs_data)
+  calculated_cols <- names(.data$obs_data)
+  modified_data <- dplyr::mutate(data_used, ...)
+  new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
+  .data$obs_data <- dplyr::bind_cols(.data$obs_data, modified_data[, new_cols])
+  return(.data)
 } 
 
 
@@ -63,12 +69,15 @@ mutate_obs <- function(.data, ...) {
 #'   
 #' @export
 transmute_taxa <- function(.data, ...) {
-  my_taxon_data <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
-  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_taxon_data), my_taxon_data)
+  data_used <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
+  # unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+  #                  names(my_taxon_data), my_taxon_data)
+  calculated_cols <- names(.data$taxon_funcs)
+  modified_data <- dplyr::mutate(data_used, ...)
+  new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
   .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , c("taxon_ids", "supertaxon_ids"), drop = FALSE],
-                                       dplyr::transmute(.data$taxon_data, ...))
-  return(.data) 
+                                       modified_data[, new_cols])
+  return(.data)
 } 
 
 
@@ -88,10 +97,13 @@ transmute_taxa <- function(.data, ...) {
 #'   
 #' @export
 transmute_obs <- function(.data, ...) {
-  my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
-  unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
-                   names(my_obs_data), my_obs_data)
+  data_used <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))
+  # unused <- mapply(function(name, value) assign(name, value, envir = parent.frame(2)),
+  #                  names(my_obs_data), my_obs_data)
+  calculated_cols <- names(.data$obs_data)
+  modified_data <- dplyr::mutate(data_used, ...)
+  new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
   .data$obs_data <- dplyr::bind_cols(.data$obs_data[ , c("obs_taxon_ids"), drop = FALSE],
-                                      dplyr::transmute(.data$obs_data, ...))
-  return(.data) 
+                                     modified_data[, new_cols])
+  return(.data)
 } 

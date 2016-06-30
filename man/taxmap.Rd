@@ -6,8 +6,8 @@
 \usage{
 taxmap(taxon_ids, supertaxon_ids, taxa = taxon_ids,
   obs_taxon_ids = numeric(0), taxon_data = NULL, obs_data = NULL,
-  taxon_funcs = list(n_obs = n_obs, taxon_levels = taxon_levels,
-  classifications = classifications), obs_funcs = list())
+  taxon_funcs = list(n_obs = n_obs, n_obs_1 = n_obs_1, taxon_levels =
+  taxon_levels, hierarchies = hierarchies), obs_funcs = list())
 }
 \arguments{
 \item{taxon_ids}{(\code{character}) 

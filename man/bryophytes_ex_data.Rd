@@ -14,7 +14,6 @@ A dataset containing information from 171 bryophytes family names scraped from \
 \examples{
 \dontrun{
 
-library(magrittr)
 library(XML)
 taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") \%>\% 
 xmlRoot() \%>\%

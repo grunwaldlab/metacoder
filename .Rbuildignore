@@ -7,6 +7,7 @@
 ^\.Rproj\.user$
 ^quilt_config\.yml$
 ^inst/doc/presentation/.*$
+^inst/doc/publication_analyses/.*$
 ^inst/doc/website_source/.*\.html$
 ^big_data$
 ^scratch$

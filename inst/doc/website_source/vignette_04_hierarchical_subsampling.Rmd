@@ -88,11 +88,19 @@ filter_taxa(subsampled, n_obs > 0, subtaxa = FALSE) %>%
 If you want to have the random sample be a specified number of observations or want more control over how often different observations or taxa get sampled, you can use `sample_n_obs` and `sample_n_taxa`.
 
 ```{r}
-sample_n_obs(unite_ex_data_3, size = 100, taxon_weight = 1 / n_obs)
+sample_n_obs(unite_ex_data_3, size = 100, taxon_weight = 1 / n_obs)  %>%
+  plot(node_size = n_obs,
+       node_color = n_obs,
+       node_label = n_obs,
+       edge_label = name)
 ```
 
 These functions also support sampling with repacement: 
 
 ```{r}
-sample_n_obs(unite_ex_data_3, size = 10000, taxon_weight = 1 / n_obs, replace = TRUE)
+sample_n_obs(unite_ex_data_3, size = 10000, taxon_weight = 1 / n_obs, replace = TRUE) %>%
+  plot(node_size = n_obs,
+       node_color = n_obs,
+       node_label = n_obs,
+       edge_label = name)
 ```

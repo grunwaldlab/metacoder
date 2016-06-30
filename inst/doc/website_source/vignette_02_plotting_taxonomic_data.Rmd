@@ -9,7 +9,6 @@ output:
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 library(ape)
 library(metacoder)
-library(magrittr)
 library(knitr)
 library(ggplot2)
 source("knitr_settings.R")
@@ -79,7 +78,7 @@ Although there are many options that can be used to make highly customized graph
 We can see the default appearance of the data used in the introduction using the code below:
 
 ```{r}
-taxon_data(unite_ex_data_3)
+unite_ex_data_3
 plot(unite_ex_data_3)
 ```
 

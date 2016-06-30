@@ -8,6 +8,7 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' genbank_ex_data <- extract_taxonomy(sequences,
@@ -15,7 +16,6 @@
 #'                                     key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
 #'                                     database = "ncbi")
 #' }
-#' 
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://www.ncbi.nlm.nih.gov/nuccore}
 "genbank_ex_data"
@@ -61,12 +61,14 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "taxon_name",  sequence_id = "obs_id",
-#'                                             other_id = "obs_info", tax_string = "obs_info"))
+#'                                     key = c(name = "obs_info", "obs_id",
+#'                                             other_id = "obs_info", tax_string = "obs_info"),
+#'                                     database = "ncbi")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -80,12 +82,17 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_2 <- extract_taxonomy(names(sequences),
+#' unite_ex_data_2 <- extract_taxonomy(sequences,
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "obs_info", sequence_id = "obs_info",
-#'                                             other_id = "obs_info", "class_name"))
+#'                                     key = c(seq_name = "obs_info", seq_id = "obs_info",
+#'                                             other_id = "obs_info", "class"),
+#'                                     class_regex = "^(.*)__(.*)$",
+#'                                     class_key = c(unite_rank = "taxon_info", "name"),
+#'                                     class_sep = ";",
+#'                                     database = "ncbi")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -99,11 +106,12 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' unite_ex_data_3 <- extract_taxonomy(sequences,
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(seq_name = "obs_info", sequence_id = "obs_info",
+#'                                     key = c(seq_name = "obs_info", seq_id = "obs_info",
 #'                                             other_id = "obs_info", "class"),
 #'                                     class_regex = "^(.*)__(.*)$",
 #'                                     class_key = c(unite_rank = "taxon_info", "name"),
@@ -122,13 +130,13 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' pr2_ex_data <- extract_taxonomy(sequences,
 #'                                 regex = "^(.*\\..*?)\\|(.*)$",
-#'                                 key = c("obs_id", "class_name"),
-#'                                 class_tax_sep = "|",
-#'                                 database = "none")
+#'                                 key = c("obs_id", "class"),
+#'                                 class_sep = "\\|")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -142,15 +150,14 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' rdp_ex_data <- extract_taxonomy(sequences,
 #'                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
-#'                                 key = c(id = "obs_info", description = "obs_info", "class_name"),
-#'                                 class_tax_sep = ";",
-#'                                 class_rank_sep = ";", 
-#'                                 class_rank_rev = TRUE,
-#'                                 database = "none")
+#'                                 key = c(id = "obs_info", description = "obs_info", "class"),
+#'                                 class_regex = "(.+?);(.*?);",
+#'                                 class_key = c("name", "taxon_info"))
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -164,12 +171,14 @@
 #' 
 #' @examples
 #' \dontrun{
+#' 
 #' file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' its1_ex_data <- extract_taxonomy(sequences,
-#'                                  regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)$",
+#'                                  regex = "^(.*)\\|(.*)\\|tax_id:(.*)\\|(.*)$",
 #'                                  key = c("obs_id", taxon_name = "taxon_info",
-#'                                          "taxon_id", description = "obs_info"))
+#'                                          "taxon_id", description = "obs_info"),
+#'                                  database = "ncbi")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -184,7 +193,6 @@
 #' @examples
 #' \dontrun{
 #' 
-#' library(magrittr)
 #' library(XML)
 #' taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") %>% 
 #' xmlRoot() %>%
@@ -196,3 +204,23 @@
 #'
 #' @format An object of type \code{\link{taxmap}}
 "bryophytes_ex_data"
+
+
+#' Example dataset from SILVA
+#'
+#' https://www.arb-silva.de/
+#' 
+#' @examples
+#' \dontrun{
+#' 
+#' file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
+#' sequences <- ape::read.FASTA(file_path)
+#' silva_ex_data <- extract_taxonomy(sequences,
+#'                                   regex = "^(.*?) (.*)$",
+#'                                   key = c(id = "obs_info", "class"),
+#'                                   class_sep = ";")
+#' }
+#'
+#' @format An object of type \code{\link{taxmap}}
+"silva_ex_data"
+

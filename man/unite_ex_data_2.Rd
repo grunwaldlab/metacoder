@@ -16,12 +16,17 @@ A dataset containing information from 500 sequences from the UNITE reference dat
 }
 \examples{
 \dontrun{
+
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-unite_ex_data_2 <- extract_taxonomy(names(sequences),
+unite_ex_data_2 <- extract_taxonomy(sequences,
                                     regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                    key = c(name = "obs_info", sequence_id = "obs_info",
-                                            other_id = "obs_info", "class_name"))
+                                    key = c(seq_name = "obs_info", seq_id = "obs_info",
+                                            other_id = "obs_info", "class"),
+                                    class_regex = "^(.*)__(.*)$",
+                                    class_key = c(unite_rank = "taxon_info", "name"),
+                                    class_sep = ";",
+                                    database = "ncbi")
 }
 
 }

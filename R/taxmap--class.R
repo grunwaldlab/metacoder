@@ -37,8 +37,9 @@ taxmap <- function(taxon_ids, supertaxon_ids,
                        obs_taxon_ids = numeric(0),
                        taxon_data = NULL, obs_data = NULL,
                        taxon_funcs = list(n_obs = n_obs,
+                                          n_obs_1 = n_obs_1,
                                           taxon_levels = taxon_levels,
-                                          classifications = classifications),
+                                          hierarchies = hierarchies),
                        obs_funcs = list()) {
   # Validate `taxon_ids` ---------------------------------------------------------------------------
   # Coerce into character vector

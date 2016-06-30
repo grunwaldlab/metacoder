@@ -16,15 +16,14 @@ A dataset containing information from 400 Archaea 16S sequences from the RDP ref
 }
 \examples{
 \dontrun{
+
 file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
 rdp_ex_data <- extract_taxonomy(sequences,
                                 regex = "^(.*?) (.*)\\\\tLineage=(.*)",
-                                key = c(id = "obs_info", description = "obs_info", "class_name"),
-                                class_tax_sep = ";",
-                                class_rank_sep = ";", 
-                                class_rank_rev = TRUE,
-                                database = "none")
+                                key = c(id = "obs_info", description = "obs_info", "class"),
+                                class_regex = "(.+?);(.*?);",
+                                class_key = c("name", "taxon_info"))
 }
 
 }

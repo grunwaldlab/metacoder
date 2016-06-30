@@ -7,8 +7,6 @@ output: html_document
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
-library(magrittr)
-library(ggplot2)
 source("knitr_settings.R")
 ```
 
@@ -32,7 +30,7 @@ Documentation is under construction at http://grunwaldlab.github.io/metacoder.
 
 ### Download the current version
 
-While this project is in development it can be installed through github:
+While this project is in development it can be installed through Github:
 
     devtools::install_github(repo="grunwaldlab/metacoder", build_vignettes = TRUE)
     library(metacoder)
@@ -55,6 +53,7 @@ Taxonomic data can be extracted from any file format using the **extract_taxonom
 Classifications can be parsed offline or retrieved from online databases if a taxon name, taxon ID, or sequence ID is present.
 A regular expression with capture groups and a corresponding key is used to define how to parse the file.
 The example code below parses the 16s Ribosome Database Project training set for Mothur.
+
 R can be used to download files from the internet and decompress them.
 The code below downloads the compressed data to a temporary directory:
 
@@ -92,7 +91,6 @@ data <- extract_taxonomy(seqs, regex = "^(.*)\\t(.*)",
                          class_sep = ";")
 ```
 
-Note, that this command will take a while to process. 
 The resulting object contains sequence information associated with an inferred taxonomic hierarchy.
 The standard print method of the object shows a part of every kind of data it contains:
 
@@ -100,7 +98,7 @@ The standard print method of the object shows a part of every kind of data it co
 data
 ```
 
-Note the `taxon_funcs` part contains function names (e.g. `n_obs`) used to calculate   taxon statistics.
+Note the `taxon_funcs` part contains function names (e.g. `n_obs`) used to calculate taxon statistics.
 You can see the results of these calculations using the `taxon_data` function:
 
 ```{r}
@@ -124,7 +122,6 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "intro_plot_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-Note, that this command can take a few minutes. 
 The default size range displayed is optimized for each plot.
 The legend represents the number of sequences for each taxon as both a color gradient and width of nodes.
 Only a few options are needed to make effective plots, yet many are available for customization of publication-ready graphics:
@@ -135,10 +132,11 @@ plot(data, node_size = n_obs, edge_color = taxon_levels,
      node_label = name, node_color = n_obs,
      node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"),
-     layout = "davidson-harel", overlap_avoidance = 0.5)
+     initial_layout = "reingold-tilford", layout = "davidson-harel",
+     overlap_avoidance = 0.5)
 ```
 
-The above command can take several minutes.
+The above command can take several minutes since it uses a force-directed layout that requires simulations.
 
 ```{r, include = FALSE, eval = FALSE}
 ggplot2::ggsave(file = "intro_plot_2.svg", plot = the_last_plot, bg = "transparent")
@@ -152,13 +150,14 @@ To see the long list of available plotting options, type `?plot_taxonomy`.
 
 Taxonomic data in the form used in metacodeR can be manipulated using functions inspired by `dplyr`.
 For example, taxa can be subset using `filter_taxa`.
-Unlike the `dplyr` function `filter`, users can choose preserve or remove the subtaxa, supertaxa, and associated sample data of the selected taxa.
+Unlike the `dplyr` function `filter`, users can choose preserve or remove the subtaxa, supertaxa, and associated observation data of the selected taxa.
 For example, `filter_taxa` can be used to look at just the Archaea:
 
 ```{r}
 set.seed(1)
-plot(filter_taxa(data, name == "Archaea"), node_size = n_obs, 
-     node_label = name, node_color = n_obs, layout = "fruchterman-reingold")
+plot(filter_taxa(data, name == "Archaea", subtaxa = TRUE),
+     node_size = n_obs, node_label = name, 
+     node_color = n_obs, layout = "fruchterman-reingold")
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -173,7 +172,7 @@ To make the Archaea-Bacteria division more clear, the "Root" taxon can be remove
 subsetted <- filter_taxa(data, taxon_levels > 1)
 set.seed(2)
 plot(subsetted, node_size = n_obs, node_label = name,
-     node_color = n_obs, tree_label = name, layout = "davidson-harel")
+     node_color = n_obs, tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -182,15 +181,13 @@ ggplot2::ggsave(file = "subset_2.svg", plot = the_last_plot, bg = "transparent")
 ```
 
 Although observations (information in `obs_data`) are typically assinged to the tips of the taxonomy, they can also be assigned to any internal node.
-When a tip taxon is removed by a filtering operation, the user has the option to reassign it a supertaxa that was not filtered out.
-This makes it easy to remove lower ranks of a taxonomy: 
+When a taxon is removed by a filtering operation, the observations assinged to it are reassigned to an unfiltered supertaxon by default.
+This makes it easy to remove lower ranks of a taxonomy without discarding oberservations assinged to the tips: 
 
 ```{r}
 set.seed(1)
-filter_taxa(data, taxon_levels < 5, subtaxa = FALSE) %>%
-plot(node_size = n_obs, 
-     node_label = name, node_color = n_obs)
-
+filter_taxa(data, taxon_levels < 5) %>%
+  plot(node_size = n_obs, node_label = name, node_color = n_obs)
 ```
 
 There is also a `filter_obs` function which can filter out observations and the taxa they are assigned to.
@@ -211,9 +208,9 @@ sampled <- filter_taxa(sampled, n_obs > 0, subtaxa = FALSE)
 ```
 
 ```{r}
-set.seed(4)
+set.seed(3)
 plot(sampled, node_size = n_obs, node_label = n_obs, overlap_avoidance = 0.5,
-     node_color = n_obs)
+     node_color = n_obs, tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -221,25 +218,25 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "subsample.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-This can also be accomplished using the `dplyr` equivalents to `sample_n` and `sample_frac` by weighting the probability of sampling observations by the inverse of the number of observations in taxa they are assigned to:
+This can also be accomplished using the `dplyr` equivalents to `sample_n` and `sample_frac` by weighting the probability of sampling observations by the inverse of the number of observations:
 
 ```{r}
-set.seed(4)
+set.seed(6)
 sample_n_obs(subsetted, size = 1000, taxon_weight = 1 / n_obs, unobserved = FALSE) %>%
   plot(node_size = n_obs, node_label = n_obs, overlap_avoidance = 0.5,
-     node_color = n_obs)
+       node_color = n_obs, tree_label = name)
 ```
 
 
 ### In silico PCR
 
 The function **primersearch** is a wrapper for an EMBOSS tool that implements *in silico* PCR.
-The code below estimates the coverage of the universal bacterial primer pair 357F/519F: 
+The code below estimates the coverage of the universal prokaryotic primer pair 515F/806R `citep("10.1128/mSystems.00009-15")`: 
 
 ```{r}
 pcr <- primersearch(sampled, 
-                    forward = c("357F" = "CTCCTACGGGAGGCAGCAG"), 
-                    reverse = c("519F" = "GWATTACCGCGGCKGCTG"), 
+                    forward = c("515F" = "GTGYCAGCMGCCGCGGTAA"), 
+                    reverse = c("806R" = "GGACTACNVGGGTWTCTAAT"), 
                     mismatch = 10)
 taxon_data(pcr)
 ```
@@ -247,9 +244,11 @@ taxon_data(pcr)
 The proportion of sequences amplified can be represented by color in a metadiversity plot:
 
 ```{r}
-set.seed(1)
-plot(pcr, node_size = n_obs, node_label = name, node_color = prop_amplified,
-     node_color_range =  c("red", "cyan"), node_color_trans = "linear", tree_label = name)
+set.seed(3)
+plot(pcr, node_size = n_obs, node_label = name,
+     node_color = prop_amplified,
+     node_color_range =  c("red", "orange", "yellow", "green", "cyan"),
+     node_color_trans = "linear", tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -257,17 +256,18 @@ the_last_plot <- .Last.value
 ggplot2::ggsave(file = "in_silico_pcr_1.svg", plot = the_last_plot, bg = "transparent")
 ```
 
-This plot makes it apparent that no Archaea were amplified and most Bacteria were amplified, but not all.
+This plot makes it apparent that most taxa were amplified, but not all.
 The data can also be subset to better see what did not get amplified:
 
 ```{r}
-set.seed(7) 
+set.seed(1) 
 pcr %>%
-  filter_taxa(name == "Bacteria") %>%
-  filter_taxa(count_amplified < n_obs, subtaxa = FALSE) %>% 
+  filter_taxa(count_amplified < n_obs) %>% 
   plot(node_size = n_obs, node_label = name, node_color = prop_amplified,
-       node_color_range =  c("red", "cyan"),
-       node_color_interval = c(0, 1), node_color_trans = "linear")
+       node_color_range =  c("red", "orange", "yellow", "green", "cyan"),
+       initial_layout = "reingold-tilford", layout = "davidson-harel",
+       node_color_interval = c(0, 1), node_color_trans = "linear",
+       node_label_max = 500, tree_label = name)
 ```
 
 ```{r, include = FALSE, eval = FALSE}
@@ -282,35 +282,38 @@ We can use what we call **Differential Metadiversity Plots** to compare the valu
 * the relative abundance of taxa in two communities
 * the coverages of different primer pairs
 
-Here, we compare the effectiveness of two primer pairs, 357F/519F and 515F/1100R, by plotting the difference in proportions amplified by each.
-First, the same sequences are amplified with 515F/1100R and results for the two primer pairs combined:
+Here, we compare the effectiveness 515F/806R to another primer pair 357F/519F, by plotting the difference in proportions amplified by each.
+First, the same sequences are amplified with 357F/519F and results for the two primer pairs combined:
 
 ```{r}
-pcr_2 <- primersearch(sampled, forward = "GTGCCAGCMGCCGCGGTAA", reverse = "AGGGTTGCGCTCGTTG",
-                      pair_name = "515F_1100R", mismatch = 10)
+pcr_2 <- primersearch(sampled,
+                      forward = c("357F" = "CTCCTACGGGAGGCAGCAG"), 
+                      reverse = c("519F" = "GWATTACCGCGGCKGCTG"), 
+                      mismatch = 10)
 pcr <- mutate_taxa(pcr, 
-                   count_amplified_2 = taxon_data(pcr_2, col_subset = "count_amplified", drop = T),
-                   prop_diff = prop_amplified - taxon_data(pcr_2, col_subset = "prop_amplified", drop = T))
+                   count_amplified_2 = taxon_data(pcr_2, col_subset = "count_amplified", drop = TRUE),
+                   prop_diff = prop_amplified - taxon_data(pcr_2, col_subset = "prop_amplified", drop = TRUE))
 ```
 
 Then, taxa that are not amplified by both pairs can be subset and the difference in amplification plotted.
-In the plot below, green corresponds to taxa amplified by 357F/519F but not 515F/1100R and brown is the opposite:
+In the plot below, green corresponds to taxa amplified by 515F/806R but not 357F/519F and brown is the opposite:
 
 
 ```{r}
 set.seed(2)
 pcr %>%
-  subset(name == "Bacteria") %>%
-  subset(abs(prop_diff) > 0.1, subtaxa = FALSE, supertaxa = TRUE) %>%
+  filter_taxa(abs(prop_diff) > 0.1, supertaxa = TRUE) %>%
   plot(node_size = n_obs,
        node_label = ifelse(abs(prop_diff) > 0.3, name, NA),
        node_color = prop_diff,
        node_color_range = diverging_palette(),
        node_color_interval = c(-1, 1),
        node_color_trans = "linear",
-       node_label_max = 200,
+       node_label_max = 500,
+       tree_label = name,
        node_color_axis_label = "Difference in proportion amplified",
        node_size_axis_label = "Sequence count",
+       initial_layout = "reingold-tilford", layout = "davidson-harel",
        title = "Comparison of two universal primer pairs using in silico PCR",
        title_size = 0.03)
 ```

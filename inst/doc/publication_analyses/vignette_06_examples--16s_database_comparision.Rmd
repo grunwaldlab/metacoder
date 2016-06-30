@@ -9,7 +9,6 @@ output:
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(metacoder)
 library(knitr)
-library(magrittr)
 source("knitr_settings.R")
 ```
 
@@ -23,8 +22,8 @@ max_taxonomy_depth <- 8
 min_seq_count <- 10
 max_mismatch <- 10 # percentage mismatch tolerated in pcr
 pcr_success_cutoff <- 0.95 # Used to subset for graphing
-forward_primer = c("357F" = "CTCCTACGGGAGGCAGCAG")
-reverse_primer = c("519R" = "GWATTACCGCGGCKGCTG")
+forward = c("515F" = "GTGYCAGCMGCCGCGGTAA")
+reverse = c("806R" = "GGACTACNVGGGTWTCTAAT")
 ```
 
 ```{r}
@@ -42,7 +41,7 @@ Even so, the object made is quite large.
 
 ```{r}
 set.seed(1)
-file_path <- file_path(input_folder, "SILVA_123.1_SSURef_Nr99_tax_silva.fasta")
+file_path <- file.path(input_folder, "SILVA_123.1_SSURef_Nr99_tax_silva.fasta")
 system.time(silva <- seqinr::read.fasta(file_path, as.string = TRUE) %>%
               extract_taxonomy(regex = "^(.*?) (.*)$",
                                key = c(id = "obs_info", "class"),

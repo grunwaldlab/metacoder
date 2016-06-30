@@ -7,11 +7,8 @@ output:
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(ape)
 library(metacoder)
 library(knitr)
-library(ggplot2)
-library(magrittr)
 source("knitr_settings.R")
 ```
 
@@ -116,10 +113,10 @@ filter_taxa(unite_ex_data_3, unite_rank != "c", reassign_taxa = FALSE) %>%
 #### Filtering observations 
 
 Filtering observations assigned to taxa is less complicated.
-The code below removes all taxa with `sequence_id`s that do not start with "A".
+The code below removes all taxa with `seq_id`s that do not start with "A".
 
 ```{r}
-filter_obs(unite_ex_data_3, grepl("^A",  sequence_id)) %>%
+filter_obs(unite_ex_data_3, grepl("^A",  seq_id)) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
        node_label = name)
@@ -128,7 +125,7 @@ filter_obs(unite_ex_data_3, grepl("^A",  sequence_id)) %>%
 You can remove any taxa that are made unobserved by the filtering using the `unobserved` option: 
 
 ```{r}
-filter_obs(unite_ex_data_3, grepl("^A",  sequence_id), unobserved = FALSE) %>%
+filter_obs(unite_ex_data_3, grepl("^A",  seq_id), unobserved = FALSE) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
        node_label = name)
@@ -213,7 +210,7 @@ sample_frac_obs(unite_ex_data_3, size = 0.1) %>%
 ### Subsetting columns: `select_taxa` and `select_obs`
 
 Subsetting columns is more straight forward that subsetting rows.
-The functions `select_taxa` and `select_obs` are little more that wrappers for `dplyr::select`.
+The functions `select_taxa` and `select_obs` are little more than wrappers for `dplyr::select`.
 The only thing they do differently is to enforce that the `taxon_ids`, `supertaxon_ids`, and `obs_taxon_ids` columns are preserved:
 
 ```{r}
