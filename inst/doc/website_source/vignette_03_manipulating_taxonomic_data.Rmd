@@ -27,26 +27,32 @@ For each `dplyr` verb, there are two functions in metacodeR, one that manipulate
 
 #### Removing supertaxa
 
-Often, there are many shared ranks in the taxonomic hierarchy that can prevent effective visualization:
+Often, there are many shared ranks in the taxonomic hierarchy that can make effective visualization difficult:
 
 ```{r}
+set.seed(2)
 plot(genbank_ex_data,
      node_size = n_obs,
      node_color = n_obs,
-     node_label = name)
+     node_label = name,
+     layout = "davidson-harel")
 ```
 
-`filter_taxa` can easily remove these taxa by filtering by rank or selecting the root taxon by name:
+`filter_taxa` can easily remove these taxa by selecting the root taxon by name:
 
 ```{r}
-filter_taxa(genbank_ex_data, n_supertaxa > 4) %>%
-  plot(node_size = n_obs,
-       node_color = n_obs,
-       node_label = name)
+set.seed(1)
 filter_taxa(genbank_ex_data, name == "Basidiomycota", subtaxa = TRUE) %>%
   plot(node_size = n_obs,
        node_color = n_obs,
-       node_label = name)
+       node_label = name,
+       layout = "davidson-harel")
+```
+
+The filtering operation could be done this way as well:
+
+```{r eval = FALSE}
+filter_taxa(genbank_ex_data, n_supertaxa > 4)
 ```
 
 

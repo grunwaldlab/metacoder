@@ -41,7 +41,7 @@ If you've built the vignettes, you can browse them with:
     
 ### Dependencies
 
-The function that runs *in silico* PCR requires `primersearch` from the EMBOSS tool kit to be installed. 
+The function that runs *in silico* PCR requires `primersearch` from the EMBOSS `r citep("10.1093/bib/3.1.87")` tool kit to be installed. 
 This is not an R package, so it is not automatically installed.
 Type `?primersearch` after installing and loading MetcodeR for installation instructions.
 
@@ -231,7 +231,7 @@ sample_n_obs(subsetted, size = 1000, taxon_weight = 1 / n_obs, unobserved = FALS
 ### In silico PCR
 
 The function **primersearch** is a wrapper for an EMBOSS tool that implements *in silico* PCR.
-The code below estimates the coverage of the universal prokaryotic primer pair 515F/806R `citep("10.1128/mSystems.00009-15")`: 
+The code below estimates the coverage of the universal prokaryotic primer pair 515F/806R `r citep("10.1128/mSystems.00009-15")`: 
 
 ```{r}
 pcr <- primersearch(sampled, 
@@ -345,3 +345,11 @@ We also welcome contributions via a Github [pull request](https://help.github.co
 
 We thank Tom Sharpton for sharing his metagenomics expertise and advising us.
 MetacodeR's major dependencies are taxize, igraph, and ggplot2.
+
+
+### References
+
+```{r, results = 'asis', echo=FALSE}
+bibliography()
+```
+
