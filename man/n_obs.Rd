@@ -9,7 +9,7 @@ n_obs(obj, subset = 1:nrow(obj$taxon_data))
 \arguments{
 \item{obj}{(\code{\link{taxmap}})}
 
-\item{subset}{(\code{character}) The \code{taxon_ids}s or indexes in \code{taxon_data} to get counts for.}
+\item{subset}{(\code{character}) The \code{taxon_ids} or indexes in \code{taxon_data} to get counts for.}
 }
 \value{
 \code{numeric}
@@ -17,5 +17,10 @@ n_obs(obj, subset = 1:nrow(obj$taxon_data))
 \description{
 Count observations for each taxon in \code{\link{taxmap}}.
 This includes observations for the specific taxon and its subtaxa.
+}
+\seealso{
+Other taxon_funcs: \code{\link{hierarchies}},
+  \code{\link{n_obs_1}}, \code{\link{n_subtaxa_1}},
+  \code{\link{n_subtaxa}}, \code{\link{n_supertaxa}}
 }
 

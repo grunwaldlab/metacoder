@@ -164,7 +164,7 @@ gridExtra::grid.arrange(ncol = 2, nrow = 1,
   plot(data, node_size = n_obs,
        node_size_range = c(0.0001, 0.1)),
   plot(data, node_size = n_obs,
-       edge_size = - taxon_levels, edge_size_range = c(0.001, 0.001)))
+       edge_size = - n_supertaxa, edge_size_range = c(0.001, 0.001)))
 ```
 
 
@@ -230,7 +230,7 @@ gridExtra::grid.arrange(ncol = 2, nrow = 1,
 
 ```{r}
 set.seed(1)
-plot(subset(data, taxon_levels > 2),
+plot(subset(data, n_supertaxa > 1),
        node_size = n_obs, node_label = name,
        node_color = n_obs, tree_label = name)
 ```
@@ -273,7 +273,7 @@ taxon_data(data, row_subset = 1:4)
 ## *In silico* PCR use case example: Plotting
 
 ```{r, fig.height=2.5}
-plot(data, node_size = n_obs, edge_color = taxon_levels,
+plot(data, node_size = n_obs, edge_color = n_supertaxa,
      node_label = name, node_color = n_obs,
      node_color_range = c("cyan", "magenta", "green"),
      edge_color_range   = c("#555555", "#EEEEEE"), overlap_avoidance = 0.5)
@@ -283,7 +283,7 @@ plot(data, node_size = n_obs, edge_color = taxon_levels,
 ## *In silico* PCR use case example: Subsetting
 
 ```{r, fig.height=2.5}
-subsetted <- subset(data, taxon_levels > 1)
+subsetted <- subset(data, n_supertaxa > 0)
 set.seed(2)
 plot(subsetted, node_size = n_obs, node_label = name, 
      node_color = n_obs, overlap_avoidance = 0.5, tree_label = name)

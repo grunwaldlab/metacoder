@@ -14,7 +14,7 @@ original_plot <- plot(obj, node_label = paste(name, n_obs), node_color = n_obs, 
 #|
 #| ####  Taxon filtering with NSE
 test_that("Taxon filtering with non-standard evaluation works", {
-  result <- filter_taxa(obj, taxon_levels < 3, n_obs > 1, 
+  result <- filter_taxa(obj, n_supertaxa < 2, n_obs > 1, 
                         subtaxa = FALSE, supertaxa = TRUE,
                         taxonless = FALSE, reassign_obs = TRUE)
   plot(result, node_label = paste(name, n_obs), node_color = n_obs, layout = "fr")
@@ -76,7 +76,7 @@ test_that("Taxon filtering: NA observations works", {
 #|
 #| ####  Removing supertaxa works
 test_that("Taxon filtering: removing supertaxa works", {
-  result <- filter_taxa(obj, taxon_levels > 1, 
+  result <- filter_taxa(obj, n_supertaxa > 0, 
                         subtaxa = FALSE, supertaxa = FALSE,
                         taxonless = FALSE, reassign_obs = TRUE)
   plot(result, node_label = paste(name, n_obs), node_color = n_obs, layout = "fr")
@@ -86,10 +86,10 @@ test_that("Taxon filtering: removing supertaxa works", {
 #|
 #| ####  Chaining multiple filtering commands
 test_that("Taxon filtering: chaining works", {
-  result <- filter_taxa(obj, taxon_levels > 1, 
+  result <- filter_taxa(obj, n_supertaxa > 0, 
                         subtaxa = FALSE, supertaxa = FALSE,
                         taxonless = FALSE, reassign_obs = TRUE) %>%
-    filter_taxa(taxon_levels > 1, 
+    filter_taxa(n_supertaxa > 0, 
                 subtaxa = FALSE, supertaxa = FALSE,
                 taxonless = FALSE, reassign_obs = TRUE)
   expect_equal(sum(is.na(result$taxon_data$supertaxon_ids)), 2)

@@ -38,7 +38,9 @@ taxmap <- function(taxon_ids, supertaxon_ids,
                        taxon_data = NULL, obs_data = NULL,
                        taxon_funcs = list(n_obs = n_obs,
                                           n_obs_1 = n_obs_1,
-                                          taxon_levels = taxon_levels,
+                                          n_supertaxa = n_supertaxa,
+                                          n_subtaxa = n_subtaxa,
+                                          n_subtaxa_1 = n_subtaxa_1,
                                           hierarchies = hierarchies),
                        obs_funcs = list()) {
   # Validate `taxon_ids` ---------------------------------------------------------------------------

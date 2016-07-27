@@ -84,43 +84,45 @@ plot_all(v35_data, "hmp--v35--all_data")
 ### Plot body site differences
 
 ```{r}
-calculate_body_site_abundance <- function(data, site) {
-  ab_col_name <- paste0(site, "_abun")
-  prop_col_name <- paste0(site, "_prop")
-  body_site_cols <- unlist(data$mapping[data$mapping$body_site == site, "sample_id"])
-  data$taxon_data[ab_col_name] <- vapply(obs(data), function(i) sum(data$obs_data[i, colnames(data$obs_data) %in% body_site_cols]), numeric(1))
-  data$taxon_data[prop_col_name] <- data$taxon_data[[ab_col_name]] / max(data$taxon_data[[ab_col_name]])
-  return(data)
+calculate_prop <- function(data, site) {
+  sample_cols <- as.character(unlist(data$mapping[data$mapping$body_site == site, "sample_id"]))
+  sample_cols <- sample_cols[sample_cols %in% colnames(data$obs_data)]
+  obs_indexes <- obs(data)
+  total_counts <- vapply(sample_cols, function(s) sum(data$obs_data[, s]), numeric(1))
+  col_name <- paste0(site, "_median_prop")
+  lapply(obs_indexes,
+         function(i) {
+           vapply(sample_cols, 
+                  function(s) sum(data$obs_data[i, s]) / total_counts[s],
+                  numeric(1))})
+}
+
+calculate_prop_diff <- function(data, site_1, site_2) {
+  props_1 <- calculate_prop(data, site_1)
+  props_2 <- calculate_prop(data, site_2)
+  p_value <- mapply(function(x, y) wilcox.test(x, y)$p.value,
+                    props_1, props_2)
+  p_value <- p.adjust(p_value, method = "bonferroni")
+  ifelse(p_value > 0.05 | is.nan(p_value), 0, vapply(props_1, median, numeric(1)) - vapply(props_2, median, numeric(1)))
 }
 
 plot_body_site_diff <- function(data, site_1, site_2, output_name, seed = 1) {
-  # calculate each site data
-  data <- calculate_body_site_abundance(data, site_1)
-  data <- calculate_body_site_abundance(data, site_2)
-   
-  # filter out taxa without reads in either site
-  data <- filter_taxa(data,
-                      data$taxon_data[[paste0(site_1, "_prop")]] != 0 | data$taxon_data[[paste0(site_2, "_prop")]] != 0,
-                      supertaxa = TRUE)
-  
-  # calculate scaled site difference
-  prop_1 <- data$taxon_data[[paste0(site_1, "_prop")]]
-  prop_2 <- data$taxon_data[[paste0(site_2, "_prop")]]
-  data$taxon_data$scaled_prop_diff <- (prop_1 - prop_2) / mean(c(prop_1, prop_2))
+  # calculate site difference
+  data$taxon_data$median_prop_diff <- calculate_prop_diff(data, site_1, site_2)
   
   # plot
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    # filter_taxa(taxon_levels <= 5) %>%
+    # filter_taxa(n_supertaxa <= 4) %>%
     plot(node_size_axis_label = "Number of OTUs",
          node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
-         node_color = scaled_prop_diff,
+         node_color = median_prop_diff,
          node_color_range = diverging_palette(),
          node_color_trans = "area",
-         node_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
-         edge_color_interval = round(max(abs(range(scaled_prop_diff)))) * c(-1, 1),
+         node_color_interval = max(abs(range(median_prop_diff))) * c(-1, 1),
+         edge_color_interval = max(abs(range(median_prop_diff))) * c(-1, 1),
          node_label = name,
          node_label_max = 150,
          overlap_avoidance = 1,
@@ -167,7 +169,7 @@ plot_body_site_diff_small <- function(data, site_1, site_2, seed = 1) {
   set.seed(seed)
   data %>%
     filter_taxa(abundance >= 100) %>%
-    filter_taxa(taxon_levels <= 5) %>%
+    filter_taxa(n_supertaxa <= 4) %>%
     plot(node_size_axis_label = "Number of OTUs",
          node_size = n_obs,
          node_color_axis_label = paste0(site_1, " only    Both    ", site_2, " only"),
