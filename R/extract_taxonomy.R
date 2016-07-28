@@ -243,7 +243,7 @@ extract_taxonomy.default <- function(input,
   taxonomy$obs_data <- dplyr::tbl_df(taxonomy$obs_data)
   
   return(taxonomy)
-  }
+}
 
 
 
