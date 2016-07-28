@@ -218,9 +218,9 @@ extract_taxonomy.default <- function(input,
                                        taxon_info_col_names)
     new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)
-    taxonomy$taxon_data <- dplyr::tbl_df(cbind(taxonomy$taxon_data, 
-                                               as.data.frame(new_columns,
-                                                             stringsAsFactors = FALSE)))
+    taxonomy$taxon_data <- cbind(taxonomy$taxon_data, 
+                                 as.data.frame(new_columns,
+                                               stringsAsFactors = FALSE))
   }
   
   # Convert columns to numeric is appropriate
@@ -237,6 +237,11 @@ extract_taxonomy.default <- function(input,
   my_print(level = "low",
            paste0(length(input), " inputs used to classify ", nrow(taxonomy$obs_data),
                   " observations by ", length(taxonomy$taxa), " taxa."))
+  
+  # Convert to tibble
+  taxonomy$taxon_data <- dplyr::tbl_df(taxonomy$taxon_data)
+  taxonomy$obs_data <- dplyr::tbl_df(taxonomy$obs_data)
+  
   return(taxonomy)
   }
 

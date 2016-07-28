@@ -41,10 +41,10 @@ test_that("Basic use works", {
 #| #### print method
 test_that("Print method works", {
   result <- taxmap(taxon_ids = LETTERS[1:4],
-                       supertaxon_ids = c(NA, LETTERS[1:3]),
-                       obs_taxon_ids = c(2, 2, 1, 1, 3))
+                   supertaxon_ids = c(NA, LETTERS[1:3]),
+                   obs_taxon_ids = c(2, 2, 1, 1, 3))
   expect_output(print(result), "`taxmap` object with")
-  expect_output(print(result), "Source: local data frame")
+  expect_output(print(result), "A tibble")
   expect_output(print(result), "taxon_data")
   expect_output(print(result), "A, B, C, D")
 })
