@@ -107,8 +107,21 @@ taxon_data_cols_used <- function(obj, ...) {
 #' 
 #' @keywords internal
 obs_data_cols_used <- function(obj, ...) {
-  names_used <- unlist(lapply(lazyeval::lazy_dots(...), function(x) as.character(x$expr)))
-  names_used[names_used %in% obs_data_colnames(obj)]
+  decompose <- function(x) {
+    if (class(x) %in% c("call", "(")) {
+      return(lapply(1:length(x), function(i) decompose(x[[i]])))
+    } else {
+      return(as.character(x))
+    }
+  }
+  
+  expressions <- lapply(lazyeval::lazy_dots(...), function(x) x$expr)
+  if (length(expressions) == 0) {
+    return(character(0))
+  } else {
+    names_used <- unlist(lapply(1:length(expressions), function(i) decompose(expressions[[i]])))
+    return(unique(names_used[names_used %in% obs_data_colnames(obj)]))
+  }
 }
 
 

@@ -7,18 +7,24 @@ context("Adding columns to `taxmap` objects")
 #|
 #| ####  Code shared by tests
 obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1), 
-                  obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
-                  taxon_data = data.frame(name = letters[1:5],
-                                          stringsAsFactors = FALSE),
-                  obs_data = data.frame(obs_attr = LETTERS[1:10],
-                                         stringsAsFactors = FALSE))
+              obs_taxon_ids = c(2, 2, 1, 1, 3, 4, 5, 3, 3, 4),
+              taxon_data = data.frame(name = letters[1:5],
+                                      stringsAsFactors = FALSE),
+              obs_data = data.frame(obs_attr = LETTERS[1:10],
+                                    stringsAsFactors = FALSE))
 #|
 #| ####  Adding taxon_data columns
 test_that("Adding taxon_data columns works", {
-  result <- mutate_taxa(obj, new_name = toupper(name))
+  result <- mutate_taxa(obj, new_name = name)
   expect_s3_class(result, "taxmap")
   expect_true(all(c("new_name", "name", "taxon_ids") %in% colnames(result$taxon_data)))
 })
+test_that("Adding taxon_data columns works with functions", {
+  result <- mutate_taxa(obj, new_name = paste0(toupper(name), "_1"))
+  expect_s3_class(result, "taxmap")
+  expect_true(all(c("new_name", "name", "taxon_ids") %in% colnames(result$taxon_data)))
+})
+
 #|
 #| ####  Adding taxon_data columns without using column names
 test_that("Adding taxon_data columns without using column names works", {
@@ -42,10 +48,16 @@ test_that("Adding taxon_data columns by referencing new columns works", {
 #|
 #| ####  Adding obs_data columns
 test_that("Adding obs_data columns works", {
-  result <- mutate_obs(obj, new_name = tolower(obs_attr))
+  result <- mutate_obs(obj, new_name = obs_attr)
   expect_s3_class(result, "taxmap")
   expect_true(all(c("new_name", "obs_attr", "obs_taxon_ids") %in% colnames(result$obs_data)))
 })
+test_that("Adding obs_data columns works in functions", {
+  result <- mutate_obs(obj, new_name = paste0(tolower(obs_attr), "_1"))
+  expect_s3_class(result, "taxmap")
+  expect_true(all(c("new_name", "obs_attr", "obs_taxon_ids") %in% colnames(result$obs_data)))
+})
+
 #|
 #| ####  Adding obs_data columns without using column names
 test_that("Adding obs_data columns without using column names works", {
