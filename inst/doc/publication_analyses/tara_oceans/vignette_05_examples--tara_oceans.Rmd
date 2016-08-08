@@ -4,26 +4,18 @@ output: html_document
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-library(knitr)
-source("knitr_settings.R")
+library(metacoder)
 ```
 
 
-### Analyses parameters
+## Analyses parameters
 
 ```{r}
-output_folder <- "tara_oceans_results"
+output_folder <- getwd()
 output_format <- ".pdf"
 ```
 
-### Create output directory
-
-```{r}
-dir.create(output_folder, showWarnings = FALSE)
-```
-
-
-### Parsing taxonomic data
+## Parsing taxonomic data
 
 The code below downloads the compressed data to a temporary directory:
 
@@ -47,14 +39,11 @@ unpacked_file_path <- file.path(temp_dir_path,
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-# Load the package
-library(metacoder)
-# Extract the taxonomic information of the sequences
 data <- parse_taxonomy_table(unpacked_file_path, taxon_col = c("class" = -9), class_sep = "\\|")
 ```
 
 
-### Getting sample data
+## Getting sample data
 
 ```{r}
 data_url <- "http://taraoceans.sb-roscoff.fr/EukDiv/data/Database_W1_Sample_parameters.xls"
@@ -65,7 +54,7 @@ sample_data <- readxl::read_excel(local_file_path)
 ```
 
 
-### Caluculate read abundance per taxon
+## Caluculate read abundance per taxon
 
 ```{r}
 sample_columns <- sample_data[["PANGAEA ACCESSION NUMBER"]]
@@ -75,7 +64,7 @@ data <- mutate_taxa(data,
 ```
 
 
-### Plot read and OTU abundance
+## Plot read and OTU abundance
 
 ```{r}
 seed = 9 #9, 10, 12 is good
@@ -114,159 +103,11 @@ data %>%
        background_color = background_color,
        maxiter = 50, fineiter = 50,
        margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("sup_figure_1--tara_all_plankton_diversity--seed_", seed,  output_format)))
+       output_file = file.path(output_folder, paste0("sup_figure_1--tara_all_plankton_diversity",  output_format)))
 ```
 
 
-### Sampling depth differential
-
-#### Calculate depth read counts
-
-```{r}
-sur_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "SUR"]
-dcm_columms <- sample_data[["PANGAEA ACCESSION NUMBER"]][sample_data[["SAMPLING DEPTH"]] == "DCM"]
-
-data <- mutate_obs(data, sur_counts = apply(data$obs_data[, sur_columms], MARGIN = 1,
-                                              function(x) sum(as.numeric(x))))
-data <- mutate_obs(data, dcm_counts = apply(data$obs_data[, dcm_columms], MARGIN = 1,
-                                              function(x) sum(as.numeric(x))))
-
-data <- mutate_taxa(data, sur_taxon_counts = vapply(obs(data),
-                                                    function(x) sum(data$obs_data$sur_counts[x]), numeric(1)))
-data <- mutate_taxa(data, dcm_taxon_counts = vapply(obs(data),
-                                                    function(x) sum(data$obs_data$dcm_counts[x]), numeric(1)))
-
-data <- mutate_taxa(data, depth_prop_dcm = dcm_taxon_counts / read_counts)
-total_dcm_reads <- sum(data$taxon_data$dcm_taxon_counts[n_supertaxa(data) == 0])
-total_sur_reads <- sum(data$taxon_data$sur_taxon_counts[n_supertaxa(data) == 0])
-total_reads <- total_dcm_reads + total_sur_reads
-
-
-prop_diff_test_stat <- function(prop_1, prop_2, prop_total, count_1, count_2) {
-  (prop_1 - prop_2) / sqrt(prop_total * (1 - prop_total) * (1 / count_1 + 1 / count_2))
-}
-
-data <- mutate_taxa(data, depth_prop_diff = ((dcm_taxon_counts / total_dcm_reads) - (sur_taxon_counts / total_sur_reads)) / (read_counts / total_reads))
-data <- mutate_taxa(data, depth_diff_test_stat = prop_diff_test_stat(prop_1 = dcm_taxon_counts / total_dcm_reads,
-                                                                     prop_2 = sur_taxon_counts / total_sur_reads,
-                                                                     prop_total = read_counts / total_reads,
-                                                                     count_1 = total_dcm_reads,
-                                                                     count_2 = total_sur_reads))
-```
-
-#### Plot proportion of reads in DCM 
-
-```{r}
-seed = 9 #9, 10, 12 is good
-set.seed(seed)
-taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-data %>%
-  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
-  filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
-  plot(title = "Location of taxa in water column",
-       title_size = 0.03,
-       node_color_axis_label = "DCM only        Both       Surface only",
-       node_size_axis_label = "Number of species (OTUs)",
-       node_size = n_obs,
-       node_size_range = c(0.0012, NA),
-       node_color = depth_prop_dcm,
-       node_color_range = diverging_palette(),
-       node_color_trans = "linear",
-       node_color_interval = c(0, 1),
-       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
-                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
-                             name, NA),
-       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
-       node_label_size_trans = "area",
-       node_label_size_range = c(0.001, NA),
-       node_label_max = 1000,
-       tree_label = name,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "da",
-       overlap_avoidance = .65,
-       maxiter = 50, fineiter = 50,
-       margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("sup_figure_2--tara_proportion_in_dcm--seed_", seed,  output_format)))
-```
-
-
-```{r}
-seed = 9 #9, 10, 12 is good
-set.seed(seed)
-taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-data %>%
-  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
-  filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
-  plot(title = "Location of taxa in water column",
-       title_size = 0.03,
-       node_color_axis_label = "DCM only        Both       Surface only",
-       node_size_axis_label = "Number of species (OTUs)",
-       node_size = n_obs,
-       node_size_range = c(0.0012, NA),
-       node_color = depth_prop_diff,
-       node_color_range = diverging_palette(),
-       node_color_trans = "linear",
-       node_color_interval = c(-2, 2),
-       edge_color_interval = c(-2, 2),
-       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
-                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
-                             name, NA),
-       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
-       node_label_size_trans = "area",
-       node_label_size_range = c(0.001, NA),
-       node_label_max = 1000,
-       tree_label = name,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "da",
-       overlap_avoidance = .65,
-       maxiter = 50, fineiter = 50,
-       margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("sup_figure_2--tara_scaled_proportion_diff--seed_", seed,  output_format)))
-```
-
-```{r}
-seed = 9 #9, 10, 12 is good
-set.seed(seed)
-taxa_patterns_to_hide <- paste0("^", c("[X]+", "X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-taxa_patterns_to_remove <- paste0("^", c("X\\+sp\\.", "NA", "root", "\\*", "sp\\.", "sp"), "$")
-data %>%
-  filter_taxa(! Reduce(`|`, lapply(taxa_patterns_to_remove, grepl, x = name))) %>%
-  filter_taxa(read_counts >= 100) %>%
-  filter_taxa(!(taxon_ids %in% subtaxa(data, name == "Eukaryota", simplify = TRUE, include_input = TRUE) & n_supertaxa <= 1)) %>%
-  plot(title = "Location of taxa in water column",
-       title_size = 0.03,
-       node_color_axis_label = "DCM only        Both       Surface only",
-       node_size_axis_label = "Number of species (OTUs)",
-       node_size = n_obs,
-       node_size_range = c(0.0012, NA),
-       node_color = depth_diff_test_stat,
-       node_color_range = diverging_palette(),
-       node_color_trans = "area",
-       node_color_interval = c(-1000, 1000),
-       edge_color_interval = c(-1000, 1000),
-       node_label = ifelse(grepl(pattern = "^[a-zA-z\\-]{1,25}$", name) &
-                               ! Reduce(`|`, lapply(taxa_patterns_to_hide, grepl, x = name)),
-                             name, NA),
-       node_label_size = (n_obs / (n_supertaxa + 1)) ^ 0.5,
-       node_label_size_trans = "area",
-       node_label_size_range = c(0.001, NA),
-       node_label_max = 1000,
-       tree_label = name,
-       tree_label_max = 100,
-       initial_layout = "re", layout = "da",
-       overlap_avoidance = .65,
-       maxiter = 10, fineiter = 10,
-       margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("sup_figure_2--tara_depth_test_stat--seed_", seed,  output_format)))
-```
-
-
-
-### Plot propotion of OTUs identified 
+## Plot propotion of OTUs identified 
 
 ```{r}
 data <- mutate_obs(data, pid = as.numeric(pid))
@@ -310,10 +151,10 @@ data %>%
        overlap_avoidance = .65,
        maxiter = 50, fineiter = 50,
        margin_size = c(0.001, 0.001),
-       output_file = file.path(output_folder, paste0("sup_figure_3--tara_proportion_identified--seed_", seed,  output_format)))
+       output_file = file.path(output_folder, paste0("sup_figure_2--tara_proportion_identified",  output_format)))
 ```
 
-#### Just Metazoa
+### Just Metazoa
 
 ```{r}
 seed = 1
@@ -340,6 +181,6 @@ data %>%
        initial_layout = "re", layout = "da",
        overlap_avoidance = .65,
        maxiter = 50, fineiter = 50,
-       output_file = file.path(output_folder, paste0("figure_1--tara_proportion_identified_metazoa--seed_", seed,  output_format)))
+       output_file = file.path(output_folder, paste0("figure_1--tara_proportion_identified_metazoa",  output_format)))
 ```
 
