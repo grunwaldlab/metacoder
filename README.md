@@ -17,7 +17,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 
 ### Documentation
 
-Documentation is under construction at <http://grunwaldlab.github.io/metacoder_documentation>.
+Documentation is under construction at <http://grunwaldlab.github.io/metacoder>.
 
 ### Download the current version
 
