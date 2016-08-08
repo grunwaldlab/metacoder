@@ -6,8 +6,9 @@
 ^.+\.Rproj$
 ^\.Rproj\.user$
 ^quilt_config\.yml$
-^inst/doc/.*$
+inst/doc/.*
 ^big_data$
 ^scratch$
 ^inst/extdata/mothur\.summary$
-^.*\.pdf$
+^inst$
+^doc$
