@@ -1,14 +1,5 @@
 ^\.travis\.yml$
-^README\.Rmd$
 ^README\.html$
-^README_cache$
-^README_files$
 ^.+\.Rproj$
 ^\.Rproj\.user$
-^quilt_config\.yml$
-inst/doc/.*
-^big_data$
 ^scratch$
-^inst/extdata/mothur\.summary$
-^inst$
-^doc$
