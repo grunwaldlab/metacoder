@@ -21,7 +21,7 @@ format_taxon_subset <- function(obj, index) {
       names(index) <- index
     } 
     if (is.numeric(index)) {
-      output <- index
+      output <- obj$taxon_data$taxon_ids[index]
       my_names <- names(index)
     } else if (is.character(index)) {
       output <- match(index, obj$taxon_data$taxon_ids)
