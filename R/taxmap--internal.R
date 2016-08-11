@@ -10,7 +10,7 @@
 #' If a \code{numeric}, then it should be row indexes of \code{taxon_data}.
 #' If a \code{logical}, then it should correspond to rows of \code{taxon_data}.
 #' 
-#' @return \code{character}
+#' @return \code{numeric}
 #' 
 #' @keywords internal
 format_taxon_subset <- function(obj, index) {
@@ -21,7 +21,7 @@ format_taxon_subset <- function(obj, index) {
       names(index) <- index
     } 
     if (is.numeric(index)) {
-      output <- obj$taxon_data$taxon_ids[index]
+      output <- index
       my_names <- names(index)
     } else if (is.character(index)) {
       output <- match(index, obj$taxon_data$taxon_ids)

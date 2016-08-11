@@ -15,7 +15,7 @@ If a \code{numeric}, then it should be row indexes of \code{taxon_data}.
 If a \code{logical}, then it should correspond to rows of \code{taxon_data}.}
 }
 \value{
-\code{character}
+\code{numeric}
 }
 \description{
 Format an input to a \code{subset} option on functions like \code{\link{supertaxa}}.

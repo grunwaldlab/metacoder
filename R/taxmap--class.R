@@ -240,7 +240,7 @@ taxon_data <- function(obj,
                        drop = FALSE) {
   # Parse options
   if (is.null(row_subset)) {
-    row_subset <- obj$taxon_data$taxon_ids
+    row_subset <- 1:nrow(obj$taxon_data)
   } else {
     row_subset <- format_taxon_subset(obj, row_subset)
   }
@@ -255,7 +255,7 @@ taxon_data <- function(obj,
   # Make copy of taxon data
   data <- obj$taxon_data
   # Remove any user-defined rows not specified
-  data <- dplyr::filter(data, data$taxon_ids %in% row_subset)
+  data <- dplyr::slice(data, row_subset)
   # Check if any of the column-generating functions are needed
   functions <- obj$taxon_funcs[names(obj$taxon_funcs) %in% col_subset]
   # Apply column-generating functions and append to output
