@@ -1,36 +1,40 @@
 #' Filter taxa with a list of conditions
 #' 
-#' Filter taxa in a \code{\link{taxmap}} object with a list of conditions. Any column name that
-#' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
+#' Filter taxa in a \code{\link{taxmap}} object with a list of conditions. Any column name that 
+#' appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See 
 #' \code{\link[dplyr]{filter}} for inspiration and more information.
 #' 
 #' @param .data \code{\link{taxmap}}
-#' @param ... One or more filtering conditions. This can be one of three things: \describe{
+#' @param ... One or more filtering conditions. This can be one of three things: \describe{ 
 #'   \item{\code{character}}{One or more \code{taxon_id}s} \item{\code{integer}}{One or more indexes
-#'   of \code{taxon_data}} \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal
+#'   of \code{taxon_data}} \item{\code{logical}}{A \code{TRUE}/\code{FALSE} vector of length equal 
 #'   to the number of rows in \code{taxon_data}} } Any column name that appears in 
 #'   \code{taxon_data(.data)} can be used as if it was a vector on its own.
-#' @param subtaxa (\code{logical} of length 1) If \code{TRUE}, include subtaxa of taxa passing the
+#' @param subtaxa (\code{logical} of length 1) If \code{TRUE}, include subtaxa of taxa passing the 
 #'   filter.
-#' @param supertaxa (\code{logical} of length 1) If \code{TRUE}, include supertaxa of taxa passing
+#' @param supertaxa (\code{logical} of length 1) If \code{TRUE}, include supertaxa of taxa passing 
 #'   the filter.
-#' @param taxonless (\code{logical} of length 1) If \code{TRUE}, include observations even if the taxon
-#'   they are assigned to is filtered out. observation assigned to removed taxa will be assigned to
-#'   \code{NA}. See the \code{reassign} option below for further complications.
-#' @param reassign_obs (\code{logical} of length 1) If \code{TRUE}, observations assigned to removed taxa will
-#'   be reassigned to the closest supertaxon that passed the filter. If there are no supertaxa of
-#'   such an observation that passed the filter, they will be filtered out if \code{taxonless} is
-#'   \code{TRUE}.
-#' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, subtaxa of removed taxa will
-#'   be reassigned to the closest supertaxon that passed the filter.
+#' @param taxonless (\code{logical} of length 1) If \code{TRUE}, include observations even if the
+#'   taxon they are assigned to is filtered out. observation assigned to removed taxa will be
+#'   assigned to \code{NA}. See the \code{reassign} option below for further complications.
+#' @param reassign_obs (\code{logical} of length 1) If \code{TRUE}, observations assigned to removed
+#'   taxa will be reassigned to the closest supertaxon that passed the filter. If there are no
+#'   supertaxa of such an observation that passed the filter, they will be filtered out if
+#'   \code{taxonless} is \code{TRUE}.
+#' @param reassign_taxa (\code{logical} of length 1) If \code{TRUE}, subtaxa of removed taxa will be
+#'   reassigned to the closest supertaxon that passed the filter.
+#' @param invert (\code{logical} of length 1) If \code{TRUE}, do NOT include the selection.
+#'   This is different than just replacing a \code{==} with a \code{!=} because this option negates
+#'   the selection after taking into account the \code{subtaxa} and \code{supertaxa} options.
+#'   This is useful for removing a taxon and all its subtaxa for example.
 #'   
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
 #' @export
-filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
-                        taxonless = FALSE, reassign_obs = TRUE, reassign_taxa = TRUE) {
+filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE, taxonless = FALSE,
+                        reassign_obs = TRUE, reassign_taxa = TRUE, invert = FALSE) {
   
   # non-standard argument evaluation ---------------------------------------------------------------
   selection <- lazyeval::lazy_eval(lazyeval::lazy_dots(...),
@@ -58,7 +62,12 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE,
                                       na = FALSE, simplify = TRUE, include_input = FALSE)
                           }))
   
-  # Reassign taxonless observations -----------------------------------------------------------------------
+  # Invert selection -------------------------------------------------------------------------------
+  if (invert) {
+    taxa_subset <- (1:nrow(.data$taxon_data))[-taxa_subset]
+  }
+  
+  # Reassign taxonless observations ----------------------------------------------------------------
   if (reassign_obs) {
     reassign_one <- function(parents) {
       included_parents <- parents[parents %in% taxa_subset]
