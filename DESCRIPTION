@@ -1,18 +1,12 @@
 Package: metacoder
-Title: Tools for metabarcoding experiment planning
-Version: 0.1.1.9579
+Title: Tools for Parsing, Manipulating, and Graphing Hierarchical Data
+Version: 0.1.1.710
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
         "grunwaln@science.oregonstate.edu", role = c("aut")))
-Maintainer: Zachary S.L. Foster <zacharyfoster1989@gmail.com>
-Description: A set of tools for metabarcoding (i.e. amplicon
-        metagenomics) experiment planning and analysis. Has functions
-        for parseing out taxonomic information from diverse metadata
-        (e.g. sequence headers), for manipulation of items with associated taxonomy information (e.g.
-        sequences), and for making publication-quality graphics showing
-        distributions of taxon statistics over taxonomic/phylogenetic
-        trees.
+Maintainer: Zachary Foster <zacharyfoster1989@gmail.com>
+Description: A set of tools for parsing, manipulating, and graphing data classified by a hierarchy (e.g. a taxonomy).  
 Depends: R (>= 3.0.2)
 License: GPL-2 | GPL-3
 LazyData: true
@@ -22,5 +16,5 @@ Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
-Date: 2016-07-01
+Date: 2016-08-01
 Encoding: UTF-8

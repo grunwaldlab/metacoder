@@ -182,7 +182,6 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-#' @source \url{http://itsonedb.ba.itb.cnr.it:8080/ITS1}
 "its1_ex_data"
 
 
