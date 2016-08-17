@@ -5,16 +5,16 @@ Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
         "grunwaln@science.oregonstate.edu", role = c("aut")))
+Maintainer: Zachary S.L. Foster <zacharyfoster1989@gmail.com>
 Description: A set of tools for metabarcoding (i.e. amplicon
         metagenomics) experiment planning and analysis. Has functions
         for parseing out taxonomic information from diverse metadata
-        (e.g. sequence headers), for taxonomically- balanced
-        subsampling of items with associated taxonomy information (e.g.
+        (e.g. sequence headers), for manipulation of items with associated taxonomy information (e.g.
         sequences), and for making publication-quality graphics showing
         distributions of taxon statistics over taxonomic/phylogenetic
         trees.
 Depends: R (>= 3.0.2)
-License: GPL-3
+License: GPL-2 | GPL-3
 LazyData: true
 Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
         reshape2, zoo, traits, RColorBrewer, RCurl, ape, reshape,
@@ -23,4 +23,4 @@ Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1
 Date: 2016-07-01
-Encoding: latin1
+Encoding: UTF-8

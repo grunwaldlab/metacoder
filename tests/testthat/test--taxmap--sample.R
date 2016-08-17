@@ -12,7 +12,7 @@ obj <- taxmap(taxon_ids = LETTERS[1:5], supertaxon_ids = c(NA, 1, 2, 2, 1),
                                           stringsAsFactors = FALSE),
                   obs_data = data.frame(obs_attr = rep(LETTERS[1:10], 10),
                                          stringsAsFactors = FALSE))
-original_plot <- plot(obj, node_label = paste(taxon_ids, n_obs), node_color = n_obs, layout = "fr")
+original_plot <- heat_tree(obj, node_label = paste(taxon_ids, n_obs), node_color = n_obs, layout = "fr")
 #|
 #| ####  Sampling observations by taxon_weights
 test_that("Sampling observations by taxon_weights works", {
