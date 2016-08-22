@@ -33,3 +33,9 @@ If you've built the vignettes, you can browse them with:
 ### Dependencies
 
 The function that runs *in silico* PCR requires `primersearch` from the EMBOSS tool kit to be installed. This is not an R package, so it is not automatically installed. Type `?primersearch` after installing and loading MetcodeR for installation instructions.
+
+### Citation
+
+To be submitted:
+
+ZSL Foster, TJ Sharpton and NJ Grünwald. 2016. _MetacodeR_: An R package for manipulation and heat tree visualization of community taxonomic data from metabarcoding. BioRxiv, to be submitted. 
