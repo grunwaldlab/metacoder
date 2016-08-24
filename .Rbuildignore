@@ -3,3 +3,6 @@
 ^.+\.Rproj$
 ^\.Rproj\.user$
 ^scratch$
+^\.gitignore$
+^\.Rhistory$
+^cran-comments\.md$
