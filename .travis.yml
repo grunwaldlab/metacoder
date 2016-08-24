@@ -1,7 +1,7 @@
 language: r
 r:
   - release
-  - dev
+  - devel
 
 sudo: required
 cran: http://cran.at.r-project.org
