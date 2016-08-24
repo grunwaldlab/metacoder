@@ -140,7 +140,6 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-#' @source \url{http://5.196.17.195/pr2/index.html}
 "pr2_ex_data"
 
 
@@ -182,7 +181,6 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-#' @source \url{http://itsonedb.ba.itb.cnr.it:8080/ITS1}
 "its1_ex_data"
 
 

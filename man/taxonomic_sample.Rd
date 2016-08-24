@@ -54,10 +54,10 @@ Recursivly sample a set of observations with taxonomic assignments and an associ
 
 \dontrun{
 #Plot data before subsampling
-plot(unite_ex_data_3,
-     node_size = n_obs,
-     node_color = n_obs,
-     node_label = n_obs)
+heat_tree(unite_ex_data_3,
+          node_size = n_obs,
+          node_color = n_obs,
+          node_label = n_obs)
      
 # Subsampling
 subsampled <- taxonomic_sample(unite_ex_data_3,
@@ -65,10 +65,10 @@ subsampled <- taxonomic_sample(unite_ex_data_3,
                                min_counts = c("7" = 3))
      
 # Remove unobserved taxa and plot
-plot(subset(subsampled, n_obs > 0, unobserved = FALSE),
-     node_size = n_obs,
-     node_color = n_obs,
-     node_label = n_obs)
+heat_tree(subset(subsampled, n_obs > 0, unobserved = FALSE),
+          node_size = n_obs,
+          node_color = n_obs,
+          node_label = n_obs)
 }
 
 }

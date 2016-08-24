@@ -61,7 +61,7 @@ To learn how to use the package and what it can do view the package vignettes by
 \strong{Plotting taxonomic distribution of data:}
 
 \itemize{
-  \item \code{\link{plot.taxmap}}
+  \item \code{\link{heat_tree}}
 }
 
 \strong{In silico PCR:}

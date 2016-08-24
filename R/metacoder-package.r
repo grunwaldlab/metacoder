@@ -54,7 +54,7 @@
 #' \strong{Plotting taxonomic distribution of data:}
 #' 
 #' \itemize{
-#'   \item \code{\link{plot.taxmap}}
+#'   \item \code{\link{heat_tree}}
 #' }
 #'
 #' \strong{In silico PCR:}

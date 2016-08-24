@@ -1,3 +1,42 @@
+#' @rdname heat_tree
+#' @export
+heat_tree <- function(...) {
+  UseMethod("heat_tree")
+}
+
+#' @param .input An object of type \code{\link{taxmap}}
+#' 
+#' @method heat_tree taxmap
+#' @export
+#' @rdname heat_tree
+heat_tree.taxmap <- function(.input, ...) {
+  # Non-standard argument evaluation
+  data <- taxon_data(.input, sort_by = hierarchies, 
+                     col_subset = unique(c(taxon_data_cols_used(.input, ...), "taxon_ids", "supertaxon_ids")))
+  arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
+                 lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
+  
+  # Use variable name for scale axis labels
+  if (! "node_color_axis_label" %in% names(arguments)) {
+    arguments$node_color_axis_label <- deparse(as.list(match.call())$node_color)
+  }
+  if (! "node_size_axis_label" %in% names(arguments)) {
+    arguments$node_size_axis_label <- deparse(as.list(match.call())$node_size)
+  }
+  if (! "edge_color_axis_label" %in% names(arguments)) {
+    arguments$edge_color_axis_label <- deparse(as.list(match.call())$edge_color)
+  }
+  if (! "edge_size_axis_label" %in% names(arguments)) {
+    arguments$edge_size_axis_label <- deparse(as.list(match.call())$edge_size)
+  }
+  
+  # Call heat_tree
+  do.call(heat_tree, arguments)
+}
+
+
+
+
 #===================================================================================================
 #' Plot a taxonomic tree
 #' 
@@ -231,7 +270,7 @@
 #' 
 #' Layouts determine the position of nodes on the graph.
 #' The are implemented using the \code{\link{igraph}} package.
-#' Any additional arguments passed to \code{plot_taxonomy} are passed to the  \code{\link{igraph}}
+#' Any additional arguments passed to \code{heat_tree} are passed to the  \code{\link{igraph}}
 #' function used.
 #' The following \code{character} values are understood:
 #' 
@@ -260,16 +299,17 @@
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #'  
 #' @examples 
-#' plot(contaminants,
-#'      node_size = n_obs,
-#'      node_color = n_obs,
-#'      node_label = name,
-#'      tree_label = name,
-#'      layout = "fruchterman-reingold")
+#' heat_tree(contaminants,
+#'           node_size = n_obs,
+#'           node_color = n_obs,
+#'           node_label = name,
+#'           tree_label = name,
+#'           layout = "fruchterman-reingold")
 #' 
 #' @keywords internal
-#' @rdname plot_taxonomy
-plot_taxonomy <- function(taxon_id, supertaxon_id, 
+#' @method heat_tree default
+#' @rdname heat_tree
+heat_tree.default <- function(taxon_id, supertaxon_id, 
                           node_label = NA,
                           edge_label = NA,
                           tree_label = NA,
@@ -907,32 +947,3 @@ plot_taxonomy <- function(taxon_id, supertaxon_id,
 }
 
 
-#' @param x An object of type \code{\link{taxmap}}
-#' 
-#' @method plot taxmap
-#' @export
-#' @rdname plot_taxonomy
-plot.taxmap <- function(x, ...) {
-  # Non-standard argument evaluation
-  data <- taxon_data(x, sort_by = hierarchies, 
-                     col_subset = unique(c(taxon_data_cols_used(x, ...), "taxon_ids", "supertaxon_ids")))
-  arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
-                 lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
-  
-  # Use variable name for scale axis labels
-  if (! "node_color_axis_label" %in% names(arguments)) {
-    arguments$node_color_axis_label <- deparse(as.list(match.call())$node_color)
-  }
-  if (! "node_size_axis_label" %in% names(arguments)) {
-    arguments$node_size_axis_label <- deparse(as.list(match.call())$node_size)
-  }
-  if (! "edge_color_axis_label" %in% names(arguments)) {
-    arguments$edge_color_axis_label <- deparse(as.list(match.call())$edge_color)
-  }
-  if (! "edge_size_axis_label" %in% names(arguments)) {
-    arguments$edge_size_axis_label <- deparse(as.list(match.call())$edge_size)
-  }
-  
-  # Call plot_taxonomy
-  do.call(plot_taxonomy, arguments)
-}
