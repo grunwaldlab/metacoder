@@ -47,6 +47,17 @@ Randomly sample some propoortion of observations from a \code{\link{taxmap}} obj
 specified for observations or the taxa they are taxmap by.
 See \link[dplyr]{sample_frac} for the inspiration for this function.
 }
+\examples{
+# Subsample without replacement, keeping all taxa
+sample_frac_obs(unite_ex_data_3, 0.1)
+# Subsample without replacement and remove unsampled taxa
+sample_frac_obs(unite_ex_data_3, 0.1, unobserved = FALSE)
+# Subsample with taxon weight 
+sample_frac_obs(unite_ex_data_3, 0.1, unobserved = FALSE, taxon_weight = 1 / n_obs)
+# Sample with replacement
+sample_frac_obs(unite_ex_data_3, 10, replace = TRUE)
+
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_obs}},

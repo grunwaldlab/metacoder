@@ -20,6 +20,11 @@ Add columns to the \code{obs_data} in \code{\link{taxmap}} objects. Any column n
 appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See
 \code{\link[dplyr]{mutate}} for inspiration and more information.
 }
+\examples{
+# Add one or more observation columns
+mutate_obs(unite_ex_data_3, x = 1, y = x+2)
+  
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_obs}},

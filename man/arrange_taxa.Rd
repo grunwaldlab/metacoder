@@ -9,8 +9,7 @@ arrange_taxa(.data, ...)
 \arguments{
 \item{.data}{\code{\link{taxmap}}}
 
-\item{...}{One or more column names to sort on. Newly created columns can be referenced in the
-same function call.}
+\item{...}{One or more column names to sort on.}
 }
 \value{
 An object of type \code{\link{taxmap}}
@@ -19,6 +18,13 @@ An object of type \code{\link{taxmap}}
 Sort columns of \code{taxon_data} in \code{\link{taxmap}} objects. Any column name that
 appears in \code{taxon_data(.data)} can be used as if it was a vector on its own. See
 \link[dplyr]{arrange} for more details.
+}
+\examples{
+# Sort by taxon name alphabetically
+arrange_taxa(unite_ex_data_3, name)
+# Reverse order of sort
+arrange_taxa(unite_ex_data_3, desc(name))
+  
 }
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},

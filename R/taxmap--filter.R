@@ -31,7 +31,19 @@
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
-#'   
+#' 
+#' @examples
+#' # Remove singleton taxa, but reassign singletons to supertaxa that pass filter
+#' filter_taxa(unite_ex_data_3, n_obs > 1)
+#' # Remove singleton taxa and associated seqeuence data
+#' filter_taxa(unite_ex_data_3, n_obs > 1, taxonless = FALSE, reassign_obs = FALSE)
+#' # Subset to a single taxon and its subtaxa
+#' filter_taxa(unite_ex_data_3, name == "Basidiomycota", subtaxa = TRUE)
+#' # Remove a taxon and its subtaxa
+#' filter_taxa(unite_ex_data_3, name == "Basidiomycota", subtaxa = TRUE, invert = TRUE)
+#' # Remove taxa, reassigning supertaxa and subtaxa 
+#' filter_taxa(unite_ex_data_3, unite_rank != "p")
+#' 
 #' @export
 filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE, taxonless = FALSE,
                         reassign_obs = TRUE, reassign_taxa = TRUE, invert = FALSE) {
@@ -134,7 +146,13 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE, taxonles
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
-#'   
+#'
+#' @examples 
+#' # Filter by sequence name, but preserve all taxa
+#' filter_obs(unite_ex_data_3, grepl("Lachnum", seq_name))
+#' # Filter by sequence name and only keep taxa with sequences that pass the filter
+#' filter_obs(unite_ex_data_3, grepl("Lachnum", seq_name), unobserved = FALSE)
+#' 
 #' @export
 filter_obs <- function(.data, ..., unobserved = TRUE) {
   # non-standard argument evaluation ---------------------------------------------------------------

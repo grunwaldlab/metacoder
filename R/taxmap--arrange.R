@@ -5,12 +5,17 @@
 #' \link[dplyr]{arrange} for more details.
 #' 
 #' @param .data \code{\link{taxmap}}
-#' @param ... One or more column names to sort on. Newly created columns can be referenced in the
-#'   same function call.
+#' @param ... One or more column names to sort on.
 #'   
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples
+#' # Sort by taxon name alphabetically
+#' arrange_taxa(unite_ex_data_3, name)
+#' # Reverse order of sort
+#' arrange_taxa(unite_ex_data_3, desc(name))
 #'   
 #' @export
 arrange_taxa <- function(.data, ...) {
@@ -29,13 +34,18 @@ arrange_taxa <- function(.data, ...) {
 #' \link[dplyr]{arrange} for more details.
 #' 
 #' @param .data \code{\link{taxmap}}
-#' @param ... One or more column names to sort on. Newly created columns can be referenced in the
-#'   same function call.
+#' @param ... One or more column names to sort on.
 #'   
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
 #'   
+#' @examples
+#' # Sort observations by sequence name alphabetically
+#' arrange_obs(unite_ex_data_3, seq_name)
+#' # Reverse order of sort
+#' arrange_obs(unite_ex_data_3, desc(seq_name))
+#' 
 #' @export
 arrange_obs <- function(.data, ...) {
   my_obs_data <- obs_data(.data, col_subset = obs_data_cols_used(.data, ...))

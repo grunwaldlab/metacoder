@@ -15,6 +15,10 @@
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples
+#' # subset taxon columns
+#' select_taxa(unite_ex_data_3, name)
 #'   
 #' @export
 select_taxa <- function(.data, ...) {
@@ -41,6 +45,10 @@ select_taxa <- function(.data, ...) {
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples
+#' # subset observation columns
+#' select_obs(unite_ex_data_3, other_id, seq_id)
 #'   
 #' @export
 select_obs <- function(.data, ...) {

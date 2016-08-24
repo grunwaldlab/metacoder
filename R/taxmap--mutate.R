@@ -11,7 +11,11 @@
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
-#'   
+#' 
+#' @examples 
+#' # Add one or more taxon columns
+#' mutate_taxa(unite_ex_data_3, x = 1, y = x+2)
+#' 
 #' @export
 mutate_taxa <- function(.data, ...) {
   data_used <- taxon_data(.data, col_subset = taxon_data_cols_used(.data, ...))
@@ -39,6 +43,10 @@ mutate_taxa <- function(.data, ...) {
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples 
+#' # Add one or more observation columns
+#' mutate_obs(unite_ex_data_3, x = 1, y = x+2)
 #'   
 #' @export
 mutate_obs <- function(.data, ...) {
@@ -66,6 +74,10 @@ mutate_obs <- function(.data, ...) {
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples 
+#' # Replace all taxon columns with new columns
+#' transmute_taxa(unite_ex_data_3, x = 1, y = x+2)
 #'   
 #' @export
 transmute_taxa <- function(.data, ...) {
@@ -94,6 +106,10 @@ transmute_taxa <- function(.data, ...) {
 #' @return An object of type \code{\link{taxmap}}
 #'   
 #' @family dplyr-like functions
+#' 
+#' @examples 
+#' # Replace all observation columns with new columns
+#' transmute_obs(unite_ex_data_3, x = 1, y = x+2)
 #'   
 #' @export
 transmute_obs <- function(.data, ...) {

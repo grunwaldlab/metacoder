@@ -24,6 +24,11 @@ Subsets \code{taxon_data} columns in a \code{\link{taxmap}} object. Takes and re
 \code{\link{taxmap}} object. Any column name that appears in \code{taxon_data(.data)} can be
 used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more information.
 }
+\examples{
+# subset taxon columns
+select_taxa(unite_ex_data_3, name)
+  
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_obs}},

@@ -28,6 +28,13 @@ Filter observations in a \code{\link{taxmap}} object with a list of conditions. 
 appears in \code{obs_data(.data)} can be used as if it was a vector on its own. See 
 \code{\link[dplyr]{filter}} for inspiration and more information.
 }
+\examples{
+# Filter by sequence name, but preserve all taxa
+filter_obs(unite_ex_data_3, grepl("Lachnum", seq_name))
+# Filter by sequence name and only keep taxa with sequences that pass the filter
+filter_obs(unite_ex_data_3, grepl("Lachnum", seq_name), unobserved = FALSE)
+
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_taxa}},

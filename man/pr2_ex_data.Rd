@@ -5,9 +5,6 @@
 \alias{pr2_ex_data}
 \title{Example of PR2 SSU data}
 \format{An object of type \code{\link{taxmap}}}
-\source{
-\url{http://5.196.17.195/pr2/index.html}
-}
 \usage{
 pr2_ex_data
 }

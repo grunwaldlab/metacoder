@@ -45,6 +45,14 @@ Randomly sample some propoortion of taxa from a \code{\link{taxmap}} object. Wei
 specified for taxa or the observations assigned to them. See \link[dplyr]{sample_frac} for the
 inspiration for this function.
 }
+\examples{
+# subsample taxa, preserving shared supertaxa
+sample_frac_taxa(unite_ex_data_3, 0.1, supertaxa = TRUE)
+# subsample taxa using weights, preserving subtaxa
+sample_frac_taxa(unite_ex_data_3, 0.01, subtaxa = TRUE,
+                 taxon_weight = ifelse(unite_rank == "g" & n_subtaxa > 3, 1, 0))
+              
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_obs}},

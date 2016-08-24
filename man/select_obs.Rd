@@ -24,6 +24,11 @@ Subsets \code{obs_data} columns in a \code{\link{taxmap}} object. Takes and retu
 \code{\link{taxmap}} object. Any column name that appears in \code{obs_data(.data)} can be
 used as if it was a vector on its own. See \code{\link[dplyr]{select}} for more information.
 }
+\examples{
+# subset observation columns
+select_obs(unite_ex_data_3, other_id, seq_id)
+  
+}
 \seealso{
 Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{arrange_taxa}}, \code{\link{filter_obs}},
