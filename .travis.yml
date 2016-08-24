@@ -1,6 +1,12 @@
 language: r
+r:
+  - release
+  - dev
 
-sudo: required
+sudo: false
+cran: http://cran.at.r-project.org
+
+cache: packages
 
 os:
 - linux
@@ -10,3 +16,8 @@ r_github_packages:
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
+  
+notifications:
+  email:
+    on_success: change
+    on_failure: always
