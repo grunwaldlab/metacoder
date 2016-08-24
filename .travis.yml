@@ -3,16 +3,13 @@ r:
   - release
   - dev
 
-sudo: false
+sudo: required
 cran: http://cran.at.r-project.org
 
 cache: packages
 
 os:
 - linux
-
-r_github_packages:
-  - jimhester/covr
 
 after_success:
   - Rscript -e 'library(covr);codecov()'
