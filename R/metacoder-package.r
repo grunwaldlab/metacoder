@@ -17,6 +17,14 @@
 #'
 #' To learn how to use the package and what it can do view the package vignettes by typing: 
 #' \code{browseVignettes("metacoder")}
+#' 
+#' @section Documentation:
+#' 
+#' The full documentation can be found online at \url{http://grunwaldlab.github.io/metacoder_documentation}.
+#' 
+#' There is also a short vignette included for offline use that can be accessed  by the following code:
+#' 
+#' \code{browseVignettes(package = "metacoder")}
 #'
 #' @section Most important functions:
 #' 
@@ -63,7 +71,7 @@
 #'   \item \code{\link{primersearch}}
 #' }
 #'
-#' @author Zachary Foster
+#' @author Zachary Foster 
 #' @name metacoder
 #' @docType package
 NULL
