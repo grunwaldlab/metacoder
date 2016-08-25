@@ -13,6 +13,7 @@ The goal of the \code{metacoder} package is to provide a set of tools for:
 
 \itemize{
   \item Standardized parsing of taxonomic information from diverse resources.
+  \item A set of functions to manipulate taxonomic data modeled after dplyr.
   \item Visualization of statistics distributed over taxonomic classifications and phylogenies.
   \item Evaluating potential metabarcoding primers for taxonomic specificity.
   \item Evaluating potential metabarcoding loci for taxonomic discrimiation (in development).
