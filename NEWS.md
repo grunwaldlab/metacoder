@@ -1,5 +1,16 @@
 # News 
 
+## metacoder 0.1.2
+
+### Breaking changes
+
+* `plot_taxonomy` and the `plot` method have been renamed `heat_tree`.
+
+### New features
+
+* New introduction vignette
+* Various minor bug fixes
+
 
 ## metacoder 0.1.1
 
