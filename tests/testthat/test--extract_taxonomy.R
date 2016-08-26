@@ -13,20 +13,27 @@ test_data = c("obs_id: FJ712037.1 - name: Panthera leo - taxon_id: 9689 - class_
 test_regex <- "obs_id: (.*) - name: (.*) - taxon_id: (.*) - class_name: (.*) - class_id: (.*)"
 
 check_for_internet <- function() {
-  if (! is.character(RCurl::getURL("www.google.com"))) {
+  result <- tryCatch(RCurl::getURL("www.google.com"), error = function(e) FALSE)
+  if (! is.character(result)) {
     skip("Internet not available")
   }
+}
+
+print_on_error <- function(result) {
+  paste0(c("---- RESULT ----", capture.output(str(result))), collapse = "\n")
 }
 
 #|
 #| ### Exracting by obs_id
 test_that("Exracting by obs_id works", {
+  skip_on_cran()
   check_for_internet()
   result <- extract_taxonomy(test_data, key = "obs_id", regex = "obs_id: (.*?) -", database = "ncbi")
   expect_s3_class(result, "taxmap")
-  expect_true("Eukaryota" %in% result$taxon_data$name)
+  expect_true("Eukaryota" %in% result$taxon_data$name, info = print_on_error(result))
 })
 test_that("Invalid IDs cause understandable errors", {
+  skip_on_cran()
   check_for_internet()
   expect_error(extract_taxonomy(c("FJ712037.1", "notvalid", "HW243304.1"),
                                 key = "obs_id", regex = "(.*)", database = "ncbi",
@@ -40,9 +47,10 @@ test_that("Exracting by classification names works", {
   result <- extract_taxonomy(test_data, key = "class", regex = "class_name: (.*?) -", 
                              class_key = "name", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "taxmap")
-  expect_true("Caniformia" %in% result$taxon_data$name)
+  expect_true("Caniformia" %in% result$taxon_data$name, info = print_on_error(result))
 })
 test_that("Looking up IDs for classification names works", {
+  skip_on_cran()
   check_for_internet()
   result <- extract_taxonomy(c("Ascomycota_sp|AY773457|SH189849.06FU|reps|k__Fungi;p__Ascomycota;c__unidentified;o__unidentified;f__unidentified;g__unidentified;s__Ascomycota_sp", 
                                "Myrmecridium_schulzeri|EU041774|SH189850.06FU|reps|k__Fungi;p__Ascomycota;c__Sordariomycetes;o__Incertae_sedis;f__Incertae_sedis;g__Myrmecridium;s__Myrmecridium_schulzeri", 
@@ -55,7 +63,7 @@ test_that("Looking up IDs for classification names works", {
                              class_sep = ";",
                              database = "ncbi")
   expect_s3_class(result, "taxmap")
-  expect_equal(result$taxon_data$ncbi_id[1], "4751")
+  expect_equal(result$taxon_data$ncbi_id[1], "4751", info = print_on_error(result))
 })
 
 
@@ -67,25 +75,27 @@ test_that("Exracting by classification IDs works", {
   result <- extract_taxonomy(test_data, key = "class", regex = "class_id: (.*?)$", 
                              class_key = "taxon_id", class_regex = "(.*)", class_sep = ";")
   expect_s3_class(result, "taxmap")
-  expect_true("379583" %in% result$taxon_data$taxon_id)
+  expect_true("379583" %in% result$taxon_data$taxon_id, info = print_on_error(result))
 })
 
 #|
 #| ### Exracting by taxon name
 test_that("Exracting by taxon name works", {
+  skip_on_cran()
   check_for_internet()
   result <- extract_taxonomy(test_data, key = "name", regex = "name: (.*?) - ", database = "ncbi")
   expect_s3_class(result, "taxmap")
-  expect_true("379583" %in% result$taxon_data$ncbi_id)
+  expect_true("379583" %in% result$taxon_data$ncbi_id, info = print_on_error(result))
 })
 
 #|
 #| ### Exracting by taxon ID
 test_that("Exracting by taxon ID works", {
+  skip_on_cran()
   check_for_internet()
   result <- extract_taxonomy(test_data, key = "taxon_id", regex = "taxon_id: (.*?) - ", database = "ncbi")
   expect_s3_class(result, "taxmap")
-  expect_true("Eukaryota" %in% result$taxon_data$name)
+  expect_true("Eukaryota" %in% result$taxon_data$name, info = print_on_error(result))
 })
 
 #|
