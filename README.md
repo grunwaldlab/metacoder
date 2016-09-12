@@ -22,7 +22,7 @@ MetacodeR is an R package that attempts to addresses these issues:
 
 ### Documentation
 
-Documentation is under construction at <http://grunwaldlab.github.io/metacoder>.
+Documentation is under construction at <http://grunwaldlab.github.io/metacoder_documentation>.
 
 ### Download the current version
 
