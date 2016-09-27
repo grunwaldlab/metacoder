@@ -45,3 +45,9 @@ The function that runs *in silico* PCR requires `primersearch` from the EMBOSS t
 We are about to submit the mansucript to a pre-print server followed by submission for peer-review. Meanwhile, cite:
 
 ZSL Foster, TJ Sharpton and NJ Grünwald. 2016. _MetacodeR_: An R package for manipulation and heat tree visualization of community taxonomic data from metabarcoding. BioRxiv, to be submitted. 
+
+### License
+
+This work is subject to the [MIT License](https://github.com/grunwaldlab/metacoder/blob/master/LICENSE).
+
+
