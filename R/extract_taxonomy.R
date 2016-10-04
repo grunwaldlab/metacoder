@@ -285,8 +285,8 @@ extract_taxonomy.list <- function(input, ...) {
 #' 
 #' Parse taxonomic data in a tsv/csv file
 #' 
-#' @param file_path (\code{character} of length 1)
-#' The file path to the input file.
+#' @param input (\code{character} of length 1)
+#' The file path to the input file or a \code{data.frame}.
 #' @param taxon_col (named \code{integer} of length 1)
 #' The index of the column with taxonomic information, named by the type of information.
 #' A negative index is interpreted as the number of columns from the last.
@@ -317,30 +317,35 @@ extract_taxonomy.list <- function(input, ...) {
 #' @return \code{\link{taxmap}}
 #' 
 #' @export
-parse_taxonomy_table <- function(file_path, taxon_col, other_col_type = "obs_info", header = TRUE, sep = "\t",  max_lines = NULL,
+parse_taxonomy_table <- function(input, taxon_col, other_col_type = "obs_info", header = TRUE, sep = "\t",  max_lines = NULL,
                                  comment_prefix = "#", ...) {
   
-  # Validate input
-  if (length(file_path) > 1) {
-    stop("Currently this function can only handle one file at a time. If you think it would be useful for it to handle multiple files at once, request this feature by starting a issue at 'https://github.com/grunwaldlab/metacoder/issues'.")
-  }
-  possible_col_names <- c("taxon_id", "name", "class")
-  if (! names(taxon_col) %in% possible_col_names || ! is.numeric(taxon_col))  {
-    stop(paste0('"taxon_col" must be an integer vector named with the following: ', paste0(collapse = ", ", possible_col_names)))
-  }
-  
-  # Read file
-  if (is.null(max_lines)) {
-    content <- readLines(file_path)
+  if (is.data.frame(input)) {
+    first_line <- colnames(input)
+    header <- TRUE
+    content <- apply(input, 1, paste0, collapse = sep)
   } else {
-    content <- readLines(file_path, n = max_lines + header)
+    # Validate input
+    if (length(input) > 1) {
+      stop("Currently this function can only handle one file at a time. If you think it would be useful for it to handle multiple files at once, request this feature by starting a issue at 'https://github.com/grunwaldlab/metacoder/issues'.")
+    }
+    possible_col_names <- c("taxon_id", "name", "class")
+    if (! names(taxon_col) %in% possible_col_names || ! is.numeric(taxon_col))  {
+      stop(paste0('"taxon_col" must be an integer vector named with the following: ', paste0(collapse = ", ", possible_col_names)))
+    }
+    
+    # Read file
+    if (is.null(max_lines)) {
+      content <- readLines(input)
+    } else {
+      content <- readLines(input, n = max_lines + header)
+    }
+    
+    # Remove comment lines
+    content <- content[! grepl(pattern = paste0("^", comment_prefix), content)]
+    
+    first_line <- strsplit(content[[1]], split = sep)[[1]]
   }
-  
-  # Remove comment lines
-  content <- content[! grepl(pattern = paste0("^", comment_prefix), content)]
-  
-  
-  first_line <- strsplit(content[[1]], split = sep)[[1]]
   
   # Interpret negative indexes
   if (taxon_col < 0) {

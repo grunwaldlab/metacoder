@@ -4,13 +4,13 @@
 \alias{parse_taxonomy_table}
 \title{Parse taxonomic data in a tsv/csv file}
 \usage{
-parse_taxonomy_table(file_path, taxon_col, other_col_type = "obs_info",
+parse_taxonomy_table(input, taxon_col, other_col_type = "obs_info",
   header = TRUE, sep = "\\t", max_lines = NULL, comment_prefix = "#",
   ...)
 }
 \arguments{
-\item{file_path}{(\code{character} of length 1)
-The file path to the input file.}
+\item{input}{(\code{character} of length 1)
+The file path to the input file or a \code{data.frame}.}
 
 \item{taxon_col}{(named \code{integer} of length 1)
 The index of the column with taxonomic information, named by the type of information.
