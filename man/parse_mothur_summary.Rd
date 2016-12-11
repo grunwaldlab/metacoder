@@ -4,14 +4,14 @@
 \alias{parse_mothur_summary}
 \title{Parse mothur classification summary file}
 \usage{
-parse_mothur_summary(file_path, untaxmap = FALSE)
+parse_mothur_summary(file_path, unclassified = FALSE)
 }
 \arguments{
 \item{file_path}{(\code{character} of length 1)
 The file path to the input file.}
 
-\item{untaxmap}{(\code{logical} of length 1)
-If \code{FALSE}, remove any untaxmap rows.}
+\item{unclassified}{(\code{logical} of length 1)
+If \code{FALSE}, remove any unclassified rows.}
 }
 \value{
 \code{\link{taxmap}}
