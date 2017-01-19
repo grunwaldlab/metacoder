@@ -27,12 +27,12 @@
 #' @param axis_label_size (\code{numeric} of length 1) 
 #' @keywords internal 
 make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL, width_stat_range, group_prefix,
-                             tick_size = .007, width_stat_trans = function(x) {x},
+                             tick_size = .008, width_stat_trans = function(x) {x},
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_trans_range = NULL, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 9, title = NULL, label_size = 0.04,
-                             title_size = 0.05, axis_label_size = 0.05,
+                             divisions = 100, label_count = 7, title = NULL, label_size = 0.07,
+                             title_size = 0.08, axis_label_size = 0.08,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
   # if the color is defined explicitly, do not print color scale labels

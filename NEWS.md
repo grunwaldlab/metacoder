@@ -2,6 +2,10 @@
 
 ## Current 
 
+### Minor changes
+
+* Increased lengend text size and reduced number of labels
+
 ### Bug fixes
 
 * Fixed bug in `primersearch` that cased the wrong primer sequence to be returned when primers match in the reverse direction
