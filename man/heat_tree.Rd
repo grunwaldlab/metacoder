@@ -36,7 +36,7 @@ heat_tree(...)
   node_color_interval = NULL, edge_size_interval = range(edge_size, na.rm =
   TRUE, finite = TRUE), edge_color_interval = NULL, node_label_max = 40,
   edge_label_max = 40, tree_label_max = 40, overlap_avoidance = 1,
-  margin_size = c(0, 0), layout = "reingold-tilford",
+  margin_size = c(0, 0, 0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE,
   title = NULL, title_size = 0.08, node_color_axis_label = NULL,
   node_size_axis_label = NULL, edge_color_axis_label = NULL,
@@ -192,8 +192,8 @@ Higher numbers will cause node size optimazation to avoid overlaps more.
 Default: \code{1}.}
 
 \item{margin_size}{(\code{numeric} of length 2)
-The horizontal and vertical margins.
-Default: \code{0, 0}.}
+The horizontal and vertical margins. c(left, right, bottom, top).
+Default: \code{0, 0, 0, 0}.}
 
 \item{layout}{The layout algorithm used to position nodes.
 See details on layouts.

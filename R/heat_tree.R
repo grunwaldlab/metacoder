@@ -171,8 +171,8 @@ heat_tree.taxmap <- function(.input, ...) {
 #' Default: \code{1}.
 #' 
 #' @param margin_size (\code{numeric} of length 2)
-#' The horizontal and vertical margins.
-#' Default: \code{0, 0}.
+#' The horizontal and vertical margins. c(left, right, bottom, top).
+#' Default: \code{0, 0, 0, 0}.
 #' 
 #' @param layout The layout algorithm used to position nodes.
 #' See details on layouts.
@@ -372,7 +372,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                           tree_label_max = 40,
                           
                           overlap_avoidance = 1,
-                          margin_size = c(0, 0),
+                          margin_size = c(0, 0, 0, 0),
                           layout = "reingold-tilford",
                           initial_layout = "fruchterman-reingold",
                           make_legend = TRUE,
@@ -418,8 +418,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   if (length(overlap_avoidance) == 0 || ! is.numeric(overlap_avoidance)) {
     stop("Argument 'overlap_avoidance' must be a numeric of length 1.")
   }
-  if (length(margin_size) != 2 || ! is.numeric(margin_size)) {
-    stop("Argument 'margin_size' must be a numeric of length 2.")
+  if (length(margin_size) != 4 || ! is.numeric(margin_size)) {
+    stop("Argument 'margin_size' must be a numeric of length 4: c(left, right, bottom, top)")
   }
   layout <- match.arg(layout, layout_functions())
   if (!is.null(initial_layout)) {
@@ -887,8 +887,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   x_points <- c(element_data$x, label_x)
   y_points <- c(element_data$y, label_y)
   margin_size_plot <- margin_size * square_side_length
-  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
-  y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
+  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2])
+  y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4])
   
   # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (! is.null(title)) {
@@ -912,8 +912,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   x_points <- c(element_data$x, label_x)
   y_points <- c(element_data$y, label_y)
   margin_size_plot <- margin_size * square_side_length
-  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[1])
-  y_range <- c(min(y_points) - margin_size_plot[2], max(y_points) + margin_size_plot[2])
+  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2])
+  y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4])
   
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),

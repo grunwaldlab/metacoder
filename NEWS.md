@@ -6,6 +6,10 @@
 
 * Increased lengend text size and reduced number of labels
 
+### Breaking changes
+
+* The `heat_tree` option `margin_size` funcion now takes four values instead of 2.
+
 ### Bug fixes
 
 * Fixed bug in `primersearch` that cased the wrong primer sequence to be returned when primers match in the reverse direction
