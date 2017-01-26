@@ -41,7 +41,7 @@ format_taxon_subset <- function(obj, index) {
 #' Remove the redundant taxon names
 #' 
 #' Remove the names of parent taxa in the begining of their children's names in a \code{taxmap} object.
-#' This is useful for remove genus names in species binomials.
+#' This is useful for removing genus names in binomials.
 #' 
 #' @param obj a \code{taxmap} object
 #' @param name_col (\code{character} of length 1)
