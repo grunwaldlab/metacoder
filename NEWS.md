@@ -14,6 +14,7 @@
 
 * Fixed bug in `primersearch` that cased the wrong primer sequence to be returned when primers match in the reverse direction
 * Fixed a bug in `parse_mothur_summary` where "unclassified" had got changed to "untaxmap" during a search and replace
+* Fixed outdated example code for `extract_taxonomy`
 
 
 ## metacoder 0.1.2

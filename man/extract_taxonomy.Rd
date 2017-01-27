@@ -134,16 +134,21 @@ Taxa are translated into unique codes if they are not already encoded this way.
 # Extract embedded classifications from UNITE FASTA file offline
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-unite_ex_data_3 <- extract_taxonomy(sequences,
-                                    regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                    key = c(name = "obs_info", seq_id = "obs_info",
-                                            other_id = "obs_info", "class_name"),
-                                    database = "none")
+x <- extract_taxonomy(sequences,
+                      regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
+                      key = c(seq_name = "obs_info", seq_id = "obs_info",
+                              other_id = "obs_info", "class"),
+                      class_regex = "^(.*)__(.*)$",
+                      class_key = c(unite_rank = "taxon_info", "name"),
+                      class_sep = ";")
 # Look up taxonomic data online using sequence ID
-unite_ex_data <- extract_taxonomy(sequences,
-                                  regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                key = c(name = "name", seq_id = "obs_id",
-                                       other_id = "obs_info", tax_string = "obs_info"))
+# This might take a while. The speed is dependent on NCBI's servers. 
+file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
+sequences <- ape::read.FASTA(file_path)
+y <- extract_taxonomy(sequences,
+                      regex = "^.*\\\\|(.*)\\\\|.*\\\\|(.*)\\\\|(.*)$",
+                      key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
+                      database = "ncbi")
 }
 
 }

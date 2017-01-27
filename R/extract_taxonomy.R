@@ -99,16 +99,21 @@
 #' # Extract embedded classifications from UNITE FASTA file offline
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_3 <- extract_taxonomy(sequences,
-#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "obs_info", seq_id = "obs_info",
-#'                                             other_id = "obs_info", "class_name"),
-#'                                     database = "none")
+#' x <- extract_taxonomy(sequences,
+#'                       regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+#'                       key = c(seq_name = "obs_info", seq_id = "obs_info",
+#'                               other_id = "obs_info", "class"),
+#'                       class_regex = "^(.*)__(.*)$",
+#'                       class_key = c(unite_rank = "taxon_info", "name"),
+#'                       class_sep = ";")
 #' # Look up taxonomic data online using sequence ID
-#' unite_ex_data <- extract_taxonomy(sequences,
-#'                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                 key = c(name = "name", seq_id = "obs_id",
-#'                                        other_id = "obs_info", tax_string = "obs_info"))
+#' # This might take a while. The speed is dependent on NCBI's servers. 
+#' file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
+#' sequences <- ape::read.FASTA(file_path)
+#' y <- extract_taxonomy(sequences,
+#'                       regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
+#'                       key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
+#'                       database = "ncbi")
 #' }
 #' 
 #' @rdname extract_taxonomy
@@ -168,7 +173,7 @@ extract_taxonomy.default <- function(input,
   if (database == "none" && ! "class" %in% key) {
     stop("Cannot look up data without a `database` specified.")
   }
-
+  
   # Parse input -----------------------------------------------------------------------------------
   my_print(level = "high", "Parsing input -------------------------------------")
   parsed_input <- data.frame(stringr::str_match(input, regex), stringsAsFactors = FALSE)
@@ -179,7 +184,7 @@ extract_taxonomy.default <- function(input,
   obs_data <- obs_data[ , c(TRUE, key %in% c("obs_id", "obs_info")), drop = FALSE]
   if (! return_match) { obs_data <- obs_data[, -1, drop = FALSE] }
   if (return_input) { obs_data <- cbind(data.frame(input = input), obs_data) }
-
+  
   # Determine observation classifications ----------------------------------------------------------------
   # This step produces a list of dataframes corresponding the in input values.
   # The rows of each data.frame in the list correspond to taxa in a classification.
@@ -191,13 +196,13 @@ extract_taxonomy.default <- function(input,
   current_arg_values <- mget(names(formals(extract_taxonomy.default)))
   current_arg_values <- current_arg_values[! names(current_arg_values) %in% c( "input", "...")]
   obs_classifications <- do.call(classification_func, c(classification_data, current_arg_values))
-
+  
   # Infer taxonomy structure ----------------------------------------------------------------------
   my_print(level = "high", "Inferring taxonomic structure ---------------------")
   class_precedence <- c("taxon_id", "name")
   class_source <- class_precedence[class_precedence %in% class_key][1]
   taxonomy <- class_to_taxonomy(obs_classifications, id_column = class_source, obs_data = obs_data) # returns an `taxmap` object with no observation data
-
+  
   # Remove redundant taxon names ------------------------------------------------------------------
   if (! redundant_names && "name" %in% colnames(taxonomy$taxon_data)) {
     taxonomy <- remove_redundant_names(taxonomy, "name")
@@ -215,7 +220,7 @@ extract_taxonomy.default <- function(input,
   if ("taxon_info" %in% key) {
     taxon_info_col_names <- names(key)[key == "taxon_info"]
     taxon_info_source_cols <- stats::setNames(parsed_input[ , colnames(parsed_input) == "taxon_info", drop = FALSE],
-                                       taxon_info_col_names)
+                                              taxon_info_col_names)
     new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)
     taxonomy$taxon_data <- cbind(taxonomy$taxon_data, 
@@ -227,12 +232,12 @@ extract_taxonomy.default <- function(input,
   taxonomy$taxon_data <- convert_numeric_cols(taxonomy$taxon_data,
                                               colnames(taxonomy$taxon_data)[! colnames(taxonomy$taxon_data) %in% c("taxon_ids", "supertaxon_ids")])
   taxonomy$obs_data <- convert_numeric_cols(taxonomy$obs_data,
-                                              colnames(taxonomy$obs_data)[! colnames(taxonomy$obs_data) %in% c("obs_taxon_ids")])
+                                            colnames(taxonomy$obs_data)[! colnames(taxonomy$obs_data) %in% c("obs_taxon_ids")])
   
   # Rename duplicated column names
   colnames(taxonomy$taxon_data) <- rename_duplicated(colnames(taxonomy$taxon_data))
   colnames(taxonomy$obs_data) <- rename_duplicated(colnames(taxonomy$obs_data))
-
+  
   # Return output
   my_print(level = "low",
            paste0(length(input), " inputs used to classify ", nrow(taxonomy$obs_data),
@@ -254,7 +259,7 @@ extract_taxonomy.default <- function(input,
 extract_taxonomy.DNAbin <- function(input, ...) {
   output <- extract_taxonomy(names(input), ...)
   output$obs_data$sequence <- unlist(lapply(as.character(input),
-                                             function(x) paste0(x, collapse = "")))
+                                            function(x) paste0(x, collapse = "")))
   return(output)
 }
 
@@ -368,5 +373,5 @@ parse_taxonomy_table <- function(input, taxon_col, other_col_type = "obs_info", 
   # Extract taxonomic data
   extract_taxonomy(content, key = key, regex = regex, return_input = FALSE, ...)
   
-  }
+}
 
