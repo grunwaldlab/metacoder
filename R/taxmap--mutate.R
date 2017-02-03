@@ -24,7 +24,7 @@ mutate_taxa <- function(.data, ...) {
   calculated_cols <- names(.data$taxon_funcs)
   modified_data <- dplyr::mutate(data_used, ...)
   new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
-  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data, modified_data[, new_cols])
+  .data$taxon_data <- dplyr::bind_cols(.data$taxon_data[ , ! colnames(.data$taxon_data) %in% new_cols], modified_data[, new_cols])
   return(.data)
 } 
 
@@ -56,7 +56,7 @@ mutate_obs <- function(.data, ...) {
   calculated_cols <- names(.data$obs_data)
   modified_data <- dplyr::mutate(data_used, ...)
   new_cols <- colnames(modified_data)[! colnames(modified_data) %in% colnames(data_used)]
-  .data$obs_data <- dplyr::bind_cols(.data$obs_data, modified_data[, new_cols])
+  .data$obs_data <- dplyr::bind_cols(.data$obs_data[ , ! colnames(.data$obs_data) %in% new_cols], modified_data[, new_cols])
   return(.data)
 } 
 
