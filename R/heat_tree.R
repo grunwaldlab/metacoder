@@ -863,7 +863,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   # Get range data ---------------------------------------------------------------------------------
   label_x_bounds <- function(x, size, label, justification) {
     just <- strsplit(justification, split = "-")[[1]][1] # hackish; should be changed
-    grob_length <- size  * text_grob_length(label)
+    grob_length <- size  * text_grob_length(label) * 0.4
     if (just == "left") {
       return(c(x, x + grob_length))
     } else if (just == "right") {
