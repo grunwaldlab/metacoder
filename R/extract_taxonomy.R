@@ -183,7 +183,7 @@ extract_taxonomy.default <- function(input,
   colnames(obs_data) <- c("match", names(key))
   obs_data <- obs_data[ , c(TRUE, key %in% c("obs_id", "obs_info")), drop = FALSE]
   if (! return_match) { obs_data <- obs_data[, -1, drop = FALSE] }
-  if (return_input) { obs_data <- cbind(data.frame(input = input), obs_data) }
+  if (return_input) { obs_data <- cbind(data.frame(input = input, stringsAsFactors = FALSE), obs_data) }
   
   # Determine observation classifications ----------------------------------------------------------------
   # This step produces a list of dataframes corresponding the in input values.
@@ -257,9 +257,18 @@ extract_taxonomy.default <- function(input,
 #' @rdname extract_taxonomy
 #' @export
 extract_taxonomy.DNAbin <- function(input, ...) {
-  output <- extract_taxonomy(names(input), ...)
-  output$obs_data$sequence <- unlist(lapply(as.character(input),
-                                            function(x) paste0(x, collapse = "")))
+  args <- list(...)
+  user_return_input <- args$return_input  
+  def_return_input <- formals(extract_taxonomy.default)$return_input
+  args$return_input <- TRUE # The input is needed to subset seqs if not all inputs could be parsed
+  output <- do.call(extract_taxonomy, c(list(names(input)), args))
+  char_seqs <- unlist(lapply(as.character(input), function(x) paste0(x, collapse = "")))
+  output$obs_data$sequence <- char_seqs[output$obs_data$input]
+  
+  # Remove the input from the output if the user specifies
+  if ((def_return_input == FALSE && is.null(user_return_input)) || user_return_input == FALSE) {
+    output$obs_data <- output$obs_data[ , names(output$obs_data) != "input"]
+  }
   return(output)
 }
 
