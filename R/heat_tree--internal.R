@@ -1,3 +1,76 @@
+#' Bounding box coords for labels
+#' 
+#' Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinants
+#' 
+#' @param x Horizontal position of center of text grob
+#' @param y Vertical position of center of text grob
+#' @param height Height of text grob
+#' @param rotation Rotation in radians
+#' @param just Justification. e.g. "left-top"
+#' 
+#' @keywords internal
+label_bounds <- function(label, x, y, height, rotation, just) {
+  
+  process_one <- function(label, x, y, height, rotation, just) {
+    # Calculate some handy values used later
+    width <- height * text_grob_length(label) # The length of the text
+    from_center_to_corner <- sqrt(height ^ 2 + width ^ 2) * 0.5 # The length between the center of the text box and a corner
+    angle_to_corner <- atan2(height, width) # The angle between the center of the text box and a corner
+    
+    # Find the coordinates for the four corners, assuming a central justification
+    coords <- data.frame(stringsAsFactors = FALSE,
+                         x = c(- cos(rotation - angle_to_corner),  # top left
+                               cos(rotation + angle_to_corner),  # top right
+                               cos(rotation - angle_to_corner), # bottom right
+                               - cos(rotation + angle_to_corner)),  # bottom left
+                         y = c(- sin(rotation - angle_to_corner),  # top left
+                               sin(rotation + angle_to_corner),  # top right
+                               sin(rotation - angle_to_corner), # bottom right
+                               - sin(rotation + angle_to_corner))  # bottom left
+    ) * from_center_to_corner
+    
+    # Offset based on justification if not centered
+    if        (just == "left-top") {
+      coords$x <- coords$x - coords$x[1]
+      coords$y <- coords$y - coords$y[1]
+    } else if (just == "center-top") {
+      coords$x <- coords$x - cos(rotation + pi * 0.5) * height * 0.5
+      coords$y <- coords$y - sin(rotation + pi * 0.5) * height * 0.5
+    } else if (just == "right-top") {
+      coords$x <- coords$x - coords$x[2]
+      coords$y <- coords$y - coords$y[2]
+    } else if (just == "left-center" || just == "left") {
+      coords$x <- coords$x + cos(rotation) * width * 0.5
+      coords$y <- coords$y + sin(rotation) * width * 0.5
+    } else if (just == "right-center" || just == "right") {
+      coords$x <- coords$x - cos(rotation) * width * 0.5
+      coords$y <- coords$y - sin(rotation) * width * 0.5
+    } else if (just == "left-bottom") {
+      coords$x <- coords$x - coords$x[4]
+      coords$y <- coords$y - coords$y[4]
+    } else if (just == "center-bottom") {
+      coords$x <- coords$x + cos(rotation + pi * 0.5) * height * 0.5
+      coords$y <- coords$y + sin(rotation + pi * 0.5) * height * 0.5
+    } else if (just == "right-bottom") {
+      coords$x <- coords$x - coords$x[3]
+      coords$y <- coords$y - coords$y[3]
+    }
+    
+    # Adjust for input coordinates
+    coords$x <- coords$x + x
+    coords$y <- coords$y + y
+    
+    # Add input label and return
+    cbind(data.frame(label = label, stringsAsFactors = FALSE),  coords)
+  }
+  
+  output <- do.call(rbind, mapply(FUN = process_one, SIMPLIFY = FALSE,
+                                  label, x, y, height, rotation, just))
+  rownames(output) <- NULL
+  return(output)
+}
+
+
 #' Verify size range parameters
 #' 
 #' Verify size range parameters
@@ -140,7 +213,7 @@ transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
                         "log2 area" = function(x) {pi * (abs(2 ^ x) ^ 2)},
                         "ln area" =  function(x) {pi * (abs(exp(1) ^ x) ^ 2)})
   
-   
+  
   if (is.null(data) & is.null(func)) {
     return(names(funcs))
   }

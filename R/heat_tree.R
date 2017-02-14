@@ -310,84 +310,84 @@ heat_tree.taxmap <- function(.input, ...) {
 #' @method heat_tree default
 #' @rdname heat_tree
 heat_tree.default <- function(taxon_id, supertaxon_id, 
-                          node_label = NA,
-                          edge_label = NA,
-                          tree_label = NA,
-                          
-                          node_size = 1,
-                          edge_size = node_size,
-                          # tree_size = 1,
-                          
-                          node_label_size = node_size,
-                          edge_label_size = edge_size,
-                          tree_label_size = as.numeric(NA), 
-                          
-                          node_color = "#999999",
-                          edge_color = node_color,
-                          tree_color = NA,
-                          
-                          node_label_color = "#000000",
-                          edge_label_color = "#000000",
-                          tree_label_color = "#000000",
-                          
-                          node_size_trans = "area",
-                          edge_size_trans = node_size_trans,
-                          # tree_size_trans = "area",
-                          
-                          node_label_size_trans = node_size_trans,
-                          edge_label_size_trans = edge_size_trans,
-                          tree_label_size_trans = "area",
-                          
-                          node_color_trans = "area",
-                          edge_color_trans = node_color_trans,
-                          tree_color_trans = "area",
-                          
-                          node_label_color_trans = "area",
-                          edge_label_color_trans = "area",
-                          tree_label_color_trans = "area",
-                          
-                          node_size_range = c(NA, NA),
-                          edge_size_range = c(NA, NA),
-                          # tree_size_range = c(NA, NA),
-                          
-                          node_label_size_range = c(NA, NA),
-                          edge_label_size_range = c(NA, NA),
-                          tree_label_size_range = c(NA, NA),
-                          
-                          node_color_range = quantative_palette(),
-                          edge_color_range = node_color_range,
-                          tree_color_range = quantative_palette(),
-                          
-                          node_label_color_range = quantative_palette(),
-                          edge_label_color_range = quantative_palette(),
-                          tree_label_color_range = quantative_palette(),
-                          
-                          node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
-                          node_color_interval = NULL,
-                          edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
-                          edge_color_interval = NULL,
-                          
-                          node_label_max = 40,
-                          edge_label_max = 40,
-                          tree_label_max = 40,
-                          
-                          overlap_avoidance = 1,
-                          margin_size = c(0, 0, 0, 0),
-                          layout = "reingold-tilford",
-                          initial_layout = "fruchterman-reingold",
-                          make_legend = TRUE,
-                          title = NULL,
-                          title_size = 0.08,
-                          
-                          node_color_axis_label = NULL, 
-                          node_size_axis_label = NULL,
-                          edge_color_axis_label = NULL, 
-                          edge_size_axis_label = NULL,
-                          
-                          background_color = "#FFFFFF00",
-                          output_file = NULL,
-                          
-                          ...) {
+                              node_label = NA,
+                              edge_label = NA,
+                              tree_label = NA,
+                              
+                              node_size = 1,
+                              edge_size = node_size,
+                              # tree_size = 1,
+                              
+                              node_label_size = node_size,
+                              edge_label_size = edge_size,
+                              tree_label_size = as.numeric(NA), 
+                              
+                              node_color = "#999999",
+                              edge_color = node_color,
+                              tree_color = NA,
+                              
+                              node_label_color = "#000000",
+                              edge_label_color = "#000000",
+                              tree_label_color = "#000000",
+                              
+                              node_size_trans = "area",
+                              edge_size_trans = node_size_trans,
+                              # tree_size_trans = "area",
+                              
+                              node_label_size_trans = node_size_trans,
+                              edge_label_size_trans = edge_size_trans,
+                              tree_label_size_trans = "area",
+                              
+                              node_color_trans = "area",
+                              edge_color_trans = node_color_trans,
+                              tree_color_trans = "area",
+                              
+                              node_label_color_trans = "area",
+                              edge_label_color_trans = "area",
+                              tree_label_color_trans = "area",
+                              
+                              node_size_range = c(NA, NA),
+                              edge_size_range = c(NA, NA),
+                              # tree_size_range = c(NA, NA),
+                              
+                              node_label_size_range = c(NA, NA),
+                              edge_label_size_range = c(NA, NA),
+                              tree_label_size_range = c(NA, NA),
+                              
+                              node_color_range = quantative_palette(),
+                              edge_color_range = node_color_range,
+                              tree_color_range = quantative_palette(),
+                              
+                              node_label_color_range = quantative_palette(),
+                              edge_label_color_range = quantative_palette(),
+                              tree_label_color_range = quantative_palette(),
+                              
+                              node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
+                              node_color_interval = NULL,
+                              edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
+                              edge_color_interval = NULL,
+                              
+                              node_label_max = 40,
+                              edge_label_max = 40,
+                              tree_label_max = 40,
+                              
+                              overlap_avoidance = 1,
+                              margin_size = c(0, 0, 0, 0),
+                              layout = "reingold-tilford",
+                              initial_layout = "fruchterman-reingold",
+                              make_legend = TRUE,
+                              title = NULL,
+                              title_size = 0.08,
+                              
+                              node_color_axis_label = NULL, 
+                              node_size_axis_label = NULL,
+                              edge_color_axis_label = NULL, 
+                              edge_size_axis_label = NULL,
+                              
+                              background_color = "#FFFFFF00",
+                              output_file = NULL,
+                              
+                              ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(supertaxon_id)) {
     stop("'taxon_id' and 'supertaxon_id' must be of equal length.")
@@ -498,12 +498,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
       # Remove edges to taxa that dont exist in this subset of the dataset
       edgelist <- edgelist[! is.na(edgelist[, "pid_user"]), , drop = FALSE]
-#       # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
-#       if (layout == "reingold-tilford") { 
-#         grouped_index <- split(rownames(edgelist), f = edgelist[, "pid_user"])
-#         grouped_index <- unlist(grouped_index[sample(seq_along(grouped_index))])
-#         edgelist <- edgelist[grouped_index, , drop = FALSE] 
-#       }
+      #       # Randomly resort if layout is "reingold-tilford". NOTE: This is kinda hackish and should be replaced
+      #       if (layout == "reingold-tilford") { 
+      #         grouped_index <- split(rownames(edgelist), f = edgelist[, "pid_user"])
+      #         grouped_index <- unlist(grouped_index[sample(seq_along(grouped_index))])
+      #         edgelist <- edgelist[grouped_index, , drop = FALSE] 
+      #       }
       sub_graph <- igraph::graph_from_edgelist(edgelist)
     }
     igraph::V(sub_graph)$weight_factor <- data[taxa, c("vs_trans")]
@@ -522,10 +522,10 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     # Calculate an initial layout if specified
     if (! is.null(initial_layout) && layout != initial_layout) {
       intitial_coords <- layout_functions(initial_layout, graph)
-        if (! any(is.na(intitial_coords) | is.nan(unlist(intitial_coords)))) {
-          intitial_coords <- rescale(intitial_coords, to = ((nrow(intitial_coords) ^ 0.65) + 5) * c(-1, 1))
-          # intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
-        }
+      if (! any(is.na(intitial_coords) | is.nan(unlist(intitial_coords)))) {
+        intitial_coords <- rescale(intitial_coords, to = ((nrow(intitial_coords) ^ 0.65) + 5) * c(-1, 1))
+        # intitial_coords <- rescale(intitial_coords, to = c(-100, 100))
+      }
     } else {
       intitial_coords <- NULL
     }
@@ -542,7 +542,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   
   sub_coords <- lapply(sub_graphs, get_sub_layouts)
   subgraph_key <- stats::setNames(rep(names(sub_graph_taxa), vapply(sub_graph_taxa, length, numeric(1))),
-                           unlist(sub_graph_taxa))
+                                  unlist(sub_graph_taxa))
   data$subgraph_root <- subgraph_key[data$tid_user]
   #|
   #| #### Merge layout coordinates into an overall graph ------------------------------------------
@@ -804,7 +804,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   if (make_legend) {
     legend_length <- square_side_length * 0.3 
     
-  
+    
     y_in_legend_space <-  (!missing(node_size) & element_data$y <  min(element_data$y) + legend_length) | 
       (!missing(edge_size) & element_data$y >  max(element_data$y) - legend_length)
     legend_min_x <- max(c(element_data$x[y_in_legend_space], min(element_data$x)))  # The furthest left allowed by graph components
@@ -835,9 +835,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                     size_axis_label = node_size_axis_label,
                                     hide_size = missing(node_size),
                                     hide_color = missing(node_color))
-  #|
-  #| #### Make edge legend -----------------------------------------------------------------------
-  #|
+    #|
+    #| #### Make edge legend -----------------------------------------------------------------------
+    #|
     edge_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = max(element_data$y) - legend_length - 0.1 * legend_length, 
                                     length = legend_length, 
@@ -861,34 +861,17 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     legend_data <- NULL
   }
   # Get range data ---------------------------------------------------------------------------------
-  label_x_bounds <- function(x, size, label, justification) {
-    just <- strsplit(justification, split = "-")[[1]][1] # hackish; should be changed
-    grob_length <- size  * text_grob_length(label) * 0.4
-    if (just == "left") {
-      return(c(x, x + grob_length))
-    } else if (just == "right") {
-      return(c(x - grob_length, x))
-    } else { #center 
-      return(c(x - grob_length / 2, x + grob_length / 2))
-    }
+  get_limits <- function() {
+    label_corners <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                                  height = text_data$size, rotation = text_data$rotation,
+                                  just = text_data$justification)
+    x_points <- c(element_data$x, label_corners$x)
+    y_points <- c(element_data$y, label_corners$y)
+    margin_size_plot <- margin_size * square_side_length
+    x_range <<- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2]) # UGLY HACK! FIX!
+    y_range <<- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4]) # UGLY HACK! FIX!
   }
-  label_y_bounds <- function(y, size, label) {
-    spread <- size * 1.1 #hackish
-    c(y + spread, y - spread)
-  }
-  
-  
-  
-  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label", "justification")],
-                                             FUN = label_x_bounds)))
-  label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
-                                             FUN = label_y_bounds)))
-  
-  x_points <- c(element_data$x, label_x)
-  y_points <- c(element_data$y, label_y)
-  margin_size_plot <- margin_size * square_side_length
-  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2])
-  y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4])
+  get_limits() # UGLY HACK! FIX!
   
   # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (! is.null(title)) {
@@ -904,17 +887,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   justification = "center-bottom"))
   }
   #| ### Draw plot ================================================================================
-  label_x <- unlist(do.call(mapply, args = c(text_data[ , c("x", "size", "label", "justification")],
-                                             FUN = label_x_bounds)))
-  label_y <- unlist(do.call(mapply, args = c(text_data[ , c("y", "size", "label")],
-                                             FUN = label_y_bounds)))
-  
-  x_points <- c(element_data$x, label_x)
-  y_points <- c(element_data$y, label_y)
-  margin_size_plot <- margin_size * square_side_length
-  x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2])
-  y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4])
-  
+  get_limits() # UGLY HACK! FIX!  
   the_plot <- ggplot2::ggplot(data = data) +
     ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
                           fill = element_data$color) +
