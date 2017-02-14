@@ -1,0 +1,52 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Resizing text tests
+
+
+```{r}
+text_data <- data.frame(stringsAsFactors = FALSE, 
+                        label = c("1", "short", "kinda_average", "quite a lengthy label", "way toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo long", "s   p   a   c   e   y"), 
+                        x = c(1, 2, 4, 8, 16, 32),
+                        y = c(1, 2, 4, 8, 16, 32),
+                        size = c(1, 2, 4, 8, 16, 32) * 0.1,
+                        rotation = c(1, 2, 3, 4, 5, 6) * pi * 0.2,
+                        justification = c("center", "left-center", "right-top", "left-bottom", "center-top", "center-bottom")
+)
+
+```
+
+
+```{r}
+label_corners <- metacoder:::label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                                          height = text_data$size, rotation = text_data$rotation,
+                                          just = text_data$justification)
+```
+
+
+
+```{r}
+the_plot <- ggplot2::ggplot(data = data) +
+  ggplot2::geom_polygon(data = label_corners, ggplot2::aes_string(x = "x", y = "y", group = "label"), fill = "transparent", color = "black")+
+  ggplot2::coord_fixed() +
+  ggplot2::theme(panel.grid = ggplot2::element_blank(),
+                 axis.title = ggplot2::element_blank(),
+                 axis.text  = ggplot2::element_blank(),
+                 axis.ticks = ggplot2::element_blank(), 
+                 axis.line  = ggplot2::element_blank(),
+                 plot.margin = grid::unit(c(0,0,0,0) , "in"))
+if (!is.null(text_data)) {
+  text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
+  for (a_grob in text_grobs) {
+    the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  }
+  
+  ```
+  
+  
