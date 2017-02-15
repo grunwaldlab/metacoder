@@ -2,6 +2,11 @@
 
 ## Current 
 
+### Improvements
+
+* `heat_tree`: improved how the predicted bondries of text is calcuated, so text with any rotation, justification, or newlines influences margins correctly (i.e. does not get cut off).
+
+
 ### Minor changes
 
 * Increased lengend text size and reduced number of labels

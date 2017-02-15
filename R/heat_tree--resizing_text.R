@@ -3,14 +3,14 @@
 #' Estimate the printed length of `resizingTextGrob` text
 #' 
 #' @param text \code{character} The text to be printed
+#' @param rot The rotation in radians 
 #' 
-#' @return The estimated length of the printed text as a multiple of its height
+#' @return The estimated length of the printed text as a multiple of its text size (height)
 #' 
 #' @keywords internal 
-text_grob_length <- function(text) {
+text_grob_length <- function(text, rot = 0) {
   do_one <- function(text) {
-    text_grob <- grid::textGrob(text)
-    as.numeric(grid::widthDetails(text_grob)) / as.numeric(grid::heightDetails(text_grob))
+    as.numeric(grid::widthDetails(grid::textGrob(text, rot = rot * 180 / pi))) / as.numeric(grid::heightDetails(grid::textGrob(text))) * .8
   }
   vapply(text, do_one, numeric(1))
  }
@@ -95,9 +95,8 @@ drawDetails.resizingTextGrob <- function(x, recording=TRUE)
 #' @keywords internal
 preDrawDetails.resizingTextGrob <- function(x)
 {
-  cex <- x$tg$gp$text_prop * 4
-  h <- grid::convertHeight(grid::unit(1, 'snpc'), 'mm', valueOnly=TRUE)
-  grid::pushViewport(grid::viewport(gp = grid::gpar(fontsize = h * cex)))
+  height <- grid::convertHeight(grid::unit(x$tg$gp$text_prop , 'snpc'), 'points', valueOnly=TRUE)
+  grid::pushViewport(grid::viewport(gp = grid::gpar(fontsize = height)))
 }
 
 

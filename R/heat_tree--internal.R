@@ -12,10 +12,14 @@
 label_bounds <- function(label, x, y, height, rotation, just) {
   
   process_one <- function(label, x, y, height, rotation, just) {
+    # Deal with newlines
+    split_label <- strsplit(label, split = "\n", fixed = TRUE)[[1]]
+    block_height <- height * length(split_label)
+    
     # Calculate some handy values used later
-    width <- height * text_grob_length(label) # The length of the text
-    from_center_to_corner <- sqrt(height ^ 2 + width ^ 2) * 0.5 # The length between the center of the text box and a corner
-    angle_to_corner <- atan2(height, width) # The angle between the center of the text box and a corner
+    width <- height * text_grob_length(split_label[which.max(vapply(split_label, nchar, numeric(1)))]) # The length of the text
+    from_center_to_corner <- sqrt(block_height ^ 2 + width ^ 2) * 0.5 # The length between the center of the text box and a corner
+    angle_to_corner <- atan2(block_height, width) # The angle between the center of the text box and a corner
     
     # Find the coordinates for the four corners, assuming a central justification
     coords <- data.frame(stringsAsFactors = FALSE,
