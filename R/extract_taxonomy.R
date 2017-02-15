@@ -83,6 +83,8 @@
 #' @param redundant_names (\code{logical} of length 1)
 #' If \code{TRUE}, remove any occurrence of the a supertaxon's name at the start of the taxon name.
 #' This is useful for removing the redundant genus information in species binomials.
+#' @param batch_size (\code{numeric} of length 1) The number of IDs to look up at once. This only effects querys using "obs_id".
+#' If there is an error looking up an ID, reducing this to 1 can prevent it from ruining the whole batch, but it will take longer. 
 #' @param verbosity (\code{character} of length 1) Controls the printing of progress updates.
 #' The following values are possible: 
 #'  \describe{
@@ -139,6 +141,7 @@ extract_taxonomy.default <- function(input,
                                      return_match = FALSE,
                                      return_input = FALSE,
                                      redundant_names = FALSE,
+                                     batch_size = 100,
                                      verbosity = c("low", "none", "high"),
                                      ...) {
   my_print <- function(text, level = "low") {

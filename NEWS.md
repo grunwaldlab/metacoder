@@ -5,6 +5,7 @@
 ### Minor changes
 
 * Increased lengend text size and reduced number of labels
+* `extract_taxonomy`: added `batch_size` option to help deal with invalid IDs better
 
 ### Breaking changes
 

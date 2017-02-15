@@ -15,10 +15,10 @@
 #' @return \code{list} of \code{data.frame}
 #' 
 #' @keywords internal
-class_from_obs_id <- function(obs_id, database = c("ncbi", "none"), ...) {
+class_from_obs_id <- function(obs_id, database = c("ncbi", "none"), batch_size = 100, ...) {
   
   using_ncbi <- function(obs_id) {
-    taxize::classification(taxize::genbank2uid(obs_id))
+    taxize::classification(taxize::genbank2uid(obs_id, batch_size = batch_size))
   }
   
   using_none <- function(obs_id) {
