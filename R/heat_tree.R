@@ -11,7 +11,7 @@ heat_tree <- function(...) {
 #' @rdname heat_tree
 heat_tree.taxmap <- function(.input, ...) {
   # Non-standard argument evaluation
-  data <- taxon_data(.input, sort_by = hierarchies, 
+  data <- taxon_data(.input, #sort_by = hierarchies, 
                      col_subset = unique(c(taxon_data_cols_used(.input, ...), "taxon_ids", "supertaxon_ids")))
   arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))

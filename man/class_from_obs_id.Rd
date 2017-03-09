@@ -4,7 +4,8 @@
 \alias{class_from_obs_id}
 \title{Retrieve classifications from observation IDs}
 \usage{
-class_from_obs_id(obs_id, database = c("ncbi", "none"), ...)
+class_from_obs_id(obs_id, database = c("ncbi", "none"), batch_size = 100,
+  ...)
 }
 \arguments{
 \item{obs_id}{(\code{character})
