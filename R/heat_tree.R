@@ -887,35 +887,53 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   justification = "center-bottom"))
   }
   #| ### Draw plot ================================================================================
-  get_limits() # UGLY HACK! FIX!  
-  the_plot <- ggplot2::ggplot(data = data) +
-    ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
-                          fill = element_data$color) +
-    ggplot2::guides(fill = "none") +
-    ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +
-    ggplot2::scale_y_continuous(expand = c(0,0), limits = y_range) +
-    ggplot2::scale_x_continuous(expand = c(0,0), limits = x_range) +
-    ggplot2::theme(panel.grid = ggplot2::element_blank(), 
-                   panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
-                   plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
-                   axis.title = ggplot2::element_blank(),
-                   axis.text  = ggplot2::element_blank(),
-                   axis.ticks = ggplot2::element_blank(), 
-                   axis.line  = ggplot2::element_blank(),
-                   plot.margin = grid::unit(c(0,0,0,0) , "in"))
-  if (!is.null(text_data)) {
-    text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
-    for (a_grob in text_grobs) {
-      the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+  result = tryCatch({
+    
+    get_limits() # UGLY HACK! FIX!  
+    the_plot <- ggplot2::ggplot(data = data) +
+      ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
+                            fill = element_data$color) +
+      ggplot2::guides(fill = "none") +
+      ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +
+      ggplot2::scale_y_continuous(expand = c(0,0), limits = y_range) +
+      ggplot2::scale_x_continuous(expand = c(0,0), limits = x_range) +
+      ggplot2::theme(panel.grid = ggplot2::element_blank(), 
+                     panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
+                     plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
+                     axis.title = ggplot2::element_blank(),
+                     axis.text  = ggplot2::element_blank(),
+                     axis.ticks = ggplot2::element_blank(), 
+                     axis.line  = ggplot2::element_blank(),
+                     plot.margin = grid::unit(c(0,0,0,0) , "in"))
+    if (!is.null(text_data)) {
+      text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
+      for (a_grob in text_grobs) {
+        the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+      }
     }
-  }
+    
+    #| ### Save output file
+    if (!is.null(output_file)) {
+      img_width <- diff(x_range)
+      img_height <- diff(y_range)
+      ggplot2::ggsave(output_file, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
+    }
+    
+    
+  }, error = function(msg) {
+    if (grepl(msg$message, "Error: evaluation nested too deeply: infinite recursion / options(expressions=)?", fixed = TRUE)) {
+      stop(paste(msg, sep = "\n", 
+                  "NOTE: This error typically occurs because of too many text labels being printed.", 
+                  "You can avoid it by increasing the value of `expressions` in the global options:",
+                  "    * How to see the current value: options('expressions')",
+                  "    * How to increase the value:    options(expressions = 100000)"))
+    } else {
+      stop(msg)
+    }
+  })
   
-  #| ### Save output file
-  if (!is.null(output_file)) {
-    img_width <- diff(x_range)
-    img_height <- diff(y_range)
-    ggplot2::ggsave(output_file, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
-  }
+  
+  
   return(the_plot)
 }
 

@@ -4,6 +4,7 @@
 
 ### Improvements
 
+* Provided helpful error message when the `evaluation nested too deeply: infinite recursion / options(expressions=)?` occurs due to too many labels being printed.
 * `heat_tree`: improved how the predicted bondries of text is calcuated, so text with any rotation, justification, or newlines influences margins correctly (i.e. does not get cut off).
 
 
