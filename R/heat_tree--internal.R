@@ -13,7 +13,11 @@ label_bounds <- function(label, x, y, height, rotation, just) {
   
   process_one <- function(label, x, y, height, rotation, just) {
     # Deal with newlines
-    split_label <- strsplit(label, split = "\n", fixed = TRUE)[[1]]
+    if (grepl(label, pattern = "\n")) {
+      split_label <- strsplit(label, split = "\n", fixed = TRUE)[[1]]
+    } else {
+      split_label <- label
+    }
     block_height <- height * length(split_label)
     
     # Calculate some handy values used later
