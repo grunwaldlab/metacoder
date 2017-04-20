@@ -14,11 +14,11 @@ plot_one <- function(obj, subset, highlight, title = deparse(match.call()[[3]]))
   vc[ids %in% subset[[1]]] <- "lightblue"
   obj$taxon_data$my_vc <- vc
   
-  plot(obj, node_label = taxon_ids,
+  heat_tree(obj, node_label = taxon_ids,
      node_color = my_vc, 
      make_legend = FALSE,
      edge_color = "#EEEEEE",
-     node_size = 1 / taxon_levels,
+     node_size = 1 / n_supertaxa,
      node_size_range = c(0.06, NA),
      title = title,
      title_size = 0.05, 
