@@ -13,4 +13,3 @@ verify_trans(args)
 Verify transformation function parameters
 }
 \keyword{internal}
-

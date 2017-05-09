@@ -2,8 +2,8 @@
 % Please edit documentation in R/extract_taxonomy.R
 \name{extract_taxonomy}
 \alias{extract_taxonomy}
-\alias{extract_taxonomy.DNAbin}
 \alias{extract_taxonomy.default}
+\alias{extract_taxonomy.DNAbin}
 \alias{extract_taxonomy.list}
 \title{Extract taxonomy information from sequence headers}
 \usage{
@@ -156,4 +156,3 @@ y <- extract_taxonomy(sequences,
 }
 
 }
-

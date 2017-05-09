@@ -868,19 +868,20 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     x_points <- c(element_data$x, label_corners$x)
     y_points <- c(element_data$y, label_corners$y)
     margin_size_plot <- margin_size * square_side_length
-    x_range <<- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2]) # UGLY HACK! FIX!
-    y_range <<- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4]) # UGLY HACK! FIX!
+    x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2]) 
+    y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4]) 
+    return(list(x = x_range, y = y_range))
   }
-  get_limits() # UGLY HACK! FIX!
+  ranges <- get_limits() # UGLY HACK! FIX!
   
   # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (! is.null(title)) {
-    title_size <- diff(x_range) * title_size
+    title_size <- diff(ranges$x) * title_size
     text_data <- rbind(text_data,
                        data.frame(stringsAsFactors = FALSE, 
                                   label = title,
-                                  x = mean(x_range),
-                                  y = max(y_range) + title_size * 0.5,
+                                  x = mean(ranges$x),
+                                  y = max(ranges$y) + title_size * 0.5,
                                   size = title_size,
                                   color = "#000000",
                                   rotation = 0,
@@ -889,14 +890,14 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| ### Draw plot ================================================================================
   result = tryCatch({
     
-    get_limits() # UGLY HACK! FIX!  
+    ranges <- get_limits()
     the_plot <- ggplot2::ggplot(data = data) +
       ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
                             fill = element_data$color) +
       ggplot2::guides(fill = "none") +
-      ggplot2::coord_fixed(xlim = x_range, ylim = y_range) +
-      ggplot2::scale_y_continuous(expand = c(0,0), limits = y_range) +
-      ggplot2::scale_x_continuous(expand = c(0,0), limits = x_range) +
+      ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
+      ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) +
+      ggplot2::scale_x_continuous(expand = c(0,0), limits = ranges$x) +
       ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                      panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                      plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
@@ -906,7 +907,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                      axis.line  = ggplot2::element_blank(),
                      plot.margin = grid::unit(c(0,0,0,0) , "in"))
     if (!is.null(text_data)) {
-      text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = x_range, y_range = y_range)))
+      text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = ranges$x, y_range = ranges$y)))
       for (a_grob in text_grobs) {
         the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
       }
@@ -914,8 +915,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     
     #| ### Save output file
     if (!is.null(output_file)) {
-      img_width <- diff(x_range)
-      img_height <- diff(y_range)
+      img_width <- diff(ranges$x)
+      img_height <- diff(ranges$y)
       ggplot2::ggsave(output_file, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
     }
     

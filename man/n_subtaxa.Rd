@@ -22,4 +22,3 @@ Other taxon_funcs: \code{\link{hierarchies}},
   \code{\link{n_obs_1}}, \code{\link{n_obs}},
   \code{\link{n_subtaxa_1}}, \code{\link{n_supertaxa}}
 }
-

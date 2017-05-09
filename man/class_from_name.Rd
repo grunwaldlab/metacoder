@@ -26,4 +26,3 @@ internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 Retrieve taxonomic classifications from taxon names using a specified database.
 }
 \keyword{internal}
-

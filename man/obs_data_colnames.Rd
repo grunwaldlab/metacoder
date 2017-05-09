@@ -15,4 +15,3 @@ obs_data_colnames(obj)
 \description{
 Get column names of obs_data without calculating columns
 }
-

@@ -18,4 +18,3 @@ names \code{character}
 \description{
 Read a FASTA file
 }
-

@@ -19,4 +19,3 @@ If \code{FALSE}, remove any unclassified rows.}
 \description{
 Parse mothur classification summary file
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/heat_tree.R
 \name{heat_tree}
 \alias{heat_tree}
-\alias{heat_tree.default}
 \alias{heat_tree.taxmap}
+\alias{heat_tree.default}
 \title{Plot a taxonomic tree}
 \usage{
 heat_tree(...)
@@ -344,6 +344,7 @@ Setting a custom interval is useful for making size/color in multiple graphs cor
 or setting logical bounderies (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 }
+
 \examples{
 heat_tree(contaminants,
           node_size = n_obs,
@@ -354,4 +355,3 @@ heat_tree(contaminants,
 
 }
 \keyword{internal}
-

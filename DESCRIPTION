@@ -17,6 +17,6 @@ Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
         stats, grDevices, utils, lazyeval, dplyr, magrittr, readr
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Date: 2016-08-01
 Encoding: UTF-8

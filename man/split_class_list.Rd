@@ -24,4 +24,3 @@ Split a list of classifications into a list of list by unique values of a
 specific row/column.
 }
 \keyword{internal}
-

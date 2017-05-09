@@ -52,4 +52,3 @@ internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 Parse embedded classifications, optionally checking the results via a database.
 }
 \keyword{internal}
-

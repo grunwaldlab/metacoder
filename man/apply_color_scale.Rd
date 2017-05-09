@@ -24,4 +24,3 @@ Convert numbers to colors.
 If colors are already supplied, return the input
 }
 \keyword{internal}
-

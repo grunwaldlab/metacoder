@@ -28,4 +28,3 @@ unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\\\|UDB", names
 
 }
 \keyword{datasets}
-

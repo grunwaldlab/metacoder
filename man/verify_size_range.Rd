@@ -13,4 +13,3 @@ verify_size_range(args)
 Verify size range parameters
 }
 \keyword{internal}
-

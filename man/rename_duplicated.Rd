@@ -19,4 +19,3 @@ If \code{TRUE}, undo the automated 'name.#' dataframe numbering}
 Add a number to any character values that appear more that once.
 }
 \keyword{internal}
-

@@ -11,4 +11,3 @@ Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", i
   hierarchy.
 }
 \keyword{internal}
-

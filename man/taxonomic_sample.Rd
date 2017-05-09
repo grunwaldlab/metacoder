@@ -72,4 +72,3 @@ heat_tree(subset(subsampled, n_obs > 0, unobserved = FALSE),
 }
 
 }
-

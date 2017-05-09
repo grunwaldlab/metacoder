@@ -19,6 +19,7 @@
 
 ### Bug fixes
 
+* Fixed bugs caused by dplyr version update
 * Fixed bug in `heat_tree` that made values not in the input taxmap object not associate with the right taxa. See [this post](https://groups.google.com/d/msgid/metacoder-discussions/c9d8ecc2-1efa-4baf-946e-0f105575da2e%40googlegroups.com).
 * `extract_taxonomy`: Fixed an error that occured when not all inputs could be classified and sequences were supplied
 * Fixed bug in `primersearch` that cased the wrong primer sequence to be returned when primers match in the reverse direction

@@ -38,4 +38,3 @@ Execute EMBOSS Primerseach
 \code{\link{parse_primersearch}}
 }
 \keyword{internal}
-

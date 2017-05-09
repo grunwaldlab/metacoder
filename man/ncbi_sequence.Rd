@@ -19,4 +19,3 @@ To large of values might case failures and too small will increase time to compl
 Downloads the sequences associated with GenBank accession ids.
 }
 \keyword{internal}
-

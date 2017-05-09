@@ -26,4 +26,3 @@ Requires an internet connection.}
 Retrieve taxonomic classifications from taxon IDs using a specified database.
 }
 \keyword{internal}
-

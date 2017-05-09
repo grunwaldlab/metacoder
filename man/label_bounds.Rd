@@ -21,4 +21,3 @@ label_bounds(label, x, y, height, rotation, just)
 Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinants
 }
 \keyword{internal}
-

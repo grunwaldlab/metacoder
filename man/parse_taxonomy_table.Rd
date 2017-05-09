@@ -50,4 +50,3 @@ The maximum number of lines to read from the file.}
 \description{
 Parse taxonomic data in a tsv/csv file
 }
-

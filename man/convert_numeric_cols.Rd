@@ -18,4 +18,3 @@ convert_numeric_cols(table, columns = colnames(table))
 Converts columns in a \code{data.frame} to numeric is they can be converted without producing \code{NA}s.
 }
 \keyword{internal}
-

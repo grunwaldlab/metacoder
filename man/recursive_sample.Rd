@@ -71,4 +71,3 @@ user-friendly functions.
 \code{\link{taxonomic_sample}}
 }
 \keyword{internal}
-

@@ -36,4 +36,3 @@ Other dplyr-like functions: \code{\link{arrange_obs}},
   \code{\link{select_obs}}, \code{\link{select_taxa}},
   \code{\link{transmute_obs}}, \code{\link{transmute_taxa}}
 }
-

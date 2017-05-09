@@ -23,4 +23,3 @@ containing labels}
 Pick labels to show based off a column name to sort by and a maximum number
 }
 \keyword{internal}
-

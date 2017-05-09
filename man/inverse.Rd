@@ -18,4 +18,3 @@ inverse(f, interval)
 http://stackoverflow.com/questions/10081479/solving-for-the-inverse-of-a-function-in-r
 }
 \keyword{internal}
-

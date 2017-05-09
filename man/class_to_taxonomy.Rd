@@ -30,4 +30,3 @@ have unique values for place in the hierarchy (e.g. same species epithet in diff
 Missing data does not effect the taxonomy, but its positon is preserved in the observation output.
 }
 \keyword{internal}
-

@@ -17,4 +17,3 @@ The maximum number of rows to print in tables.}
 \description{
 Print a \code{\link{taxmap}} object
 }
-

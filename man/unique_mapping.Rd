@@ -10,4 +10,3 @@ unique_mapping(input)
 get indexes of a unique set of the input
 }
 \keyword{internal}
-

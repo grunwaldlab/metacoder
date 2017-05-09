@@ -18,4 +18,3 @@ taxon_data_cols_used(obj, ...)
 Get names of taxon_data in an unevaluated expression
 }
 \keyword{internal}
-

@@ -18,4 +18,3 @@ The estimated length of the printed text as a multiple of its text size (height)
 Estimate the printed length of `resizingTextGrob` text
 }
 \keyword{internal}
-

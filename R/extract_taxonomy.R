@@ -226,7 +226,7 @@ extract_taxonomy.default <- function(input,
                                               taxon_info_col_names)
     new_columns <- mapply(taxon_info_column, taxon_info_source_cols, taxon_info_col_names,
                           SIMPLIFY = FALSE)
-    taxonomy$taxon_data <- cbind(taxonomy$taxon_data, 
+    taxonomy$taxon_data <- dplyr::bind_cols(taxonomy$taxon_data, 
                                  as.data.frame(new_columns,
                                                stringsAsFactors = FALSE))
   }

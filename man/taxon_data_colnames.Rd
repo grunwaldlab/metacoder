@@ -15,4 +15,3 @@ taxon_data_colnames(obj)
 \description{
 Get column names of taxon_data without calculating columns
 }
-

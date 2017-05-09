@@ -19,4 +19,3 @@ Calling the function with no parameters returns available function names.
 Calling with just the function name returns the transformation function
 }
 \keyword{internal}
-

@@ -32,4 +32,3 @@ ggplot(data = line_coords(x1 = rnorm(10), y1 = rnorm(10), x2 = rnorm(10),
 }
 }
 \keyword{internal}
-

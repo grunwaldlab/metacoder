@@ -24,4 +24,3 @@ silva_ex_data <- extract_taxonomy(sequences,
 
 }
 \keyword{datasets}
-

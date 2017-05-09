@@ -72,4 +72,3 @@ data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum",
 
 }
 \keyword{internal}
-

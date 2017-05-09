@@ -16,4 +16,3 @@ Returns the default color palette for quantative data.
 quantative_palette()
 
 }
-

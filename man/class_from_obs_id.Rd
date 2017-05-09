@@ -27,4 +27,3 @@ internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 Retrieve taxonomic classifications from observation (e.g. sequence) IDs using a specified database.
 }
 \keyword{internal}
-

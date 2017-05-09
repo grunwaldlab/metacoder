@@ -43,4 +43,3 @@ A \code{data.frame} or \code{vector} with rows corresponding to taxa in input
 Return a table of data associated with taxa of and object of type
 \code{\link{taxmap}}.
 }
-

@@ -7,4 +7,3 @@
 dplyr select_helpers
 }
 \keyword{internal}
-

@@ -65,4 +65,3 @@ make_plot_legend(x, y, length, width_range, width_trans_range = NULL,
 Make color/size legend
 }
 \keyword{internal}
-

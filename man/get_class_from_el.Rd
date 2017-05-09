@@ -19,4 +19,3 @@ A list of vectors of taxa IDs. Each list entry corresponds to the \code{taxa} su
 Extracts the classification of every taxon in a list of unique taxa and their supertaxa.
 }
 \keyword{internal}
-

@@ -16,4 +16,3 @@ Returns the default color palette for diverging data
 diverging_palette()
 
 }
-

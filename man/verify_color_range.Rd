@@ -13,4 +13,3 @@ verify_color_range(args)
 Verify color range parameters
 }
 \keyword{internal}
-

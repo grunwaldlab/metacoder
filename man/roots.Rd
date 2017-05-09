@@ -27,4 +27,3 @@ a subset of taxa.
 Other taxmap taxonomy functions: \code{\link{obs}},
   \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
-

@@ -38,4 +38,3 @@ layout_functions()
 layout_functions("davidson-harel", igraph::make_ring(5))
 
 }
-

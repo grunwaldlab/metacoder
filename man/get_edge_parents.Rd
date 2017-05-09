@@ -10,4 +10,3 @@ get_edge_parents(graph)
 get_edge_parents
 }
 \keyword{internal}
-

@@ -66,6 +66,7 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 
 NOTE: This has not been tested by us yet.
 }
+
 \examples{
 \dontrun{
 result <- primersearch(rdp_ex_data, 
@@ -84,4 +85,3 @@ heat_tree(result,
 }
 
 }
-

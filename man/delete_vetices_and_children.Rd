@@ -10,4 +10,3 @@ delete_vetices_and_children(graph, nodes)
 delete_vetices_and_children
 }
 \keyword{internal}
-

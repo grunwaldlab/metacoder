@@ -24,4 +24,3 @@ molten_dist(x = 1:5, y = 1:5)
 
 }
 \keyword{internal}
-

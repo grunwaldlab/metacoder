@@ -25,4 +25,3 @@ read_lines_apply(file_path, func, buffer_size = 1000, simplify = FALSE,
 Reads a file in chunks, applies a function to each of them, and returns to results of the function calls.
 }
 \keyword{internal}
-

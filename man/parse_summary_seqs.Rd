@@ -19,4 +19,3 @@ Extract statistics from the command line output of mothur command \code{summary.
 return the resutls in a \code{data.frame}
 }
 \keyword{internal}
-
