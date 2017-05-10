@@ -132,9 +132,15 @@ test_that("Taxon info columns from both key and class are added", {
                              class_key = c("name", "taxon_info", my_custom_name = "taxon_info"),
                              class_regex = "^(.*)-(.*)-(.*)$", class_sep = ";")
   expect_s3_class(result, "taxmap")
-  expect_true(all(c("taxon_info", "my_custom_name", "taxon_info1", "my_custom_name1") %in% colnames(result$taxon_data)))
-  expect_equal(result$taxon_data$taxon_info, c("a", "a", "b", "c", "b"))
-  expect_equal(result$taxon_data$taxon_info1, c(NA, NA, NA, "9639", "9688"))
+  if (utils::packageVersion("dplyr") > "0.5.0") {
+    expect_true(all(c("taxon_info", "my_custom_name", "taxon_info1", "my_custom_name1") %in% colnames(result$taxon_data)))
+    expect_equal(result$taxon_data$taxon_info, c("a", "a", "b", "c", "b"))
+    expect_equal(result$taxon_data$taxon_info1, c(NA, NA, NA, "9639", "9688"))
+  } else {
+    expect_true(all(c("taxon_info_1", "my_custom_name_1", "taxon_info_2", "my_custom_name_2") %in% colnames(result$taxon_data)))
+    expect_equal(result$taxon_data$taxon_info_1, c("a", "a", "b", "c", "b"))
+    expect_equal(result$taxon_data$taxon_info_2, c(NA, NA, NA, "9639", "9688"))
+  }
 })
 
 #|
