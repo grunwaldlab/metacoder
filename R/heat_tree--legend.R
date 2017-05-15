@@ -36,9 +36,9 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
   # if the color is defined explicitly, do not print color scale labels
-  explicit_color_scale <- is.character(color_stat_range) && length(unique(color_stat_range)) ==  1
+  explicit_color_scale <- any(is.character(color_stat_range)) || is.null(color_stat_range)
   if (explicit_color_scale) {
-    hide_color = TRUE
+    hide_color <- TRUE
   }
   
   # If only color is used, set width range to average
@@ -47,7 +47,7 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   }
 
     # If size and color are the same, only show color scale
-  if (width_stat_range == color_stat_range && all.equal(width_stat_trans, color_stat_trans)) {
+  if (hide_color == FALSE && width_stat_range == color_stat_range && all.equal(width_stat_trans, color_stat_trans)) {
     hide_size = TRUE
   }
   
@@ -71,11 +71,7 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                            y = prop_div * length)
   prop_seg <- vapply(1:(divisions - 1), function(i) mean(prop_div[c(i, i + 1)]), FUN.VALUE = numeric(1))
   if (hide_color) {
-    if (explicit_color_scale) {
-      seq_color <- rep(unique(color_stat_range), length(prop_seg))
-    } else {
-      seq_color <- rep("#000000", length(prop_seg))
-    }
+    seq_color <- rep("#000000", length(prop_seg))
   } else {
     seq_color <- apply_color_scale(rev(prop_seg), color_range) 
   }

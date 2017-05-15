@@ -75,3 +75,25 @@ map_unique <- function(input, func, ...) {
 DNAbin_to_char <- function(dna_bin) {
   vapply(as.character(dna_bin), paste, character(1), collapse="")
 }
+
+#' Test if characters can be converted to numbers
+#' 
+#' Makes TRUE/FALSE vector
+#' 
+#' @param input A character vector
+#' 
+#' @keywords internal
+can_be_num <- function(input) {
+  suppressWarnings(!is.na(as.numeric(input)))
+}
+
+#' Return numeric values in a character
+#' 
+#' Returns just valid numeric values and igores others.
+#' 
+#' @param input
+#' 
+#' @keywords internal
+get_numerics <- function(input) {
+  as.numeric(input[can_be_num(input)])
+}
