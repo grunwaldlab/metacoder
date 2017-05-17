@@ -10,8 +10,11 @@
 
 ### Minor changes
 
-* Increased lengend text size and reduced number of labels
+* `extract_taxonomy`: There is now a warning message if class regex does not match ([issue #123](https://github.com/grunwaldlab/metacoder/issues/123))
+* `heat_tree`: Increased lengend text size and reduced number of labels
 * `extract_taxonomy`: added `batch_size` option to help deal with invalid IDs better
+* Added CITATION file
+
 
 ### Breaking changes
 
@@ -19,6 +22,7 @@
 
 ### Bug fixes
 
+* `heat_tree`: Fixed bug when color is set explicitly (e.g. "grey") instead of raw numbers and the legend is not removed. Now a mixure of raw numbers and color names can be used. 
 * Fixed bugs caused by dplyr version update
 * Fixed bug in `heat_tree` that made values not in the input taxmap object not associate with the right taxa. See [this post](https://groups.google.com/d/msgid/metacoder-discussions/c9d8ecc2-1efa-4baf-946e-0f105575da2e%40googlegroups.com).
 * `extract_taxonomy`: Fixed an error that occured when not all inputs could be classified and sequences were supplied

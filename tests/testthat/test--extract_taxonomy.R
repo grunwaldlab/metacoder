@@ -166,6 +166,18 @@ test_that("Invalid keys give warnings", {
                'Invalid key value "invalid" given.')
   
 })
+
+#|
+#| ### Invalid regex give warnings
+test_that("Invalid regex give warnings", {
+  expect_warning(extract_taxonomy(test_data,
+                                key = c("obs_info", "obs_info", "class", "obs_info"),
+                                regex = "obs_id: (.*?) - name.* taxon_id: (.*?) - class_name: (.*) - class_id: (.*)", 
+                                class_key = "name", class_regex = "(not_valid)", class_sep = ";"))
+  
+})
+
+
 #|
 #| ### Only specified keys can be duplicated
 test_that("Only specified keys can be duplicated", {
