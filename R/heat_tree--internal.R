@@ -129,6 +129,11 @@ verify_size <- function(args) {
     if (any(!is.na(value) & is.na(as.numeric(value)))) {
       stop(paste0("Argument '", arg, "' is not numeric."))
     }
+    
+    if (any(is.infinite(value))) {
+      warning(paste0('Infinite values found for "', arg,
+                     '". These will be graphed in the same way as the largest (Inf) or smallest (-Inf) real number supplied.\n'))
+    }
   }
 }
 

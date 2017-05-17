@@ -10,6 +10,7 @@
 
 ### Minor changes
 
+* `heat_tree` now gives a warning if infinite values are given to it
 * `extract_taxonomy`: There is now a warning message if class regex does not match ([issue #123](https://github.com/grunwaldlab/metacoder/issues/123))
 * `heat_tree`: Increased lengend text size and reduced number of labels
 * `extract_taxonomy`: added `batch_size` option to help deal with invalid IDs better
