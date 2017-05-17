@@ -17,4 +17,3 @@ Report a error/warning if needed
 NOTE: This function is unusual in that it looks for a varaible names `vigilance` in a parent namespace.
 }
 \keyword{internal}
-

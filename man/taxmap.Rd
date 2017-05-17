@@ -51,4 +51,3 @@ An object of type \code{taxmap}
 \description{
 Create an instance of \code{taxmap} containing observations taxmap by a taxonomy.
 }
-

@@ -33,4 +33,3 @@ Given one or more taxa IDs and a \code{\link{taxmap}} object, return the observa
 Other taxmap taxonomy functions: \code{\link{roots}},
   \code{\link{subtaxa}}, \code{\link{supertaxa}}
 }
-

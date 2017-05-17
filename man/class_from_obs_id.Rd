@@ -4,7 +4,8 @@
 \alias{class_from_obs_id}
 \title{Retrieve classifications from observation IDs}
 \usage{
-class_from_obs_id(obs_id, database = c("ncbi", "none"), ...)
+class_from_obs_id(obs_id, database = c("ncbi", "none"), batch_size = 100,
+  ...)
 }
 \arguments{
 \item{obs_id}{(\code{character})
@@ -26,4 +27,3 @@ internet. NOTE: Only \code{"ncbi"} has been tested so far.}
 Retrieve taxonomic classifications from observation (e.g. sequence) IDs using a specified database.
 }
 \keyword{internal}
-

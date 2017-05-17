@@ -13,4 +13,3 @@ verify_label_count(args)
 Verify label count
 }
 \keyword{internal}
-

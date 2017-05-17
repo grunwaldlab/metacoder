@@ -31,4 +31,3 @@ unite_ex_data_2 <- extract_taxonomy(sequences,
 
 }
 \keyword{datasets}
-

@@ -18,4 +18,3 @@ obs_data_cols_used(obj, ...)
 Get names of obs_data in an unevaluated expression
 }
 \keyword{internal}
-

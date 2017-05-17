@@ -17,4 +17,3 @@ map_unique(input, func, ...)
 Run a function on unique values of a iterable
 }
 \keyword{internal}
-

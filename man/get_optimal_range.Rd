@@ -26,4 +26,3 @@ and returns the index of the best one.}
 Finds optimal max and min value using an optimality criterion.
 }
 \keyword{internal}
-

@@ -22,4 +22,3 @@ Format an input to a \code{subset} option on functions like \code{\link{supertax
 Converts logical and \code{taxon_ids} into indexes of \code{taxon_data}.
 }
 \keyword{internal}
-

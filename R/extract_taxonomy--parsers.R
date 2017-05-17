@@ -15,10 +15,10 @@
 #' @return \code{list} of \code{data.frame}
 #' 
 #' @keywords internal
-class_from_obs_id <- function(obs_id, database = c("ncbi", "none"), ...) {
+class_from_obs_id <- function(obs_id, database = c("ncbi", "none"), batch_size = 100, ...) {
   
   using_ncbi <- function(obs_id) {
-    taxize::classification(taxize::genbank2uid(obs_id))
+    taxize::classification(taxize::genbank2uid(obs_id, batch_size = batch_size))
   }
   
   using_none <- function(obs_id) {
@@ -108,6 +108,22 @@ class_from_class <- function(class, class_key, class_regex, class_sep, class_rev
       row.names(x) <- NULL
       x
     })
+  }
+  
+  # Check that the regex matched something
+  not_matched <- vapply(result, function(x) any(is.na(x)), logical(1))
+  if (any(not_matched)) {
+    max_to_display <- 10
+    input_to_display <- class[1:min(c(length(class), max_to_display))]
+    names(input_to_display) <- which(not_matched)[1:min(c(length(class), max_to_display))]
+    error_msg <- paste0('The classification regex "', class_regex,
+                        '" does not match the following ', sum(not_matched),
+                        ' of ', length(not_matched), ' inputs:\n', 
+                        paste0("  ", names(input_to_display), ": ", input_to_display, collapse = "\n"))
+    if (length(class) > max_to_display) {
+      error_msg <- paste(error_msg, "\n   ...")
+    }
+    warning(error_msg)
   }
   
   # Name columns in each classification according to the key

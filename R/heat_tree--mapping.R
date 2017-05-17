@@ -36,13 +36,16 @@ rescale <- function (x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRU
 #' 
 #' @keywords internal
 apply_color_scale <- function(values, color_series, interval = NULL, no_color_in_palette = 1000) {
-  if (is.numeric(values)) { ## Not factors, characters, or hex codes
+  numeric_values <- get_numerics(values)
+  if (length(numeric_values) > 0) { ## Not factors, characters, or hex codes
     palette <- grDevices::colorRampPalette(color_series)(no_color_in_palette)
     if (is.null(interval)) {
-      interval <- range(values, na.rm = TRUE, finite = TRUE)
+      interval <- range(numeric_values, na.rm = TRUE, finite = TRUE)
     }
-    color_index <- as.integer(rescale(values, to = c(1, no_color_in_palette), from = interval))
-    return(palette[color_index])
+    color_index <- as.integer(rescale(numeric_values, to = c(1, no_color_in_palette), from = interval))
+    output <- values
+    output[can_be_num(values)] <- palette[color_index]
+    return(output)
   } else {
     return(values)
   }

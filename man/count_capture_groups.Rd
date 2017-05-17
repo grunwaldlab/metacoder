@@ -19,4 +19,3 @@ count_capture_groups(regex)
 Count the number of capture groups in a regular expression.
 }
 \keyword{internal}
-

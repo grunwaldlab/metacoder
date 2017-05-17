@@ -36,13 +36,13 @@ parse_summary_seqs <- function(text = NULL, file = NULL) {
 #' 
 #' @param file_path (\code{character} of length 1)
 #' The file path to the input file.
-#' @param untaxmap (\code{logical} of length 1)
-#' If \code{FALSE}, remove any untaxmap rows.
+#' @param unclassified (\code{logical} of length 1)
+#' If \code{FALSE}, remove any unclassified rows.
 #' 
 #' @return \code{\link{taxmap}}
 #' 
 #' @export
-parse_mothur_summary <- function(file_path, untaxmap = FALSE) {
+parse_mothur_summary <- function(file_path, unclassified = FALSE) {
   
   # Read file
   content <- readLines(file_path)
@@ -57,11 +57,11 @@ parse_mothur_summary <- function(file_path, untaxmap = FALSE) {
   # Make regex
   regex <- paste0("^", paste0(collapse = "\t", rep("(.*?)", length(header))), "$")
   
-  # Remove 'untaxmap' rows
-  if (! untaxmap) {
-    untaxmap_rows <- grepl(content, pattern = "^(.*?)\\t(.*?)\\tuntaxmap\\t")
-    content <- content[! untaxmap_rows]
-    message(paste0("Removed ", sum(untaxmap_rows), " untaxmap rows."))
+  # Remove 'unclassified' rows
+  if (! unclassified) {
+    unclassified_rows <- grepl(content, pattern = "^(.*?)\\t(.*?)\\tunclassified\\t")
+    content <- content[! unclassified_rows]
+    message(paste0("Removed ", sum(unclassified_rows), " unclassified rows."))
   }
   
   # Extract taxonomic data

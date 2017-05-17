@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for Parsing, Manipulating, and Graphing Hierarchical Data
-Version: 0.1.2
+Version: 0.1.3.9001
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
@@ -17,6 +17,6 @@ Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
         stats, grDevices, utils, lazyeval, dplyr, magrittr, readr
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Date: 2016-08-01
 Encoding: UTF-8

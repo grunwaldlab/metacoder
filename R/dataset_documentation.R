@@ -1,6 +1,6 @@
 #' Fungal ITS Genbank refseq
 #'
-#' A dataset containing information for 299 sequences obtained form NCBI using the following query:
+#' A dataset containing information for 299 sequences obtained from NCBI using the following query:
 #' 
 #' \code{
 #' (18s[All Fields] AND 28s[All Fields]) AND "basidiomycetes"[porgn] AND (refseq[filter] AND ("700"[SLEN] : "800"[SLEN]))

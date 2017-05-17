@@ -1,0 +1,6 @@
+```{r}
+library(metacoder)
+heat_tree(unite_ex_data_3, node_size = n_obs, node_label = name, node_color = ifelse(n_supertaxa == 2, "red", "grey"))
+heat_tree(unite_ex_data_3, node_size = n_obs, node_label = name, node_color = ifelse(n_supertaxa %in% 2:5, n_obs, "grey"))
+```
+

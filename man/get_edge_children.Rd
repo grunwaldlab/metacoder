@@ -10,4 +10,3 @@ get_edge_children(graph)
 get_edge_children
 }
 \keyword{internal}
-

@@ -10,4 +10,3 @@ get_node_children(graph, node)
 get_node_children
 }
 \keyword{internal}
-

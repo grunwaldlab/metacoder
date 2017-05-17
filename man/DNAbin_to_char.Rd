@@ -13,4 +13,3 @@ DNAbin_to_char(dna_bin)
 Converts an object of class DNAbin (as produced by ape) to a named character vector.
 }
 \keyword{internal}
-

@@ -34,4 +34,3 @@ Is split by \code{"-"}}
 Creates a list of resizing text grobs
 }
 \keyword{internal}
-

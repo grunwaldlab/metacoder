@@ -45,4 +45,3 @@ supertaxa(contaminants, subset = 1:10)}
 Other taxmap taxonomy functions: \code{\link{obs}},
   \code{\link{roots}}, \code{\link{subtaxa}}
 }
-

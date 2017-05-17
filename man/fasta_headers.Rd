@@ -20,4 +20,3 @@ fasta_headers(file_path, buffer_size = 1000, return_headers = TRUE)
 Get line numbers of FASTA headers without reading whole fasta file into RAM.
 }
 \keyword{internal}
-

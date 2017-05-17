@@ -81,7 +81,7 @@ There is also a short vignette included for offline use that can be accessed  by
   \item \code{\link{primersearch}}
 }
 }
+
 \author{
 Zachary Foster
 }
-

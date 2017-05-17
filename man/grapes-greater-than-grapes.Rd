@@ -7,4 +7,3 @@
 magrittr forward-pipe operator
 }
 \keyword{internal}
-

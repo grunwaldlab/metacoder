@@ -34,4 +34,3 @@ ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5
   
 }
 \keyword{internal}
-

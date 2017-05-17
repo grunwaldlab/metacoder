@@ -1,0 +1,14 @@
+
+
+
+```{r}
+data <- unite_ex_data_3
+data$taxon_data$x <- n_obs(data)
+data$taxon_data$x[1] <- Inf
+data$taxon_data$x[2] <- -Inf
+```
+
+```{r}
+heat_tree(data, node_label = name, node_size = x, node_color = x)
+```
+

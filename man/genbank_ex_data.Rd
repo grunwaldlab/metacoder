@@ -12,7 +12,7 @@
 genbank_ex_data
 }
 \description{
-A dataset containing information for 299 sequences obtained form NCBI using the following query:
+A dataset containing information for 299 sequences obtained from NCBI using the following query:
 }
 \details{
 \code{
@@ -31,4 +31,3 @@ genbank_ex_data <- extract_taxonomy(sequences,
 }
 }
 \keyword{datasets}
-

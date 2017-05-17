@@ -17,4 +17,3 @@ If \code{TRUE}, throw an error if primersearch is not installed.}
 Test if primersearch is installed
 }
 \keyword{internal}
-

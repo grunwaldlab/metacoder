@@ -22,4 +22,3 @@ Ensure that all of a character vector matches a regex.
 Inputs that do not match are excluded.
 }
 \keyword{internal}
-

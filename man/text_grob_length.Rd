@@ -4,16 +4,17 @@
 \alias{text_grob_length}
 \title{Estimate text grob length}
 \usage{
-text_grob_length(text)
+text_grob_length(text, rot = 0)
 }
 \arguments{
 \item{text}{\code{character} The text to be printed}
+
+\item{rot}{The rotation in radians}
 }
 \value{
-The estimated length of the printed text as a multiple of its height
+The estimated length of the printed text as a multiple of its text size (height)
 }
 \description{
 Estimate the printed length of `resizingTextGrob` text
 }
 \keyword{internal}
-

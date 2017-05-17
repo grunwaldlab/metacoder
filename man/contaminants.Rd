@@ -39,4 +39,3 @@ contaminants <- extract_taxonomy(ids, key = "obs_id", database = "ncbi")
 
 }
 \keyword{datasets}
-

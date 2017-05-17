@@ -26,4 +26,3 @@ Adds names to keys that will be used for column names in the output of \code{ext
 Uses non-standard evaluation to get the name of input variables.
 }
 \keyword{internal}
-

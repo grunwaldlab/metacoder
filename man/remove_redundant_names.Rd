@@ -19,6 +19,5 @@ The name of a column in \code{obj$taxon_data}}
 }
 \description{
 Remove the names of parent taxa in the begining of their children's names in a \code{taxmap} object.
-This is useful for remove genus names in species binomials.
+This is useful for removing genus names in binomials.
 }
-

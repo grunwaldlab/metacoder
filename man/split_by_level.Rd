@@ -23,4 +23,3 @@ a \code{list} of taxon id \code{character} vectors.
 Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
 }
 \keyword{internal}
-

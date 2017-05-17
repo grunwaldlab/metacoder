@@ -188,8 +188,8 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
   output <- parse_primersearch(output_path)
   
   # Extract amplicon input ---------------------------------------------------------------------
-  output$f_primer <- primer_table[match(output$pair_name, primer_table$pair_name), "forward"]
-  output$r_primer <- primer_table[match(output$pair_name, primer_table$pair_name), "reverse"]
+  output$f_primer <- ifelse(vapply(output$f_primer, grepl, x = forward, FUN.VALUE = logical(1)), forward, reverse)
+  output$r_primer <- ifelse(vapply(output$r_primer, grepl, x = reverse, FUN.VALUE = logical(1)), reverse, forward)
   output$r_index <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_index + 1
   output$amplicon <- unlist(Map(function(seq, start, end) substr(seq, start, end),
                                 input[output$seq_id], output$f_index, output$r_index)) 

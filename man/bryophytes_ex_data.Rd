@@ -25,4 +25,3 @@ bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name", database = "it
 
 }
 \keyword{datasets}
-

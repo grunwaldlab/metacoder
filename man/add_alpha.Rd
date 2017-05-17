@@ -10,4 +10,3 @@ add_alpha(col, alpha = 1)
 add_alpha
 }
 \keyword{internal}
-

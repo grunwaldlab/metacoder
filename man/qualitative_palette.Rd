@@ -16,4 +16,3 @@ Returns the default color palette for qualitative data
 qualitative_palette()
 
 }
-

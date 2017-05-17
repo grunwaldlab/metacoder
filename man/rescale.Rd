@@ -21,4 +21,3 @@ Rescale numeric vector to have specified minimum and maximum, but allow for hard
 Light wrapper for scales::rescale
 }
 \keyword{internal}
-
