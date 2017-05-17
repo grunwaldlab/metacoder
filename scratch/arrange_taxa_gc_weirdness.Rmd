@@ -1,0 +1,31 @@
+
+
+
+```{r}
+install.packages("metacoder")
+library(metacoder)
+gctorture2(999)
+#> [1] 0
+arrange_taxa(unite_ex_data_3, desc(name))
+#> Error in data[, colnames(data) %in% col_subset, drop = FALSE]: incorrect number of dimensions
+```
+
+
+## old metacoder, new dplyr
+
+```{r}
+install.packages("metacoder")
+devtools::install_github("tidyverse/dplyr@v0.6.0-rc")
+library(metacoder)
+arrange_taxa(unite_ex_data_3, desc(name))
+```
+
+
+## new metacoder, old dplyr
+
+```{r}
+devtools::install_github("grunwaldlab/metacoder@dev")
+devtools::install_github("tidyverse/dplyr@v0.5.0")
+library(metacoder)
+arrange_taxa(unite_ex_data_3, desc(name))
+```
