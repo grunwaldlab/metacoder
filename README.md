@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.org/grunwaldlab/metacoder?branch=master) [![codecov.io](https://codecov.io/github/grunwaldlab/metacoder/coverage.svg?branch=master)](https://codecov.io/github/grunwaldlab/metacoder?branch=master)
 [![Downloads from Rstudio mirror per month](http://cranlogs.r-pkg.org/badges/metacoder)](http://www.r-pkg.org/pkg/metacoder)
 [![Downloads from Rstudio mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](http://www.r-pkg.org/pkg/metacoder)
-[![CRAN version](http://www.r-pkg.org/badges/version/metacoder)](http://cran.r-project.org/package=metacoder)
+[![CRAN version](http://www.r-pkg.org/badges/version/metacoder)](https://cran.r-project.org/package=metacoder)
 
 
 An R package for metabarcoding research planning and analysis
