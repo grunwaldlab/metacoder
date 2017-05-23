@@ -196,7 +196,7 @@ heat_tree.taxmap <- function(.input, ...) {
 #' 
 #' @param background_color The background color of the plot.
 #' Default: Transparent
-#' @param output_file The path to a file to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+#' @param output_file The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
 #' The type of the file will be determined by the extension given.
 #' Default: Do not save plot.
 #' 
@@ -919,7 +919,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     if (!is.null(output_file)) {
       img_width <- diff(ranges$x)
       img_height <- diff(ranges$y)
-      ggplot2::ggsave(output_file, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
+      for (path in output_file) {
+        ggplot2::ggsave(path, the_plot, bg = "transparent", width = 10, height = 10 * (img_height / img_width))
+      }
     }
     
     

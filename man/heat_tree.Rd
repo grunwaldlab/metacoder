@@ -225,7 +225,7 @@ Default: The expression given to \code{edge_size}.}
 \item{background_color}{The background color of the plot.
 Default: Transparent}
 
-\item{output_file}{The path to a file to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+\item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
 The type of the file will be determined by the extension given.
 Default: Do not save plot.}
 }
