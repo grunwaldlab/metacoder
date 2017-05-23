@@ -1,0 +1,44 @@
+
+
+```{r, eval = FALSE}
+source('http://bioconductor.org/biocLite.R')
+biocLite('phyloseq')
+```
+
+
+```{r}
+phyloseq_to_taxmap <- function(phyloseq_obj) {
+  tax_data <- data.frame(
+    taxonomy = vapply(seq_len(nrow(phyloseq_obj@tax_table)), FUN.VALUE = character(1),
+                      function(i) {
+                        taxon_names <- as.vector(phyloseq_obj@tax_table[i, ])
+                        rank_names <- colnames(phyloseq_obj@tax_table)
+                        rank_names <- rank_names[!is.na(taxon_names)]
+                        taxon_names <- taxon_names[!is.na(taxon_names)]
+                        paste(rank_names, taxon_names, sep = "::", collapse = ";;")
+                      }),
+    phyloseq_id = rownames(phyloseq_obj@tax_table)
+  )
+  
+  otu_data  <- as.data.frame(t(phyloseq_obj@otu_table))
+  otu_data$phyloseq_id <- rownames(otu_data)
+  tax_data <- merge(tax_data, otu_data, by.x = "phyloseq_id", by.y = "phyloseq_id")
+  
+  parse_taxonomy_table(tax_data, taxon_col = c("class" = 2), other_col_type = "obs_info",
+                       class_regex = "^(.*)::(.*)$",
+                       class_key = c(rank = "taxon_info", "name"),
+                       class_sep = ";;")
+}
+```
+
+
+```{r}
+library(phyloseq)
+phy <- readRDS("example.phyloseq")
+```
+
+
+```{r}
+data <- phyloseq_to_taxmap(phy)
+```
+

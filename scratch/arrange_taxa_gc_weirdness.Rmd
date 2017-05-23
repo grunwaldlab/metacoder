@@ -10,6 +10,22 @@ arrange_taxa(unite_ex_data_3, desc(name))
 #> Error in data[, colnames(data) %in% col_subset, drop = FALSE]: incorrect number of dimensions
 ```
 
+```{r}
+gctorture2(999)
+data <- dplyr::tibble(x = 1:10)
+dplyr::slice(data, 1:10)
+```
+
+```{r}
+devtools::install_github("tidyverse/dplyr")
+gctorture2(999)
+(x <- dplyr::tibble(y = 1:10))
+dplyr::slice(x, 1:10)
+dplyr::slice(x, 1:10)
+dplyr::slice(x, 1:10)
+dplyr::slice(x, 1:10)
+sessionInfo()
+```
 
 ## old metacoder, new dplyr
 
@@ -24,7 +40,7 @@ arrange_taxa(unite_ex_data_3, desc(name))
 ## new metacoder, old dplyr
 
 ```{r}
-devtools::install_github("grunwaldlab/metacoder@dev")
+devtools::install_github("grunwaldlab/metacoder")
 devtools::install_github("tidyverse/dplyr@v0.5.0")
 library(metacoder)
 arrange_taxa(unite_ex_data_3, desc(name))
