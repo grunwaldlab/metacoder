@@ -1,6 +1,6 @@
 #' Rescale numeric vector to have specified minimum and maximum.
 #' 
-#' Rescale numeric vector to have specified minimum and maximum, but allow for hard boundries.
+#' Rescale numeric vector to have specified minimum and maximum, but allow for hard boundaries.
 #' Light wrapper for scales::rescale
 #' 
 #' @param x values to rescale
@@ -53,7 +53,7 @@ apply_color_scale <- function(values, color_series, interval = NULL, no_color_in
 
 
 
-#' The defualt quantative color palette
+#' The default quantative color palette
 #' 
 #' Returns the default color palette for quantative data.
 #' 
@@ -68,7 +68,7 @@ quantative_palette <- function() {
 }
 
 
-#' The defualt qualitative color palette
+#' The default qualitative color palette
 #' 
 #' Returns the default color palette for qualitative data
 #' 
@@ -82,7 +82,7 @@ qualitative_palette <- function() {
   return(c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(9, "Pastel1")))
 }
 
-#' The defualt diverging color palette
+#' The default diverging color palette
 #' 
 #' Returns the default color palette for diverging data
 #' 

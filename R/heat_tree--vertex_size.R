@@ -1,7 +1,7 @@
 #===================================================================================================
-#' Get all distances beween points
+#' Get all distances between points
 #' 
-#' Returns the distances bewteen every possible combination of two points.
+#' Returns the distances between every possible combination of two points.
 #' 
 #' @param x (\code{numeric} of length 1) x coordinate
 #' @param y (\code{numeric} of length 1) y coordinate

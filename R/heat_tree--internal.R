@@ -1,6 +1,6 @@
 #' Bounding box coords for labels
 #' 
-#' Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinants
+#' Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinates
 #' 
 #' @param x Horizontal position of center of text grob
 #' @param y Vertical position of center of text grob

@@ -10,7 +10,7 @@
 #'   \item A set of functions to manipulate taxonomic data modeled after dplyr.
 #'   \item Visualization of statistics distributed over taxonomic classifications and phylogenies.
 #'   \item Evaluating potential metabarcoding primers for taxonomic specificity.
-#'   \item Evaluating potential metabarcoding loci for taxonomic discrimiation (in development).
+#'   \item Evaluating potential metabarcoding loci for taxonomic discrimination (in development).
 #' }
 #' 
 #' To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with
@@ -29,7 +29,7 @@
 #'
 #' @section Most important functions:
 #' 
-#' \strong{Parseing taxonomy information:}
+#' \strong{Parsing taxonomy information:}
 #' 
 #' \itemize{
 #'   \item \code{\link{extract_taxonomy}}

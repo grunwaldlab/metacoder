@@ -1,6 +1,6 @@
 #' Parse HMP QIIME results
 #' 
-#' NOTE: Not extensivley tested
+#' NOTE: Not extensively tested
 #' Parses the results of the Human Microbiome Project QIIME analysis of the 16S metagenomic data.
 #' This is mostly a wrapper for \code{\link{extract_taxonomy}}.
 #' 

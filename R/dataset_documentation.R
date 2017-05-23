@@ -21,7 +21,7 @@
 "genbank_ex_data"
 
 
-#' Example dataset of comtamination
+#' Example dataset of contamination
 #'
 #' A dataset containing information from 97 NCBI accession numbers representing possible contamination:
 #' 

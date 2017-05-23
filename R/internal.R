@@ -89,7 +89,7 @@ can_be_num <- function(input) {
 
 #' Return numeric values in a character
 #' 
-#' Returns just valid numeric values and igores others.
+#' Returns just valid numeric values and ignores others.
 #' 
 #' @param input
 #' 

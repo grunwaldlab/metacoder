@@ -8,7 +8,7 @@
 #' @param name (\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 
 #' see all options. 
 #' @param graph (\code{igraph}) The graph to generate the layout for.
-#' @param intitial_coords (\code{matrix}) Initial node layout to bawse new layout off of.
+#' @param intitial_coords (\code{matrix}) Initial node layout to base new layout off of.
 #' @param effort  (\code{numeric} of length 1) The amount of effort to put into layouts. Typically
 #' determines the the number of iterations. 
 #' @param ... (other arguments) Passed to igraph layout function used.

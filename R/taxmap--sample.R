@@ -79,7 +79,7 @@ sample_n_obs <- function(.data, size, replace = FALSE, taxon_weight = NULL, obs_
 
 #' Sample a proportion of observations from \code{\link{taxmap}}
 #' 
-#' Randomly sample some propoortion of observations from a \code{\link{taxmap}} object. Weights can be 
+#' Randomly sample some proportion of observations from a \code{\link{taxmap}} object. Weights can be 
 #' specified for observations or the taxa they are taxmap by.
 #' See \link[dplyr]{sample_frac} for the inspiration for this function.
 #' 
@@ -185,7 +185,7 @@ sample_n_taxa <- function(.data, size, taxon_weight = NULL, obs_weight = NULL,
 
 #' Sample a proportion of taxa from \code{\link{taxmap}}
 #' 
-#' Randomly sample some propoortion of taxa from a \code{\link{taxmap}} object. Weights can be 
+#' Randomly sample some proportion of taxa from a \code{\link{taxmap}} object. Weights can be 
 #' specified for taxa or the observations assigned to them. See \link[dplyr]{sample_frac} for the
 #' inspiration for this function.
 #' 

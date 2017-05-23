@@ -56,7 +56,7 @@ validate_regex_match <- function(input, regex, max_print = 10) {
 #' Check a regex-key pair
 #' 
 #' Checks that the number of capture groups in the regex matches the length of the key.
-#' Checks that only certian values of \code{key} can appear more that once.
+#' Checks that only certain values of \code{key} can appear more that once.
 #' Adds names to keys that will be used for column names in the output of \code{extract_taxonomy}.
 #' Uses non-standard evaluation to get the name of input variables.
 #'
