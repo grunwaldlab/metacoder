@@ -160,7 +160,7 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-#' @source \url{https://rdp.cme.msu.edu/}
+#' @source \url{http://rdp.cme.msu.edu/}
 "rdp_ex_data"
 
 
