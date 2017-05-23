@@ -2,7 +2,7 @@
 % Please edit documentation in R/heat_tree--vertex_size.R
 \name{molten_dist}
 \alias{molten_dist}
-\title{Get all distances beween points}
+\title{Get all distances between points}
 \usage{
 molten_dist(x, y)
 }
@@ -15,7 +15,7 @@ molten_dist(x, y)
 A \code{data.frame}
 }
 \description{
-Returns the distances bewteen every possible combination of two points.
+Returns the distances between every possible combination of two points.
 }
 \examples{
 \dontrun{

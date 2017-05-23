@@ -19,7 +19,7 @@ parse_hmp_qiime(otu_file, mapping_file, min_abundance = 1, max_otus = -1)
 A \code{\link{taxmap}} object
 }
 \description{
-NOTE: Not extensivley tested
+NOTE: Not extensively tested
 Parses the results of the Human Microbiome Project QIIME analysis of the 16S metagenomic data.
 This is mostly a wrapper for \code{\link{extract_taxonomy}}.
 }

@@ -10,6 +10,6 @@ get_numerics(input)
 \item{input}{}
 }
 \description{
-Returns just valid numeric values and igores others.
+Returns just valid numeric values and ignores others.
 }
 \keyword{internal}

@@ -14,7 +14,7 @@ queried.}
 \item{subset}{(\code{character}) \code{taxon_ids} or indexes of \code{taxon_data} for which
 supertaxa will be returned. Default: All taxa in \code{obj} will be used.}
 
-\item{recursive}{(\code{logical}) If \code{FALSE}, only return the subtaxa one level bwlow the 
+\item{recursive}{(\code{logical}) If \code{FALSE}, only return the subtaxa one level below the 
 target taxa. If \code{TRUE}, return all the subtaxa of every subtaxa, etc.}
 
 \item{simplify}{(\code{logical}) If \code{TRUE}, then combine all the results into a single 

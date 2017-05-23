@@ -3,7 +3,7 @@
 \docType{data}
 \name{contaminants}
 \alias{contaminants}
-\title{Example dataset of comtamination}
+\title{Example dataset of contamination}
 \format{An object of type \code{\link{taxmap}}}
 \usage{
 contaminants

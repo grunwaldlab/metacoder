@@ -17,7 +17,7 @@ The length of \code{class_key} must be equal to the number of capturing groups s
 Any names added to the terms will be used as column names in the output.
 At least \code{"taxon_id"} or \code{"name"} must be specified.
 Only \code{"taxon_info"} can be used multiple times.
-Each term must be one of those decribed below:
+Each term must be one of those described below:
  \describe{
    \item{\code{taxon_id}}{A unique numeric id for a taxon for a particular \code{database} (e.g. ncbi accession number).
          Requires an internet connection.}
@@ -36,7 +36,7 @@ The character(s) used to separate individual taxa within a classification.}
 
 \item{class_rev}{(\code{logical} of length 1)
 Used with the \code{class} term in the \code{key} argument.
-If \code{TRUE}, the order of taxon data in a classfication is reversed to be specific to broad.}
+If \code{TRUE}, the order of taxon data in a classification is reversed to be specific to broad.}
 
 \item{database}{(\code{character} of length 1) The name of the database that patterns given in 
 \code{parser} will apply to. Valid databases include "ncbi", "itis", "eol", "col", "tropicos",

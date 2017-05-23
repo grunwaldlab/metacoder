@@ -18,6 +18,6 @@ label_bounds(label, x, y, height, rotation, just)
 \item{just}{Justification. e.g. "left-top"}
 }
 \description{
-Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinants
+Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinates
 }
 \keyword{internal}

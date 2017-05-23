@@ -21,7 +21,7 @@ The name of the column can have to following values:
          Requires an internet connection.}
    \item{\code{name}}{The name of a taxon. Not necessarily unique, but are interpretable
          by a particular \code{database}. Requires an internet connection.}
-   \item{\code{class}}{A list of taxa information that consitutes the full taxonomic classification
+   \item{\code{class}}{A list of taxa information that constitutes the full taxonomic classification
          from broad to specific (see \code{class_rev}) for a particular \code{database}. Individual taxa
          are separated by the \code{class_sep} argument and the information is parsed by the
          \code{class_regex} and \code{class_key} arguments.}

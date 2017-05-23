@@ -17,7 +17,7 @@ rescale(x, to = c(0, 1), from = range(x, na.rm = TRUE, finite = TRUE),
 \item{hard_bounds}{If \code{TRUE}, all values will be forced into the range of \code{to}.}
 }
 \description{
-Rescale numeric vector to have specified minimum and maximum, but allow for hard boundries.
+Rescale numeric vector to have specified minimum and maximum, but allow for hard boundaries.
 Light wrapper for scales::rescale
 }
 \keyword{internal}

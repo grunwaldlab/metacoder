@@ -13,7 +13,7 @@ see all options.}
 
 \item{graph}{(\code{igraph}) The graph to generate the layout for.}
 
-\item{intitial_coords}{(\code{matrix}) Initial node layout to bawse new layout off of.}
+\item{intitial_coords}{(\code{matrix}) Initial node layout to base new layout off of.}
 
 \item{effort}{(\code{numeric} of length 1) The amount of effort to put into layouts. Typically
 determines the the number of iterations.}

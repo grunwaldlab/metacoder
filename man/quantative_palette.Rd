@@ -2,7 +2,7 @@
 % Please edit documentation in R/heat_tree--mapping.R
 \name{quantative_palette}
 \alias{quantative_palette}
-\title{The defualt quantative color palette}
+\title{The default quantative color palette}
 \usage{
 quantative_palette()
 }

@@ -27,7 +27,7 @@ primersearch(input, forward, reverse, mismatch = 5, ...)
 \item{sequence_col}{(\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.}
 
 \item{result_cols}{(\code{character}) The names of columns to include in the output.
-By defualt, all output columns are included.}
+By default, all output columns are included.}
 }
 \value{
 An object of type \code{\link{taxmap}}

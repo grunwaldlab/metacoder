@@ -43,7 +43,7 @@ vector and return a single number.}
 An object of type \code{\link{taxmap}}
 }
 \description{
-Randomly sample some propoortion of observations from a \code{\link{taxmap}} object. Weights can be 
+Randomly sample some proportion of observations from a \code{\link{taxmap}} object. Weights can be 
 specified for observations or the taxa they are taxmap by.
 See \link[dplyr]{sample_frac} for the inspiration for this function.
 }

@@ -6,7 +6,7 @@
 \title{Example of RDP Archea data}
 \format{An object of type \code{\link{taxmap}}}
 \source{
-\url{https://rdp.cme.msu.edu/}
+\url{http://rdp.cme.msu.edu/}
 }
 \usage{
 rdp_ex_data
