@@ -1,5 +1,11 @@
 # News 
 
+## Current
+
+### Bug fixes
+
+* Fixed bug in `subtaxa` that caused an error when all of `subset` is `FALSE`. (issue [#143](https://github.com/grunwaldlab/metacoder/issues/143))
+
 ##  metacoder 0.1.3 
 
 ### Improvements
