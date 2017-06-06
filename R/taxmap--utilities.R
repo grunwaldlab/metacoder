@@ -145,6 +145,15 @@ subtaxa <- function(obj, subset = NULL, recursive = TRUE,
   # Parse arguments --------------------------------------------------------------------------------
   subset <- format_taxon_subset(obj, subset)
   
+  # Return empty list if `subset` has no values
+  if (length(subset) == 0) {
+    if (simplify) {
+      return(character(0))
+    } else {
+      return(list())
+    }
+  }
+  
   # Get subtaxa ------------------------------------------------------------------------------------
   parent_index <- match(obj$taxon_data$supertaxon_ids, obj$taxon_data$taxon_ids) 
 

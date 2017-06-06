@@ -1,21 +1,45 @@
 Package: metacoder
 Title: Tools for Parsing, Manipulating, and Graphing Hierarchical Data
-Version: 0.1.3
+Version: 0.1.3.9001
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
         "grunwaln@science.oregonstate.edu", role = c("ths")))
 Maintainer: Zachary Foster <zacharyfoster1989@gmail.com>
-Description: A set of tools for parsing, manipulating, and graphing data classified by a hierarchy (e.g. a taxonomy).  
-Depends: R (>= 3.0.2)
+Description: A set of tools for parsing, manipulating, and graphing data
+    classified by a hierarchy (e.g. a taxonomy).
+Depends:
+    R (>= 3.0.2)
 License: GPL-2 | GPL-3
 LazyData: true
 URL: https://grunwaldlab.github.io/metacoder_documentation/
 BugReports: https://github.com/grunwaldlab/metacoder/issues
-Imports: stringr, ggplot2, igraph, scales, grid, taxize, seqinr,
-        reshape2, zoo, traits, RColorBrewer, RCurl, ape, reshape,
-        stats, grDevices, utils, lazyeval, dplyr, magrittr, readr
-Suggests: knitr, rmarkdown, testthat
+Imports:
+    stringr,
+    ggplot2,
+    igraph,
+    scales,
+    grid,
+    taxize,
+    seqinr,
+    reshape2,
+    zoo,
+    traits,
+    RColorBrewer,
+    RCurl,
+    ape,
+    reshape,
+    stats,
+    grDevices,
+    utils,
+    lazyeval,
+    dplyr,
+    magrittr,
+    readr
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Date: 2017-05-22
