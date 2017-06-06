@@ -119,7 +119,8 @@ filter_taxa <- function(.data, ..., subtaxa = FALSE, supertaxa = FALSE, taxonles
   # Remove filtered taxa ---------------------------------------------------------------------------
   .data$taxa <- .data$taxa[.data$taxon_data$taxon_ids[taxa_subset]]
   .data$taxon_data <- .data$taxon_data[taxa_subset, , drop = FALSE]
-  .data$taxon_data[! .data$taxon_data$supertaxon_ids %in% .data$taxon_data$taxon_ids, "supertaxon_ids"] <- as.character(NA)
+  orphans <- ! .data$taxon_data$supertaxon_ids %in% .data$taxon_data$taxon_ids
+  .data$taxon_data[, "supertaxon_ids"] <- rep(NA_character_, length(orphans))
   
   return(.data)
 }

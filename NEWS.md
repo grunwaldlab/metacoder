@@ -5,6 +5,7 @@
 ### Bug fixes
 
 * Fixed bug in `subtaxa` that caused an error when all of `subset` is `FALSE`. (issue [#143](https://github.com/grunwaldlab/metacoder/issues/143))
+* Fixed bug in `filter_taxa` that caused an error when all taxa are filtered out. (issue [#144](https://github.com/grunwaldlab/metacoder/issues/144))
 
 ##  metacoder 0.1.3 
 
