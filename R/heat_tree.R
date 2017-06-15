@@ -393,7 +393,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     stop("'taxon_id' and 'supertaxon_id' must be of equal length.")
   }
   if (length(taxon_id) == 0) {
-    stop("'taxon_id' and 'supertaxon_id' are empty.")
+    warning("'taxon_id' and 'supertaxon_id' are empty. Returning NULL.")
+    return(NULL)
   }
   if (length(unique(taxon_id)) != length(taxon_id)) {
     stop("All values of 'taxon_id' are not unique.")
