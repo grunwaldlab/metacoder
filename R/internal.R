@@ -1,3 +1,23 @@
+#' Report a error/warning if needed
+#' 
+#' Report a error/warning if needed
+#' NOTE: This function is unusual in that it looks for a varaible names `vigilance` in a parent namespace.
+#' 
+#' @param text The error to report
+#' 
+#' @return \code{NULL}
+#' 
+#' @keywords internal
+vigilant_report <- function(text) {
+  vigilance <- dynGet("vigilance", ifnotfound = "error")
+  text <- paste0(text, "\n",
+                 "To avoid this ", vigilance, ", change the setting of the `vigilance` option")
+  response <- list("error" = stop, "warning" = warning, "message" = message,
+                   "none" = function(text) invisible(NULL))
+  response[[vigilance]](text)
+}
+
+
 #' get_edge_parents
 #' 
 #' @keywords internal
