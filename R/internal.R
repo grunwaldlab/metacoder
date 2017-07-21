@@ -117,3 +117,4 @@ can_be_num <- function(input) {
 get_numerics <- function(input) {
   as.numeric(input[can_be_num(input)])
 }
+

@@ -2,13 +2,13 @@
 % Please edit documentation in R/heat_tree.R
 \name{heat_tree}
 \alias{heat_tree}
-\alias{heat_tree.taxmap}
+\alias{heat_tree.Taxmap}
 \alias{heat_tree.default}
 \title{Plot a taxonomic tree}
 \usage{
 heat_tree(...)
 
-\method{heat_tree}{taxmap}(.input, ...)
+\method{heat_tree}{Taxmap}(.input, ...)
 
 \method{heat_tree}{default}(taxon_id, supertaxon_id, node_label = NA,
   edge_label = NA, tree_label = NA, node_size = 1,

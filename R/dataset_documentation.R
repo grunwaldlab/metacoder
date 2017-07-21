@@ -11,11 +11,13 @@
 #' 
 #' file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' genbank_ex_data <- extract_taxonomy(sequences,
+#' library(taxa) # The parsers in taxa are used
+#' 
+#' # Note: This can take a few minutes
+#' genbank_ex_data <- extract_tax_data(names(sequences),
 #'                                     regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
-#'                                     key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
-#'                                     database = "ncbi")
-#' }
+#'                                     key = c(gi_no = "info", "seq_id", desc = "info"),
+#'                                     database = "ncbi")#' }
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://www.ncbi.nlm.nih.gov/nuccore}
 "genbank_ex_data"
@@ -48,7 +50,8 @@
 #'          "AB248923.1", "CP002291.1", "X98409.1", "CU928161.2", "CP003297.1", 
 #'          "FJ797950.1", "CP000038.1", "U82598.1", "CP002211.1", "JQ806764.1", 
 #'          "U03463.1", "CP001665.1")
-#' contaminants <- extract_taxonomy(ids, key = "obs_id", database = "ncbi")
+#' library(taxa) # The parsers in taxa are used
+#' contaminants <- lookup_tax_data(ids, type = "seq_id", database = "ncbi")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -64,12 +67,13 @@
 #' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\|UDB", names(sequences))],
+#' library(taxa) # The parsers in taxa are used
+#' headers <- names(sequences[!grepl(pattern = "\\|UDB", names(sequences))])
+#' unite_ex_data_1 <- extract_tax_data(headers,
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(name = "obs_info", "obs_id",
-#'                                             other_id = "obs_info", tax_string = "obs_info"),
-#'                                     database = "ncbi")
-#' }
+#'                                     key = c(name = "info", "seq_id",
+#'                                             other_id = "info", tax_string = "info"),
+#'                                     database = "ncbi")#' }
 #'
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}

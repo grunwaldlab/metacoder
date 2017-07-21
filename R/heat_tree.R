@@ -6,14 +6,13 @@ heat_tree <- function(...) {
 
 #' @param .input An object of type \code{\link{taxmap}}
 #' 
-#' @method heat_tree taxmap
+#' @method heat_tree Taxmap
 #' @export
 #' @rdname heat_tree
-heat_tree.taxmap <- function(.input, ...) {
+heat_tree.Taxmap <- function(.input, ...) {
   # Non-standard argument evaluation
-  data <- taxon_data(.input, #sort_by = hierarchies, 
-                     col_subset = unique(c(taxon_data_cols_used(.input, ...), "taxon_ids", "supertaxon_ids")))
-  arguments <- c(list(taxon_id = data$taxon_ids, supertaxon_id = data$supertaxon_ids),
+  data <- taxa:::data_used(.input, ...)
+  arguments <- c(list(taxon_id = .input$edge_list$to, supertaxon_id = .input$edge_list$from),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
   # Use variable name for scale axis labels

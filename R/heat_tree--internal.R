@@ -272,3 +272,73 @@ select_labels <- function(my_data, label_max, sort_by_column, label_column) {
   return(rownames(my_data) %in% labels_shown)
 }
 
+
+#' Splits a taxonomy at a specific level or rank
+#' 
+#' Breaks one taxonomy into multiple, each with a root of a specified distance from the root.
+#' 
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
+#' @param level (\code{character} or \code{numeric} of length 1)
+#' @param rank (\code{character}) The rank designation (e.g. "genus") corresponding to each observation in
+#' 
+#' @return a \code{list} of taxon id \code{character} vectors. 
+#' \code{taxa}.
+#' 
+#' @keywords internal
+split_by_level <- function(taxa, parents, level, rank = NULL) {
+  class_data <- get_class_from_el(taxa, parents)
+  data <- data.frame(taxa = taxa, parents = parents, 
+                     level = vapply(class_data, length, numeric(1)))
+  if (is.null(rank)) {
+    new_roots <- data$taxa[data$level == level]
+  } else {
+    new_roots <- data$taxa[rank == level]
+  }
+  get_children <- function(id) {
+    index <- vapply(class_data, function(x) id %in% x, logical(1))
+    names(class_data[index])
+  }
+  stats::setNames(lapply(new_roots, get_children), new_roots)
+}
+
+
+#' Get classification for taxa in edge list
+#' 
+#' Extracts the classification of every taxon in a list of unique taxa and their supertaxa.
+#' 
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' 
+#' @return A list of vectors of taxa IDs. Each list entry corresponds to the \code{taxa} supplied.
+#' 
+#' @keywords internal
+get_class_from_el <- function(taxa, parents) {
+  process_one <- function(x) {
+    output <- character(0)
+    my_next <- x
+    while (length(my_next) != 0 && !is.null(my_next) && !is.na(my_next)) {
+      output <- c(my_next, output)
+      my_next <- parents[taxa == my_next]
+    }
+    return(output)
+  }
+  if (!is.character(taxa)) taxa <- as.character(taxa)
+  if (!is.character(parents)) parents <- as.character(parents)  
+  stats::setNames(lapply(taxa, process_one), taxa)
+}
+
+
+#' Get distance from root of edgelist observations
+#' 
+#' Gets the number of ancestors/supergroups for observations of an edge/adjacency list
+#' 
+#' @param taxa (\code{character}) Unique taxon IDs for every possible taxon.
+#' @param parents (\code{character}) Unique taxon IDs for the supertaxa of every possible taxon.
+#' Root taxa should have \code{NA} in this column.
+#' 
+#' @keywords internal
+edge_list_depth <-  function(taxa, parents) {
+  vapply(get_class_from_el(taxa, parents), length, numeric(1))
+}

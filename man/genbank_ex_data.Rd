@@ -24,10 +24,12 @@ A dataset containing information for 299 sequences obtained from NCBI using the 
 
 file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-genbank_ex_data <- extract_taxonomy(sequences,
+library(taxa) # The parsers in taxa are used
+
+# Note: This can take a few minutes
+genbank_ex_data <- extract_tax_data(names(sequences),
                                     regex = "^.*\\\\|(.*)\\\\|.*\\\\|(.*)\\\\|(.*)$",
-                                    key = c(gi_no = "obs_info", "obs_id", desc = "obs_info"),
-                                    database = "ncbi")
-}
+                                    key = c(gi_no = "info", "seq_id", desc = "info"),
+                                    database = "ncbi")#' }
 }
 \keyword{datasets}
