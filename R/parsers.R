@@ -65,3 +65,49 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   
   return(otu_data)
 }
+
+
+
+#' @export
+parse_phyloseq <- function(obj) {
+  datasets <- list()
+  
+  # Parse taxonomic data
+  possible_ranks <- unique(unlist(strsplit(taxa::ranks_ref$ranks, split = ",")))
+  tax_data <- as.data.frame(obj@tax_table)
+  
+  # Parse OTU tables
+  if (! is.null(obj@otu_table)) {
+    otu_table <- obj@otu_table
+    if (! otu_table@taxa_are_rows) {
+      otu_table <- t(otu_table)
+    }
+    otu_table <- as.data.frame(otu_table)
+    datasets <- c(datasets, list(otu_table = otu_table))
+  }
+  
+  # Parse sample data
+  if (! is.null(obj@sam_data)) {
+    datasets <- c(datasets, list(sam_data = obj@sam_data))
+  }
+  
+  # Parse phylogenetic tree
+  if (! is.null(obj@phy_tree)) {
+    datasets <- c(datasets, list(phy_tree = obj@phy_tree))
+  }
+  
+  # Parse reference sequences
+  if (! is.null(obj@refseq)) {
+    refseq <- as.character(obj@refseq)
+    datasets <- c(datasets, list(refseq = refseq))
+  }
+  
+  # Construct output
+  parse_tax_data(tax_data = tax_data, 
+                 datasets = datasets,
+                 class_cols = which(tolower(colnames(tax_data)) %in% possible_ranks), 
+                 mappings = c("{{name}}" = "{{name}}",
+                              NA, 
+                              NA, 
+                              "{{name}}" = "{{name}}"))
+}
