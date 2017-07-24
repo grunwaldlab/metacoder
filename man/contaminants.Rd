@@ -34,8 +34,17 @@ ids <- c("JQ086376.1", "AM946981.2", "JQ182735.1", "CP001396.1", "J02459.1",
          "AB248923.1", "CP002291.1", "X98409.1", "CU928161.2", "CP003297.1", 
          "FJ797950.1", "CP000038.1", "U82598.1", "CP002211.1", "JQ806764.1", 
          "U03463.1", "CP001665.1")
+library(taxa) # The parsers in taxa are used
 contaminants <- lookup_tax_data(ids, type = "seq_id", database = "ncbi")
 }
 
+}
+\seealso{
+Other example_datasets: \code{\link{bryophytes_ex_data}},
+  \code{\link{genbank_ex_data}},
+  \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
+  \code{\link{silva_ex_data}},
+  \code{\link{unite_ex_data_1}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}

@@ -19,12 +19,21 @@ A dataset containing information from 449 sequences from the UNITE reference dat
 
 file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-unite_ex_data_1 <- extract_taxonomy(sequences[!grepl(pattern = "\\\\|UDB", names(sequences))],
+library(taxa) # The parsers in taxa are used
+headers <- names(sequences[!grepl(pattern = "\\\\|UDB", names(sequences))])
+unite_ex_data_1 <- extract_tax_data(headers,
                                     regex = "^(.*)\\\\|(.*)\\\\|(.*)\\\\|.*\\\\|(.*)$",
-                                    key = c(name = "obs_info", "obs_id",
-                                            other_id = "obs_info", tax_string = "obs_info"),
-                                    database = "ncbi")
-}
+                                    key = c(name = "info", "seq_id",
+                                            other_id = "info", tax_string = "info"),
+                                    database = "ncbi")#' }
 
+}
+\seealso{
+Other example_datasets: \code{\link{bryophytes_ex_data}},
+  \code{\link{contaminants}},
+  \code{\link{genbank_ex_data}},
+  \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
+  \code{\link{silva_ex_data}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}

@@ -16,11 +16,20 @@ A dataset containing information from 249 Stramenopile sequences from the PR2 re
 
 file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-pr2_ex_data <- extract_taxonomy(sequences,
+library(taxa) # The parsers in taxa are used
+pr2_ex_data <- extract_tax_data(names(sequences),
                                 regex = "^(.*\\\\..*?)\\\\|(.*)$",
-                                key = c("obs_id", "class"),
-                                class_sep = "\\\\|")
+                                key = c("info", "class"),
+                                class_sep = "|")
 }
 
+}
+\seealso{
+Other example_datasets: \code{\link{bryophytes_ex_data}},
+  \code{\link{contaminants}},
+  \code{\link{genbank_ex_data}},
+  \code{\link{its1_ex_data}}, \code{\link{silva_ex_data}},
+  \code{\link{unite_ex_data_1}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}

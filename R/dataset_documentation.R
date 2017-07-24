@@ -6,6 +6,7 @@
 #' (18s[All Fields] AND 28s[All Fields]) AND "basidiomycetes"[porgn] AND (refseq[filter] AND ("700"[SLEN] : "800"[SLEN]))
 #' }
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
@@ -27,6 +28,7 @@
 #'
 #' A dataset containing information from 97 NCBI accession numbers representing possible contamination:
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
@@ -62,6 +64,7 @@
 #'
 #' A dataset containing information from 449 sequences from the UNITE reference database.
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
@@ -84,19 +87,20 @@
 #'
 #' A dataset containing information from 500 sequences from the UNITE reference database.
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_2 <- extract_taxonomy(sequences,
+#' library(taxa) # The parsers in taxa are used
+#' unite_ex_data_2 <- extract_tax_data(names(sequences),
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(seq_name = "obs_info", seq_id = "obs_info",
-#'                                             other_id = "obs_info", "class"),
+#'                                     key = c(seq_name = "info", seq_id = "info",
+#'                                             other_id = "info", my_class = "class"),
 #'                                     class_regex = "^(.*)__(.*)$",
-#'                                     class_key = c(unite_rank = "taxon_info", "name"),
-#'                                     class_sep = ";",
-#'                                     database = "ncbi")
+#'                                     class_key = c(unite_rank = "info", my_name = "taxon_name"),
+#'                                     class_sep = ";")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -104,83 +108,43 @@
 "unite_ex_data_2"
 
 
-#' Example of UNITE fungal ITS data
-#'
-#' A dataset containing information from 500 sequences from the UNITE reference database.
-#' 
-#' @examples
-#' \dontrun{
-#' 
-#' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
-#' sequences <- ape::read.FASTA(file_path)
-#' unite_ex_data_3 <- extract_taxonomy(sequences,
-#'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
-#'                                     key = c(seq_name = "obs_info", seq_id = "obs_info",
-#'                                             other_id = "obs_info", "class"),
-#'                                     class_regex = "^(.*)__(.*)$",
-#'                                     class_key = c(unite_rank = "taxon_info", "name"),
-#'                                     class_sep = ";")
-#' }
-#'
-#' @format An object of type \code{\link{taxmap}}
-#' @source \url{https://unite.ut.ee/}
-"unite_ex_data_3"
-
-
-
 #' Example of PR2 SSU data
 #'
 #' A dataset containing information from 249 Stramenopile sequences from the PR2 reference database.
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
 #' file_path <- system.file("extdata", "pr2_stramenopiles_gb203.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' pr2_ex_data <- extract_taxonomy(sequences,
+#' library(taxa) # The parsers in taxa are used
+#' pr2_ex_data <- extract_tax_data(names(sequences),
 #'                                 regex = "^(.*\\..*?)\\|(.*)$",
-#'                                 key = c("obs_id", "class"),
-#'                                 class_sep = "\\|")
+#'                                 key = c("info", "class"),
+#'                                 class_sep = "|")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
 "pr2_ex_data"
 
 
-#' Example of RDP Archea data
-#'
-#' A dataset containing information from 400 Archaea 16S sequences from the RDP reference database.
-#' 
-#' @examples
-#' \dontrun{
-#' 
-#' file_path <- system.file("extdata", "rdp_current_Archaea_unaligned.fa", package = "metacoder")
-#' sequences <- ape::read.FASTA(file_path)
-#' rdp_ex_data <- extract_taxonomy(sequences,
-#'                                 regex = "^(.*?) (.*)\\tLineage=(.*)",
-#'                                 key = c(id = "obs_info", description = "obs_info", "class"),
-#'                                 class_regex = "(.+?);(.*?);",
-#'                                 class_key = c("name", "taxon_info"))
-#' }
-#'
-#' @format An object of type \code{\link{taxmap}}
-#' @source \url{http://rdp.cme.msu.edu/}
-"rdp_ex_data"
-
 
 #' Example of ITS1 fungal data
 #'
 #' A dataset containing information from 170 Chytridiomycota ITS sequences from the ITS1 reference database.
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
 #' file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' its1_ex_data <- extract_taxonomy(sequences,
-#'                                  regex = "^(.*)\\|(.*)\\|tax_id:(.*)\\|(.*)$",
-#'                                  key = c("obs_id", taxon_name = "taxon_info",
-#'                                          "taxon_id", description = "obs_info"),
+#' library(taxa) # The parsers in taxa are used
+#' its1_ex_data <- extract_tax_data(names(sequences),
+#'                                  regex = "^(.*)_ITS1_HMM\\|(.*)\\|tax_id:(.*)\\|(.*)$",
+#'                                  key = c("seq_id", my_name = "info",
+#'                                          my_id = "info", description = "info"),
 #'                                  database = "ncbi")
 #' }
 #'
@@ -192,16 +156,20 @@
 #'
 #' A dataset containing information from 171 bryophytes family names scraped from \url{http://www.theplantlist.org/1.1/browse/B/}:
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
 #' library(XML)
+#' library(taxa) # The parsers in taxa are used
 #' taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") %>% 
-#' xmlRoot() %>%
+#'   xmlRoot() %>%
 #'   getNodeSet("//ul[@id='nametree']/li/a/i") %>%
 #'   sapply(xmlValue)
-#'   
-#' bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name", database = "itis")
+#' 
+#' bryophytes_ex_data <- lookup_tax_data(taxon_names,
+#'                                       type = "taxon_name", 
+#'                                       database = "itis")
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
@@ -212,16 +180,17 @@
 #'
 #' https://www.arb-silva.de/
 #' 
+#' @family example_datasets
 #' @examples
 #' \dontrun{
 #' 
+#' library(taxa) # The parsers in taxa are used
 #' file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' silva_ex_data <- extract_taxonomy(sequences,
+#' silva_ex_data <- extract_tax_data(names(sequences),
 #'                                   regex = "^(.*?) (.*)$",
-#'                                   key = c(id = "obs_info", "class"),
-#'                                   class_sep = ";")
-#' }
+#'                                   key = c(id = "info", tax = "class"),
+#'                                   class_sep = ";")#' }
 #'
 #' @format An object of type \code{\link{taxmap}}
 "silva_ex_data"

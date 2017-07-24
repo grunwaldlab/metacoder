@@ -15,13 +15,24 @@ A dataset containing information from 171 bryophytes family names scraped from \
 \dontrun{
 
 library(XML)
+library(taxa) # The parsers in taxa are used
 taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") \%>\% 
-xmlRoot() \%>\%
+  xmlRoot() \%>\%
   getNodeSet("//ul[@id='nametree']/li/a/i") \%>\%
   sapply(xmlValue)
-  
-bryophytes_ex_data <- extract_taxonomy(taxon_names, key = "name", database = "itis")
+
+bryophytes_ex_data <- lookup_tax_data(taxon_names,
+                                      type = "taxon_name", 
+                                      database = "itis")
 }
 
+}
+\seealso{
+Other example_datasets: \code{\link{contaminants}},
+  \code{\link{genbank_ex_data}},
+  \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
+  \code{\link{silva_ex_data}},
+  \code{\link{unite_ex_data_1}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}

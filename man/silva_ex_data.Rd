@@ -14,13 +14,21 @@ https://www.arb-silva.de/
 \examples{
 \dontrun{
 
+library(taxa) # The parsers in taxa are used
 file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-silva_ex_data <- extract_taxonomy(sequences,
+silva_ex_data <- extract_tax_data(names(sequences),
                                   regex = "^(.*?) (.*)$",
-                                  key = c(id = "obs_info", "class"),
-                                  class_sep = ";")
-}
+                                  key = c(id = "info", tax = "class"),
+                                  class_sep = ";")#' }
 
+}
+\seealso{
+Other example_datasets: \code{\link{bryophytes_ex_data}},
+  \code{\link{contaminants}},
+  \code{\link{genbank_ex_data}},
+  \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
+  \code{\link{unite_ex_data_1}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}

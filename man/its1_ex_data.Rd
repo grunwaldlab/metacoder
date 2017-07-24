@@ -16,12 +16,21 @@ A dataset containing information from 170 Chytridiomycota ITS sequences from the
 
 file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 sequences <- ape::read.FASTA(file_path)
-its1_ex_data <- extract_taxonomy(sequences,
-                                 regex = "^(.*)\\\\|(.*)\\\\|tax_id:(.*)\\\\|(.*)$",
-                                 key = c("obs_id", taxon_name = "taxon_info",
-                                         "taxon_id", description = "obs_info"),
+library(taxa) # The parsers in taxa are used
+its1_ex_data <- extract_tax_data(names(sequences),
+                                 regex = "^(.*)_ITS1_HMM\\\\|(.*)\\\\|tax_id:(.*)\\\\|(.*)$",
+                                 key = c("seq_id", my_name = "info",
+                                         my_id = "info", description = "info"),
                                  database = "ncbi")
 }
 
+}
+\seealso{
+Other example_datasets: \code{\link{bryophytes_ex_data}},
+  \code{\link{contaminants}},
+  \code{\link{genbank_ex_data}}, \code{\link{pr2_ex_data}},
+  \code{\link{silva_ex_data}},
+  \code{\link{unite_ex_data_1}},
+  \code{\link{unite_ex_data_2}}
 }
 \keyword{datasets}
