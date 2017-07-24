@@ -12,16 +12,18 @@
 #' 
 #' file_path <- system.file("extdata", "ncbi_basidiomycetes.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' library(taxa) # The parsers in taxa are used
 #' 
 #' # Note: This can take a few minutes
 #' genbank_ex_data <- extract_tax_data(names(sequences),
 #'                                     regex = "^.*\\|(.*)\\|.*\\|(.*)\\|(.*)$",
 #'                                     key = c(gi_no = "info", "seq_id", desc = "info"),
-#'                                     database = "ncbi")#' }
+#'                                     database = "ncbi")
+#'                                     
+#' }
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{http://www.ncbi.nlm.nih.gov/nuccore}
-"genbank_ex_data"
+#' @name genbank_ex_data
+NULL
 
 
 #' Example dataset of contamination
@@ -57,7 +59,8 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-"contaminants"
+#' @name contaminants
+NULL
 
 
 #' Example of UNITE fungal ITS data
@@ -70,17 +73,18 @@
 #' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' library(taxa) # The parsers in taxa are used
 #' headers <- names(sequences[!grepl(pattern = "\\|UDB", names(sequences))])
 #' unite_ex_data_1 <- extract_tax_data(headers,
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
 #'                                     key = c(name = "info", "seq_id",
 #'                                             other_id = "info", tax_string = "info"),
-#'                                     database = "ncbi")#' }
+#'                                     database = "ncbi")
+#' }
 #'
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}
-"unite_ex_data_1"
+#' @name unite_ex_data_1
+NULL
 
 
 #' Example of UNITE fungal ITS data
@@ -93,7 +97,6 @@
 #' 
 #' file_path <- system.file("extdata", "unite_general_release.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' library(taxa) # The parsers in taxa are used
 #' unite_ex_data_2 <- extract_tax_data(names(sequences),
 #'                                     regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
 #'                                     key = c(seq_name = "info", seq_id = "info",
@@ -105,8 +108,8 @@
 #'
 #' @format An object of type \code{\link{taxmap}}
 #' @source \url{https://unite.ut.ee/}
-"unite_ex_data_2"
-
+#' @name unite_ex_data_2
+NULL
 
 #' Example of PR2 SSU data
 #'
@@ -126,7 +129,8 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-"pr2_ex_data"
+#' @name pr2_ex_data
+NULL
 
 
 
@@ -140,7 +144,6 @@
 #' 
 #' file_path <- system.file("extdata", "its1_chytridiomycota_hmm.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
-#' library(taxa) # The parsers in taxa are used
 #' its1_ex_data <- extract_tax_data(names(sequences),
 #'                                  regex = "^(.*)_ITS1_HMM\\|(.*)\\|tax_id:(.*)\\|(.*)$",
 #'                                  key = c("seq_id", my_name = "info",
@@ -149,7 +152,8 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-"its1_ex_data"
+#' @name its1_ex_data
+NULL
 
 
 #' Example dataset of bryophytes
@@ -161,7 +165,6 @@
 #' \dontrun{
 #' 
 #' library(XML)
-#' library(taxa) # The parsers in taxa are used
 #' taxon_names <- XML::htmlTreeParse("http://www.theplantlist.org/1.1/browse/B/") %>% 
 #'   xmlRoot() %>%
 #'   getNodeSet("//ul[@id='nametree']/li/a/i") %>%
@@ -173,7 +176,8 @@
 #' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-"bryophytes_ex_data"
+#' @name bryophytes_ex_data
+NULL
 
 
 #' Example dataset from SILVA
@@ -184,14 +188,15 @@
 #' @examples
 #' \dontrun{
 #' 
-#' library(taxa) # The parsers in taxa are used
 #' file_path <- system.file("extdata", "silva_nr99.fasta", package = "metacoder")
 #' sequences <- ape::read.FASTA(file_path)
 #' silva_ex_data <- extract_tax_data(names(sequences),
 #'                                   regex = "^(.*?) (.*)$",
 #'                                   key = c(id = "info", tax = "class"),
-#'                                   class_sep = ";")#' }
+#'                                   class_sep = ";")
+#' }
 #'
 #' @format An object of type \code{\link{taxmap}}
-"silva_ex_data"
+#' @name silva_ex_data
+NULL
 
