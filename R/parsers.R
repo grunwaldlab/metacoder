@@ -111,3 +111,85 @@ parse_phyloseq <- function(obj) {
                               NA, 
                               "{{name}}" = "{{name}}"))
 }
+
+
+#' Parse mothur classification summary file
+#' 
+#' Parse mothur classification summary file
+#' 
+#' @param file_path (\code{character} of length 1)
+#' The file path to the input file.
+#' @param unclassified (\code{logical} of length 1)
+#' If \code{FALSE}, remove any unclassified rows.
+#' 
+#' @return \code{\link{taxmap}}
+#' 
+#' @export
+parse_mothur_tax_summary <- function(file_path = NULL, text = NULL,
+                                     unclassified = FALSE) {
+  
+  # Read file
+  content <- readLines(file_path)
+  
+  # Parse header to make key
+  header <- strsplit(content[[1]], split = "\t")[[1]]
+  key <- c("taxon_info", "class", rep("taxon_info", length(header) - 2))
+  key_names <- header
+  key_names[2] <- ""
+  names(key) <- key_names
+  
+  # Make regex
+  regex <- paste0("^", paste0(collapse = "\t", rep("(.*?)", length(header))), "$")
+  
+  # Remove 'unclassified' rows
+  if (! unclassified) {
+    unclassified_rows <- grepl(content, pattern = "^(.*?)\\t(.*?)\\tunclassified\\t")
+    content <- content[! unclassified_rows]
+    message(paste0("Removed ", sum(unclassified_rows), " unclassified rows."))
+  }
+  
+  # Extract taxonomic data
+  result <- extract_taxonomy(content[-1],
+                             key = key,
+                             regex = regex,
+                             class_key = "name",
+                             class_sep = "\\.",
+                             return_input = FALSE,
+                             return_match = FALSE)
+  
+  # Add 'all' calculated column
+  result$taxon_funcs <- c(result$taxon_funcs,
+                          list(all = function(obj, subset = obj$taxon_data$taxon_ids) {
+                            sample_cols <- header[6:length(header)]
+                            sample_cols <- sample_cols[sample_cols %in% colnames(obj$taxon_data)]
+                            apply(obj$taxon_data[subset, sample_cols], MARGIN = 1, sum)
+                          }))
+  
+  return(result)
+}
+
+
+
+parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
+  # Check that both `file` and `text` are not used together
+  if ((!missing(file) && !missing(text)) || (missing(file) && missing(text))) {
+    stop(paste0('Either "file" or "text" must be supplied, but not both.'))
+  }
+  
+  # Convert file or text to a char vector of lines
+  if (! missing(file)) {
+    raw_lines <- readLines(file)
+  } else { # "text" must have been supplied
+    raw_lines <- unlist(strsplit(text, "\r\n?|\n"))
+  }
+  
+  # Parse raw lines
+  output <- taxa::extract_tax_data(tax_data = raw_lines,
+                                   class_sep = ";",
+                                   key = c("sequence_id" = "info", raw_tax = "class"),
+                                   regex = "^(.+)\\t(.+);$",
+                                   class_key = c("taxon_name", score = "info"),
+                                   class_regex = "^(.+)\\(([0-9]+)\\)$")
+  
+  return(output)
+}
