@@ -169,7 +169,26 @@ parse_mothur_tax_summary <- function(file_path = NULL, text = NULL,
 }
 
 
-
+#' Parse mothur taxonomy file
+#' 
+#' Parse the `.taxonomy`` file that is returned by the `Classify.seqs` command
+#' in mothur.
+#' 
+#' The input file has a format like:
+#' 
+#' AY457915	Bacteria(100);Firmicutes(99);Clostridiales(99);Joh...       
+#' 
+#' or..
+#' 
+#' AY457915	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_r...      
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' @param text (\code{character}) An alternate input to "file". The contents of
+#' the file as a character. Either "file" or "text" must be used, but not both.
+#' 
+#' @return \code{\link{taxmap}}
+#' 
+#' @export
 parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
   # Check that both `file` and `text` are not used together
   if ((!missing(file) && !missing(text)) || (missing(file) && missing(text))) {
