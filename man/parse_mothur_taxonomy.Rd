@@ -2,12 +2,13 @@
 % Please edit documentation in R/parsers.R
 \name{parse_mothur_taxonomy}
 \alias{parse_mothur_taxonomy}
-\title{Parse mothur taxonomy file}
+\title{Parse mothur Classify.seqs *.taxonomy output}
 \usage{
 parse_mothur_taxonomy(file = NULL, text = NULL)
 }
 \arguments{
-\item{file}{(\code{character} of length 1) The file path to the input file.}
+\item{file}{(\code{character} of length 1) The file path to the input file.
+Either "file" or "text" must be used, but not both.}
 
 \item{text}{(\code{character}) An alternate input to "file". The contents of
 the file as a character. Either "file" or "text" must be used, but not both.}
@@ -16,15 +17,30 @@ the file as a character. Either "file" or "text" must be used, but not both.}
 \code{\link{taxmap}}
 }
 \description{
-Parse the `.taxonomy`` file that is returned by the `Classify.seqs` command
-in mothur.
+Parse the `*.taxonomy` file that is returned by the `Classify.seqs` command
+in mothur. If confidence scores are present, they are included in the output.
 }
 \details{
-The input file has a format like:
+The input file has a format with lines like:
 
-AY457915	Bacteria(100);Firmicutes(99);Clostridiales(99);Joh...
+\preformatted{
+AY457915	Bacteria(100);Firmicutes(99);Clostridiales(99);Johnsone...
+AY457914	Bacteria(100);Firmicutes(100);Clostridiales(100);Johnso...
+AY457913	Bacteria(100);Firmicutes(100);Clostridiales(100);Johnso...
+AY457912	Bacteria(100);Firmicutes(99);Clostridiales(99);Johnsone...
+AY457911	Bacteria(100);Firmicutes(99);Clostridiales(98);Ruminoco...
+}
 
-or..
+or...
 
-AY457915	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_r...
+\preformatted{
+AY457915	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+AY457914	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+AY457913	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+AY457912	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
+}
+}
+\seealso{
+Other parsers: \code{\link{parse_mothur_tax_summary}}
 }

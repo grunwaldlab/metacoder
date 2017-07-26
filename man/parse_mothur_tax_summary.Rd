@@ -2,7 +2,7 @@
 % Please edit documentation in R/parsers.R
 \name{parse_mothur_tax_summary}
 \alias{parse_mothur_tax_summary}
-\title{Parse mothur classification summary file}
+\title{Parse mothur *.tax.summary Classify.seqs output}
 \usage{
 parse_mothur_tax_summary(file_path = NULL, text = NULL,
   unclassified = FALSE)
@@ -18,5 +18,30 @@ If \code{FALSE}, remove any unclassified rows.}
 \code{\link{taxmap}}
 }
 \description{
-Parse mothur classification summary file
+Parse the `*.tax.summary` file that is returned by the `Classify.seqs` command
+in mothur.
+}
+\details{
+The input file has a format like:
+
+\preformatted{
+taxlevel	 rankID	 taxon	 daughterlevels	 total	
+0	0	Root	2	242	
+1	0.1	Bacteria	50	242	
+2	0.1.2	Actinobacteria	38	13	
+3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	
+4	0.1.2.3.7	Bifidobacteriaceae	6	13	
+5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	
+6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	
+7	0.1.2.3.7.2.1.1	unclassified	1	11	
+8	0.1.2.3.7.2.1.1.1	unclassified	1	11	
+9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	
+10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11
+11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	
+12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	
+6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2		
+}
+}
+\seealso{
+Other parsers: \code{\link{parse_mothur_taxonomy}}
 }
