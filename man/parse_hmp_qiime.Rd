@@ -23,3 +23,8 @@ NOTE: Not extensively tested
 Parses the results of the Human Microbiome Project QIIME analysis of the 16S metagenomic data.
 This is mostly a wrapper for \code{\link{extract_taxonomy}}.
 }
+\seealso{
+Other parsers: \code{\link{parse_mothur_tax_summary}},
+  \code{\link{parse_mothur_taxonomy}},
+  \code{\link{parse_phyloseq}}
+}

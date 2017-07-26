@@ -11,6 +11,8 @@
 #' 
 #' @return A \code{\link{taxmap}} object
 #' 
+#' @family parsers
+#' 
 #' @export
 parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus = -1) {
   
@@ -67,7 +69,16 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
 }
 
 
-
+#' Convert a phyloseq to taxmap
+#' 
+#' Converts a phyloseq object to a taxmap object.
+#' 
+#' @param obj A phyloseq object
+#' 
+#' @return A taxmap object
+#' 
+#' @family parsers
+#' 
 #' @export
 parse_phyloseq <- function(obj) {
   datasets <- list()
