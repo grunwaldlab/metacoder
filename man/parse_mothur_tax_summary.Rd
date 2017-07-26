@@ -4,15 +4,18 @@
 \alias{parse_mothur_tax_summary}
 \title{Parse mothur *.tax.summary Classify.seqs output}
 \usage{
-parse_mothur_tax_summary(file_path = NULL, text = NULL,
-  unclassified = FALSE)
+parse_mothur_tax_summary(file = NULL, text = NULL, table = NULL)
 }
 \arguments{
-\item{file_path}{(\code{character} of length 1)
-The file path to the input file.}
+\item{file}{(\code{character} of length 1) The file path to the input file. 
+Either "file", "text", or "table" must be used, but only one.}
 
-\item{unclassified}{(\code{logical} of length 1)
-If \code{FALSE}, remove any unclassified rows.}
+\item{text}{(\code{character}) An alternate input to "file". The contents of 
+the file as a character. Either "file", "text", or "table" must be used,
+but only one.}
+
+\item{table}{(\code{character} of length 1) An already parsed data.frame or
+tibble. Either "file", "text", or "table" must be used, but only one.}
 }
 \value{
 \code{\link{taxmap}}
@@ -25,21 +28,33 @@ in mothur.
 The input file has a format like:
 
 \preformatted{
-taxlevel	 rankID	 taxon	 daughterlevels	 total	
-0	0	Root	2	242	
-1	0.1	Bacteria	50	242	
-2	0.1.2	Actinobacteria	38	13	
-3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	
-4	0.1.2.3.7	Bifidobacteriaceae	6	13	
-5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	
-6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	
-7	0.1.2.3.7.2.1.1	unclassified	1	11	
-8	0.1.2.3.7.2.1.1.1	unclassified	1	11	
-9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	
-10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11
-11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	
-12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	
-6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2		
+taxlevel	 rankID	 taxon	 daughterlevels	 total	A	B	C	
+0	0	Root	2	242	84	84	74	
+1	0.1	Bacteria	50	242	84	84	74	
+2	0.1.2	Actinobacteria	38	13	0	13	0	
+3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	0	13	0	
+4	0.1.2.3.7	Bifidobacteriaceae	6	13	0	13	0	
+5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	0	13	0	
+6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	0	11	0	
+7	0.1.2.3.7.2.1.1	unclassified	1	11	0	11	0	
+8	0.1.2.3.7.2.1.1.1	unclassified	1	11	0	11	0	
+9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	0	11	0	
+10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11	0	11	0	
+11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2	0	2	0	
+7	0.1.2.3.7.2.5.1	unclassified	1	2	0	2	0	
+8	0.1.2.3.7.2.5.1.1	unclassified	1	2	0	2	0	
+9	0.1.2.3.7.2.5.1.1.1	unclassified	1	2	0	2	0
+}
+
+or
+
+\preformatted{
+taxon	total	A	B	C
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
 }
 }
 \seealso{

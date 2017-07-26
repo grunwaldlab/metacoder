@@ -21,7 +21,7 @@ Parse the `*.taxonomy` file that is returned by the `Classify.seqs` command
 in mothur. If confidence scores are present, they are included in the output.
 }
 \details{
-The input file has a format with lines like:
+The input file has a format like:
 
 \preformatted{
 AY457915	Bacteria(100);Firmicutes(99);Clostridiales(99);Johnsone...

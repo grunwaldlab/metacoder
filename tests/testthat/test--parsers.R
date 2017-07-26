@@ -36,23 +36,46 @@ AY457911\tBacteria(100);Firmicutes(99);Clostridiales(98);Ruminococcus_et_rel.(96
 })
 
 
-test_that("Mothur classify.seqs *.tax.summary parsing", {
+test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
   raw_data <-
-"taxlevel	 rankID	 taxon	 daughterlevels	 total	
-0	0	Root	2	242	
-1	0.1	Bacteria	50	242	
-2	0.1.2	Actinobacteria	38	13	
-3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	
-4	0.1.2.3.7	Bifidobacteriaceae	6	13	
-5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	
-6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	
-7	0.1.2.3.7.2.1.1	unclassified	1	11	
-8	0.1.2.3.7.2.1.1.1	unclassified	1	11	
-9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	
-10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11
-11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	
-12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	
-6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2		
-"  
-  result <- parse_mothur_taxonomy(text = raw_data)
+"taxlevel	 rankID	 taxon	 daughterlevels	 total	A	B	C	
+0	0	Root	2	242	84	84	74	
+1	0.1	Bacteria	50	242	84	84	74	
+2	0.1.2	Actinobacteria	38	13	0	13	0	
+3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	0	13	0	
+4	0.1.2.3.7	Bifidobacteriaceae	6	13	0	13	0	
+5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	0	13	0	
+6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	0	11	0	
+7	0.1.2.3.7.2.1.1	unclassified	1	11	0	11	0	
+8	0.1.2.3.7.2.1.1.1	unclassified	1	11	0	11	0	
+9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	0	11	0	
+10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11	0	11	0	
+11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2	0	2	0	
+7	0.1.2.3.7.2.5.1	unclassified	1	2	0	2	0	
+8	0.1.2.3.7.2.5.1.1	unclassified	1	2	0	2	0	
+9	0.1.2.3.7.2.5.1.1.1	unclassified	1	2	0	2	0"  
+  result <- parse_mothur_tax_summary(text = raw_data)
+  
+  expect_equal(length(result$taxa), 17)
+  expect_equal(length(roots(result)), 1)
+  expect_true(all(c("Bacteria", "Actinobacteria") %in% result$taxon_names()))
+  
+  
 })
+
+
+test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
+  raw_data <- 
+'taxon	total	A	B	C
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__";	1	0	1	0
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__adolescentis";	1	0	1	0
+"k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__longum";	1	0	1	0
+'
+  result <- parse_mothur_tax_summary(text = raw_data)
+  expect_equal(length(result$taxa), 9)
+  expect_equal(length(roots(result)), 1)
+  expect_true(all(c("k__Bacteria", "p__Actinobacteria") %in% result$taxon_names()))
+})
+

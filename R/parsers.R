@@ -28,7 +28,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   
   # Parse OTU table
   otu_raw <- utils::read.table(otu_file, header = TRUE, skip = 1, comment.char = "",
-                        stringsAsFactors = FALSE, sep = "\t", nrows = max_otus)
+                               stringsAsFactors = FALSE, sep = "\t", nrows = max_otus)
   # Fix header problems
   colnames(otu_raw) <- gsub(colnames(otu_raw), pattern = "^X\\.?", replacement = "")
   colnames(otu_raw)[1] <- "otu_id"
@@ -59,7 +59,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
   
   # Parse mapping table 
   mapping_data <- utils::read.table(mapping_file, header = TRUE, comment.char = "",
-                             stringsAsFactors = FALSE, sep = "\t")[1:7]
+                                    stringsAsFactors = FALSE, sep = "\t")[1:7]
   colnames(mapping_data) <- c("sample_id", "rsid", "visit_no", "sex", "run_center", "body_site", "description")
   otu_data$mapping <- dplyr::tbl_df(mapping_data)
   
@@ -121,74 +121,105 @@ parse_phyloseq <- function(obj) {
 #' The input file has a format like:
 #' 
 #' \preformatted{
-#' taxlevel	 rankID	 taxon	 daughterlevels	 total	
-#' 0	0	Root	2	242	
-#' 1	0.1	Bacteria	50	242	
-#' 2	0.1.2	Actinobacteria	38	13	
-#' 3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	
-#' 4	0.1.2.3.7	Bifidobacteriaceae	6	13	
-#' 5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	
-#' 6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	
-#' 7	0.1.2.3.7.2.1.1	unclassified	1	11	
-#' 8	0.1.2.3.7.2.1.1.1	unclassified	1	11	
-#' 9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	
-#' 10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11
-#' 11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	
-#' 12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	
-#' 6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2		
+#' taxlevel	 rankID	 taxon	 daughterlevels	 total	A	B	C	
+#' 0	0	Root	2	242	84	84	74	
+#' 1	0.1	Bacteria	50	242	84	84	74	
+#' 2	0.1.2	Actinobacteria	38	13	0	13	0	
+#' 3	0.1.2.3	Actinomycetaceae-Bifidobacteriaceae	10	13	0	13	0	
+#' 4	0.1.2.3.7	Bifidobacteriaceae	6	13	0	13	0	
+#' 5	0.1.2.3.7.2	Bifidobacterium_choerinum_et_rel.	8	13	0	13	0	
+#' 6	0.1.2.3.7.2.1	Bifidobacterium_angulatum_et_rel.	1	11	0	11	0	
+#' 7	0.1.2.3.7.2.1.1	unclassified	1	11	0	11	0	
+#' 8	0.1.2.3.7.2.1.1.1	unclassified	1	11	0	11	0	
+#' 9	0.1.2.3.7.2.1.1.1.1	unclassified	1	11	0	11	0	
+#' 10	0.1.2.3.7.2.1.1.1.1.1	unclassified	1	11	0	11	0	
+#' 11	0.1.2.3.7.2.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+#' 12	0.1.2.3.7.2.1.1.1.1.1.1.1	unclassified	1	11	0	11	0	
+#' 6	0.1.2.3.7.2.5	Bifidobacterium_longum_et_rel.	1	2	0	2	0	
+#' 7	0.1.2.3.7.2.5.1	unclassified	1	2	0	2	0	
+#' 8	0.1.2.3.7.2.5.1.1	unclassified	1	2	0	2	0	
+#' 9	0.1.2.3.7.2.5.1.1.1	unclassified	1	2	0	2	0
 #' }
 #' 
-#' @param file_path (\code{character} of length 1)
-#' The file path to the input file.
-#' @param unclassified (\code{logical} of length 1)
-#' If \code{FALSE}, remove any unclassified rows.
+#' or 
+#' 
+#' \preformatted{
+#' taxon	total	A	B	C
+#' "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
+#' "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
+#' "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";...	1	0	1	0
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file. 
+#'   Either "file", "text", or "table" must be used, but only one.
+#' @param text (\code{character}) An alternate input to "file". The contents of 
+#'   the file as a character. Either "file", "text", or "table" must be used,
+#'   but only one.
+#' @param table (\code{character} of length 1) An already parsed data.frame or
+#'   tibble. Either "file", "text", or "table" must be used, but only one.
 #' 
 #' @return \code{\link{taxmap}}
 #' 
 #' @family parsers
 #' 
 #' @export
-parse_mothur_tax_summary <- function(file_path = NULL, text = NULL,
-                                     unclassified = FALSE) {
+parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
-  # Read file
-  content <- readLines(file_path)
-  
-  # Parse header to make key
-  header <- strsplit(content[[1]], split = "\t")[[1]]
-  key <- c("taxon_info", "class", rep("taxon_info", length(header) - 2))
-  key_names <- header
-  key_names[2] <- ""
-  names(key) <- key_names
-  
-  # Make regex
-  regex <- paste0("^", paste0(collapse = "\t", rep("(.*?)", length(header))), "$")
-  
-  # Remove 'unclassified' rows
-  if (! unclassified) {
-    unclassified_rows <- grepl(content, pattern = "^(.*?)\\t(.*?)\\tunclassified\\t")
-    content <- content[! unclassified_rows]
-    message(paste0("Removed ", sum(unclassified_rows), " unclassified rows."))
+  # Check that `file` and `text` and `table` are not used together
+  are_missing <- c(file = missing(file),
+                   text = missing(text),
+                   table = missing(table))
+  if (sum(are_missing) != 2) {
+    stop(paste0('Either "file", "text", or "table" must be supplied, but only one.'))
   }
   
-  # Extract taxonomic data
-  result <- extract_taxonomy(content[-1],
-                             key = key,
-                             regex = regex,
-                             class_key = "name",
-                             class_sep = "\\.",
-                             return_input = FALSE,
-                             return_match = FALSE)
+  # Read raw data
+  if (! are_missing["file"]) {
+    raw_data <- read.csv(file_path = file, header = TRUE, sep = "\t",
+                         stringsAsFactors = FALSE)
+  } else if (! are_missing["text"]) {
+    raw_data <- read.csv(text = text, header = TRUE, sep = "\t",
+                         stringsAsFactors = FALSE)
+  } else {
+    if (!is.data.frame(table)) {
+      stop('The "table" input requires a data.frame or tibble.')
+    }
+    raw_data <- table
+  }
   
-  # Add 'all' calculated column
-  result$taxon_funcs <- c(result$taxon_funcs,
-                          list(all = function(obj, subset = obj$taxon_data$taxon_ids) {
-                            sample_cols <- header[6:length(header)]
-                            sample_cols <- sample_cols[sample_cols %in% colnames(obj$taxon_data)]
-                            apply(obj$taxon_data[subset, sample_cols], MARGIN = 1, sum)
-                          }))
+  # Check that it is an accepted format
+  detailed_cols <- c("taxlevel", "rankID", "taxon", "daughterlevels", "total")
+  simple_cols <- c("taxon",	"total")
+  if (all(detailed_cols %in% colnames(raw_data))) {
+    is_detailed <- TRUE
+  } else if (all(simple_cols %in% colnames(raw_data))) {
+    is_detailed <- FALSE
+  } else {
+    stop("Format not recognized.")
+  }
   
-  return(result)
+
+  if (is_detailed) {
+    # parse raw table
+    output <- taxa::parse_tax_data(tax_data = raw_data,
+                                   class_cols = "rankID",
+                                   class_sep = ".")
+    # replace taoxon names
+    my_taxon_names <- output$map_data(taxon_ids, taxon)
+    output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
+                                          function(i) {
+                                            my_taxon <- output$taxa[[i]]
+                                            my_taxon$name$name <- my_taxon_names[i]
+                                            return(my_taxon)
+                                          }),
+                                   names(output$taxa))
+  } else { # is simple format
+    output <- taxa::parse_tax_data(tax_data = raw_data,
+                                   class_cols = "taxon",
+                                   class_sep = ";")
+  }
+
+  return(output)
 }
 
 
