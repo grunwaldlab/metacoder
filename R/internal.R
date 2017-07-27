@@ -118,3 +118,23 @@ get_numerics <- function(input) {
   as.numeric(input[can_be_num(input)])
 }
 
+
+#' check for packages
+#'
+#' check for packages, and stop if not installed.
+#' This function was written by Scott Chamerlain, from whom I shamelessly stole
+#' it.
+#'
+#' @param package The name of the package
+#'
+#' @return `TRUE` if package is present
+#'
+#' @keywords internal
+check_for_pkg <- function(package) {
+  if (!requireNamespace(package, quietly = TRUE)) {
+    stop("Please install ", package, call. = FALSE)
+  } else {
+    invisible(TRUE)
+  }
+}
+

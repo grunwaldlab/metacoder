@@ -1,0 +1,19 @@
+UclustOtuPicker parameters:
+Application:uclust
+Similarity:0.97
+enable_rev_strand_matching:True
+exact:False
+max_accepts:1
+max_rejects:8
+new_cluster_identifier:New.CleanUp.ReferenceOTU
+optimal:False
+output_dir:otus//step4_otus/
+prefilter_identical_sequences:True
+presort_by_abundance:True
+save_uc_files:True
+stable_sort:True
+stepwords:8
+suppress_sort:True
+word_length:8
+Num OTUs:3666
+Result path: otus//step4_otus//failures_otus.txt

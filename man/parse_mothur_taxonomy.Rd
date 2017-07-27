@@ -44,5 +44,6 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
 \seealso{
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_phyloseq}}
+  \code{\link{parse_phyloseq}},
+  \code{\link{parse_qiime_biom}}
 }

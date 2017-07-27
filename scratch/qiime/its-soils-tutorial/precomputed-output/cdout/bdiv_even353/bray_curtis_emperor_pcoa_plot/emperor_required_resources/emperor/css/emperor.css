@@ -1,0 +1,312 @@
+/*
+ * __author__ = "Meg Pirrung"
+ * __copyright__ = "Copyright 2013, Emperor"
+ * __credits__ = ["Meg Pirrung", "Yoshiki Vazquez Baeza",
+                  "Antonio Gonzalez Pena", "Jackson Chen"]
+ * __license__ = "BSD"
+ * __version__ = "0.9.3-dev"
+ * __maintainer__ = "Yoshiki Vazquez Baeza"
+ * __email__ = "yoshiki89@gmail.com"
+ * __status__ = "Development"
+ */
+
+body, html {
+  font-size: 10px;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  overflow: hidden;
+  float: left;
+}
+
+/* #small-logo, #overlay, #explanation and #source are all styling elements
+ * that get in use when WebGL is not enabled and a small help message needs to
+ * be shown
+ */
+#small-logo {
+  width: 150px;
+  height: 45px;
+}
+
+#overlay {
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  font-size: 13px;
+  text-align: center;
+  z-index: 1000;
+}
+
+#overlay div {
+  width: 325px;
+  margin: 75px auto;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 15px;
+  text-align: center;
+}
+
+#explanation {
+  text-align: left;
+}
+
+#source {
+  font-size: 11px;
+  text-align: left;
+}
+
+/* the plotting area */
+div.emperor-plot-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 73%;
+  float: left;
+  margin: 0;
+}
+
+/* button to select between parallel coordinates and 3D plots */
+#emperor-plot-toggle {
+  z-index: 5;
+  width: 73%;
+  margin: 0;
+  overflow: hidden;
+  bottom: 0;
+  position: absolute;
+  float: left;
+}
+
+/* div.emperor-separator and div.emperor-separator:hover are classes that make
+ * the separator on the right of the user interface that let's you rescale the
+ * area of the plot
+ */
+div.emperor-separator {
+  height: 100%;
+  width: 1%;
+  float: left;
+  cursor: col-resize;
+  margin: 0;
+  background-color: #333333;
+}
+
+div.emperor-separator:hover {
+  background-color:#666666;
+}
+
+/* #emperor-menu and #emperor-menu-tabs the two things that show in the right
+ * side-bar, #emperor-menu is the container for all the tabs and
+ * #emperor-menu-tabs is the container for the name of the tabs */
+div#emperor-menu {
+  height: 100%;
+  font-family: Helvetica, sans-serif;
+  width: 26%;
+  overflow: hidden;
+  float: left;
+  padding: 0px;
+  margin: 0;
+}
+
+div#emperor-menu-tabs {
+  background: #eee;
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+}
+
+/* class used in the divs that contain the widgets for the menu tabs like:
+ * axes, show by, and all the other tabs in the main interface.
+ */
+.emperor-tab-div{
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 100%;
+  overflow: auto;
+  align: center; /*align the contents to the center*/
+}
+
+/* tables displayed inside any div of class emperor-tab-div should have the
+ * following class to keep consistency between the displayed elements
+ */
+.emperor-tab-table {
+   display: table;
+   margin-right: auto;
+   margin-left: auto;
+   width: 100%;
+   height: 100%
+   text-align: left;
+}
+
+/* tables displayed inside any div of class emperor-tab-div that list sliders
+ * should have the following class that will prevent horizontal scroll bars to
+ * appear on screen
+ */
+.emperor-tab-table-with-sliders{
+   display: table;
+   margin-right: auto;
+   margin-left: auto;
+   width: 100%;
+   height: 100%
+   text-align: left;
+
+   /* avoid showing horizontal scrollbars when the slider is at 0% or 100% */
+   padding-right: 10px;
+   padding-left: 10px;
+}
+
+/* drop-down menus inside the tabs should use as much space as possible but
+ * never go out of the tab size, this is important because otherwise it breaks
+ * some of the interface's layout.
+ */
+.emperor-tab-drop-down{
+  width: 100%;
+}
+
+/* general styling for a variety of elements in emperor */
+table {
+  font-family: Helvetica, sans-serif;
+  font-size: 12px !important;
+}
+
+form {
+  margin: 0px;
+}
+
+input {
+  font-style: 10pt helvetica;
+}
+
+div.colorbox {
+  border: 1px solid black;
+  height: 18px;
+  width: 18px;
+}
+
+div.list{
+  width: 100%;
+  height: 85%;
+  overflow: auto;
+}
+
+div.list ul {
+  width: 100%;
+  padding-left: 0px !important;
+  list-style-type: none;
+  font-size: 12px !important;
+}
+
+input.button {
+  height: 2em;
+  width: 100%;
+}
+
+label {
+  border: 0;
+  font: 9pt Helvetica;
+}
+
+label.slidervalue {
+  float: right;
+  border: 0;
+  color: #6cf;
+  font-weight: bold;
+  font: 9pt Helvetica;
+}
+
+.ui-tabs .ui-tabs-nav li a{
+  padding: 2px 5px !important;
+}
+
+/* style for all labels in emperor */
+div#label-list {
+  height: 60%;
+}
+
+div.#labels-top {
+  height: 30%;
+}
+
+div#labels {
+  display: none;
+  font-family: courier;
+  color: #fff;
+  height: 0px;
+  float: left;
+  position: absolute;
+  z-index: 1;
+}
+
+div#taxalabels {
+  display: none;
+  font-family: courier;
+  color: #fff;
+  height: 0px;
+  float: left;
+  position: absolute;
+  z-index: 1;
+}
+
+.axis-labels {
+  color: #fff;
+}
+
+div#label-color-holder {
+  width: 100%;
+}
+
+div#label-color-holder div {
+  float: left;
+}
+
+div#label-color-holder label{
+  float: left;
+  width: 50%;
+}
+
+/* arrow that's shown on the plot when you double click a sample */
+.arrow-right {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 10px solid white;
+}
+
+/* the media-button class used in the animations tab */
+a.media-button img {
+  background-color: #eee;
+}
+
+a.media-button:hover img{
+  background-color: #cff;
+}
+
+/* miscellaneous useful classes */
+*.unselectable {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+
+  /*
+  Introduced in IE 10.
+  See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+  */
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.ontop {
+  padding: 2px;
+  font-style: 9pt helvetica;
+  color: #fff;
+  border: 1px solid white;
+  position: absolute;
+}
+
+.invisible {
+  display: none;
+}

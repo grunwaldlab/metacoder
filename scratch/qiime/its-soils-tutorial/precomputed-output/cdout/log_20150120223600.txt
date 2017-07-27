@@ -1,0 +1,162 @@
+Logging started at 22:36:00 on 20 Jan 2015
+QIIME version: 1.9.0-rc2
+
+qiime_config values:
+blastmat_dir	/qiime_software/blast-2.2.22-release/data
+pick_otus_reference_seqs_fp	/usr/local/lib/python2.7/dist-packages/qiime_default_reference/gg_13_8_otus/rep_set/97_otus.fasta
+sc_queue	all.q
+pynast_template_alignment_fp	/usr/local/lib/python2.7/dist-packages/qiime_default_reference/gg_13_8_otus/rep_set_aligned/85_otus.fasta
+cluster_jobs_fp	start_parallel_jobs.py
+assign_taxonomy_reference_seqs_fp	/usr/local/lib/python2.7/dist-packages/qiime_default_reference/gg_13_8_otus/rep_set/97_otus.fasta
+torque_queue	friendlyq
+jobs_to_start	1
+denoiser_min_per_core	50
+assign_taxonomy_id_to_taxonomy_fp	/usr/local/lib/python2.7/dist-packages/qiime_default_reference/gg_13_8_otus/taxonomy/97_otu_taxonomy.txt
+temp_dir	/home/ubuntu/temp/
+blastall_fp	/qiime_software/blast-2.2.22-release/bin/blastall
+seconds_to_sleep	1
+
+parameter file values:
+beta_diversity:metrics	bray_curtis
+alpha_diversity:metrics	observed_otus,chao1
+parallel:jobs_to_start	1
+
+Input file md5 sums:
+otus/otu_table_mc2_w_tax.biom: e7f97e51a2870f49acae8b96b7afdc0a
+its-soils-tutorial/map.txt: 7ec0fac56709ebdc0953811b2b33cba6
+
+Executing commands.
+
+# Generate BIOM table summary command 
+biom summarize-table -i otus/otu_table_mc2_w_tax.biom -o cdout//biom_table_summary.txt 
+
+Stdout:
+
+Stderr:
+
+# Filter low sequence count samples from table (minimum sequence count: 353) command 
+filter_samples_from_otu_table.py -i otus/otu_table_mc2_w_tax.biom -o cdout//table_mc353.biom -n 353
+
+Stdout:
+
+Stderr:
+
+# Rarify the OTU table to 353 sequences/sample command 
+single_rarefaction.py -i cdout//table_mc353.biom -o cdout//table_even353.biom -d 353
+
+Stdout:
+
+Stderr:
+
+Executing commands.
+
+# Beta Diversity (bray_curtis) command 
+beta_diversity.py -i cdout//table_even353.biom -o cdout//bdiv_even353/ --metrics bray_curtis 
+
+Stdout:
+
+Stderr:
+/usr/local/lib/python2.7/dist-packages/numpy/core/fromnumeric.py:2499: VisibleDeprecationWarning: `rank` is deprecated; use the `ndim` attribute or function instead. To find the rank of a matrix see `numpy.linalg.matrix_rank`.
+  VisibleDeprecationWarning)
+
+# Rename distance matrix (bray_curtis) command 
+mv cdout//bdiv_even353//bray_curtis_table_even353.txt cdout//bdiv_even353//bray_curtis_dm.txt
+
+Stdout:
+
+Stderr:
+
+# Principal coordinates (bray_curtis) command 
+principal_coordinates.py -i cdout//bdiv_even353//bray_curtis_dm.txt -o cdout//bdiv_even353//bray_curtis_pc.txt 
+
+Stdout:
+
+Stderr:
+
+# Make emperor plots, bray_curtis) command 
+make_emperor.py -i cdout//bdiv_even353//bray_curtis_pc.txt -o cdout//bdiv_even353//bray_curtis_emperor_pcoa_plot/ -m its-soils-tutorial/map.txt 
+
+Stdout:
+
+Stderr:
+
+Executing commands.
+
+# Alpha rarefaction command 
+multiple_rarefactions.py -i cdout//table_mc353.biom -m 10 -x 353 -s 34 -o cdout//arare_max353//rarefaction/ 
+
+Stdout:
+
+Stderr:
+
+# Alpha diversity on rarefied OTU tables command 
+alpha_diversity.py -i cdout//arare_max353//rarefaction/ -o cdout//arare_max353//alpha_div/ --metrics observed_otus,chao1
+
+Stdout:
+
+Stderr:
+
+# Collate alpha command 
+collate_alpha.py -i cdout//arare_max353//alpha_div/ -o cdout//arare_max353//alpha_div_collated/ 
+
+Stdout:
+
+Stderr:
+
+# Removing intermediate files command 
+rm -r cdout//arare_max353//rarefaction/ cdout//arare_max353//alpha_div/
+
+Stdout:
+
+Stderr:
+
+# Rarefaction plot: All metrics command 
+make_rarefaction_plots.py -i cdout//arare_max353//alpha_div_collated/ -m its-soils-tutorial/map.txt -o cdout//arare_max353//alpha_rarefaction_plots/ 
+
+Stdout:
+
+Stderr:
+
+Skipping compare_alpha_diversity.py as no categories were provided.
+
+Executing commands.
+
+# Sort OTU Table command 
+sort_otu_table.py -i cdout//table_mc353.biom -o cdout//taxa_plots/table_mc353_sorted.biom
+
+Stdout:
+
+Stderr:
+
+# Summarize Taxonomy command 
+summarize_taxa.py -i cdout//taxa_plots/table_mc353_sorted.biom -o cdout//taxa_plots/ 
+
+Stdout:
+
+Stderr:
+
+# Plot Taxonomy Summary command 
+plot_taxa_summary.py -i cdout//taxa_plots/table_mc353_sorted_L2.txt,cdout//taxa_plots/table_mc353_sorted_L3.txt,cdout//taxa_plots/table_mc353_sorted_L4.txt,cdout//taxa_plots/table_mc353_sorted_L5.txt,cdout//taxa_plots/table_mc353_sorted_L6.txt -o cdout//taxa_plots//taxa_summary_plots/ 
+
+Stdout:
+
+Stderr:
+
+Executing commands.
+
+# Compress the filtered BIOM table command 
+gzip cdout//table_mc353.biom
+
+Stdout:
+
+Stderr:
+
+# Compress the rarified BIOM table command 
+gzip cdout//table_even353.biom
+
+Stdout:
+
+Stderr:
+
+
+Logging stopped at 22:37:27 on 20 Jan 2015

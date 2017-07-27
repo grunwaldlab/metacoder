@@ -2,7 +2,7 @@
 % Please edit documentation in R/parsers.R
 \name{parse_phyloseq}
 \alias{parse_phyloseq}
-\title{Convert a phyloseq to taxmap}
+\title{Convert phyloseq to taxmap}
 \usage{
 parse_phyloseq(obj)
 }
@@ -18,5 +18,6 @@ Converts a phyloseq object to a taxmap object.
 \seealso{
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_mothur_taxonomy}}
+  \code{\link{parse_mothur_taxonomy}},
+  \code{\link{parse_qiime_biom}}
 }
