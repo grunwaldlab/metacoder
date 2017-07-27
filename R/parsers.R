@@ -69,52 +69,7 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
 }
 
 
-#' Parse a BIOM output from QIIME
-#' 
-#' Parses a file in BIOM format from QIIME into a taxmap object.
-#' I have not tested if it works with other BIOM files. 
-#' 
-#' This function was inspired by the tutorial created by Geoffrey Zahn at 
-#' http://geoffreyzahn.com/getting-your-otu-table-into-r/.
-#' 
-#' @param file (\code{character} of length 1) The file path to the input file.
-#' 
-#' @return A taxmap object
-#' 
-#' @family parsers
-#' 
-#' @export
-parse_qiime_biom <- function(file) {
-  # Check that the "biomformat" package has been installed
-  check_for_pkg("biomformat")
-  
-  # Read biom file
-  my_biom <- read_biom(file)
-  
-  # Coerce into a matrix
-  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(dat)))
-  otu_table <- cbind(list(otu_id = rownames(taxonomy)), otu_table)
-  
-  # Get taxonomy
-  taxonomy <- biomformat::observation_metadata(dat)
-  tax_cols <- colnames(taxonomy)
-
-  # Get sample metadata (not used yet)
-  metadata <- biomformat::sample_metadata(dat)
-  
-  # Create a taxmap object
-  output <- taxa::parse_tax_data(tax_data = taxonomy,
-                                 class_cols = colnames(taxonomy),
-                                 datasets = list(otu_table = otu_table),
-                                 mappings = c("{{name}}" = "{{name}}"),
-                                 include_tax_data = FALSE)
-  
-  return(output)
-}
-
-
-
-#' Convert phyloseq to taxmap
+#' Convert a phyloseq to taxmap
 #' 
 #' Converts a phyloseq object to a taxmap object.
 #' 
