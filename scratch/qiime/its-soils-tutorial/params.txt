@@ -1,4 +1,0 @@
-pick_otus:enable_rev_strand_match True
-assign_taxonomy:assignment_method blast
-assign_taxonomy:id_to_taxonomy_fp its_12_11_otus/taxonomy/97_otu_taxonomy.txt
-assign_taxonomy:reference_seqs_fp its_12_11_otus/rep_set/97_otus.fasta
