@@ -310,3 +310,65 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
   
   return(output)
 }
+
+
+#' Parse a Newick file
+#' 
+#' Parse a Newick file
+#' 
+#' The input file has a format like:
+#' 
+#' \preformatted{
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' 
+#' @return \code{\link{taxmap}}
+#' 
+#' @family parsers
+#' 
+#' @export
+parse_newick <- function(file) {
+  # Read input
+  raw_data <- read_annotated(file, format = "newick")
+  
+  # Parse edge list
+  edge_list <- as.data.frame(raw_data$edge)
+  colnames(edge_list) <- c("from", "to")
+  edge_list$from <- as.character(edge_list$from)
+  edge_list$to <- as.character(edge_list$to)
+  
+  # Add roots to edge list
+  is_root <- vapply(seq_len(nrow(edge_list)),
+                    function(i) ! edge_list$from[i] %in% edge_list$to,
+                    FUN.VALUE = logical(1))
+  roots <- unique(edge_list$from[is_root])
+  edge_list <- rbind(data.frame(from = NA, to = roots), edge_list)
+
+  # Parse edge length
+  edge_length <- rep(NA, nrow(edge_list))
+  edge_length[!is.na(edge_list$from)] <- raw_data$edge.length
+  
+  # Parse tip labels
+  is_tip <-  vapply(seq_len(nrow(edge_list)),
+                    function(i) ! edge_list$to[i] %in% edge_list$from,
+                    FUN.VALUE = logical(1))
+
+  tip_label <- rep(NA, nrow(edge_list))
+  tip_label[is_tip] <- raw_data$tip.label
+  
+  # Build taxmap object
+  output <- taxa::taxmap()
+  output$edge_list <- edge_list
+  taxon_ids <- unique(unlist(output$edge_list))
+  taxon_ids <- taxon_ids[!is.na(taxon_ids)]
+  output$taxa <- stats::setNames(lapply(taxon_ids, taxa::taxon), taxon_ids)
+  output$data <- c(output$data, 
+                   list(tax_data = data.frame(stringsAsFactors = FALSE,
+                                   taxon_id = edge_list$to,
+                                   edge_length = edge_length,
+                                   tip_label = tip_label)))
+  output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
+  
+  return(output)         
+}

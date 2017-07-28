@@ -79,3 +79,9 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
   expect_true(all(c("k__Bacteria", "p__Actinobacteria") %in% result$taxon_names()))
 })
 
+
+
+test_that("Newick parsing", {
+  
+})
+
