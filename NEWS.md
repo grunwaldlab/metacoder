@@ -7,6 +7,19 @@
 * Fixed bug in `subtaxa` that caused an error when all of `subset` is `FALSE`. (issue [#143](https://github.com/grunwaldlab/metacoder/issues/143))
 * Fixed bug in `filter_taxa` that caused an error when all taxa are filtered out. (issue [#144](https://github.com/grunwaldlab/metacoder/issues/144))
 
+### Breaking changes
+
+* All taxmap-related manipulation functions have been moved to the [taxa](https://github.com/ropensci/taxa) package.
+* `heat_tree` now uses the `taxmap` class defined in the [taxa](https://github.com/ropensci/taxa) package.
+
+### Improvements
+
+* New parser named `parse_mothur_tax_summary` for mothur *.tax.summary file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).
+* New parser named `parse_mothur_taxonomy` for mothur *.taxonomy file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).
+* New parser named `parse_qiime_biom` for the QIIME BIOM output.
+* New parser named `parse_phyloseq` to convert phyloseq objects.
+* New parser named `parse_newick` to parse newick files.
+
 ##  metacoder 0.1.3 
 
 ### Improvements
