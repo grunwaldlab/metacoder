@@ -99,28 +99,33 @@ parse_phyloseq <- function(obj) {
   
   # Parse sample data
   if (! is.null(obj@sam_data)) {
-    datasets <- c(datasets, list(sam_data = obj@sam_data))
+    sam_data <- cbind(data.frame(sample_id = rownames(obj@sam_data)),
+                      as.data.frame(as.list(obj@sam_data)))
+    datasets <- c(datasets, list(sam_data = sam_data))
   }
   
   # Parse phylogenetic tree
   if (! is.null(obj@phy_tree)) {
-    datasets <- c(datasets, list(phy_tree = obj@phy_tree))
+    datasets <- c(datasets, list(phylo_tree = obj@phy_tree))
   }
   
   # Parse reference sequences
   if (! is.null(obj@refseq)) {
     refseq <- as.character(obj@refseq)
-    datasets <- c(datasets, list(refseq = refseq))
+    datasets <- c(datasets, list(ref_seq = refseq))
   }
   
   # Construct output
-  parse_tax_data(tax_data = tax_data, 
-                 datasets = datasets,
-                 class_cols = which(tolower(colnames(tax_data)) %in% possible_ranks), 
-                 mappings = c("{{name}}" = "{{name}}",
-                              NA, 
-                              NA, 
-                              "{{name}}" = "{{name}}"))
+  tax_cols <- colnames(tax_data)[which(tolower(colnames(tax_data)) %in% possible_ranks)]
+  output <- parse_tax_data(tax_data = tax_data, 
+                           datasets = datasets,
+                           class_cols = tax_cols, 
+                           mappings = c("{{name}}" = "{{name}}",
+                                        NA, 
+                                        NA, 
+                                        "{{name}}" = "{{name}}"))
+  
+  return(output)
 }
 
 
