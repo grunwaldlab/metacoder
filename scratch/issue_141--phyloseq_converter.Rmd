@@ -1,4 +1,4 @@
-
+### old way
 
 ```{r, eval = FALSE}
 source('http://bioconductor.org/biocLite.R')
@@ -40,5 +40,29 @@ phy <- readRDS("example.phyloseq")
 
 ```{r}
 data <- phyloseq_to_taxmap(phy)
+```
+
+
+## New way with taxa taxmap
+
+```{r}
+# devtools::install_github("grunwaldlab/metacoder")
+# devtools::install_github("ropensci/taxa")
+
+library(metacoder)
+library(taxa)
+
+phy <- readRDS("example.phyloseq")
+obj <- parse_phyloseq(phy)
+
+obj$filter_taxa(taxon_names == "Bacteria", subtaxa = TRUE)
+
+healthy_samples <- obj$data$sam_data$sample_id[obj$data$sam_data$status == "healthy"]
+healthy_counts <- obs_apply(obj, "otu_table", function(i) sum(obj$data$otu_table[i, healthy_samples]), simplify = TRUE)
+
+obj %>%
+  heat_tree(node_size = healthy_counts, 
+            node_color = healthy_counts,
+            node_label = taxon_names)
 ```
 

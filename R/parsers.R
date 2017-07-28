@@ -85,7 +85,7 @@ parse_phyloseq <- function(obj) {
   
   # Parse taxonomic data
   possible_ranks <- unique(unlist(strsplit(taxa::ranks_ref$ranks, split = ",")))
-  tax_data <- as.data.frame(obj@tax_table)
+  tax_data <- as.data.frame(obj@tax_table, stringsAsFactors = FALSE)
   
   # Parse OTU tables
   if (! is.null(obj@otu_table)) {
@@ -93,14 +93,15 @@ parse_phyloseq <- function(obj) {
     if (! otu_table@taxa_are_rows) {
       otu_table <- t(otu_table)
     }
-    otu_table <- as.data.frame(otu_table)
+    otu_table <- as.data.frame(otu_table, stringsAsFactors = FALSE)
+    otu_table <- cbind(data.frame(otu_id = rownames(otu_table), stringsAsFactors = FALSE), otu_table)
     datasets <- c(datasets, list(otu_table = otu_table))
   }
   
   # Parse sample data
   if (! is.null(obj@sam_data)) {
-    sam_data <- cbind(data.frame(sample_id = rownames(obj@sam_data)),
-                      as.data.frame(as.list(obj@sam_data)))
+    sam_data <- cbind(data.frame(sample_id = rownames(obj@sam_data), stringsAsFactors = FALSE),
+                      as.data.frame(as.list(obj@sam_data), stringsAsFactors = FALSE))
     datasets <- c(datasets, list(sam_data = sam_data))
   }
   
