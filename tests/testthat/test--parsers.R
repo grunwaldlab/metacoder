@@ -82,6 +82,9 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 
 
 test_that("Newick parsing", {
-  
+  result <- parse_newick("newick_example_1.txt")
+  expect_equal(length(result$taxa), 21)
+  expect_equal(length(roots(result)), 2)
+  expect_true(all(c("node_1", "node_2") %in% result$taxon_names()))
 })
 

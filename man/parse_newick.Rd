@@ -13,17 +13,20 @@ parse_newick(file)
 \code{\link{taxmap}}
 }
 \description{
-Parse a Newick file
+Parse a Newick file into a taxmap object.
 }
 \details{
 The input file has a format like:
 
 \preformatted{
+(ant:17, (bat:31, cow:22):7, dog:22, (elk:33, fox:12):40);
+(dog:20, (elephant:30, horse:60):20):50;
 }
 }
 \seealso{
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_phyloseq}}
+  \code{\link{parse_phyloseq}},
+  \code{\link{parse_qiime_biom}}
 }

@@ -209,7 +209,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
     stop("Format not recognized.")
   }
   
-
+  
   if (is_detailed) {
     # parse raw table
     output <- taxa::parse_tax_data(tax_data = raw_data,
@@ -229,7 +229,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
                                    class_cols = "taxon",
                                    class_sep = ";")
   }
-
+  
   return(output)
 }
 
@@ -312,13 +312,59 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 }
 
 
+#' Parse a BIOM output from QIIME
+#' 
+#' Parses a file in BIOM format from QIIME into a taxmap object.
+#' I have not tested if it works with other BIOM files. 
+#' 
+#' This function was inspired by the tutorial created by Geoffrey Zahn at 
+#' http://geoffreyzahn.com/getting-your-otu-table-into-r/.
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' 
+#' @return A taxmap object
+#' 
+#' @family parsers
+#' 
+#' @export
+parse_qiime_biom <- function(file) {
+  # Check that the "biomformat" package has been installed
+  check_for_pkg("biomformat")
+  
+  # Read biom file
+  my_biom <- read_biom(file)
+  
+  # Coerce into a matrix
+  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(dat)))
+  otu_table <- cbind(list(otu_id = rownames(taxonomy)), otu_table)
+  
+  # Get taxonomy
+  taxonomy <- biomformat::observation_metadata(dat)
+  tax_cols <- colnames(taxonomy)
+  
+  # Get sample metadata (not used yet)
+  metadata <- biomformat::sample_metadata(dat)
+  
+  # Create a taxmap object
+  output <- taxa::parse_tax_data(tax_data = taxonomy,
+                                 class_cols = colnames(taxonomy),
+                                 datasets = list(otu_table = otu_table),
+                                 mappings = c("{{name}}" = "{{name}}"),
+                                 include_tax_data = FALSE)
+  
+  return(output)
+}
+
+
 #' Parse a Newick file
 #' 
-#' Parse a Newick file
+#' Parse a Newick file into a taxmap object.
 #' 
 #' The input file has a format like:
 #' 
 #' \preformatted{
+#' (ant:17, (bat:31, cow:22):7, dog:22, (elk:33, fox:12):40);
+#' (dog:20, (elephant:30, horse:60):20):50;
 #' }
 #' 
 #' @param file (\code{character} of length 1) The file path to the input file.
@@ -330,7 +376,7 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' @export
 parse_newick <- function(file) {
   # Read input
-  raw_data <- read_annotated(file, format = "newick")
+  raw_data <- phylotate::read_annotated(file, format = "newick")
   
   # Parse edge list
   edge_list <- as.data.frame(raw_data$edge)
@@ -344,7 +390,7 @@ parse_newick <- function(file) {
                     FUN.VALUE = logical(1))
   roots <- unique(edge_list$from[is_root])
   edge_list <- rbind(data.frame(from = NA, to = roots), edge_list)
-
+  
   # Parse edge length
   edge_length <- rep(NA, nrow(edge_list))
   edge_length[!is.na(edge_list$from)] <- raw_data$edge.length
@@ -353,7 +399,7 @@ parse_newick <- function(file) {
   is_tip <-  vapply(seq_len(nrow(edge_list)),
                     function(i) ! edge_list$to[i] %in% edge_list$from,
                     FUN.VALUE = logical(1))
-
+  
   tip_label <- rep(NA, nrow(edge_list))
   tip_label[is_tip] <- raw_data$tip.label
   
@@ -362,12 +408,13 @@ parse_newick <- function(file) {
   output$edge_list <- edge_list
   taxon_ids <- unique(unlist(output$edge_list))
   taxon_ids <- taxon_ids[!is.na(taxon_ids)]
-  output$taxa <- stats::setNames(lapply(taxon_ids, taxa::taxon), taxon_ids)
-  output$data <- c(output$data, 
-                   list(tax_data = data.frame(stringsAsFactors = FALSE,
-                                   taxon_id = edge_list$to,
-                                   edge_length = edge_length,
-                                   tip_label = tip_label)))
+  output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxa::taxon),
+                                 taxon_ids)
+  tax_data <- dplyr::as.tbl(data.frame(stringsAsFactors = FALSE,
+                                       taxon_id = edge_list$to,
+                                       edge_length = edge_length,
+                                       tip_label = tip_label))
+  output$data <- c(output$data, list(tax_data = tax_data))
   output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
   
   return(output)         

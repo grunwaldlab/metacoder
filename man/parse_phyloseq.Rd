@@ -19,5 +19,6 @@ Converts a phyloseq object to a taxmap object.
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_newick}}
+  \code{\link{parse_newick}},
+  \code{\link{parse_qiime_biom}}
 }
