@@ -442,3 +442,57 @@ parse_newick <- function(file) {
   
   return(output)         
 }
+
+
+
+#' Parse UNITE general release FASTA
+#' 
+#' Parse the UNITE general release FASTA file
+#' 
+#' The input file has a format like:
+#' 
+#' \preformatted{
+#' >Glomeromycota_sp|KJ484724|SH523877.07FU|reps|k__Fungi;p__Glomeromycota;c__unid...
+#' ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT...
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
+#'   sequences in the output object.
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family parsers
+#'   
+#' @export
+parse_unite_general <- function(file, include_seqs = TRUE) {
+  # Read file
+  raw_data <- ape::read.FASTA(file)
+  headers <- names(raw_data)
+  seqs <- vapply(as.character(raw_data),
+                 FUN = function(x) paste0(x, collapse = ""),
+                 FUN.VALUE = character(1))
+  
+  # Create taxmap object
+  output <- taxa::extract_tax_data(tax_data = headers,
+                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                                   key = c(organism = "info",
+                                           acc_num = "info",
+                                           unite_id = "info",
+                                           tax_string = "class"),
+                                   class_regex = "^(.*)__(.*)$",
+                                   class_key = c(unite_rank = "info",
+                                                 name = "taxon_name"),
+                                   class_sep = ";")
+  
+  # Remove unneeded columns
+  output$data$tax_data$input <- NULL
+  output$data$tax_data$tax_string <- NULL
+  
+  # Add sequences 
+  if (include_seqs) {
+    output$data$tax_data$unite_seq <- toupper(seqs)
+  }
+  
+  return(output)
+}

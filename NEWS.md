@@ -19,6 +19,7 @@
 * New parser named `parse_qiime_biom` for the QIIME BIOM output.
 * New parser named `parse_phyloseq` to convert phyloseq objects.
 * New parser named `parse_newick` to parse newick files.
+* New parser named `parse_unite_general` for unite general FASTA release. (issue [#154](https://github.com/grunwaldlab/metacoder/issues/154))
 
 ##  metacoder 0.1.3 
 
