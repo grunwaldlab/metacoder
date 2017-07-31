@@ -82,9 +82,18 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 
 
 test_that("Newick parsing", {
-  result <- parse_newick("newick_example_1.txt")
+  result <- parse_newick("example_data/newick_example_1.txt")
   expect_equal(length(result$taxa), 21)
   expect_equal(length(roots(result)), 2)
   expect_true(all(c("node_1", "node_2") %in% result$taxon_names()))
 })
 
+
+test_that("Parsing the UNITE general release fasta", {
+  result <- parse_unite_general("example_data/unite_general.fa")
+  expect_equal(length(result$taxa), 183)
+  expect_equal(length(roots(result)), 1)
+  expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "Orbilia_sp")
+  expect_equal(result$data$tax_data$organism[5], "Orbilia_sp")
+  expect_equal(result$data$tax_data$unite_seq[5], "CCAAATCATGTCTCCCGGCCGCAAGGCAGGTGCAGGCGTTTAACCCTTTGTGAACCAAAAAACCTTTCGCTTCGGCAGCAGCTCGGTTGGAGACAGCCTCTGTGTCAGCCTGCCGCTAGCACCAATTATCAAAACTTGCGGTTAGCAACATTGTCTGATTACCAAATTTTCGAATGAAAATCAAAACTTTCAACAACGGATCTCTTGGTTCCCGCATCGATGAAGAACGCAGCGAAACGCGATAGTTAATGTGAATTGCAGAATTCAGTGAATCATCGAGTCTTTGAACGCACATTGCGCCCATTGGTATTCCATTGGGCATGTCTGTTTGAGCGTCATTACAACCCTCGGTCACCACCGGTTTTGAGCGAGCAGGGTCTTCGGATCCAGCTGGCTTTAAAGTTGTAAGCTCTGCTGGCTGCTCGGCCCAACCAGAACATAGTAAAATCATGCTTGTTCAAGGTTCGCGGTCGAAGCGGTACGGCCTGAACAATACCTACCACCTCTTAGG")
+})
