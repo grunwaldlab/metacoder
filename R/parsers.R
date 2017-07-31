@@ -79,9 +79,22 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
 #' 
 #' @family parsers
 #' 
+#' @examples \dontrun{
+#' 
+#' # Install phyloseq to get example data
+#' # source('http://bioconductor.org/biocLite.R')
+#' # biocLite('phyloseq')
+#' 
+#' # Parse example dataset
+#' data(GlobalPatterns)
+#' x <- parse_phyloseq(GlobalPatterns)
+#' 
+#' }
+#' 
 #' @export
 parse_phyloseq <- function(obj) {
   datasets <- list()
+  mappings <- c()
   
   # Parse taxonomic data
   possible_ranks <- unique(unlist(strsplit(taxa::ranks_ref$ranks, split = ",")))
@@ -96,6 +109,7 @@ parse_phyloseq <- function(obj) {
     otu_table <- as.data.frame(otu_table, stringsAsFactors = FALSE)
     otu_table <- cbind(data.frame(otu_id = rownames(otu_table), stringsAsFactors = FALSE), otu_table)
     datasets <- c(datasets, list(otu_table = otu_table))
+    mappings <- c(mappings, c("{{name}}" = "{{name}}"))
   }
   
   # Parse sample data
@@ -103,17 +117,20 @@ parse_phyloseq <- function(obj) {
     sam_data <- cbind(data.frame(sample_id = rownames(obj@sam_data), stringsAsFactors = FALSE),
                       as.data.frame(as.list(obj@sam_data), stringsAsFactors = FALSE))
     datasets <- c(datasets, list(sam_data = sam_data))
+    mappings <- c(mappings, NA)
   }
   
   # Parse phylogenetic tree
   if (! is.null(obj@phy_tree)) {
     datasets <- c(datasets, list(phylo_tree = obj@phy_tree))
+    mappings <- c(mappings, NA)
   }
   
   # Parse reference sequences
   if (! is.null(obj@refseq)) {
     refseq <- as.character(obj@refseq)
     datasets <- c(datasets, list(ref_seq = refseq))
+    mappings <- c(mappings, c("{{name}}" = "{{name}}"))
   }
   
   # Construct output
@@ -121,10 +138,10 @@ parse_phyloseq <- function(obj) {
   output <- parse_tax_data(tax_data = tax_data, 
                            datasets = datasets,
                            class_cols = tax_cols, 
-                           mappings = c("{{name}}" = "{{name}}",
-                                        NA, 
-                                        NA, 
-                                        "{{name}}" = "{{name}}"))
+                           mappings = mappings)
+  
+  # Remove NA taxa
+  output$filter_taxa(taxon_names != "NA")
   
   return(output)
 }

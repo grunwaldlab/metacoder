@@ -15,6 +15,20 @@ A taxmap object
 \description{
 Converts a phyloseq object to a taxmap object.
 }
+\examples{
+\dontrun{
+
+# Install phyloseq to get example data
+# source('http://bioconductor.org/biocLite.R')
+# biocLite('phyloseq')
+
+# Parse example dataset
+data(GlobalPatterns)
+x <- parse_phyloseq(GlobalPatterns)
+
+}
+
+}
 \seealso{
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},

@@ -1,0 +1,19 @@
+#NEXUS
+BEGIN TAXA;
+      Dimensions NTax=4;
+      TaxLabels fish frog snake mouse;
+END;
+
+BEGIN CHARACTERS;
+      Dimensions NChar=20;
+      Format DataType=DNA;
+      Matrix
+        fish   ACATA GAGGG TACCT CTAAG
+        frog   ACATA GAGGG TACCT CTAAG
+        snake  ACATA GAGGG TACCT CTAAG
+        mouse  ACATA GAGGG TACCT CTAAG
+END;
+
+BEGIN TREES;
+      Tree best=(fish, (frog, (snake, mouse)));
+END;
