@@ -86,8 +86,16 @@ parse_hmp_qiime <- function(otu_file, mapping_file, min_abundance = 1, max_otus 
 #' # biocLite('phyloseq')
 #' 
 #' # Parse example dataset
+#' library(phyloseq)
 #' data(GlobalPatterns)
 #' x <- parse_phyloseq(GlobalPatterns)
+#' 
+#' # Plot data
+#' heat_tree(x,
+#'           node_size = n_obs,
+#'           node_color = n_obs,
+#'           node_label = taxon_names,
+#'           tree_label = taxon_names)
 #' 
 #' }
 #' 
@@ -142,6 +150,12 @@ parse_phyloseq <- function(obj) {
   
   # Remove NA taxa
   output$filter_taxa(taxon_names != "NA")
+  
+  # Move OTU table to front of data if it is there
+  if ("otu_table" %in% names(output$data)) {
+    otu_tab_index <- which(names(output$data) == "otu_table")
+    output$data <- c(output$data[otu_tab_index], output$data[-otu_tab_index])
+  }
   
   return(output)
 }

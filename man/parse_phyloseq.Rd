@@ -23,8 +23,16 @@ Converts a phyloseq object to a taxmap object.
 # biocLite('phyloseq')
 
 # Parse example dataset
+library(phyloseq)
 data(GlobalPatterns)
 x <- parse_phyloseq(GlobalPatterns)
+
+# Plot data
+heat_tree(x,
+          node_size = n_obs,
+          node_color = n_obs,
+          node_label = taxon_names,
+          tree_label = taxon_names)
 
 }
 
