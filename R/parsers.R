@@ -510,3 +510,56 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
   
   return(output)
 }
+
+
+
+#' Parse RDP FASTA release
+#' 
+#' Parses an RDP reference FASTA file that can be found at
+#' https://rdp.cme.msu.edu/misc/resources.jsp.
+#' 
+#' The input file has a format like:
+#' 
+#' \preformatted{
+#' >S000448483 Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5	Lineage=Root;rootrank;Fun...
+#' ggattcccctagtaactgcgagtgaagcgggaagagctcaaatttaaaatctggcggcgtcctcgtcgtccgagttgtaa
+#' tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
+#' ...
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
+#'   sequences in the output object.
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family parsers
+#'   
+#' @export
+parse_rdp <- function(file, include_seqs = TRUE) {
+  # Read file
+  raw_data <- ape::read.FASTA(file)
+  
+  # Create taxmap object
+  output <- taxa::extract_tax_data(tax_data = names(raw_data),
+                                   regex = "^(.*?) (.*)\\tLineage=(.*)$",
+                                   key = c(rdp_id = "info", info = "info",
+                                           tax_string = "class"),
+                                   class_regex = "(.+?);(.*?)(?:;|$)",
+                                   class_key = c(name = "taxon_name",
+                                                 rdp_rank = "info"))
+  
+  # Add sequences 
+  if (include_seqs) {
+    seqs <- vapply(as.character(raw_data[output$data$tax_data$input]),
+                   FUN = function(x) paste0(x, collapse = ""),
+                   FUN.VALUE = character(1))
+    output$data$tax_data$rdp_seq <- tolower(seqs)
+  }
+  
+  # Remove unneeded columns
+  output$data$tax_data$input <- NULL
+  output$data$tax_data$tax_string <- NULL
+  
+  return(output)
+}

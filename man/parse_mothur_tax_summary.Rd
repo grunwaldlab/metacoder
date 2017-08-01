@@ -61,6 +61,6 @@ taxon	total	A	B	C
 Other parsers: \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
-  \code{\link{parse_qiime_biom}},
+  \code{\link{parse_qiime_biom}}, \code{\link{parse_rdp}},
   \code{\link{parse_unite_general}}
 }

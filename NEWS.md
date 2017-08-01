@@ -20,6 +20,7 @@
 * New parser named `parse_phyloseq` to convert phyloseq objects.
 * New parser named `parse_newick` to parse newick files.
 * New parser named `parse_unite_general` for unite general FASTA release. (issue [#154](https://github.com/grunwaldlab/metacoder/issues/154))
+* New parser named `parse_rdp` for RDP FASTA release. (issue [#160](https://github.com/grunwaldlab/metacoder/issues/160))
 
 ##  metacoder 0.1.3 
 

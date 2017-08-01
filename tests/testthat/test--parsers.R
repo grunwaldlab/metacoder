@@ -97,3 +97,13 @@ test_that("Parsing the UNITE general release fasta", {
   expect_equal(result$data$tax_data$organism[5], "Orbilia_sp")
   expect_equal(result$data$tax_data$unite_seq[5], "CCAAATCATGTCTCCCGGCCGCAAGGCAGGTGCAGGCGTTTAACCCTTTGTGAACCAAAAAACCTTTCGCTTCGGCAGCAGCTCGGTTGGAGACAGCCTCTGTGTCAGCCTGCCGCTAGCACCAATTATCAAAACTTGCGGTTAGCAACATTGTCTGATTACCAAATTTTCGAATGAAAATCAAAACTTTCAACAACGGATCTCTTGGTTCCCGCATCGATGAAGAACGCAGCGAAACGCGATAGTTAATGTGAATTGCAGAATTCAGTGAATCATCGAGTCTTTGAACGCACATTGCGCCCATTGGTATTCCATTGGGCATGTCTGTTTGAGCGTCATTACAACCCTCGGTCACCACCGGTTTTGAGCGAGCAGGGTCTTCGGATCCAGCTGGCTTTAAAGTTGTAAGCTCTGCTGGCTGCTCGGCCCAACCAGAACATAGTAAAATCATGCTTGTTCAAGGTTCGCGGTCGAAGCGGTACGGCCTGAACAATACCTACCACCTCTTAGG")
 })
+
+
+test_that("Parsing the RDP fasta release", {
+  result <- parse_rdp("example_data/rdp_example.fa")
+  expect_equal(length(result$taxa), 26)
+  expect_equal(length(roots(result)), 1)
+  expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[3]], "Saccharomyces")
+  expect_equal(result$data$tax_data$rdp_id[3], "S004468774")
+  expect_true(startsWith(result$data$tax_data$rdp_seq[3], "gtttgacctcaaatcaggtaggagtacccgctgaacttaagcatatcaataagcggaggaaaagaaaccaaccgggattg"))
+})
