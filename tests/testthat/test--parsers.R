@@ -107,3 +107,13 @@ test_that("Parsing the RDP fasta release", {
   expect_equal(result$data$tax_data$rdp_id[3], "S004468774")
   expect_true(startsWith(result$data$tax_data$rdp_seq[3], "gtttgacctcaaatcaggtaggagtacccgctgaacttaagcatatcaataagcggaggaaaagaaaccaaccgggattg"))
 })
+
+
+test_that("Parsing the SILVA fasta release", {
+  result <- parse_silva_fasta("example_data/silva_example.fa")
+  expect_equal(length(result$taxa), 224)
+  expect_equal(length(roots(result)), 2)
+  expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "peruviana")
+  expect_equal(result$data$tax_data$ncbi_id[5], "GEET01005309")
+  expect_true(startsWith(result$data$tax_data$silva_seq[5], "GAUGGAUGCCUUGGCUUCAUCAGGCGAAGAAGGACGCAGCAAGCUGCGAUAAGCUUCGGGGAGCGGCACGCACGCUUUGA"))
+})

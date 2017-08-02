@@ -563,3 +563,74 @@ parse_rdp <- function(file, include_seqs = TRUE) {
   
   return(output)
 }
+
+
+
+#' Parse SILVA FASTA release
+#' 
+#' Parses an SILVA FASTA file that can be found at
+#' https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/.
+#' 
+#' The input file has a format like:
+#' 
+#' \preformatted{
+#' >GCVF01000431.1.2369 Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
+#' CGUGCACGGUGGAUGCCUUGGCAGCCAGAGGCGAUGAAGGACGUUGUAGCCUGCGAUAAGCUCCGGUUAGGUGGCAAACA
+#' ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
+#' ...
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file.
+#' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
+#'   sequences in the output object.
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family parsers
+#'   
+#' @export
+parse_silva_fasta <- function(file, include_seqs = TRUE) {
+  # Read file
+  raw_data <- seqinr::read.fasta(file, as.string = TRUE)
+  raw_headers <- vapply(raw_data, attr, which = "Annot", character(1))
+  
+  # Make classifications easier to parse
+  name_chars <- "A-Za-z0-9.\\-_+ "
+  parts <- stringr::str_match(raw_headers,
+                              paste0("^(.+;)([", name_chars, "]+)(\\(?.*\\)?)$"))
+  parts <- as.data.frame(parts[, -1], stringsAsFactors = FALSE)
+  colnames(parts) <- c("tax", "binom", "common")
+  parts$binom <- sub(parts$binom, pattern = "sp\\. ", replacement = "sp\\._")
+  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom)
+  parts$binom <- sub(pattern = ";$", replacement = " ", parts$binom)
+  headers <- apply(parts, MARGIN = 1, paste0, collapse = "")
+  
+  # Create taxmap object
+  output <- taxa::extract_tax_data(tax_data = headers,
+                                   regex = "^>(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
+                                   key = c(ncbi_id = "info",
+                                           start_pos = "info",
+                                           end_pos = "info",
+                                           tax_string = "class"),
+                                   class_regex = paste0("^([", name_chars, "]+) ?\\(?([", name_chars, "]*)\\)?$"),
+                                   class_key = c("name" = "taxon_name", other_name = "info"),
+                                   class_sep = ";")
+  
+  # Clean up taxon names
+  output$taxa <- lapply(output$taxa, function(x) {
+    x$name$name <- sub(pattern = " $", replacement = "", x$name$name)
+    x$name$name <- sub(pattern = "_", replacement = " ", x$name$name) # undo the sp._xxx hack above
+    return(x)
+  })
+  
+  # Add sequences 
+  if (include_seqs) {
+    output$data$tax_data$silva_seq <- toupper(unlist(raw_data))
+  }
+  
+  # Remove unneeded columns
+  output$data$tax_data$input <- NULL
+  output$data$tax_data$tax_string <- NULL
+  
+  return(output)
+}
