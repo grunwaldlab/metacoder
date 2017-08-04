@@ -634,3 +634,57 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
   
   return(output)
 }
+
+
+#' Parse Greengenes release
+#' 
+#' Parses the greengenes database.
+#' 
+#' The taxonomy input file has a format like:
+#' 
+#' \preformatted{
+#' 228054  k__Bacteria; p__Cyanobacteria; c__Synechococcophycideae; o__Synech...
+#' 844608  k__Bacteria; p__Cyanobacteria; c__Synechococcophycideae; o__Synech...
+#' ...
+#' }
+#' 
+#' The optional sequence file has a format like:
+#' 
+#' \preformatted{
+#' >1111886
+#' AACGAACGCTGGCGGCATGCCTAACACATGCAAGTCGAACGAGACCTTCGGGTCTAGTGGCGCACGGGTGCGTA...
+#' >1111885
+#' AGAGTTTGATCCTGGCTCAGAATGAACGCTGGCGGCGTGCCTAACACATGCAAGTCGTACGAGAAATCCCGAGC...
+#' ...
+#' }
+#' 
+#' @param tax_file (\code{character} of length 1) The file path to the greengenes taxonomy file.
+#' @param tax_file (\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family parsers
+#'   
+#' @export
+parse_greengenes <- function(tax_file, seq_file = NULL) {
+  # Parse taxonomy file
+  tax_data <- read.table(tax_file, sep = "\t")
+  colnames(tax_data) <- c("gg_id", "classification")
+  result <- taxa::parse_tax_data(tax_data, class_cols = "classification", 
+                                 class_sep = "; ",
+                                 class_regex = "^([a-z]{1})__(.*)$", 
+                                 class_key = c(gg_rank = "info", name = "taxon_name"))
+  result$data$tax_data$gg_id <- as.character(result$data$tax_data$gg_id)
+
+  # Remove data for ranks with no information
+  result <- filter_taxa(result, taxon_names != "", drop_obs = TRUE, 
+                        reassign_obs = c(tax_data = TRUE, class_data = FALSE))
+  
+  # Integrating sequence and taxonomy
+  if (! is.null(seq_file)) {
+    gg_sequences <- seqinr::read.fasta(seq_file, as.string = TRUE)
+    result <- mutate_obs(result, "tax_data", gg_seq = toupper(unlist(gg_sequences)[gg_id]))
+  }
+  
+  return(result)
+}

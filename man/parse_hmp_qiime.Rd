@@ -24,7 +24,8 @@ Parses the results of the Human Microbiome Project QIIME analysis of the 16S met
 This is mostly a wrapper for \code{\link{extract_taxonomy}}.
 }
 \seealso{
-Other parsers: \code{\link{parse_mothur_tax_summary}},
+Other parsers: \code{\link{parse_greengenes}},
+  \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
   \code{\link{parse_qiime_biom}}, \code{\link{parse_rdp}},

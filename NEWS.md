@@ -23,6 +23,7 @@
 * New parser named `parse_rdp` for RDP FASTA release. (issue [#160](https://github.com/grunwaldlab/metacoder/issues/160))
 * New parser named `parse_silva_fasta` for SILVA FASTA release. (issue [#162](https://github.com/grunwaldlab/metacoder/issues/162))
 * New function `calc_obs_props` to calculate proportions from observation counts (issue [#167](https://github.com/grunwaldlab/metacoder/issues/167)
+* New parser named `parse_greengenes` for the Greengenes database. (issue [#?](https://github.com/grunwaldlab/metacoder/issues/?))
 
 ##  metacoder 0.1.3 
 

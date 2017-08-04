@@ -56,7 +56,7 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 7	0.1.2.3.7.2.5.1	unclassified	1	2	0	2	0	
 8	0.1.2.3.7.2.5.1.1	unclassified	1	2	0	2	0	
 9	0.1.2.3.7.2.5.1.1.1	unclassified	1	2	0	2	0"  
-  result <- parse_mothur_tax_summary(text = raw_data)
+  expect_warning(result <- parse_mothur_tax_summary(text = raw_data))
   
   expect_equal(length(result$taxa), 17)
   expect_equal(length(roots(result)), 1)
@@ -73,7 +73,7 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__adolescentis";	1	0	1	0
 "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__longum";	1	0	1	0
 '
-  result <- parse_mothur_tax_summary(text = raw_data)
+  expect_warning(result <- parse_mothur_tax_summary(text = raw_data))
   expect_equal(length(result$taxa), 9)
   expect_equal(length(roots(result)), 1)
   expect_true(all(c("k__Bacteria", "p__Actinobacteria") %in% result$taxon_names()))
@@ -116,4 +116,15 @@ test_that("Parsing the SILVA fasta release", {
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "peruviana")
   expect_equal(result$data$tax_data$ncbi_id[5], "GEET01005309")
   expect_true(startsWith(result$data$tax_data$silva_seq[5], "GAUGGAUGCCUUGGCUUCAUCAGGCGAAGAAGGACGCAGCAAGCUGCGAUAAGCUUCGGGGAGCGGCACGCACGCUUUGA"))
+})
+
+
+test_that("Parsing the greengenes database", {
+  result <- parse_greengenes(tax_file = "example_data/gg_tax_example.txt",
+                             seq_file = "example_data/gg_seq_example.fa")
+  expect_equal(length(result$taxa), 119)
+  expect_equal(length(roots(result)), 1)
+  expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "Rhodobacteraceae")
+  expect_equal(result$data$tax_data$gg_id[5], "1111758")
+  expect_true(startsWith(result$data$tax_data$gg_seq[5], "TTAGAGTTTGATCCTGGCTCAGAACGAACGCTGGCGGCAGGCCTAACACATGCAAGTCGAGCGCGCCCTTCGGGGTGAGCGGCGGACGGGTGAGTAACGCGTGGGAACGTGCCCTCTTCTGCGGGATAGCC"))
 })

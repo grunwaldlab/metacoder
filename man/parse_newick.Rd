@@ -24,7 +24,8 @@ The input file has a format like:
 }
 }
 \seealso{
-Other parsers: \code{\link{parse_hmp_qiime}},
+Other parsers: \code{\link{parse_greengenes}},
+  \code{\link{parse_hmp_qiime}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_phyloseq}},
