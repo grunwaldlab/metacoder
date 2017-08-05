@@ -119,12 +119,22 @@ test_that("Parsing the SILVA fasta release", {
 })
 
 
-test_that("Parsing the greengenes database", {
-  result <- parse_greengenes(tax_file = "example_data/gg_tax_example.txt",
-                             seq_file = "example_data/gg_seq_example.fa")
+test_that("Parsing/writing the greengenes database", {
+  # Reading
+  tax_in_path <- "example_data/gg_tax_example.txt"
+  seq_in_path <- "example_data/gg_seq_example.fa"
+  result <- parse_greengenes(tax_file = tax_in_path, seq_file = seq_in_path)
   expect_equal(length(result$taxa), 119)
   expect_equal(length(roots(result)), 1)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "Rhodobacteraceae")
   expect_equal(result$data$tax_data$gg_id[5], "1111758")
   expect_true(startsWith(result$data$tax_data$gg_seq[5], "TTAGAGTTTGATCCTGGCTCAGAACGAACGCTGGCGGCAGGCCTAACACATGCAAGTCGAGCGCGCCCTTCGGGGTGAGCGGCGGACGGGTGAGTAACGCGTGGGAACGTGCCCTCTTCTGCGGGATAGCC"))
+  
+  # Check that the input can be replicated
+  tax_out_path <-  "test_gg_output.txt"
+  seq_out_path <- "test_gg_output.fa"
+  write_greengenes(result, tax_file = tax_out_path, seq_file = seq_out_path)
+  expect_equal(readLines(tax_out_path), readLines(tax_in_path))
+  expect_equal(readLines(seq_out_path), readLines(seq_in_path))
+  expect_error(write_greengenes(result))
 })

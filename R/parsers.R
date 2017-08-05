@@ -659,7 +659,7 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
 #' }
 #' 
 #' @param tax_file (\code{character} of length 1) The file path to the greengenes taxonomy file.
-#' @param tax_file (\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.
+#' @param seq_file (\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.
 #'   
 #' @return \code{\link{taxmap}}
 #'   

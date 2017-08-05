@@ -24,6 +24,7 @@
 * New parser named `parse_silva_fasta` for SILVA FASTA release. (issue [#162](https://github.com/grunwaldlab/metacoder/issues/162))
 * New function `calc_obs_props` to calculate proportions from observation counts (issue [#167](https://github.com/grunwaldlab/metacoder/issues/167)
 * New parser named `parse_greengenes` for the Greengenes database. (issue [#?](https://github.com/grunwaldlab/metacoder/issues/?))
+* New writer named `write_greengenes` to create an imitation of the Greengenes database format. 
 
 ##  metacoder 0.1.3 
 
