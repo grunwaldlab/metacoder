@@ -5,7 +5,8 @@
 \title{Write an immitation of the Greengenes databse}
 \usage{
 write_greengenes(obj, tax_file = NULL, seq_file = NULL,
-  taxa = taxon_names, ranks = gg_rank, ids = gg_id, sequences = gg_seq)
+  tax_names = taxon_names, ranks = gg_rank, ids = gg_id,
+  sequences = gg_seq)
 }
 \arguments{
 \item{tax_file}{(\code{character} of length 1) The file path to save the
@@ -14,13 +15,13 @@ taxonomy file.}
 \item{seq_file}{(\code{character} of length 1) The file path to save the
 sequence fasta file. This is optional.}
 
+\item{tax_names}{(\code{character} named by taxon ids) The names of taxa}
+
 \item{ranks}{(\code{character} named by taxon ids) The ranks of taxa}
 
 \item{ids}{(\code{character} named by taxon ids) Sequence ids}
 
 \item{sequences}{(\code{character} named by taxon ids) Sequences}
-
-\item{names}{(\code{character} named by taxon ids) The names of taxa}
 }
 \value{
 \code{\link{taxmap}}

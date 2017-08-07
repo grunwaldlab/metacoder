@@ -82,7 +82,7 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 
 
 test_that("Newick parsing", {
-  result <- parse_newick("example_data/newick_example_1.txt")
+  expect_warning(result <- parse_newick("example_data/newick_example_1.txt"))
   expect_equal(length(result$taxa), 21)
   expect_equal(length(roots(result)), 2)
   expect_true(all(c("node_1", "node_2") %in% result$taxon_names()))
@@ -137,4 +137,8 @@ test_that("Parsing/writing the greengenes database", {
   expect_equal(readLines(tax_out_path), readLines(tax_in_path))
   expect_equal(readLines(seq_out_path), readLines(seq_in_path))
   expect_error(write_greengenes(result))
+  
+  # Delete files used for tests
+  file.remove(tax_out_path)
+  file.remove(seq_out_path)
 })

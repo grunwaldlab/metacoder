@@ -27,7 +27,7 @@
 #'   taxonomy file.
 #' @param seq_file (\code{character} of length 1) The file path to save the
 #'   sequence fasta file. This is optional.
-#' @param names (\code{character} named by taxon ids) The names of taxa
+#' @param tax_names (\code{character} named by taxon ids) The names of taxa
 #' @param ranks (\code{character} named by taxon ids) The ranks of taxa 
 #' @param ids (\code{character} named by taxon ids) Sequence ids
 #' @param sequences (\code{character} named by taxon ids) Sequences
@@ -38,11 +38,12 @@
 #'   
 #' @export
 write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
-                             taxa = taxon_names, ranks = gg_rank, ids = gg_id,
+                             tax_names = taxon_names, ranks = gg_rank, ids = gg_id,
                              sequences = gg_seq) {
   # non-standard argument evaluation
-  data_used <- eval(substitute(obj$data_used(taxa, ranks, ids, sequences)))
-  taxa <- rlang::eval_tidy(rlang::enquo(taxa), data = data_used)
+  my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
+  data_used <- eval(substitute(my_data_used_func(obj, tax_names, ranks, ids, sequences)))
+  tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
   ranks <- rlang::eval_tidy(rlang::enquo(ranks), data = data_used)
   ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
   sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
@@ -60,7 +61,7 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
                           function(i) {
                             class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
                                                        include_input = TRUE, simplify = TRUE))
-                            my_names <- taxa[class_ids]
+                            my_names <- tax_names[class_ids]
                             my_ranks <- ranks[class_ids]
                             if (length(class_ids) < 7) {
                               my_names <- c(my_names, rep("", 7 - length(class_ids)))
