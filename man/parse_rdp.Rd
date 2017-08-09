@@ -4,13 +4,17 @@
 \alias{parse_rdp}
 \title{Parse RDP FASTA release}
 \usage{
-parse_rdp(file, include_seqs = TRUE)
+parse_rdp(file, include_seqs = TRUE, add_species = FALSE)
 }
 \arguments{
 \item{file}{(\code{character} of length 1) The file path to the input file.}
 
-\item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include
+\item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include 
 sequences in the output object.}
+
+\item{add_species}{(\code{logical} of length 1) If \code{TRUE}, add the
+species information to the taxonomy. In this databse, the speceis name
+often contains other information as well.}
 }
 \value{
 \code{\link{taxmap}}

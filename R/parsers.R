@@ -528,22 +528,38 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 #' }
 #' 
 #' @param file (\code{character} of length 1) The file path to the input file.
-#' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
+#' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include 
 #'   sequences in the output object.
+#' @param add_species (\code{logical} of length 1) If \code{TRUE}, add the
+#'   species information to the taxonomy. In this databse, the speceis name
+#'   often contains other information as well.
 #'   
 #' @return \code{\link{taxmap}}
 #'   
 #' @family parsers
 #'   
 #' @export
-parse_rdp <- function(file, include_seqs = TRUE) {
+parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
   # Read file
   raw_data <- ape::read.FASTA(file)
+  headers <- names(raw_data)
+  
+  # Add species to classification if present
+  if (add_species) {
+    org_name <- stringr::str_match(headers, "^.*? (.*)\\tLineage=.*$")[, 2]
+    genus <- stringr::str_match(headers, ";([a-zA-Z]+);genus$")[, 2]
+    species <- vapply(seq_len(length(org_name)), FUN.VALUE = character(1),  function (i) {
+      sub(org_name[i], pattern = paste0("^", genus[i], " ?"), replacement = "") %>%
+        sub(pattern = ";.*$", replacement = "")
+    })
+    headers <- paste0(headers, ";", species, ";",
+                      ifelse(endsWith(headers, ";"), "", "species"))
+  }
   
   # Create taxmap object
-  output <- taxa::extract_tax_data(tax_data = names(raw_data),
+  output <- taxa::extract_tax_data(tax_data = headers,
                                    regex = "^(.*?) (.*)\\tLineage=(.*)$",
-                                   key = c(rdp_id = "info", info = "info",
+                                   key = c(rdp_id = "info", seq_name = "info",
                                            tax_string = "class"),
                                    class_regex = "(.+?);(.*?)(?:;|$)",
                                    class_key = c(name = "taxon_name",

@@ -23,6 +23,7 @@
 #' ...
 #' }
 #' 
+#' @param obj A taxmap object
 #' @param tax_file (\code{character} of length 1) The file path to save the
 #'   taxonomy file.
 #' @param seq_file (\code{character} of length 1) The file path to save the
@@ -80,4 +81,64 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
     writeLines(seq_content, seq_file)
   }
   
+}
+
+
+#' Write an immitation of the RDP FASTA databse
+#' 
+#' Attempts to save taxonomic and sequence information of a taxmap object in the
+#' RDP FASTA format. If the taxmap object was created using
+#' [parse_rdp()], then it should be able to replicate the format
+#' exactly.
+#' 
+#' The output file has a format like:
+#' 
+#' \preformatted{
+#' >S000448483 Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5	Lineage=Root;rootrank;Fun...
+#' ggattcccctagtaactgcgagtgaagcgggaagagctcaaatttaaaatctggcggcgtcctcgtcgtccgagttgtaa
+#' tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
+#' ...
+#' }
+#' 
+#' @param obj A taxmap object
+#' @param file (\code{character} of length 1) The file path to save the
+#'   sequence fasta file. This is optional.
+#' @param tax_names (\code{character} named by taxon ids) The names of taxa
+#' @param ranks (\code{character} named by taxon ids) The ranks of taxa 
+#' @param ids (\code{character} named by taxon ids) Sequence ids
+#' @param info (\code{character} named by taxon ids) Info associated with
+#'   sequences. In the example output shown here, this field corresponds to
+#'   "Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5"
+#' @param sequences (\code{character} named by taxon ids) Sequences
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family writers
+#'   
+#' @export
+write_rdp <- function(obj, file, tax_names = taxon_names,
+                      ranks = rdp_rank, ids = rdp_id, info = seq_name, 
+                      sequences = rdp_seq) {
+  # non-standard argument evaluation
+  my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
+  data_used <- eval(substitute(my_data_used_func(obj, tax_names, ranks, ids,
+                                                 sequences, info)))
+  tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
+  ranks <- rlang::eval_tidy(rlang::enquo(ranks), data = data_used)
+  ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
+  info <- rlang::eval_tidy(rlang::enquo(info), data = data_used)
+  sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
+
+  # Create sequence file
+  headers <- vapply(seq_len(length(ids)),
+                        FUN.VALUE = character(1),
+                        function(i) {
+                          class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                                                     include_input = TRUE, simplify = TRUE))
+                          my_names <- tax_names[class_ids]
+                          my_ranks <- ranks[class_ids]
+                          my_seq_name <- info[names(info) %in% class_ids]
+                          paste0(ids[i], " ", my_seq_name, "\tLineage=", paste(my_names, my_ranks, sep = ";", collapse = ";"))
+                        })
+  seqinr::write.fasta(as.list(sequences), headers, file, as.string = TRUE, nbchar = 80)
 }

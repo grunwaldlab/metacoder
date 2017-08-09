@@ -100,13 +100,26 @@ test_that("Parsing the UNITE general release fasta", {
 
 
 test_that("Parsing the RDP fasta release", {
-  result <- parse_rdp("example_data/rdp_example.fa")
+  # Reading
+  seq_in_path <- "example_data/rdp_example.fa"
+  result <- parse_rdp(seq_in_path)
   expect_equal(length(result$taxa), 26)
   expect_equal(length(roots(result)), 1)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[3]], "Saccharomyces")
   expect_equal(result$data$tax_data$rdp_id[3], "S004468774")
   expect_true(startsWith(result$data$tax_data$rdp_seq[3], "gtttgacctcaaatcaggtaggagtacccgctgaacttaagcatatcaataagcggaggaaaagaaaccaaccgggattg"))
-})
+  
+  # Check that the input can be replicated
+  seq_out_path <- "test_rdp_output.fa"
+  write_rdp(result, file = seq_out_path)
+  expect_equal(readLines(seq_out_path), readLines(seq_in_path))
+  expect_error(write_greengenes(result))
+  
+  # Delete files used for tests
+  file.remove(seq_out_path)
+  
+  
+  })
 
 
 test_that("Parsing the SILVA fasta release", {

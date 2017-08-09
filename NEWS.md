@@ -25,6 +25,7 @@
 * New function `calc_obs_props` to calculate proportions from observation counts (issue [#167](https://github.com/grunwaldlab/metacoder/issues/167)
 * New parser named `parse_greengenes` for the Greengenes database. (issue [#?](https://github.com/grunwaldlab/metacoder/issues/?))
 * New writer named `write_greengenes` to create an imitation of the Greengenes database format. 
+* New writer named `write_rdp` to create an imitation of the RDP database format. 
 
 ##  metacoder 0.1.3 
 

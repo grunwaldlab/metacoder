@@ -9,6 +9,8 @@ write_greengenes(obj, tax_file = NULL, seq_file = NULL,
   sequences = gg_seq)
 }
 \arguments{
+\item{obj}{A taxmap object}
+
 \item{tax_file}{(\code{character} of length 1) The file path to save the
 taxonomy file.}
 
@@ -50,4 +52,7 @@ AACGAACGCTGGCGGCATGCCTAACACATGCAAGTCGAACGAGACCTTCGGGTCTAGTGGCGCACGGGTGCGTA...
 AGAGTTTGATCCTGGCTCAGAATGAACGCTGGCGGCGTGCCTAACACATGCAAGTCGTACGAGAAATCCCGAGC...
 ...
 }
+}
+\seealso{
+Other writers: \code{\link{write_rdp}}
 }
