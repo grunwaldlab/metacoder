@@ -26,6 +26,7 @@
 * New parser named `parse_greengenes` for the Greengenes database. (issue [#?](https://github.com/grunwaldlab/metacoder/issues/?))
 * New writer named `write_greengenes` to create an imitation of the Greengenes database format. 
 * New writer named `write_rdp` to create an imitation of the RDP database format. 
+* New writer named `write_mothur_taxonomy` to create an imitation of the mothur taxonomy format. 
 
 ##  metacoder 0.1.3 
 

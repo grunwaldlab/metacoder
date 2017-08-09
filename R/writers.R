@@ -142,3 +142,80 @@ write_rdp <- function(obj, file, tax_names = taxon_names,
                         })
   seqinr::write.fasta(as.list(sequences), headers, file, as.string = TRUE, nbchar = 80)
 }
+
+
+#' Write an immitation of the Mothur taxonomy file
+#' 
+#' Attempts to save taxonomic information of a taxmap object in the
+#' mothur `*.taxonomy` format. If the taxmap object was created using
+#' [parse_mothur_taxonomy()], then it should be able to replicate the format
+#' exactly.
+#' 
+#' The output file has a format like:
+#' 
+#' \preformatted{
+#' AY457915	Bacteria(100);Firmicutes(99);Clostridiales(99);Johnsone...
+#' AY457914	Bacteria(100);Firmicutes(100);Clostridiales(100);Johnso...
+#' AY457913	Bacteria(100);Firmicutes(100);Clostridiales(100);Johnso...
+#' AY457912	Bacteria(100);Firmicutes(99);Clostridiales(99);Johnsone...
+#' AY457911	Bacteria(100);Firmicutes(99);Clostridiales(98);Ruminoco...
+#' }
+#' 
+#' or...
+#' 
+#' \preformatted{
+#' AY457915	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+#' AY457914	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+#' AY457913	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+#' AY457912	Bacteria;Firmicutes;Clostridiales;Johnsonella_et_rel.;J...
+#' AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
+#' }
+#' 
+#' @param obj A taxmap object
+#' @param file (\code{character} of length 1) The file path to save the
+#'   sequence fasta file. This is optional.
+#' @param tax_names (\code{character} named by taxon ids) The names of taxa
+#' @param ranks (\code{character} named by taxon ids) The ranks of taxa 
+#' @param ids (\code{character} named by taxon ids) Sequence ids
+#' @param info (\code{character} named by taxon ids) Info associated with
+#'   sequences. In the example output shown here, this field corresponds to
+#'   "Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5"
+#' @param sequences (\code{character} named by taxon ids) Sequences
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family writers
+#'   
+#' @export
+write_mothur_taxonomy <- function(obj, file, tax_names = taxon_names,
+                                  ids = sequence_id, scores = score) {
+  # non-standard argument evaluation
+  my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
+  data_used <- eval(substitute(my_data_used_func(obj, tax_names, ids, scores)))
+  tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
+  ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
+  if (length(data_used) > 2) {
+    scores <- rlang::eval_tidy(rlang::enquo(scores), data = data_used)
+  } else {
+    scores <- NULL
+  }
+
+  # Create sequence file
+  output <- vapply(seq_len(length(ids)),
+                    FUN.VALUE = character(1),
+                    function(i) {
+                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                                                 include_input = TRUE, simplify = TRUE))
+                      my_names <- tax_names[class_ids]
+                      my_scores <- scores[obj$data$class_data$input_index == i][class_ids]
+                      if (is.null(scores)) {
+                        line <- paste0(ids[i], "\t", paste(my_names, collapse = ";"))
+                      } else {
+                        line <- paste0(ids[i], "\t", paste(my_names, "(", my_scores, ")", collapse = ";", sep = ""))
+                      }
+                      paste0(line, ";")
+                    })
+  writeLines(output, file)
+}
+
+

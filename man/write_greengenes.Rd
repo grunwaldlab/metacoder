@@ -54,5 +54,6 @@ AGAGTTTGATCCTGGCTCAGAATGAACGCTGGCGGCGTGCCTAACACATGCAAGTCGTACGAGAAATCCCGAGC...
 }
 }
 \seealso{
-Other writers: \code{\link{write_rdp}}
+Other writers: \code{\link{write_mothur_taxonomy}},
+  \code{\link{write_rdp}}
 }

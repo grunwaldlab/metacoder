@@ -33,6 +33,15 @@ AY457911\tBacteria(100);Firmicutes(99);Clostridiales(98);Ruminococcus_et_rel.(96
   expect_equal(nrow(result$data$class_data), stringr::str_count(raw_data, ";"))
   expect_true("score" %in% colnames(result$data$class_data))
   
+  
+  # Check that the input can be replicated
+  out_path <- "test_mothur_tax_output.txt"
+  write_mothur_taxonomy(result, file = out_path)
+  expect_equal(readLines(out_path), strsplit(raw_data, split = "\n")[[1]])
+  expect_error(write_mothur_taxonomy(result))
+  
+  # Delete files used for tests
+  file.remove(out_path)
 })
 
 
@@ -117,8 +126,6 @@ test_that("Parsing the RDP fasta release", {
   
   # Delete files used for tests
   file.remove(seq_out_path)
-  
-  
   })
 
 
