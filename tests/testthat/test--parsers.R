@@ -14,6 +14,15 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;Anaerofilum-Faec
   expect_equal(length(result$taxa), 18)
   expect_equal(length(roots(result)), 1)
   expect_true(all(c("Bacteria", "Firmicutes") %in% result$taxon_names()))
+  
+  # Check that the input can be replicated
+  out_path <- "test_mothur_tax_output.txt"
+  write_mothur_taxonomy(result, file = out_path)
+  expect_equal(readLines(out_path), strsplit(raw_data, split = "\n")[[1]])
+  expect_error(write_mothur_taxonomy(result))
+  
+  # Delete files used for tests
+  file.remove(out_path)
 })
 
 
