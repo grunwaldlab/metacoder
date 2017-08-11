@@ -46,5 +46,6 @@ tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
 }
 \seealso{
 Other writers: \code{\link{write_greengenes}},
-  \code{\link{write_mothur_taxonomy}}
+  \code{\link{write_mothur_taxonomy}},
+  \code{\link{write_unite_general}}
 }

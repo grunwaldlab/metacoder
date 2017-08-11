@@ -219,3 +219,68 @@ write_mothur_taxonomy <- function(obj, file, tax_names = taxon_names,
 }
 
 
+#' Write an immitation of the UNITE general FASTA databse
+#' 
+#' Attempts to save taxonomic and sequence information of a taxmap object in the
+#' UNITE general FASTA format. If the taxmap object was created using
+#' [parse_unite_general()], then it should be able to replicate the format
+#' exactly.
+#' 
+#' The output file has a format like:
+#' 
+#' \preformatted{
+#' >Glomeromycota_sp|KJ484724|SH523877.07FU|reps|k__Fungi;p__Glomeromycota;c__unid...
+#' ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT...
+#' ...
+#' }
+#' 
+#' @param obj A taxmap object
+#' @param file (\code{character} of length 1) The file path to save the
+#'   sequence fasta file. This is optional.
+#' @param tax_names (\code{character} named by taxon ids) The names of taxa
+#' @param ranks (\code{character} named by taxon ids) The ranks of taxa 
+#' @param sequences (\code{character} named by taxon ids) Sequences
+#' @param seq_name (\code{character} named by taxon ids) Name of sequences.
+#'   Usually a taxon name.
+#' @param acc_num (\code{character} named by taxon ids) Genbank accession
+#'   numbers
+#' @param ids (\code{character} named by taxon ids) UNITE sequence ids
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family writers
+#'   
+#' @export
+write_unite_general <- function(obj, file, tax_names = taxon_names,
+                                ranks = unite_rank, ids = unite_id, gb_acc = acc_num, 
+                                sequences = unite_seq, seq_name = organism) {
+  # non-standard argument evaluation
+  my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
+  data_used <- eval(substitute(my_data_used_func(obj, tax_names, ranks, ids,
+                                                 rdp_id, seq_name, gb_acc,
+                                                 sequences)))
+  tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
+  ranks <- rlang::eval_tidy(rlang::enquo(ranks), data = data_used)
+  ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
+  acc_num <- rlang::eval_tidy(rlang::enquo(gb_acc), data = data_used)
+  seq_name <- rlang::eval_tidy(rlang::enquo(seq_name), data = data_used)
+  sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
+  
+  # Create sequence file
+  headers <- vapply(seq_len(length(ids)),
+                    FUN.VALUE = character(1),
+                    function(i) {
+                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                                                 include_input = TRUE, simplify = TRUE))
+                      my_names <- tax_names[class_ids]
+                      my_ranks <- ranks[class_ids]
+                      my_seq_name <- seq_name[obj$data$class_data$input_index == i][class_ids[length(class_ids)]]
+                      my_acc_num <-  acc_num[obj$data$class_data$input_index == i][class_ids[length(class_ids)]]
+                      paste(sep = "|", my_seq_name, my_acc_num, ids[i], "reps", 
+                            paste(my_ranks, my_names, sep = "__", collapse = ";"))
+                    })
+  
+  seq_content <- paste0(">", headers, "\n",  toupper(sequences))
+  writeLines(seq_content, file)
+}
+

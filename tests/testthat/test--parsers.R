@@ -84,7 +84,7 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 })
 
 
-test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
+test_that("Mothur classify.seqs *.tax.summary simple parsing", {
   raw_data <- 
 'taxon	total	A	B	C
 "k__Bacteria";"p__Actinobacteria";"c__Actinobacteria";"o__Bifidobacteriales";"f__Bifidobacteriaceae";"g__Bifidobacterium";"s__";	1	0	1	0
@@ -108,12 +108,23 @@ test_that("Newick parsing", {
 
 
 test_that("Parsing the UNITE general release fasta", {
-  result <- parse_unite_general("example_data/unite_general.fa")
+  # Reading
+  seq_in_path <- "example_data/unite_general.fa"
+  result <- parse_unite_general(seq_in_path)
   expect_equal(length(result$taxa), 183)
   expect_equal(length(roots(result)), 1)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "Orbilia_sp")
   expect_equal(result$data$tax_data$organism[5], "Orbilia_sp")
   expect_equal(result$data$tax_data$unite_seq[5], "CCAAATCATGTCTCCCGGCCGCAAGGCAGGTGCAGGCGTTTAACCCTTTGTGAACCAAAAAACCTTTCGCTTCGGCAGCAGCTCGGTTGGAGACAGCCTCTGTGTCAGCCTGCCGCTAGCACCAATTATCAAAACTTGCGGTTAGCAACATTGTCTGATTACCAAATTTTCGAATGAAAATCAAAACTTTCAACAACGGATCTCTTGGTTCCCGCATCGATGAAGAACGCAGCGAAACGCGATAGTTAATGTGAATTGCAGAATTCAGTGAATCATCGAGTCTTTGAACGCACATTGCGCCCATTGGTATTCCATTGGGCATGTCTGTTTGAGCGTCATTACAACCCTCGGTCACCACCGGTTTTGAGCGAGCAGGGTCTTCGGATCCAGCTGGCTTTAAAGTTGTAAGCTCTGCTGGCTGCTCGGCCCAACCAGAACATAGTAAAATCATGCTTGTTCAAGGTTCGCGGTCGAAGCGGTACGGCCTGAACAATACCTACCACCTCTTAGG")
+  
+  # Check that the input can be replicated
+  seq_out_path <- "test_unite_output.fa"
+  write_unite_general(result, file = seq_out_path)
+  expect_equal(readLines(seq_out_path), readLines(seq_in_path))
+  expect_error(write_unite_general(result))
+  
+  # Delete files used for tests
+  file.remove(seq_out_path)
 })
 
 
