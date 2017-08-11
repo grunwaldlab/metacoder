@@ -57,6 +57,6 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
 }
 \seealso{
 Other writers: \code{\link{write_greengenes}},
-  \code{\link{write_rdp}},
+  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}},
   \code{\link{write_unite_general}}
 }

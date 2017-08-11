@@ -286,3 +286,72 @@ write_unite_general <- function(obj, file, tax_names = taxon_names,
   writeLines(seq_content, file)
 }
 
+#' Write an immitation of the SILVA FASTA databse
+#' 
+#' Attempts to save taxonomic and sequence information of a taxmap object in the
+#' SILVA FASTA format. If the taxmap object was created using
+#' [parse_silva_fasta()], then it should be able to replicate the format
+#' exactly.
+#' 
+#' The output file has a format like:
+#' 
+#' \preformatted{
+#' >GCVF01000431.1.2369 Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
+#' CGUGCACGGUGGAUGCCUUGGCAGCCAGAGGCGAUGAAGGACGUUGUAGCCUGCGAUAAGCUCCGGUUAGGUGGCAAACA
+#' ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
+#' ...
+#' }
+#' 
+#' @param obj A taxmap object
+#' @param file (\code{character} of length 1) The file path to save the
+#'   sequence fasta file. This is optional.
+#' @param tax_names (\code{character} named by taxon ids) The names of taxa
+#' @param other_names (\code{character} named by taxon ids) Alternate names
+#'   of taxa. Will be added after the primary name.
+#' @param ids (\code{character} named by taxon ids) Sequence ids
+#' @param start (\code{character}) The start position of the
+#' sequence.
+#' @param end (\code{character}) The end position of the
+#' sequence.
+#' @param sequences (\code{character} named by taxon ids) Sequences
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family writers
+#'   
+#' @export
+write_silva_fasta <- function(obj, file, tax_names = taxon_names, 
+                        other_names = other_name, ids = ncbi_id,
+                        start = start_pos, end = end_pos,
+                        sequences = silva_seq) {
+  # non-standard argument evaluation
+  my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
+  data_used <- eval(substitute(my_data_used_func(obj, tax_names, other_names, ids,
+                                                 start, end, sequences, info)))
+  tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
+  other_names <- rlang::eval_tidy(rlang::enquo(other_names), data = data_used)
+  ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
+  start <- rlang::eval_tidy(rlang::enquo(start), data = data_used)
+  end <- rlang::eval_tidy(rlang::enquo(end), data = data_used)
+  sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
+  
+  # Create sequence file
+  headers <- vapply(seq_len(length(ids)),
+                    FUN.VALUE = character(1),
+                    function(i) {
+                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                                                 include_input = TRUE, simplify = TRUE))
+                      my_names <- tax_names[class_ids]
+                      my_other <- other_names[class_ids]
+                      my_names <- ifelse(my_other == "",
+                                         my_names,
+                                         paste0(my_names, " (", my_other, ")"))
+                      if (length(my_names) >= 2) { # collapse species and genus
+                        last_two <- c(length(my_names) - 1, length(my_names))
+                        my_names <- c(my_names[-last_two], paste0(my_names[last_two], collapse = " "))
+                      }
+                      paste0(ids[i], ".", start[i], ".", end[i], " ",
+                             paste(my_names, collapse = ";"))
+                    })
+  seqinr::write.fasta(as.list(sequences), headers, file, as.string = TRUE, nbchar = 80)
+}

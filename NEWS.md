@@ -28,6 +28,7 @@
 * New writer named `write_rdp` to create an imitation of the RDP database format. 
 * New writer named `write_mothur_taxonomy` to create an imitation of the mothur taxonomy format. 
 * New writer named `write_unite_general` to create an imitation of the UNITE general FASTA release. 
+* New writer named `write_silva_fasta` to create an imitation of the SILVA FASTA release. 
 
 ##  metacoder 0.1.3 
 
