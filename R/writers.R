@@ -242,9 +242,11 @@ write_mothur_taxonomy <- function(obj, file, tax_names = taxon_names,
 #' @param sequences (\code{character} named by taxon ids) Sequences
 #' @param seq_name (\code{character} named by taxon ids) Name of sequences.
 #'   Usually a taxon name.
-#' @param acc_num (\code{character} named by taxon ids) Genbank accession
-#'   numbers
 #' @param ids (\code{character} named by taxon ids) UNITE sequence ids
+#' @param gb_acc (\code{character} named by taxon ids) Genbank accession
+#'   numbers
+#' @param type (\code{character} named by taxon ids) What type of sequence it
+#'   is. Usually "rep" or "ref".
 #'   
 #' @return \code{\link{taxmap}}
 #'   
@@ -252,18 +254,20 @@ write_mothur_taxonomy <- function(obj, file, tax_names = taxon_names,
 #'   
 #' @export
 write_unite_general <- function(obj, file, tax_names = taxon_names,
-                                ranks = unite_rank, ids = unite_id, gb_acc = acc_num, 
-                                sequences = unite_seq, seq_name = organism) {
+                                ranks = unite_rank, sequences = unite_seq,
+                                seq_name = organism, ids = unite_id,
+                                gb_acc = acc_num, type = unite_type) {
   # non-standard argument evaluation
   my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
   data_used <- eval(substitute(my_data_used_func(obj, tax_names, ranks, ids,
                                                  rdp_id, seq_name, gb_acc,
-                                                 sequences)))
+                                                 type, sequences)))
   tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
   ranks <- rlang::eval_tidy(rlang::enquo(ranks), data = data_used)
   ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
   acc_num <- rlang::eval_tidy(rlang::enquo(gb_acc), data = data_used)
   seq_name <- rlang::eval_tidy(rlang::enquo(seq_name), data = data_used)
+  type <- rlang::eval_tidy(rlang::enquo(type), data = data_used)
   sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
   
   # Create sequence file
@@ -274,9 +278,7 @@ write_unite_general <- function(obj, file, tax_names = taxon_names,
                                                  include_input = TRUE, simplify = TRUE))
                       my_names <- tax_names[class_ids]
                       my_ranks <- ranks[class_ids]
-                      my_seq_name <- seq_name[obj$data$class_data$input_index == i][class_ids[length(class_ids)]]
-                      my_acc_num <-  acc_num[obj$data$class_data$input_index == i][class_ids[length(class_ids)]]
-                      paste(sep = "|", my_seq_name, my_acc_num, ids[i], "reps", 
+                      paste(sep = "|", seq_name[i], acc_num[i], ids[i], type[i], 
                             paste(my_ranks, my_names, sep = "__", collapse = ";"))
                     })
   

@@ -27,6 +27,7 @@
 * New writer named `write_greengenes` to create an imitation of the Greengenes database format. 
 * New writer named `write_rdp` to create an imitation of the RDP database format. 
 * New writer named `write_mothur_taxonomy` to create an imitation of the mothur taxonomy format. 
+* New writer named `write_unite_general` to create an imitation of the UNITE general FASTA release. 
 
 ##  metacoder 0.1.3 
 

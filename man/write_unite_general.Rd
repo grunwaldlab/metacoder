@@ -5,8 +5,8 @@
 \title{Write an immitation of the UNITE general FASTA databse}
 \usage{
 write_unite_general(obj, file, tax_names = taxon_names, ranks = unite_rank,
-  ids = unite_id, gb_acc = acc_num, sequences = unite_seq,
-  seq_name = organism)
+  sequences = unite_seq, seq_name = organism, ids = unite_id,
+  gb_acc = acc_num, type = unite_type)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -18,15 +18,18 @@ sequence fasta file. This is optional.}
 
 \item{ranks}{(\code{character} named by taxon ids) The ranks of taxa}
 
-\item{ids}{(\code{character} named by taxon ids) UNITE sequence ids}
-
 \item{sequences}{(\code{character} named by taxon ids) Sequences}
 
 \item{seq_name}{(\code{character} named by taxon ids) Name of sequences.
 Usually a taxon name.}
 
-\item{acc_num}{(\code{character} named by taxon ids) Genbank accession
+\item{ids}{(\code{character} named by taxon ids) UNITE sequence ids}
+
+\item{gb_acc}{(\code{character} named by taxon ids) Genbank accession
 numbers}
+
+\item{type}{(\code{character} named by taxon ids) What type of sequence it
+is. Usually "rep" or "ref".}
 }
 \value{
 \code{\link{taxmap}}

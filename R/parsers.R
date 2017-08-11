@@ -489,10 +489,11 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
   
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
-                                   regex = "^(.*)\\|(.*)\\|(.*)\\|.*\\|(.*)$",
+                                   regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)\\|(.*)$",
                                    key = c(organism = "info",
                                            acc_num = "info",
                                            unite_id = "info",
+                                           unite_type = "info",
                                            tax_string = "class"),
                                    class_regex = "^(.*)__(.*)$",
                                    class_key = c(unite_rank = "info",
