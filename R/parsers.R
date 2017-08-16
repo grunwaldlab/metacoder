@@ -123,6 +123,9 @@ parse_phyloseq <- function(obj) {
   # Parse sample data
   if (! is.null(obj@sam_data)) {
     sam_data <- as.data.frame(as.list(obj@sam_data), stringsAsFactors = FALSE)
+    if (! is.null(rownames(obj@sam_data))) {
+      sam_data <- cbind(sample_ids = rownames(obj@sam_data), sam_data)
+    }
     sam_data[] <- lapply(sam_data, as.character)
     datasets <- c(datasets, list(sam_data = sam_data))
     mappings <- c(mappings, NA)
