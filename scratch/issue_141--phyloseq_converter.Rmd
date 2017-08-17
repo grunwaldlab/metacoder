@@ -70,7 +70,12 @@ obj %>%
 ## Even newer way
 
 ```{r}
-phy <- readRDS("scratch/example.phyloseq")
+devtools::install_github("grunwaldlab/metacoder")
+devtools::install_github("ropensci/taxa")
+
+library(metacoder)
+
+phy <- readRDS("example.phyloseq")
 obj <- parse_phyloseq(phy)
 
 # Convert counts to proportions
@@ -90,7 +95,7 @@ obj$data$diff_table <- compare_treatments(obj,
                                           treatments = obj$data$sam_data$status)
 
 # Plot differneces
-color_interval <- c(-4, 4) # The range of values (log 2 ratio of median proportion) to display
+color_interval <- c(-5, 5) # The range of values (log 2 ratio of median proportion) to display
 obj %>%
   taxa::filter_taxa(taxon_names == "Bacteria", subtaxa = TRUE) %>%
   heat_tree(node_size_axis_label = "Number of OTUs",
