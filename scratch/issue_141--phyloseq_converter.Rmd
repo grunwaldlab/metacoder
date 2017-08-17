@@ -66,3 +66,22 @@ obj %>%
             node_label = taxon_names)
 ```
 
+
+##
+
+```{r}
+phy <- readRDS("scratch/example.phyloseq")
+obj <- parse_phyloseq(phy)
+
+# Convert counts to proportions
+obj$data$otu_table <- calc_obs_props(obj,
+                                     dataset = "otu_table",
+                                     cols = obj$data$sam_data$sample_ids)
+
+# Calculate difference between treatments
+obj$data$diff_table <- compare_treatments(obj,
+                                          dataset = "otu_table",
+                                          sample_ids = obj$data$sam_data$sample_ids,
+                                          treatments = obj$data$sam_data$status)
+```
+

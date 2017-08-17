@@ -64,3 +64,160 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   
   return(prop_table)
 }
+
+
+
+
+
+
+#' Compare treatments
+#' 
+#' Apply a function to compare data, usually abundance, from pairs of 
+#' treatments. By default, every pairwise combination of treatments are 
+#' compared. A custom function can be supplied to perform the comparison.
+#' 
+#' @param obj A taxmap object
+#' @param dataset The name of a table in \code{obj} that contains data for each 
+#'   sample in columns.
+#' @param sample_ids The names of sample columns in \code{dataset}
+#' @param treatments The treatment associated with each sample. Must be the same
+#'   order and length as \code{sample_ids}.
+#' @param func The function to apply for each comparison. For each row in 
+#'   \code{dataset}, for each combination of treatments, this function will 
+#'   recieve the data for each treatment, passed a two character vecotors.
+#'   Therefor the function must take at least 2 arguments corresponding to the
+#'   two treatments compared. The function should return a vector or list or
+#'   results of a fixed length. If named, the names will be used in the output.
+#'   The names should be consistent as well. A simple example is
+#'   \code{function(x, y) mean(x) - mean(y)}. By default, the following function
+#'   is used:
+#'   \preformatted{
+#'   function(abund_1, abund_2) {
+#'     log_ratio <- log2(median(abund_1) / median(abund_2))
+#'     if (is.nan(log_ratio)) {
+#'       log_ratio <- 0
+#'     }
+#'     list(log2_median_ratio = log_ratio,
+#'          median_diff = median(abund_1) - median(abund_2),
+#'          mean_diff = mean(abund_1) - mean(abund_2),
+#'          wilcox_p_value = wilcox.test(abund_1, abund_2)$p.value)
+#'   }
+#'   }
+#' @param combinations Which combinations of treatments to use. Must be a list 
+#'   of vectors, each containing the names of 2 treatments to compare. By 
+#'   default, all pairwise combinations of treatments are compared.
+#' @param keep_cols If \code{TRUE}, preserve all columns not in 
+#'   \code{sample_ids} in the output. If \code{FALSE}, dont keep other columns. 
+#'   If a column names or indexes are supplied, only preserve those columns.
+#'   
+#' @return A tibble
+#'   
+#' @export
+compare_treatments <- function(obj, dataset, sample_ids, treatments,
+                               func = NULL, combinations = NULL,
+                               keep_cols = TRUE) {
+  # Get abundance by sample data
+  abund_data <- obj$data[[dataset]]
+  
+  # Define defualt function
+  if (is.null(func)) {
+    func <- function(abund_1, abund_2) {
+      log_ratio <- log2(median(abund_1) / median(abund_2))
+      if (is.nan(log_ratio)) {
+        log_ratio <- 0
+      }
+      list(log2_median_ratio = log_ratio,
+           median_diff = median(abund_1) - median(abund_2),
+           mean_diff = mean(abund_1) - mean(abund_2),
+           wilcox_p_value = wilcox.test(abund_1, abund_2)$p.value)
+    }
+  }
+  
+  # Parse "keep_cols" option
+  kc_error_msg <- 'The "keep_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.'
+  if (is.logical(keep_cols)) {
+    if (length(keep_cols) != 1) {
+      stop(kc_error_msg)
+    } else if (keep_cols) {
+      keep_cols <- colnames(abund_data)[! colnames(abund_data) %in% sample_ids]
+    } else {
+      keep_cols <- c()
+    }
+  } else {
+    if (is.numeric(keep_cols)) {
+      invalid_cols <- keep_cols[! keep_cols %in% seq_len(ncol(abund_data))]
+    } else {
+      invalid_cols <- keep_cols[! keep_cols %in% colnames(abund_data)]
+    }
+    if (length(invalid_cols) > 0) {
+      stop(paste0(kc_error_msg, 
+                  " The following column names/indexes are not valid:\n",
+                  "  ", limited_print(invalid_cols, type = "silent")))
+    }
+  }
+  
+  # Get every combination of treatments to compare
+  if (is.null(combinations)) {
+    combinations <- t(combn(unique(treatments), 2))
+    combinations <- lapply(seq_len(nrow(combinations)), function(i) combinations[i, ])
+  }
+  
+  # Make function to compare one pair of treatments
+  one_comparison <- function(treat_1, treat_2) {
+    output <- lapply(seq_len(nrow(abund_data)), function(i) {
+      # get samples ids for each treatment
+      samples_1 <- sample_ids[treatments == treat_1]
+      samples_2 <- sample_ids[treatments == treat_2]
+      
+      # get abundance data for each treatment
+      abund_1 <- unlist(abund_data[i, samples_1])
+      abund_2 <- unlist(abund_data[i, samples_2])
+      
+      # Run user-supplied function on abundance info
+      result <- as.list(func(abund_1, abund_2))
+      
+      # Complain if nothing is returned
+      if (length(result) == 0) {
+        stop(paste0("The function supplied returned nothing when given the following data:\n",
+                    '  Treatments compared: "', treat_1, '" vs "', treat_2, '"\n',
+                    '  Row index: ', i, '\n',
+                    limited_print(abund_1, prefix = paste0('  "', treat_1, '" data: '), type = "silent"),
+                    limited_print(abund_2, prefix = paste0('  "', treat_2, '" data: '), type = "silent")))
+      }
+      
+      # If the output does not have names, add defaults
+      if (is.null(names(result))) {
+        if (length(result) == 1) {
+          names(result) <- "value"
+        } else {
+          names(result) <- paste("value_", seq_along(result)) 
+        }
+      }
+      
+      do.call(data.frame, result)
+    })
+    
+    # Combine the results for each row into a data frame
+    output <- as.data.frame(do.call(rbind, output))
+    
+    # Add treatments compared
+    output <- cbind(data.frame(stringsAsFactors = FALSE,
+                               treatment_1 = treat_1,
+                               treatment_2 = treat_2),
+                    output)
+    
+    # Add in other columns if specified
+    output <- cbind(abund_data[, keep_cols], output)
+    
+    return(output)
+  }
+  
+  # Compare all pairs of treatments and combine
+  output <- lapply(seq_len(length(combinations)), function(i) {
+    one_comparison(combinations[[i]][1], combinations[[i]][2])
+  })
+  output <- do.call(rbind, output)
+  
+  # Convert to tibble and return
+  dplyr::as.tbl(output)
+}
