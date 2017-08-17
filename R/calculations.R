@@ -260,9 +260,9 @@ calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   }
   
   # Sum counts per taxon for each sample
+  obs_indexes <- obj$obs(dataset)
   output <- lapply(cols, function(col_index) {
-    count_table[col_index]
-    taxa::obs_apply(obj, dataset, function(i) sum(count_table[i, col_index]), simplify = TRUE)
+    vapply(obs_indexes, function(i) sum(count_table[i, col_index]), numeric(1))
   })
   output <- as.data.frame(output, stringsAsFactors = FALSE)
   colnames(output) <- colnames(count_table[cols])
