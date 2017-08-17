@@ -41,7 +41,8 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
     warning(paste0('The following ', length(invlaild_cols),
                    ' column(s) were not found in dataset "', dataset, '":\n',
                    limited_print(prefix = "  ", invlaild_cols, type = "silent")))
-    cols <- cols[cols %in% colnames(count_table)]
+    count_table <- count_table[ , ! colnames(count_table) %in% invlaild_cols]
+    cols <- cols[! cols %in% invlaild_cols]
   }
 
   # Check that count columns are numeric
@@ -62,16 +63,15 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   # }
 
   # Calculate proportions
-  prop_table <- count_table
-  prop_table[cols] <- lapply(prop_table[cols], function(x) x / sum(x))
+  count_table[cols] <- lapply(count_table[cols], function(x) x / sum(x))
   
   # Remove other columns if specified
   if (! keep_other_cols) {
-    cols_to_keep <- c(colnames(prop_table[cols]), "taxon_id")
-    prop_table <- prop_table[colnames(prop_table) %in% cols_to_keep]
+    cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
+    count_table <- count_table[colnames(count_table) %in% cols_to_keep]
   }
   
-  return(prop_table)
+  return(count_table)
 }
 
 
@@ -137,6 +137,18 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
            wilcox_p_value = wilcox.test(abund_1, abund_2)$p.value)
     }
   }
+  
+  # Check that all columns exist
+  invlaild_cols <- sample_ids[! sample_ids %in% colnames(abund_data)]
+  if (length(invlaild_cols) > 0) {
+    warning(paste0('The following ', length(invlaild_cols),
+                   ' column(s) were not found in dataset "', dataset, '":\n',
+                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
+    abund_data <- abund_data[ , ! colnames(abund_data) %in% invlaild_cols]
+    treatments <- treatments[! sample_ids %in% invlaild_cols]
+    sample_ids <- sample_ids[! sample_ids %in% invlaild_cols]
+  }
+  
   
   # Parse "keep_cols" option
   kc_error_msg <- 'The "keep_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.'
@@ -259,6 +271,16 @@ calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   # Find default columns if needed
   if (is.null(cols)) {
     cols <- which(vapply(count_table, is.numeric, logical(1)))
+  }
+  
+  # Check that all columns exist
+  invlaild_cols <- cols[! cols %in% colnames(count_table)]
+  if (length(invlaild_cols) > 0) {
+    warning(paste0('The following ', length(invlaild_cols),
+                   ' column(s) were not found in dataset "', dataset, '":\n',
+                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
+    count_table <- count_table[ , ! colnames(count_table) %in% invlaild_cols]
+    cols <- cols[! cols %in% invlaild_cols]
   }
   
   # Check that count columns are numeric
