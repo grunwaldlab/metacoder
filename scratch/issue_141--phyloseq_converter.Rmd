@@ -67,7 +67,7 @@ obj %>%
 ```
 
 
-##
+## Even newer way
 
 ```{r}
 phy <- readRDS("scratch/example.phyloseq")
@@ -78,10 +78,31 @@ obj$data$otu_table <- calc_obs_props(obj,
                                      dataset = "otu_table",
                                      cols = obj$data$sam_data$sample_ids)
 
+# Calculate per-taxon proportions 
+obj$data$tax_table <- calc_taxon_abund(obj, 
+                                       dataset = "otu_table", 
+                                       cols = obj$data$sam_data$sample_ids)
+
 # Calculate difference between treatments
 obj$data$diff_table <- compare_treatments(obj,
-                                          dataset = "otu_table",
+                                          dataset = "tax_table",
                                           sample_ids = obj$data$sam_data$sample_ids,
                                           treatments = obj$data$sam_data$status)
+
+# Plot differneces
+color_interval <- c(-4, 4) # The range of values (log 2 ratio of median proportion) to display
+obj %>%
+  taxa::filter_taxa(taxon_names == "Bacteria", subtaxa = TRUE) %>%
+  heat_tree(node_size_axis_label = "Number of OTUs",
+            node_size = n_obs,
+            node_color_axis_label = "Log 2 ratio of median proportions",
+            node_color = log2_median_ratio,
+            node_color_range = diverging_palette(),
+            node_color_trans = "linear",
+            node_color_interval = color_interval,
+            edge_color_interval = color_interval,
+            node_label = taxon_names,
+            node_label_max = 150)
+
 ```
 

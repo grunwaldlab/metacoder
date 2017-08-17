@@ -30,6 +30,7 @@
 * New writer named `write_unite_general` to create an imitation of the UNITE general FASTA release. 
 * New writer named `write_silva_fasta` to create an imitation of the SILVA FASTA release. 
 * New function named `compare_treatments` to compare multiple samples in multiple treatments, applying a user-defined function.
+* New function named `calc_taxon_abund` to sum observation values for each taxon.
 
 ##  metacoder 0.1.3 
 
