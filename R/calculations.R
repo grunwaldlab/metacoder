@@ -34,6 +34,15 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   if (is.null(cols)) {
     cols <- which(vapply(count_table, is.numeric, logical(1)))
   }
+  
+  # Check that all columns exist
+  invlaild_cols <- cols[! cols %in% colnames(count_table)]
+  if (length(invlaild_cols) > 0) {
+    warning(paste0('The following ', length(invlaild_cols),
+                   ' column(s) were not found in dataset "', dataset, '":\n',
+                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
+    cols <- cols[cols %in% colnames(count_table)]
+  }
 
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
