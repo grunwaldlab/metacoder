@@ -17,51 +17,24 @@
 #'
 #' @export
 calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
-  # Check that dataset exists and is a table
-  if (! dataset %in% names(obj$data)) {
-    stop(paste0('The dataset "', dataset,
-                '" is not in the object supplied. Datasets found include:\n  ',
-                limited_print(names(obj$data), type = "silent")))
-  }
-  if (! is.data.frame(obj$data[[dataset]])) {
-    stop(paste0('The dataset "', dataset,  '" is not a table.'))
-  }
-
+  
   # Get count table
-  count_table <- obj$data[[dataset]]
-
+  count_table <- get_taxmap_table(obj, dataset, cols)
+  
   # Find default columns if needed
   if (is.null(cols)) {
     cols <- which(vapply(count_table, is.numeric, logical(1)))
+  } else { # remove any columns that do not exist
+    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
   
-  # Check that all columns exist
-  invlaild_cols <- cols[! cols %in% colnames(count_table)]
-  if (length(invlaild_cols) > 0) {
-    warning(paste0('The following ', length(invlaild_cols),
-                   ' column(s) were not found in dataset "', dataset, '":\n',
-                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
-    count_table <- count_table[ , ! colnames(count_table) %in% invlaild_cols]
-    cols <- cols[! cols %in% invlaild_cols]
-  }
-
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
   if (! all(col_is_num)) {
     stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
                 limited_print(cols[!col_is_num], type = "silent")))
   }
-
-  # Check that counts are not summed per taxon
-  # NOT DONE YET
-  # if ("taxon_id" %in% colnames(count_table)) {
-  #   lapply(obj$subtaxa(value = "taxon_ids", recursive = FALSE), 
-  #          function(ids) {
-  #            test_col <- count_table[[cols[1]]]
-  #            sum(as.numeric(test_col[match(ids, count_table$taxon_id)]))
-  #          })
-  # }
-
+  
   # Calculate proportions
   count_table[cols] <- lapply(count_table[cols], function(x) x / sum(x))
   
@@ -122,7 +95,7 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
                                func = NULL, combinations = NULL,
                                keep_cols = TRUE) {
   # Get abundance by sample data
-  abund_data <- obj$data[[dataset]]
+  abund_data <- get_taxmap_table(obj, dataset, sample_ids)
   
   # Define defualt function
   if (is.null(func)) {
@@ -138,39 +111,22 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
     }
   }
   
-  # Check that all columns exist
-  invlaild_cols <- sample_ids[! sample_ids %in% colnames(abund_data)]
-  if (length(invlaild_cols) > 0) {
-    warning(paste0('The following ', length(invlaild_cols),
-                   ' column(s) were not found in dataset "', dataset, '":\n',
-                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
-    abund_data <- abund_data[ , ! colnames(abund_data) %in% invlaild_cols]
-    treatments <- treatments[! sample_ids %in% invlaild_cols]
-    sample_ids <- sample_ids[! sample_ids %in% invlaild_cols]
-  }
-  
+  # Account for columns that do not exist
+  invalid_cols <- get_invalid_cols(abund_data, sample_ids)
+  treatments <- treatments[! sample_ids %in% invalid_cols]
+  sample_ids <- sample_ids[! sample_ids %in% invalid_cols]
   
   # Parse "keep_cols" option
-  kc_error_msg <- 'The "keep_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.'
   if (is.logical(keep_cols)) {
     if (length(keep_cols) != 1) {
-      stop(kc_error_msg)
+      stop('The "keep_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.', call. = FALSE)
     } else if (keep_cols) {
       keep_cols <- colnames(abund_data)[! colnames(abund_data) %in% sample_ids]
     } else {
       keep_cols <- c()
     }
   } else {
-    if (is.numeric(keep_cols)) {
-      invalid_cols <- keep_cols[! keep_cols %in% seq_len(ncol(abund_data))]
-    } else {
-      invalid_cols <- keep_cols[! keep_cols %in% colnames(abund_data)]
-    }
-    if (length(invalid_cols) > 0) {
-      stop(paste0(kc_error_msg, 
-                  " The following column names/indexes are not valid:\n",
-                  "  ", limited_print(invalid_cols, type = "silent")))
-    }
+    not_used <- get_taxmap_table(obj, dataset, keep_cols) # Checks that columns specified are valid
   }
   
   # Get every combination of treatments to compare
@@ -255,34 +211,17 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
 #'   
 #' @export
 calc_taxon_abund <-function(obj, dataset, cols = NULL) {
-  # Check that dataset exists and is a table
-  if (! dataset %in% names(obj$data)) {
-    stop(paste0('The dataset "', dataset,
-                '" is not in the object supplied. Datasets found include:\n  ',
-                limited_print(names(obj$data), type = "silent")))
-  }
-  if (! is.data.frame(obj$data[[dataset]])) {
-    stop(paste0('The dataset "', dataset,  '" is not a table.'))
-  }
   
   # Get count table
-  count_table <- obj$data[[dataset]]
+  count_table <- get_taxmap_table(obj, dataset, cols)
   
   # Find default columns if needed
   if (is.null(cols)) {
     cols <- which(vapply(count_table, is.numeric, logical(1)))
+  }  else { # remove any columns that do not exist
+    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
-  
-  # Check that all columns exist
-  invlaild_cols <- cols[! cols %in% colnames(count_table)]
-  if (length(invlaild_cols) > 0) {
-    warning(paste0('The following ', length(invlaild_cols),
-                   ' column(s) were not found in dataset "', dataset, '":\n',
-                   limited_print(prefix = "  ", invlaild_cols, type = "silent")))
-    count_table <- count_table[ , ! colnames(count_table) %in% invlaild_cols]
-    cols <- cols[! cols %in% invlaild_cols]
-  }
-  
+
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
   if (! all(col_is_num)) {
