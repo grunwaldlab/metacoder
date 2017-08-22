@@ -124,8 +124,6 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
 #' 
 #' \code{brew install homebrew/science/emboss}
 #' 
-#' NOTE: This has not been tested by us yet.
-#' 
 #' \strong{Windows:}
 #' 
 #' There is an installer for Windows here:
