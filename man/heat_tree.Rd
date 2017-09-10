@@ -286,7 +286,7 @@ Any of the transformations listed below can be used by specifying their name.
 A customized function can also be supplied to do the transformation.
 
 \describe{
-  \item{"linear"}{Proprotional to radius/diameter of node}
+  \item{"linear"}{Proportional to radius/diameter of node}
   \item{"area"}{circular area; better perceptual accuracy than \code{"linear"}}
   \item{"log10"}{Log base 10 of radius}
   \item{"log2"}{Log base 2 of radius}
