@@ -345,13 +345,4 @@ or setting logical boundaries (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 }
 
-\examples{
-heat_tree(contaminants,
-          node_size = n_obs,
-          node_color = n_obs,
-          node_label = name,
-          tree_label = name,
-          layout = "fruchterman-reingold")
-
-}
 \keyword{internal}

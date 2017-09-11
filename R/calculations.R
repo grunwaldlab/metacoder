@@ -100,14 +100,14 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
   # Define defualt function
   if (is.null(func)) {
     func <- function(abund_1, abund_2) {
-      log_ratio <- log2(median(abund_1) / median(abund_2))
+      log_ratio <- log2(stats::median(abund_1) / stats::median(abund_2))
       if (is.nan(log_ratio)) {
         log_ratio <- 0
       }
       list(log2_median_ratio = log_ratio,
-           median_diff = median(abund_1) - median(abund_2),
+           median_diff = stats::median(abund_1) - stats::median(abund_2),
            mean_diff = mean(abund_1) - mean(abund_2),
-           wilcox_p_value = wilcox.test(abund_1, abund_2)$p.value)
+           wilcox_p_value = stats::wilcox.test(abund_1, abund_2)$p.value)
     }
   }
   
@@ -131,7 +131,7 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
   
   # Get every combination of treatments to compare
   if (is.null(combinations)) {
-    combinations <- t(combn(unique(treatments), 2))
+    combinations <- t(utils::combn(unique(treatments), 2))
     combinations <- lapply(seq_len(nrow(combinations)), function(i) combinations[i, ])
   }
   

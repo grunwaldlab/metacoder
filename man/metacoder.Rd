@@ -13,10 +13,8 @@ The goal of the \code{metacoder} package is to provide a set of tools for:
 
 \itemize{
   \item Standardized parsing of taxonomic information from diverse resources.
-  \item A set of functions to manipulate taxonomic data modeled after dplyr.
-  \item Visualization of statistics distributed over taxonomic classifications and phylogenies.
+  \item Visualization of statistics distributed over taxonomic classifications.
   \item Evaluating potential metabarcoding primers for taxonomic specificity.
-  \item Evaluating potential metabarcoding loci for taxonomic discrimination (in development).
 }
 
 To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with
@@ -33,41 +31,6 @@ The full documentation can be found online at \url{http://grunwaldlab.github.io/
 There is also a short vignette included for offline use that can be accessed  by the following code:
 
 \code{browseVignettes(package = "metacoder")}
-}
-
-\section{Most important functions}{
-
-
-\strong{Parsing taxonomy information:}
-
-\itemize{
-  \item \code{\link{extract_taxonomy}}
-}
-
-\strong{Dplyr-style manipulations of taxonomic data:}
-
-\itemize{
-  \item \code{\link{arrange_obs}}
-  \item \code{\link{arrange_taxa}}
-  \item \code{\link{filter_obs}}
-  \item \code{\link{filter_taxa}}
-  \item \code{\link{mutate_obs}}
-  \item \code{\link{mutate_taxa}}
-  \item \code{\link{transmute_obs}}
-  \item \code{\link{transmute_taxa}}
-  \item \code{\link{sample_n_obs}}
-  \item \code{\link{sample_n_taxa}}
-  \item \code{\link{sample_frac_obs}}
-  \item \code{\link{sample_frac_taxa}}
-  \item \code{\link{select_obs}}
-  \item \code{\link{select_taxa}}
-}
-
-\strong{Taxonomically balanced sub-sampling:}
-
-\itemize{
-  \item \code{\link{taxonomic_sample}}
-}
 
 \strong{Plotting taxonomic distribution of data:}
 

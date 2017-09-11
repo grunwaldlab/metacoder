@@ -75,13 +75,13 @@ parse_phyloseq <- function(obj) {
   
   # Construct output
   tax_cols <- colnames(tax_data)[which(tolower(colnames(tax_data)) %in% possible_ranks)]
-  output <- parse_tax_data(tax_data = tax_data, 
+  output <- taxa::parse_tax_data(tax_data = tax_data, 
                            datasets = datasets,
                            class_cols = tax_cols, 
                            mappings = mappings)
   
   # Remove NA taxa
-  output$filter_taxa(taxon_names != "NA")
+  output$filter_taxa(output$taxon_names() != "NA")
   
   # Move OTU table to front of data if it is there
   if ("otu_table" %in% names(output$data)) {
@@ -155,10 +155,10 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
   # Read raw data
   if (! are_missing["file"]) {
-    raw_data <- read.csv(file_path = file, header = TRUE, sep = "\t",
+    raw_data <- utils::read.csv(file_path = file, header = TRUE, sep = "\t",
                          stringsAsFactors = FALSE)
   } else if (! are_missing["text"]) {
-    raw_data <- read.csv(text = text, header = TRUE, sep = "\t",
+    raw_data <- utils::read.csv(text = text, header = TRUE, sep = "\t",
                          stringsAsFactors = FALSE)
   } else {
     if (!is.data.frame(table)) {
@@ -185,7 +185,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
                                    class_cols = "rankID",
                                    class_sep = ".")
     # replace taoxon names
-    my_taxon_names <- output$map_data(taxon_ids, taxon)
+    my_taxon_names <- output$map_data(output$taxon_ids(), output$data$tax_data$taxon)
     output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
                                           function(i) {
                                             my_taxon <- output$taxa[[i]]
@@ -301,18 +301,18 @@ parse_qiime_biom <- function(file) {
   check_for_pkg("biomformat")
   
   # Read biom file
-  my_biom <- read_biom(file)
+  my_biom <- biomformat::read_biom(file)
   
   # Coerce into a matrix
-  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(dat)))
+  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(my_biom)))
   otu_table <- cbind(list(otu_id = rownames(taxonomy)), otu_table)
   
   # Get taxonomy
-  taxonomy <- biomformat::observation_metadata(dat)
+  taxonomy <- biomformat::observation_metadata(my_biom)
   tax_cols <- colnames(taxonomy)
   
   # Get sample metadata (not used yet)
-  metadata <- biomformat::sample_metadata(dat)
+  metadata <- biomformat::sample_metadata(my_biom)
   
   # Create a taxmap object
   output <- taxa::parse_tax_data(tax_data = taxonomy,
@@ -617,22 +617,22 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
 #' @export
 parse_greengenes <- function(tax_file, seq_file = NULL) {
   # Parse taxonomy file
-  tax_data <- read.table(tax_file, sep = "\t")
+  tax_data <- utils::read.table(tax_file, sep = "\t")
   colnames(tax_data) <- c("gg_id", "classification")
   result <- taxa::parse_tax_data(tax_data, class_cols = "classification", 
                                  class_sep = "; ",
                                  class_regex = "^([a-z]{1})__(.*)$", 
-                                 class_key = c(gg_rank = "info", name = "taxon_name"))
+                                 class_key = c("gg_rank" = "info", "name" = "taxon_name"))
   result$data$tax_data$gg_id <- as.character(result$data$tax_data$gg_id)
-
+  
   # Remove data for ranks with no information
-  result <- filter_taxa(result, taxon_names != "", drop_obs = TRUE, 
-                        reassign_obs = c(tax_data = TRUE, class_data = FALSE))
+  result <- result$filter_taxa(result, result$taxon_names() != "", drop_obs = TRUE, 
+                               reassign_obs = c(tax_data = TRUE, class_data = FALSE))
   
   # Integrating sequence and taxonomy
   if (! is.null(seq_file)) {
     gg_sequences <- seqinr::read.fasta(seq_file, as.string = TRUE)
-    result <- mutate_obs(result, "tax_data", gg_seq = toupper(unlist(gg_sequences)[gg_id]))
+    result <- result$mutate_obs("tax_data", gg_seq = toupper(unlist(gg_sequences)[result$data$tax_data$gg_id]))
   }
   
   return(result)

@@ -60,7 +60,7 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
     tax_content <- vapply(seq_len(length(ids)),
                           FUN.VALUE = character(1),
                           function(i) {
-                            class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                            class_ids <- rev(obj$supertaxa(names(ids[i]), value = "taxon_ids",
                                                        include_input = TRUE, simplify = TRUE))
                             my_names <- tax_names[class_ids]
                             my_ranks <- ranks[class_ids]
@@ -133,7 +133,7 @@ write_rdp <- function(obj, file, tax_names = taxon_names,
   headers <- vapply(seq_len(length(ids)),
                         FUN.VALUE = character(1),
                         function(i) {
-                          class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                          class_ids <- rev(obj$supertaxa(names(ids[i]), value = "taxon_ids",
                                                      include_input = TRUE, simplify = TRUE))
                           my_names <- tax_names[class_ids]
                           my_ranks <- ranks[class_ids]
@@ -204,7 +204,7 @@ write_mothur_taxonomy <- function(obj, file, tax_names = taxon_names,
   output <- vapply(seq_len(length(ids)),
                     FUN.VALUE = character(1),
                     function(i) {
-                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                      class_ids <- rev(obj$supertaxa(names(ids[i]), value = "taxon_ids",
                                                  include_input = TRUE, simplify = TRUE))
                       my_names <- tax_names[class_ids]
                       my_scores <- scores[obj$data$class_data$input_index == i][class_ids]
@@ -274,7 +274,7 @@ write_unite_general <- function(obj, file, tax_names = taxon_names,
   headers <- vapply(seq_len(length(ids)),
                     FUN.VALUE = character(1),
                     function(i) {
-                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                      class_ids <- rev(obj$supertaxa(names(ids[i]), value = "taxon_ids",
                                                  include_input = TRUE, simplify = TRUE))
                       my_names <- tax_names[class_ids]
                       my_ranks <- ranks[class_ids]
@@ -339,7 +339,7 @@ write_silva_fasta <- function(obj, file, tax_names = taxon_names,
   headers <- vapply(seq_len(length(ids)),
                     FUN.VALUE = character(1),
                     function(i) {
-                      class_ids <- rev(supertaxa(obj, names(ids[i]), value = "taxon_ids",
+                      class_ids <- rev(obj$supertaxa(names(ids[i]), value = "taxon_ids",
                                                  include_input = TRUE, simplify = TRUE))
                       my_names <- tax_names[class_ids]
                       my_other <- other_names[class_ids]
