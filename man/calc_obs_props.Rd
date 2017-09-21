@@ -9,13 +9,13 @@ calc_obs_props(obj, dataset, cols = NULL, keep_other_cols = TRUE)
 \arguments{
 \item{obj}{A taxmap object}
 
+\item{dataset}{The name of a table in \code{obj} that contains counts.}
+
 \item{cols}{The names/indexes of columns in \code{data} that have counts. By Default,
 all numeric columns in \code{data} are used.}
 
 \item{keep_other_cols}{If \code{TRUE}, keep non-count cols in the input data.
 The "taxon_id" column will always be preserved.}
-
-\item{data}{The name of a table in \code{obj} that contains counts.}
 }
 \value{
 A tibble
@@ -26,4 +26,9 @@ counts to proportions. This is meant to be used with counts associated with
 observations (e.g. OTUs), as opposed to counts that have already been summed
 per taxon. If counts have already been summed per taxon, use
 [calc_tax_props()] instead.
+}
+\seealso{
+Other calculations: \code{\link{calc_taxon_abund}},
+  \code{\link{compare_treatments}},
+  \code{\link{rarefy_obs}}
 }

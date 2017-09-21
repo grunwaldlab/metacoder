@@ -7,7 +7,7 @@
 #' [calc_tax_props()] instead.
 #'
 #' @param obj A taxmap object
-#' @param data The name of a table in \code{obj} that contains counts.
+#' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{data} that have counts. By Default,
 #'   all numeric columns in \code{data} are used.
 #' @param keep_other_cols If \code{TRUE}, keep non-count cols in the input data.
@@ -15,6 +15,8 @@
 #'
 #' @return A tibble
 #'
+#' @family calculations
+#' 
 #' @export
 calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   
@@ -38,6 +40,64 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   # Calculate proportions
   count_table[cols] <- lapply(count_table[cols], function(x) x / sum(x))
   
+  # Remove other columns if specified
+  if (! keep_other_cols) {
+    cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
+    count_table <- count_table[colnames(count_table) %in% cols_to_keep]
+  }
+  
+  return(count_table)
+}
+
+
+#' Calculate proportions from observation counts
+#' 
+#' For a given table in a taxmap object, rarefy counts to a constant total. This
+#' is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
+#' which columns are numeric and handles the reformatting needed to use tibbles.
+#' 
+#' @param obj A taxmap object
+#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @param cols The names/indexes of columns in \code{data} that have counts. By 
+#'   Default, all numeric columns in \code{data} are used.
+#' @param sample_size The sample size counts will be rarefied to. This can be 
+#'   either a single integer or a vector of integers of equal length to the 
+#'   number of columns.
+#' @param keep_other_cols If \code{TRUE}, keep non-count cols in the input data.
+#'   The "taxon_id" column will always be preserved.
+#'   
+#' @return A tibble
+#' 
+#' @family calculations
+#'   
+#' @export
+rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, keep_other_cols = TRUE) {
+  
+  # Get count table
+  count_table <- get_taxmap_table(obj, dataset, cols)
+  
+  # Find default columns if needed
+  if (is.null(cols)) {
+    cols <- which(vapply(count_table, is.numeric, logical(1)))
+  } else { # remove any columns that do not exist
+    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
+  }
+  
+  # Check that columns are numeric
+  col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
+  if (! all(col_is_num)) {
+    stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
+                limited_print(cols[!col_is_num], type = "silent")))
+  }
+  
+  # Calculate minimum count if no sample size is given
+  if (is.null(sample_size)) {
+    sample_size <- min(colSums(count_table[cols]))
+  }
+  
+  # Rarefy
+  count_table[cols] <- dplyr::as.tbl(as.data.frame(t(vegan::rrarefy(t(count_table[cols]), sample = sample_size))))
+
   # Remove other columns if specified
   if (! keep_other_cols) {
     cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
@@ -90,6 +150,8 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
 #'   
 #' @return A tibble
 #'   
+#' @family calculations
+#' 
 #' @export
 compare_treatments <- function(obj, dataset, sample_ids, treatments,
                                func = NULL, combinations = NULL,
@@ -209,6 +271,8 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
 #'   
 #' @return A tibble
 #'   
+#' @family calculations
+#' 
 #' @export
 calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   

@@ -22,3 +22,8 @@ For a given table in a taxmap object, sum the values in each column for each
 taxon. This is useful to convert per-observation counts (e.g. OTU counts) to
 per-taxon counts.
 }
+\seealso{
+Other calculations: \code{\link{calc_obs_props}},
+  \code{\link{compare_treatments}},
+  \code{\link{rarefy_obs}}
+}
