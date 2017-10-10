@@ -260,21 +260,23 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
 
 #' Sum observation values for each taxon
 #' 
-#' For a given table in a taxmap object, sum the values in each column for each
-#' taxon. This is useful to convert per-observation counts (e.g. OTU counts) to
+#' For a given table in a taxmap object, sum the values in each column for each 
+#' taxon. This is useful to convert per-observation counts (e.g. OTU counts) to 
 #' per-taxon counts.
 #' 
 #' @param obj A taxmap object
 #' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{data} that have counts. By
+#' @param cols The names/indexes of columns in \code{data} that have counts. By 
 #'   Default, all numeric columns in \code{data} are used.
+#' @param col_names The names of count columns in the output. Must be the same
+#'   length as \code{cols}.
 #'   
 #' @return A tibble
 #'   
 #' @family calculations
-#' 
+#'   
 #' @export
-calc_taxon_abund <-function(obj, dataset, cols = NULL) {
+calc_taxon_abund <- function(obj, dataset, cols = NULL, col_names = NULL) {
   
   # Get count table
   count_table <- get_taxmap_table(obj, dataset, cols)
@@ -285,6 +287,13 @@ calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   }  else { # remove any columns that do not exist
     cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
+  
+  # Get output column names
+  if (is.null(col_names)) {
+    col_names <- names(count_table[cols])
+  } else if (length(col_names) != length(cols)) { 
+    stop("The length of 'cols' and 'col_names' are not equal")
+  }  
 
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
@@ -296,7 +305,7 @@ calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   # Sum counts per taxon for each sample
   obs_indexes <- obj$obs(dataset)
   output <- lapply(cols, function(col_index) {
-    vapply(obs_indexes, function(i) sum(count_table[i, col_index]), numeric(1))
+    vapply(obs_indexes, function(i) sum(count_table[[col_index]][i]), numeric(1))
   })
   output <- as.data.frame(output, stringsAsFactors = FALSE)
   colnames(output) <- colnames(count_table[cols])
@@ -304,6 +313,9 @@ calc_taxon_abund <-function(obj, dataset, cols = NULL) {
   # Add taxon_id column
   output <- cbind(data.frame(taxon_id = obj$taxon_ids(), stringsAsFactors = FALSE),
                   output)
+  
+  # Rename cols
+  colnames(output)[match(cols, colnames(output))] <- col_names
   
   # Convert to tibble and return
   dplyr::as.tbl(output)

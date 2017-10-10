@@ -4,22 +4,25 @@
 \alias{calc_taxon_abund}
 \title{Sum observation values for each taxon}
 \usage{
-calc_taxon_abund(obj, dataset, cols = NULL)
+calc_taxon_abund(obj, dataset, cols = NULL, col_names = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
-\item{cols}{The names/indexes of columns in \code{data} that have counts. By
+\item{cols}{The names/indexes of columns in \code{data} that have counts. By 
 Default, all numeric columns in \code{data} are used.}
+
+\item{col_names}{The names of count columns in the output. Must be the same
+length as \code{cols}.}
 }
 \value{
 A tibble
 }
 \description{
-For a given table in a taxmap object, sum the values in each column for each
-taxon. This is useful to convert per-observation counts (e.g. OTU counts) to
+For a given table in a taxmap object, sum the values in each column for each 
+taxon. This is useful to convert per-observation counts (e.g. OTU counts) to 
 per-taxon counts.
 }
 \seealso{
