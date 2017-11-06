@@ -1,26 +1,58 @@
-heat_tree_matrix <- function(obj, seed = 1, ...) {
+#' Plot a matrix of heat trees
+#' 
+#' Plot a matrix of heat trees for showing parwise comparision. A larger, 
+#' labelled tree serves as a key for the matrix of smaller unlabelled trees.
+#' 
+#' @param obj A \code{taxmap} object
+#' @param dataset The name of a table in \code{obj$data} that is the output of 
+#'   \code{\link{compare_treatments}} or in the same format.
+#' @param label_small_trees If \code{TRUE} add labels to small trees as well as 
+#'   the key tree. Otherwise, only the key tree will be labled.
+#' @param key_size The size of the key tree relative to the whole graph. For
+#'   example, 0.5 means half the width/height of the graph.
+#' @param seed That random seed used to make the graphs.
+#'   
+#' @export
+heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
+                             key_size = 0.6, seed = 1, ...) {
   # Make plot layout
-  treatments <- unique(c(obj$data$diff_table$treatment_1, obj$data$diff_table$treatment_2))
+  diff_table <- obj$data[[dataset]]
+  treatments <- unique(c(diff_table$treatment_1, diff_table$treatment_2))
   combinations <- t(combn(seq_along(treatments), 2))
   layout_matrix <- matrix(rep(NA, (length(treatments))^2), nrow = length(treatments))
   for (index in 1:nrow(combinations)) {
     layout_matrix[combinations[index, 1], combinations[index, 2]] <- index
   }
   
+  
+  
   # Make individual plots
+  if (label_small_trees) {
+    plot_sub_plot <- function(..., make_legend = FALSE) {
+      metacoder::heat_tree(..., make_legend = FALSE)
+    }
+  } else {
+    plot_sub_plot <- function(..., node_label = NULL, make_legend = FALSE) {
+      metacoder::heat_tree(..., make_legend = FALSE)
+    }
+  }
+  
   sub_plots <- lapply(seq_len(nrow(combinations)),
                       function(index) {
                         set.seed(seed)
                         obj %>%
                           taxa::filter_obs("diff_table",
                                            treatment_1 == treatments[combinations[index, 1]] & treatment_2 == treatments[combinations[index, 2]]) %>%
-                          metacoder::heat_tree(...,
-                                               make_legend = FALSE)
+                          plot_sub_plot(...)
                       })
   
   # Make key plot
+  plot_key_plot <- function(..., node_color = NULL, node_color_range = NULL) {
+    heat_tree(..., node_color = "grey")
+  }
+  
   set.seed(seed)
-  key_plot <- metacoder::heat_tree(obj, ..., make_legend = TRUE)
+  key_plot <- plot_key_plot(obj, ...)
   
   calc_subplot_coords <- function(a_matrix, x1 = 0, y1 = 0, x2 = 1, y2 = 1) {
     # lowerleft = c(x1, y1), upperright = c(x2, y2)
@@ -58,7 +90,7 @@ heat_tree_matrix <- function(obj, seed = 1, ...) {
   # Make plot
   label_size <- 12
   matrix_plot <- cowplot::ggdraw() + 
-    cowplot::draw_plot(key_plot, x = 0, y = 0, width = 0.75, height = 0.6) +
+    cowplot::draw_plot(key_plot, x = 0, y = 0, width = key_size, height = key_size) +
     cowplot::draw_text(gsub("_", " ", horz_label_data$treatment_2), 
                        x = horz_label_data$label_x, y = horz_label_data$label_y, 
                        size = label_size, colour = diverging_palette()[1],
