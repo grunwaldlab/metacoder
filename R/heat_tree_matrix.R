@@ -47,7 +47,7 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
                       })
   
   # Make key plot
-  plot_key_plot <- function(..., node_color = NULL, node_color_range = NULL) {
+  plot_key_plot <- function(..., node_color = NULL) {
     heat_tree(..., node_color = "grey")
   }
   
