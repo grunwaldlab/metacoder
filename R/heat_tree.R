@@ -889,6 +889,19 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   rotation = 0,
                                   justification = "center-bottom"))
   }
+  
+  # Calculate label boundries
+  bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                         height = text_data$size, rotation = text_data$rotation,
+                         just = text_data$justification)
+  x_coords <- split(bounds$x, bounds$label)
+  y_coords <- split(bounds$y, bounds$label)
+  bounds_reformatted <- data.frame(label= names(x_coords),
+                                   xmin = vapply(x_coords, min, numeric(1)),
+                                   xmax = vapply(x_coords, max, numeric(1)),
+                                   ymin = vapply(y_coords, min, numeric(1)),
+                                   ymax = vapply(y_coords, max, numeric(1)))
+  
   #| ### Draw plot ================================================================================
   result = tryCatch({
     
@@ -900,6 +913,14 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
       ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) +
       ggplot2::scale_x_continuous(expand = c(0,0), limits = ranges$x) +
+      ggfittext::geom_fit_text(data = bounds_reformatted,
+                               grow = TRUE,
+                               # reflow = TRUE,
+                               ggplot2::aes_string(label = "label",
+                                                   xmin = "xmin",
+                                                   xmax = "xmax",
+                                                   ymin = "ymin",
+                                                   ymax = "ymax")) +
       ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                      panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                      plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
@@ -908,12 +929,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                      axis.ticks = ggplot2::element_blank(), 
                      axis.line  = ggplot2::element_blank(),
                      plot.margin = grid::unit(c(0,0,0,0) , "in"))
-    if (!is.null(text_data)) {
-      text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = ranges$x, y_range = ranges$y)))
-      for (a_grob in text_grobs) {
-        the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-      }
-    }
+    # if (!is.null(text_data)) {
+    #   text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = ranges$x, y_range = ranges$y)))
+    #   for (a_grob in text_grobs) {
+    #     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
+    #   }
+    # }
     
     #| ### Save output file
     if (!is.null(output_file)) {
@@ -928,10 +949,10 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   }, error = function(msg) {
     if (grepl(msg$message, "Error: evaluation nested too deeply: infinite recursion / options(expressions=)?", fixed = TRUE)) {
       stop(paste(msg, sep = "\n", 
-                  "NOTE: This error typically occurs because of too many text labels being printed.", 
-                  "You can avoid it by increasing the value of `expressions` in the global options:",
-                  "    * How to see the current value: options('expressions')",
-                  "    * How to increase the value:    options(expressions = 100000)"))
+                 "NOTE: This error typically occurs because of too many text labels being printed.", 
+                 "You can avoid it by increasing the value of `expressions` in the global options:",
+                 "    * How to see the current value: options('expressions')",
+                 "    * How to increase the value:    options(expressions = 100000)"))
     } else {
       stop(msg)
     }

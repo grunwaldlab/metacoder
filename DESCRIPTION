@@ -39,7 +39,8 @@ Imports:
     readr,
     rlang,
     biomformat,
-    phylotate
+    phylotate,
+    ggfittext
 Suggests:
     knitr,
     rmarkdown,
