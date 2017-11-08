@@ -41,7 +41,7 @@ heat_tree(...)
   title = NULL, title_size = 0.08, node_color_axis_label = NULL,
   node_size_axis_label = NULL, edge_color_axis_label = NULL,
   edge_size_axis_label = NULL, background_color = "#FFFFFF00",
-  output_file = NULL, ...)
+  output_file = NULL, aspect_ratio = 1, ...)
 }
 \arguments{
 \item{...}{(other named arguments)
@@ -228,6 +228,8 @@ Default: Transparent}
 \item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
 The type of the file will be determined by the extension given.
 Default: Do not save plot.}
+
+\item{aspect_ratio}{The aspect_ratio of the plot.}
 }
 \description{
 Plots the distribution of values associated with a taxonomic classification.

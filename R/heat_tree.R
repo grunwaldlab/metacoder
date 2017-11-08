@@ -200,6 +200,8 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' The type of the file will be determined by the extension given.
 #' Default: Do not save plot.
 #' 
+#' @param aspect_ratio The aspect_ratio of the plot.
+#' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
@@ -379,6 +381,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               background_color = "#FFFFFF00",
                               output_file = NULL,
                               
+                              aspect_ratio = 1,
+                              
                               ...) {
   #| ### Verify arguments =========================================================================
   if (length(taxon_id) != length(supertaxon_id)) {
@@ -547,6 +551,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   row.names(coords) <- names(igraph::V(graph))
   data$vx_plot <- coords[data$tid_user, 1]
   data$vy_plot <- coords[data$tid_user, 2]
+  
+  #| ### Set aspect ration
+  data$vx_plot <- data$vx_plot * aspect_ratio
   
   #| ### Core plot data ===========================================================================
   #|
