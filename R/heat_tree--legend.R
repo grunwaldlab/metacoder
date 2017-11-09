@@ -31,8 +31,8 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                              width_title = "Size", width_sig_fig = 3,
                              color_range, color_trans_range = NULL, color_stat_range, color_stat_trans = function(x) {x},
                              color_title = "Color", color_sig_fig = 3,
-                             divisions = 100, label_count = 7, title = NULL, label_size = 0.07,
-                             title_size = 0.08, axis_label_size = 0.08,
+                             divisions = 100, label_count = 7, title = NULL, label_size = 0.09,
+                             title_size = 0.11, axis_label_size = 0.11,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
   # if the color is defined explicitly, do not print color scale labels
@@ -128,7 +128,8 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                                    size = label_size,
                                    color = label_color,
                                    rotation = 0,
-                                   justification = "left"))
+                                   justification = "left",
+                                   group = "legend"))
     
   }
   # Color axis labels ------------------------------------------------------------------------------
@@ -141,7 +142,8 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                                    size = label_size,
                                    color = label_color,
                                    rotation = 0,
-                                   justification = "right"))
+                                   justification = "right",
+                                   group = "legend"))
   }
   
   # Add color axis title ---------------------------------------------------------------------------
@@ -159,7 +161,8 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                                    size = axis_label_size,
                                    color = "#000000",
                                    rotation = pi / 2,
-                                   justification = "center-bottom"))
+                                   justification = "center-bottom",
+                                   group = "legend"))
   }
   
   # Add size axis title ----------------------------------------------------------------------------
@@ -174,23 +177,25 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                                    size = axis_label_size,
                                    color = "#000000",
                                    rotation = pi / 2,
-                                   justification = "center-top"))
+                                   justification = "center-top",
+                                   group = "legend"))
   }
   
   # Add legend title -------------------------------------------------------------------------------
   if (!is.null(title)) {
     title_size <- length * title_size
-    title_spacer <- title_size
+    title_spacer <- title_size * 0.5
     label_y_max <- max(label_data$y + label_size / 2)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
                                    label = title,
-                                   x = mean(range(point_data$x)),
+                                   x = min(scale_data$x),
                                    y = label_y_max + title_spacer,
                                    size = title_size,
                                    color = "#000000",
                                    rotation = 0,
-                                   justification = "center-bottom"))
+                                   justification = "left-bottom",
+                                   group = "legend"))
   } 
   
   

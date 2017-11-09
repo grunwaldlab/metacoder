@@ -271,3 +271,15 @@ get_invalid_cols <- function(table, cols)  {
   }
   return(invalid_cols)
 }
+
+
+#' @keywords internal
+rad_to_deg <- function(rad) {
+  (rad * 180) / (pi)
+}
+
+
+#' @keywords internal
+deg2rad <- function(deg) {
+  (deg * pi) / (180)
+  }

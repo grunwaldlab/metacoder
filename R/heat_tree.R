@@ -201,6 +201,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Default: Do not save plot.
 #' 
 #' @param aspect_ratio The aspect_ratio of the plot.
+#' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -382,6 +383,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               output_file = NULL,
                               
                               aspect_ratio = 1,
+                              repel_labels = TRUE,
                               
                               ...) {
   #| ### Verify arguments =========================================================================
@@ -738,7 +740,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                             size = vl_data$vls_plot,
                             color = vl_data$vlc_plot,
                             rotation = 0,
-                            justification = "center")
+                            justification = "center",
+                            group = "nodes")
   } else {
     text_data <- NULL
   }
@@ -771,7 +774,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   size = el_data$els_plot,
                                   color = el_data$elc_plot,
                                   rotation = el_data$el_rotation,
-                                  justification = justification))
+                                  justification = justification,
+                                  group = "edges"))
   }
   # Get tree label data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   data$tl_is_shown <- FALSE
@@ -798,30 +802,96 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   size = title_data$tls_plot,
                                   color = title_data$tlc_plot,
                                   rotation = 0,
-                                  justification = "center"))
+                                  justification = "center",
+                                  group = "trees"))
   }
+  
+  
+  
+  # Get range data ---------------------------------------------------------------------------------
+  get_limits <- function() {
+    label_corners <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                                  height = text_data$size, rotation = text_data$rotation,
+                                  just = text_data$justification)
+    x_points <- c(element_data$x, label_corners$x)
+    y_points <- c(element_data$y, label_corners$y)
+    margin_size_plot <- margin_size * square_side_length
+    x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2]) 
+    y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4]) 
+    return(list(x = x_range, y = y_range))
+  }
+  
+  # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ranges <- get_limits() # UGLY HACK! FIX!
+  if (! is.null(title)) {
+    title_size <- diff(ranges$x) * title_size
+    text_data <- rbind(text_data,
+                       data.frame(stringsAsFactors = FALSE, 
+                                  label = title,
+                                  x = mean(ranges$x),
+                                  y = max(ranges$y) + title_size * 0.5,
+                                  size = title_size,
+                                  color = "#000000",
+                                  rotation = 0,
+                                  justification = "center-bottom"))
+  }
+  
+  
+  # Repel labels
+  ranges <- get_limits() # UGLY HACK! FIX!
+  reformat_bounds <- function(bounds) {
+    bounds$label <- factor(bounds$label, levels=unique(bounds$label)) # keep order when split
+    x_coords <- split(bounds$x, rep(seq_len(nrow(text_data)), each = 4))
+    y_coords <- split(bounds$y, rep(seq_len(nrow(text_data)), each = 4))
+    data.frame(label = text_data$label,
+               color = text_data$color,
+               rotation = rad_to_deg(text_data$rotation),
+               group = text_data$group,
+               xmin = vapply(x_coords, min, numeric(1)),
+               xmax = vapply(x_coords, max, numeric(1)),
+               ymin = vapply(y_coords, min, numeric(1)),
+               ymax = vapply(y_coords, max, numeric(1)),
+               stringsAsFactors = FALSE)
+  }
+  
+  bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                         height = text_data$size, rotation = text_data$rotation,
+                         just = text_data$justification)
+  bounds <- reformat_bounds(bounds)
+  
+  if (repel_labels) {
+    movable <- text_data$group != "legend"
+    text_data[movable, c("x", "y")] <- ggrepel:::repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
+                                                             boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
+                                                             point_padding_x = 0, point_padding_y = 0,
+                                                             xlim = ranges$x,
+                                                             ylim = ranges$y,
+                                                             force = 0.002,
+                                                             maxiter = 10000,
+                                                             direction = "both")
+    bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                           height = text_data$size, rotation = text_data$rotation,
+                           just = text_data$justification)
+    bounds <- reformat_bounds(bounds)
+  }
+  
+  
+  
+  
   #|
   #| #### Make node legend -----------------------------------------------------------------------
   #|
   if (make_legend) {
     legend_length <- square_side_length * 0.3 
     
+    # right_plot_boundry <- max(c(element_data[element_data$y <= legend_length + min(element_data$y), "x"],
+    #       bounds[bounds$ymin <= legend_length +  min(element_data$y), "xmax"]))
     
-    y_in_legend_space <-  (!missing(node_size) & element_data$y <  min(element_data$y) + legend_length) | 
-      (!missing(edge_size) & element_data$y >  max(element_data$y) - legend_length)
-    legend_min_x <- max(c(element_data$x[y_in_legend_space], min(element_data$x)))  # The furthest left allowed by graph components
-    legend_ideal_x <- max(element_data$x) - diff(range(data$vs_plot) * 2) - square_side_length * 0.1 # The ideal position of the legend
-    
-    # right_plot_boundry <- max(c(legend_min_x, legend_ideal_x))
-    if (legend_ideal_x >= legend_min_x) {
-      right_plot_boundry <- legend_ideal_x + diff(range(element_data$x)) * 0.05 # needs to be changed; hackish
-    } else {
-      right_plot_boundry <- legend_min_x + diff(range(element_data$x)) * 0.05 # needs to be changed; hackish
-    }
+    right_plot_boundry <- max(c(element_data$x, bounds$xmax))
     
     
     node_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = min(element_data$y), 
+                                    y = min(element_data$y) * 0.9, 
                                     length = legend_length, 
                                     width_range = vsr_plot * 2, 
                                     width_trans_range = range(data$vs_trans) * 2,
@@ -840,8 +910,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     #|
     #| #### Make edge legend -----------------------------------------------------------------------
     #|
+    
+    # right_plot_boundry <- max(c(element_data[element_data$y >= max(element_data$y) - legend_length, "x"],
+    #                             bounds[bounds$ymax >= max(element_data$y) - legend_length, "xmin"]))
+    
     edge_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = max(element_data$y) - legend_length - 0.1 * legend_length, 
+                                    y = max(element_data$y) - legend_length * 1.3, 
                                     length = legend_length, 
                                     width_range = esr_plot * 2, 
                                     width_trans_range = range(data$vs_trans) * 2,
@@ -859,48 +933,16 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                     hide_color = missing(edge_color))
     element_data <- rbind(element_data, node_legend$shapes, edge_legend$shapes)
     text_data <- rbind(text_data, node_legend$labels, edge_legend$labels)
+    bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                           height = text_data$size, rotation = text_data$rotation,
+                           just = text_data$justification)
+    bounds <- reformat_bounds(bounds)
   } else {
     legend_data <- NULL
   }
-  # Get range data ---------------------------------------------------------------------------------
-  get_limits <- function() {
-    label_corners <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
-                                  height = text_data$size, rotation = text_data$rotation,
-                                  just = text_data$justification)
-    x_points <- c(element_data$x, label_corners$x)
-    y_points <- c(element_data$y, label_corners$y)
-    margin_size_plot <- margin_size * square_side_length
-    x_range <- c(min(x_points) - margin_size_plot[1], max(x_points) + margin_size_plot[2]) 
-    y_range <- c(min(y_points) - margin_size_plot[3], max(y_points) + margin_size_plot[4]) 
-    return(list(x = x_range, y = y_range))
-  }
-  ranges <- get_limits() # UGLY HACK! FIX!
   
-  # Add tree title data - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  if (! is.null(title)) {
-    title_size <- diff(ranges$x) * title_size
-    text_data <- rbind(text_data,
-                       data.frame(stringsAsFactors = FALSE, 
-                                  label = title,
-                                  x = mean(ranges$x),
-                                  y = max(ranges$y) + title_size * 0.5,
-                                  size = title_size,
-                                  color = "#000000",
-                                  rotation = 0,
-                                  justification = "center-bottom"))
-  }
   
-  # Calculate label boundries
-  bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
-                         height = text_data$size, rotation = text_data$rotation,
-                         just = text_data$justification)
-  x_coords <- split(bounds$x, bounds$label)
-  y_coords <- split(bounds$y, bounds$label)
-  bounds_reformatted <- data.frame(label= names(x_coords),
-                                   xmin = vapply(x_coords, min, numeric(1)),
-                                   xmax = vapply(x_coords, max, numeric(1)),
-                                   ymin = vapply(y_coords, min, numeric(1)),
-                                   ymax = vapply(y_coords, max, numeric(1)))
+  
   
   #| ### Draw plot ================================================================================
   result = tryCatch({
@@ -913,14 +955,18 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
       ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) +
       ggplot2::scale_x_continuous(expand = c(0,0), limits = ranges$x) +
-      ggfittext::geom_fit_text(data = bounds_reformatted,
+      ggfittext::geom_fit_text(data = bounds, 
                                grow = TRUE,
                                # reflow = TRUE,
+                               color = bounds$color,
+                               padding.x = grid::unit(0, "mm"),
+                               padding.y = grid::unit(0, "mm"),
                                ggplot2::aes_string(label = "label",
                                                    xmin = "xmin",
                                                    xmax = "xmax",
                                                    ymin = "ymin",
-                                                   ymax = "ymax")) +
+                                                   ymax = "ymax",
+                                                   angle = "rotation")) +
       ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                      panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                      plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
@@ -962,5 +1008,4 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   
   return(the_plot)
 }
-
 
