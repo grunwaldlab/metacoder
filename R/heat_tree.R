@@ -854,27 +854,30 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                stringsAsFactors = FALSE)
   }
   
-  bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
-                         height = text_data$size, rotation = text_data$rotation,
-                         just = text_data$justification)
-  bounds <- reformat_bounds(bounds)
-  
-  if (repel_labels) {
-    movable <- text_data$group != "legend"
-    text_data[movable, c("x", "y")] <- ggrepel:::repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
-                                                             boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
-                                                             point_padding_x = 0, point_padding_y = 0,
-                                                             xlim = ranges$x,
-                                                             ylim = ranges$y,
-                                                             force = 0.002,
-                                                             maxiter = 10000,
-                                                             direction = "both")
+  if (!is.null(text_data)) {
     bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                            height = text_data$size, rotation = text_data$rotation,
                            just = text_data$justification)
     bounds <- reformat_bounds(bounds)
+    
+    if (repel_labels) {
+      movable <- text_data$group != "legend"
+      text_data[movable, c("x", "y")] <- ggrepel:::repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
+                                                               boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
+                                                               point_padding_x = 0, point_padding_y = 0,
+                                                               xlim = ranges$x,
+                                                               ylim = ranges$y,
+                                                               force = 0.002,
+                                                               maxiter = 10000,
+                                                               direction = "both")
+      bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
+                             height = text_data$size, rotation = text_data$rotation,
+                             just = text_data$justification)
+      bounds <- reformat_bounds(bounds)
+    }
+  } else {
+    bounds <- NULL
   }
-  
   
   
   
@@ -887,8 +890,11 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     # right_plot_boundry <- max(c(element_data[element_data$y <= legend_length + min(element_data$y), "x"],
     #       bounds[bounds$ymin <= legend_length +  min(element_data$y), "xmax"]))
     
-    right_plot_boundry <- max(c(element_data$x, bounds$xmax))
-    
+    if (is.null(bounds)) {
+      right_plot_boundry <- max(celement_data$x)
+    } else {
+      right_plot_boundry <- max(c(element_data$x, bounds$xmax))
+    }
     
     node_legend <- make_plot_legend(x = right_plot_boundry,
                                     y = min(element_data$y) * 0.9, 
@@ -955,18 +961,6 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
       ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) +
       ggplot2::scale_x_continuous(expand = c(0,0), limits = ranges$x) +
-      ggfittext::geom_fit_text(data = bounds, 
-                               grow = TRUE,
-                               # reflow = TRUE,
-                               color = bounds$color,
-                               padding.x = grid::unit(0, "mm"),
-                               padding.y = grid::unit(0, "mm"),
-                               ggplot2::aes_string(label = "label",
-                                                   xmin = "xmin",
-                                                   xmax = "xmax",
-                                                   ymin = "ymin",
-                                                   ymax = "ymax",
-                                                   angle = "rotation")) +
       ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                      panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                      plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
@@ -975,6 +969,20 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                      axis.ticks = ggplot2::element_blank(), 
                      axis.line  = ggplot2::element_blank(),
                      plot.margin = grid::unit(c(0,0,0,0) , "in"))
+    if (!is.null(bounds)) {
+      the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
+                                                      grow = TRUE,
+                                                      # reflow = TRUE,
+                                                      color = bounds$color,
+                                                      padding.x = grid::unit(0, "mm"),
+                                                      padding.y = grid::unit(0, "mm"),
+                                                      ggplot2::aes_string(label = "label",
+                                                                          xmin = "xmin",
+                                                                          xmax = "xmax",
+                                                                          ymin = "ymin",
+                                                                          ymax = "ymax",
+                                                                          angle = "rotation")) 
+    }
     # if (!is.null(text_data)) {
     #   text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = ranges$x, y_range = ranges$y)))
     #   for (a_grob in text_grobs) {
