@@ -40,7 +40,10 @@ Imports:
     rlang,
     biomformat,
     phylotate,
-    ggfittext
+    ggfittext,
+    vegan,
+    ggrepel,
+    cowplot
 Suggests:
     knitr,
     rmarkdown,

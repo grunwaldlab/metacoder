@@ -20,6 +20,8 @@ the key tree. Otherwise, only the key tree will be labled.}
 example, 0.5 means half the width/height of the graph.}
 
 \item{seed}{That random seed used to make the graphs.}
+
+\item{...}{Passed to \code{\link{heat_tree}}. Some options will be overwritten.}
 }
 \description{
 Plot a matrix of heat trees for showing parwise comparision. A larger, 

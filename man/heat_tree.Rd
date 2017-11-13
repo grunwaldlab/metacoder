@@ -41,7 +41,8 @@ heat_tree(...)
   title = NULL, title_size = 0.08, node_color_axis_label = NULL,
   node_size_axis_label = NULL, edge_color_axis_label = NULL,
   edge_size_axis_label = NULL, background_color = "#FFFFFF00",
-  output_file = NULL, aspect_ratio = 1, repel_labels = TRUE, ...)
+  output_file = NULL, aspect_ratio = 1, repel_labels = TRUE,
+  repel_force = 1e-04, ...)
 }
 \arguments{
 \item{...}{(other named arguments)
@@ -232,6 +233,8 @@ Default: Do not save plot.}
 \item{aspect_ratio}{The aspect_ratio of the plot.}
 
 \item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.}
+
+\item{repel_force}{The force of which overlapping labels will be repeled from eachother}
 }
 \description{
 Plots the distribution of values associated with a taxonomic classification.

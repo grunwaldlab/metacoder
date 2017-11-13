@@ -202,6 +202,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' @param aspect_ratio The aspect_ratio of the plot.
 #' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
+#' @param repel_force The force of which overlapping labels will be repeled from eachother
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -384,6 +385,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               
                               aspect_ratio = 1,
                               repel_labels = TRUE,
+                              repel_force = 0.0001,
                               
                               ...) {
   #| ### Verify arguments =========================================================================
@@ -867,7 +869,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                                                point_padding_x = 0, point_padding_y = 0,
                                                                xlim = ranges$x,
                                                                ylim = ranges$y,
-                                                               force = 0.002,
+                                                               force = repel_force,
                                                                maxiter = 10000,
                                                                direction = "both")
       bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
@@ -891,7 +893,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     #       bounds[bounds$ymin <= legend_length +  min(element_data$y), "xmax"]))
     
     if (is.null(bounds)) {
-      right_plot_boundry <- max(celement_data$x)
+      right_plot_boundry <- max(element_data$x)
     } else {
       right_plot_boundry <- max(c(element_data$x, bounds$xmax))
     }
@@ -969,7 +971,10 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                      axis.ticks = ggplot2::element_blank(), 
                      axis.line  = ggplot2::element_blank(),
                      plot.margin = grid::unit(c(0,0,0,0) , "in"))
-    if (!is.null(bounds)) {
+    
+    # Plot text..
+    bounds <- bounds[bounds$label != "" & ! is.na(bounds$label), ]
+    if (! is.null(bounds) && nrow(bounds) > 0) {
       the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
                                                       grow = TRUE,
                                                       # reflow = TRUE,

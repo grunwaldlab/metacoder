@@ -11,6 +11,7 @@
 #' @param key_size The size of the key tree relative to the whole graph. For
 #'   example, 0.5 means half the width/height of the graph.
 #' @param seed That random seed used to make the graphs.
+#' @param ... Passed to \code{\link{heat_tree}}. Some options will be overwritten.
 #'   
 #' @export
 heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,

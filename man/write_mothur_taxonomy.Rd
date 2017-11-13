@@ -17,13 +17,7 @@ sequence fasta file. This is optional.}
 
 \item{ids}{(\code{character} named by taxon ids) Sequence ids}
 
-\item{ranks}{(\code{character} named by taxon ids) The ranks of taxa}
-
-\item{info}{(\code{character} named by taxon ids) Info associated with
-sequences. In the example output shown here, this field corresponds to
-"Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5"}
-
-\item{sequences}{(\code{character} named by taxon ids) Sequences}
+\item{scores}{TBD}
 }
 \value{
 \code{\link{taxmap}}

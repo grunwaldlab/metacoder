@@ -16,7 +16,7 @@ ncbi_taxon_sample(name = NULL, id = NULL, target_rank, min_counts = NULL,
 
 \item{target_rank}{(\code{character} of length 1) The finest taxonomic rank at which
 to sample. The finest rank at which replication occurs. Must be a finer rank than 
-\code{taxon}. Use \code{\link{get_taxonomy_levels}} to see available ranks.}
+\code{taxon}.}
 
 \item{min_counts}{(named \code{numeric}) The minimum number of sequences to download for each
 taxonomic rank. The names correspond to taxonomic ranks.}
@@ -56,10 +56,7 @@ Can be used to get a shallow sampling of a vast groups.
 \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 can take a very long time. 
 Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-Use a downloaded database and \code{\link{extract_taxonomy}} when possible.
-}
-\details{
-See \code{\link{get_taxonomy_levels}} for available taxonomic ranks.
+Use a downloaded database and a parser from the taxa package when possible.
 }
 \examples{
 \dontrun{

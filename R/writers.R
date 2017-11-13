@@ -175,12 +175,8 @@ write_rdp <- function(obj, file, tax_names = taxon_names,
 #' @param file (\code{character} of length 1) The file path to save the
 #'   sequence fasta file. This is optional.
 #' @param tax_names (\code{character} named by taxon ids) The names of taxa
-#' @param ranks (\code{character} named by taxon ids) The ranks of taxa 
 #' @param ids (\code{character} named by taxon ids) Sequence ids
-#' @param info (\code{character} named by taxon ids) Info associated with
-#'   sequences. In the example output shown here, this field corresponds to
-#'   "Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5"
-#' @param sequences (\code{character} named by taxon ids) Sequences
+#' @param scores TBD
 #'   
 #' @return \code{\link{taxmap}}
 #'   
