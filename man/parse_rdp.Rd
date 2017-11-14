@@ -38,6 +38,7 @@ Other parsers: \code{\link{parse_greengenes}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
+  \code{\link{parse_phylo}},
   \code{\link{parse_qiime_biom}},
   \code{\link{parse_silva_fasta}},
   \code{\link{parse_unite_general}}

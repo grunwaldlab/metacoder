@@ -34,8 +34,8 @@ heat_tree(...)
   tree_label_color_range = quantative_palette(),
   node_size_interval = range(node_size, na.rm = TRUE, finite = TRUE),
   node_color_interval = NULL, edge_size_interval = range(edge_size, na.rm =
-  TRUE, finite = TRUE), edge_color_interval = NULL, node_label_max = 40,
-  edge_label_max = 40, tree_label_max = 40, overlap_avoidance = 1,
+  TRUE, finite = TRUE), edge_color_interval = NULL, node_label_max = 500,
+  edge_label_max = 500, tree_label_max = 500, overlap_avoidance = 1,
   margin_size = c(0, 0, 0, 0), layout = "reingold-tilford",
   initial_layout = "fruchterman-reingold", make_legend = TRUE,
   title = NULL, title_size = 0.08, node_color_axis_label = NULL,

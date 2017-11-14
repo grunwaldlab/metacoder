@@ -363,9 +363,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               edge_size_interval = range(edge_size, na.rm = TRUE, finite = TRUE),
                               edge_color_interval = NULL,
                               
-                              node_label_max = 40,
-                              edge_label_max = 40,
-                              tree_label_max = 40,
+                              node_label_max = 500,
+                              edge_label_max = 500,
+                              tree_label_max = 500,
                               
                               overlap_avoidance = 1,
                               margin_size = c(0, 0, 0, 0),
@@ -842,6 +842,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   # Repel labels
   ranges <- get_limits() # UGLY HACK! FIX!
   reformat_bounds <- function(bounds) {
+    if (is.null(bounds)) {
+      return(NULL)
+    }
     bounds$label <- factor(bounds$label, levels=unique(bounds$label)) # keep order when split
     x_coords <- split(bounds$x, rep(seq_len(nrow(text_data)), each = 4))
     y_coords <- split(bounds$y, rep(seq_len(nrow(text_data)), each = 4))
@@ -973,28 +976,26 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                      plot.margin = grid::unit(c(0,0,0,0) , "in"))
     
     # Plot text..
-    bounds <- bounds[bounds$label != "" & ! is.na(bounds$label), ]
-    if (! is.null(bounds) && nrow(bounds) > 0) {
-      the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
-                                                      grow = TRUE,
-                                                      # reflow = TRUE,
-                                                      color = bounds$color,
-                                                      padding.x = grid::unit(0, "mm"),
-                                                      padding.y = grid::unit(0, "mm"),
-                                                      ggplot2::aes_string(label = "label",
-                                                                          xmin = "xmin",
-                                                                          xmax = "xmax",
-                                                                          ymin = "ymin",
-                                                                          ymax = "ymax",
-                                                                          angle = "rotation")) 
-    }
-    # if (!is.null(text_data)) {
-    #   text_grobs <- do.call(make_text_grobs, c(text_data, list(x_range = ranges$x, y_range = ranges$y)))
-    #   for (a_grob in text_grobs) {
-    #     the_plot <- the_plot + ggplot2::annotation_custom(grob = a_grob)
-    #   }
-    # }
     
+    if (! is.null(bounds)) {
+      bounds <- bounds[bounds$label != "" & ! is.na(bounds$label), ]
+      if (nrow(bounds) > 0) {
+        the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
+                                                        grow = TRUE,
+                                                        min.size = 0,
+                                                        # reflow = TRUE,
+                                                        color = bounds$color,
+                                                        padding.x = grid::unit(0, "mm"),
+                                                        padding.y = grid::unit(0, "mm"),
+                                                        ggplot2::aes_string(label = "label",
+                                                                            xmin = "xmin",
+                                                                            xmax = "xmax",
+                                                                            ymin = "ymin",
+                                                                            ymax = "ymax",
+                                                                            angle = "rotation")) 
+      }
+    }
+
     #| ### Save output file
     if (!is.null(output_file)) {
       img_width <- diff(ranges$x)

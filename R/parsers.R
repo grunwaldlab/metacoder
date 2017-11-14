@@ -185,7 +185,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
                                    class_cols = "rankID",
                                    class_sep = ".")
     # replace taoxon names
-    my_taxon_names <- output$map_data(output$taxon_ids(), output$data$tax_data$taxon)
+    my_taxon_names <- output$map_data(taxon_ids, taxon)
     output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
                                           function(i) {
                                             my_taxon <- output$taxa[[i]]
@@ -348,43 +348,7 @@ parse_newick <- function(file) {
   raw_data <- phylotate::read_annotated(file, format = "newick")
   
   # Parse edge list
-  edge_list <- as.data.frame(raw_data$edge)
-  colnames(edge_list) <- c("from", "to")
-  edge_list$from <- as.character(edge_list$from)
-  edge_list$to <- as.character(edge_list$to)
-  
-  # Add roots to edge list
-  is_root <- vapply(seq_len(nrow(edge_list)),
-                    function(i) ! edge_list$from[i] %in% edge_list$to,
-                    FUN.VALUE = logical(1))
-  roots <- unique(edge_list$from[is_root])
-  edge_list <- rbind(data.frame(from = NA, to = roots), edge_list)
-  
-  # Parse edge length
-  edge_length <- rep(NA, nrow(edge_list))
-  edge_length[!is.na(edge_list$from)] <- raw_data$edge.length
-  
-  # Parse tip labels
-  is_tip <-  vapply(seq_len(nrow(edge_list)),
-                    function(i) ! edge_list$to[i] %in% edge_list$from,
-                    FUN.VALUE = logical(1))
-  
-  tip_label <- rep(NA, nrow(edge_list))
-  tip_label[is_tip] <- raw_data$tip.label
-  
-  # Build taxmap object
-  output <- taxa::taxmap()
-  output$edge_list <- edge_list
-  taxon_ids <- unique(unlist(output$edge_list))
-  taxon_ids <- taxon_ids[!is.na(taxon_ids)]
-  output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxa::taxon),
-                                 taxon_ids)
-  tax_data <- dplyr::as.tbl(data.frame(stringsAsFactors = FALSE,
-                                       taxon_id = edge_list$to,
-                                       edge_length = edge_length,
-                                       tip_label = tip_label))
-  output$data <- c(output$data, list(tax_data = tax_data))
-  output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
+  output <- parse_phylo(raw_data)
   
   return(output)         
 }
@@ -626,7 +590,7 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
   result$data$tax_data$gg_id <- as.character(result$data$tax_data$gg_id)
   
   # Remove data for ranks with no information
-  result <- result$filter_taxa(result, result$taxon_names() != "", drop_obs = TRUE, 
+  result <- result$filter_taxa(result$taxon_names() != "", drop_obs = TRUE, 
                                reassign_obs = c(tax_data = TRUE, class_data = FALSE))
   
   # Integrating sequence and taxonomy
@@ -636,4 +600,58 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
   }
   
   return(result)
+}
+
+
+
+#' Parse a phylo object 
+#' 
+#' Parses a phylo object from the ape package.
+#' 
+#' @param obj A phylo object from the ape package.
+#'   
+#' @return \code{\link{taxmap}}
+#'   
+#' @family parsers
+#'   
+#' @export
+parse_phylo  <- function(obj) {
+  # Parse edge list
+  edge_list <- as.data.frame(obj$edge)
+  colnames(edge_list) <- c("from", "to")
+  edge_list$from <- as.character(edge_list$from)
+  edge_list$to <- as.character(edge_list$to)
+  
+  # Add roots to edge list
+  is_root <- vapply(seq_len(nrow(edge_list)),
+                    function(i) ! edge_list$from[i] %in% edge_list$to,
+                    FUN.VALUE = logical(1))
+  roots <- unique(edge_list$from[is_root])
+  edge_list <- rbind(data.frame(from = NA, to = roots), edge_list)
+  
+  # Parse edge length
+  edge_length <- rep(NA, nrow(edge_list))
+  edge_length[!is.na(edge_list$from)] <- obj$edge.length
+  
+  # Parse tip labels
+  is_tip <-  vapply(seq_len(nrow(edge_list)),
+                    function(i) ! edge_list$to[i] %in% edge_list$from,
+                    FUN.VALUE = logical(1))
+  
+  tip_label <- rep(NA, nrow(edge_list))
+  tip_label[is_tip] <- obj$tip.label
+  
+  # Build taxmap object
+  output <- taxa::taxmap()
+  output$edge_list <- edge_list
+  taxon_ids <- unique(unlist(output$edge_list))
+  taxon_ids <- taxon_ids[!is.na(taxon_ids)]
+  output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxa::taxon),
+                                 taxon_ids)
+  tax_data <- dplyr::as.tbl(data.frame(stringsAsFactors = FALSE,
+                                       taxon_id = edge_list$to,
+                                       edge_length = edge_length,
+                                       tip_label = tip_label))
+  output$data <- c(output$data, list(tax_data = tax_data))
+  output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
 }
