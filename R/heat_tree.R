@@ -570,12 +570,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     y_diff <- max(data$vy_plot) - min(data$vy_plot)
     square_side_length <- sqrt(x_diff * y_diff)
     if (is.na(node_size_range[1])) { # if minimum node size not set
-      min_range <- c(square_side_length / 1000, min(all_pairwise$distance))
+      min_range <- c(square_side_length / 500, min(all_pairwise$distance))
     } else {
       min_range <- rep(node_size_range[1], 2) * square_side_length
     }
     if (is.na(node_size_range[2])) { # if maximum node size not set
-      max_range <- c(min_range[1], square_side_length / 4)
+      max_range <- c(min_range[1], square_side_length / 5)
     } else {
       max_range <- c(node_size_range[2], 2) * square_side_length
     }
@@ -611,21 +611,29 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
         scaled_vs <- rescale(data$vs_t, to = c(a_min, a_max), from = node_size_interval_trans)
         names(scaled_vs) <- data$tid_user
         gap <- distance$distance - scaled_vs[distance$index_1] - scaled_vs[distance$index_2]
-        gap <- ifelse(gap < 0, abs(gap), 0)
-        gap <- gap^2
-        sqrt(sum(gap))
+        overlap <- ifelse(gap < 0, abs(gap), 0)
+        overlap <- (overlap ^ 2) / (scaled_vs[distance$index_1] ^ 2 + scaled_vs[distance$index_2] ^ 2)
+        mean(overlap)
       } 
       search_space$overlap <- apply(search_space, MARGIN = 1,
                                     function(x) find_overlap(x["min"], x["max"], all_pairwise))
       
       # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
-      optimality_stat <- function(overlap, range_size, minimum) {
-        overlap_weight <- 1 / nrow(data)^(1/3)
-        minimum_weight <- 75 / sqrt(nrow(data))
-        (1 + range_size + minimum * minimum_weight) / (1 + overlap * overlap_avoidance * overlap_weight)
+      optimality_stat <- function(overlap, minimum, maximum) {
+        ideal_min <- 0.02
+        ideal_max <- 0.3
+        ideal_range <- .1
+        minimum <- minimum / square_side_length
+        maximum <- maximum / square_side_length
+        min_size_score <- min(c(1, 1 - (ideal_min - minimum) / ideal_min))
+        max_size_score <- min(c(1, 1 - (maximum - ideal_max) / maximum))
+        range_prop <- minimum / maximum 
+        range_size_score <- min(c(1, 1 - abs(range_prop - ideal_range)))
+        overlap_score <- min(c(1, 1 - overlap ^ (0.05 / overlap_avoidance) )) # Totally observation based; might need to be rethought
+        prod(c(min_size_score, max_size_score, range_size_score, overlap_score) * c(1, 1, 2, 1))
       }
       search_space$opt_stat <- apply(search_space, MARGIN = 1,
-                                     function(x) optimality_stat(x["overlap"], x["range_size"], x["min"]))
+                                     function(x) optimality_stat(x["overlap"], x["min"], x["max"]))
       vsr_plot <- unlist(search_space[which.max(search_space$opt_stat), c("min", "max")])
     }
   } else {
@@ -835,7 +843,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                   size = title_size,
                                   color = "#000000",
                                   rotation = 0,
-                                  justification = "center-bottom"))
+                                  justification = "center-bottom",
+                                  group = "title"))
   }
   
   

@@ -1,0 +1,25 @@
+This is a diverse set of plots for optimizing the default appearance of plots.
+It is time-consuming to run, so it will not be run on CRAN servers
+
+## Highly branched
+
+```{r}
+library(ape)
+library(metacoder)
+
+plot_one <- function(n) {
+  set.seed(1)
+  parse_phylo(ape::rcoal(n)) %>%
+    heat_tree(node_label = taxon_names,
+              node_size = n_obs,
+              node_color = n_obs,
+              title = paste(n, "tips"))
+}
+
+tip_counts <- c(2, 3, 5, 10, 30, 100, 500)
+
+for (n in tip_counts) {
+  print(plot_one(n))
+}
+```
+
