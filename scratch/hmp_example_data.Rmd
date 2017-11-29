@@ -1,0 +1,28 @@
+
+## Creating the HMP example dataset
+
+### Sample data
+
+```{r}
+library(readr)
+sample_data <- read_tsv("~/Downloads/v35_map_uniquebyPSN.txt")
+```
+
+remove uneeded columns
+
+```{r}
+sample_data <- sample_data[, c("#SampleID", "sex", "HMPbodysubsite")]
+```
+
+rename columns
+
+```{r}
+colnames(sample_data) <- c("sample_id", "sex", "body_site")
+```
+
+subset treatments
+
+```{r}
+sites <- c("Saliva", "Throat", "Stool", "Right_Antecubital_fossa", "Anterior_nares")
+```
+
