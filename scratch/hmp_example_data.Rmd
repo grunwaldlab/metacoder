@@ -5,24 +5,128 @@
 
 ```{r}
 library(readr)
-sample_data <- read_tsv("~/Downloads/v35_map_uniquebyPSN.txt")
+library(dplyr)
+set.seed(1)
+hmp_samples <- read_tsv("~/Downloads/v35_map_uniquebyPSN.txt")
+hmp_otus <- read_tsv("~/Downloads/v35_psn_otu.genus.fixed.txt", skip = 1)
 ```
 
 remove uneeded columns
 
 ```{r}
-sample_data <- sample_data[, c("#SampleID", "sex", "HMPbodysubsite")]
+hmp_samples <- hmp_samples[, c("#SampleID", "sex", "HMPbodysubsite")]
 ```
 
 rename columns
 
 ```{r}
-colnames(sample_data) <- c("sample_id", "sex", "body_site")
+colnames(hmp_samples) <- c("sample_id", "sex", "body_site")
 ```
 
 subset treatments
 
 ```{r}
 sites <- c("Saliva", "Throat", "Stool", "Right_Antecubital_fossa", "Anterior_nares")
+hmp_samples <- hmp_samples[hmp_samples$body_site %in% sites, ]
+```
+
+rename treatments
+
+```{r}
+hmp_samples[hmp_samples$body_site == "Right_Antecubital_fossa", "body_site"] <- "Skin"
+hmp_samples[hmp_samples$body_site == "Anterior_nares", "body_site"] <- "Nose"
+```
+
+remove samples not in abundance data
+
+```{r}
+hmp_samples <- hmp_samples[hmp_samples$sample_id %in% colnames(hmp_otus), ]
+```
+
+subsample sites
+
+```{r}
+hmp_samples <- hmp_samples %>%
+  group_by(body_site, sex) %>%
+  sample_n(size = 5)
+```
+
+convert sample IDs to character
+
+```{r}
+hmp_samples$sample_id <- as.character(hmp_samples$sample_id)
+```
+
+
+### Abundance matrix
+
+Subset samples
+
+```{r}
+hmp_otus <- hmp_otus[, c("#OTU ID", "Consensus Lineage", hmp_samples$sample_id)]
+```
+
+rename columns
+
+```{r}
+colnames(hmp_otus)[1:2] <- c("otu_id", "lineage")
+```
+
+
+Remove OTUs with missing info
+
+```{r}
+hmp_otus <- hmp_otus[! endsWith(hmp_otus$lineage, "__"), ]
+hmp_otus <- hmp_otus[! grepl(hmp_otus$lineage, pattern = "__;", fixed = TRUE), ]
+```
+
+Remove ambiguous OTUs
+
+```{r}
+hmp_otus <- hmp_otus[! grepl(hmp_otus$lineage, pattern = "IncertaeSedis"), ]
+```
+
+Remove singletons
+
+```{r}
+hmp_otus <- hmp_otus[rowSums(hmp_otus[, hmp_samples$sample_id]) > 1, ]
+
+```
+
+
+random subsample of OTUs
+
+```{r}
+hmp_otus <- hmp_otus %>% sample_n(1000, weight = rowSums(hmp_otus[, hmp_samples$sample_id]))
+```
+
+Add root rank 
+
+
+```{r}
+hmp_otus$lineage <- paste0("r__", hmp_otus$lineage)
+```
+
+## Add to package
+
+```{r}
+devtools::use_data(hmp_otus, overwrite = TRUE)
+devtools::use_data(hmp_samples, overwrite = TRUE)
+```
+
+
+
+## How to parse
+
+```{r}
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+               class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+               class_regex = "^(.+)__(.+)$")
+```
+
+
+```{r}
+library(metacoder)
+heat_tree(x, node_size = n_obs, node_color = n_obs, node_label = taxon_names)
 ```
 
