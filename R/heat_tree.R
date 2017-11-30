@@ -203,6 +203,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @param aspect_ratio The aspect_ratio of the plot.
 #' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
 #' @param repel_force The force of which overlapping labels will be repeled from eachother
+#' @param repel_iter The number of iterations used whe repeling labels
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -386,6 +387,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               aspect_ratio = 1,
                               repel_labels = TRUE,
                               repel_force = 0.0001,
+                              repel_iter = 10000,
                               
                               ...) {
   #| ### Verify arguments =========================================================================
@@ -583,9 +585,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       vsr_plot <- node_size_range * square_side_length
     } else {
       # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      max_important_pairs <- 2000 # Takes into account both size and distance
-      max_biggest_pairs <- 2000
-      max_closest_pairs <- 2000
+      max_important_pairs <- 5000 # Takes into account both size and distance
+      max_biggest_pairs <- 5000
+      max_closest_pairs <- 5000
       if (nrow(all_pairwise) > sum(max_important_pairs, max_biggest_pairs, max_closest_pairs)) {
         all_pairwise$size_sum <- data$vs_trans[all_pairwise$index_1] + data$vs_trans[all_pairwise$index_2]
         all_pairwise$importance <- all_pairwise$size_sum / all_pairwise$distance
@@ -882,7 +884,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                                                xlim = ranges$x,
                                                                ylim = ranges$y,
                                                                force = repel_force,
-                                                               maxiter = 10000,
+                                                               maxiter = repel_iter,
                                                                direction = "both")
       bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                              height = text_data$size, rotation = text_data$rotation,
@@ -990,7 +992,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       bounds <- bounds[bounds$label != "" & ! is.na(bounds$label), ]
       if (nrow(bounds) > 0) {
         the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
-                                                        grow = TRUE,
+                                                        grow = FALSE,
                                                         min.size = 0,
                                                         # reflow = TRUE,
                                                         color = bounds$color,

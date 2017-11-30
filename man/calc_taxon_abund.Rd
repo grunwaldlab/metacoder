@@ -4,7 +4,8 @@
 \alias{calc_taxon_abund}
 \title{Sum observation values for each taxon}
 \usage{
-calc_taxon_abund(obj, dataset, cols = NULL, col_names = NULL)
+calc_taxon_abund(obj, dataset, cols = NULL, groups = NULL,
+  out_names = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -14,8 +15,14 @@ calc_taxon_abund(obj, dataset, cols = NULL, col_names = NULL)
 \item{cols}{The names/indexes of columns in \code{data} that have counts. By 
 Default, all numeric columns in \code{data} are used.}
 
-\item{col_names}{The names of count columns in the output. Must be the same
-length as \code{cols}.}
+\item{groups}{Group counts of multiple columns per treatment/group. This
+should be a vector of group IDs (e.g. character, integer) the same
+length as \code{cols} that defines which samples go in which group. When
+used, there will be one column in the output for each unique value in
+\code{groups}.}
+
+\item{out_names}{The names of count columns in the output. Must be the same
+length as \code{cols} (or \code{unique(groups)}, if used).}
 }
 \value{
 A tibble

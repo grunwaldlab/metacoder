@@ -268,15 +268,21 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{data} that have counts. By 
 #'   Default, all numeric columns in \code{data} are used.
-#' @param col_names The names of count columns in the output. Must be the same
-#'   length as \code{cols}.
+#' @param groups Group counts of multiple columns per treatment/group. This
+#'   should be a vector of group IDs (e.g. character, integer) the same
+#'   length as \code{cols} that defines which samples go in which group. When
+#'   used, there will be one column in the output for each unique value in
+#'   \code{groups}.
+#' @param out_names The names of count columns in the output. Must be the same
+#'   length as \code{cols} (or \code{unique(groups)}, if used).
 #'   
 #' @return A tibble
 #'   
 #' @family calculations
 #'   
 #' @export
-calc_taxon_abund <- function(obj, dataset, cols = NULL, col_names = NULL) {
+calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
+                             out_names = NULL) {
   
   # Get count table
   count_table <- get_taxmap_table(obj, dataset, cols)
@@ -287,13 +293,6 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, col_names = NULL) {
   }  else { # remove any columns that do not exist
     cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
-  
-  # Get output column names
-  if (is.null(col_names)) {
-    col_names <- names(count_table[cols])
-  } else if (length(col_names) != length(cols)) { 
-    stop("The length of 'cols' and 'col_names' are not equal")
-  }  
 
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
@@ -302,20 +301,50 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, col_names = NULL) {
                 limited_print(cols[!col_is_num], type = "silent")))
   }
   
+  # Check that groups and output names make sense
+  if (is.null(groups)) {
+    if (is.null(out_names)) { # groups and out_names are NULL
+      out_names <- colnames(count_table[cols])
+    } else { # groups is NULL, but out_names set
+      if (length(out_names) != length(cols)) {
+        stop("The length of 'cols' and 'out_names' are not equal")
+      }
+    }
+    groups <- seq_along(cols)
+  } else {
+    if (length(groups) != length(cols)) {
+      stop("`groups` must be the same length as cols.")
+    }
+    if (is.null(out_names)) { # groups is set, but out_names is NULL
+      if (is.numeric(groups)) {
+        warning("Numeric groups used without supplying out_name. This will result in numeric column names.")
+      }
+      out_names <- unique(groups)
+    } else { # groups and out_names are both set
+      if (length(out_names) != length(unique(groups))) {
+        stop("The length of 'unique(groups)' and 'out_names' are not equal")       
+      }
+    }
+  }
+  
+  # Check that out_names is a character
+  if (! is.null(out_names) && is.numeric(out_names)){
+    warning("`out_names` is numeric. This will result in numeric column names.")
+  }
+  
   # Sum counts per taxon for each sample
   obs_indexes <- obj$obs(dataset)
-  output <- lapply(cols, function(col_index) {
-    vapply(obs_indexes, function(i) sum(count_table[[col_index]][i]), numeric(1))
+  output <- lapply(split(cols, groups), function(col_index) {
+    vapply(obs_indexes, function(i) sum(unlist(count_table[i, col_index])), numeric(1))
   })
   output <- as.data.frame(output, stringsAsFactors = FALSE)
-  colnames(output) <- colnames(count_table[cols])
   
   # Add taxon_id column
   output <- cbind(data.frame(taxon_id = obj$taxon_ids(), stringsAsFactors = FALSE),
                   output)
   
   # Rename cols
-  colnames(output)[match(cols, colnames(output))] <- col_names
+  colnames(output)[-1] <- out_names
   
   # Convert to tibble and return
   dplyr::as.tbl(output)
