@@ -43,7 +43,8 @@ Imports:
     ggfittext,
     vegan,
     ggrepel,
-    cowplot
+    cowplot,
+    GA
 Suggests:
     knitr,
     rmarkdown,
