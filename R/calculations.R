@@ -350,3 +350,139 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
   dplyr::as.tbl(output)
 }
 
+
+
+#' Count the number of samples with reads
+#'
+#' For a given table in a taxmap object, count the number of samples with
+#' greater than zero reads.
+#'
+#' @param obj A taxmap object
+#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @param cols The names/indexes of columns in \code{data} that have counts. By
+#'   Default, all numeric columns in \code{data} are used.
+#' @param groups Group counts of multiple columns per treatment/group. This
+#'   should be a vector of group IDs (e.g. character, integer) the same length
+#'   as \code{cols} that defines which samples go in which group. When used,
+#'   there will be one column in the output for each unique value in
+#'   \code{groups}.
+#' @param out_names The names of count columns in the output. Must be the length
+#'   1 or same length as \code{unique(groups)}, if used.
+#' @param If \code{groups} is not used, return a vector of the results instead
+#'   of a table with one column.
+#' @param append If \code{TRUE}, append results to input table and return.
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for example
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Count samples with reads
+#' calc_n_samples(x, dataset = "tax_data")
+#' 
+#' # Return a vector instead of a table
+#' calc_n_samples(x, dataset = "tax_data", drop = TRUE)
+#' 
+#' # Only use some columns
+#' calc_n_samples(x, dataset = "tax_data", cols =  hmp_samples$sample_id[1:5])
+#' 
+#' # Return a count for each treatment
+#' calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
+#' 
+#' # Rename output columns 
+#' calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
+#'                out_names = c("A", "B", "C", "D", "E"))
+#' 
+#' # Add results to input table
+#' calc_n_samples(x, dataset = "tax_data", append = TRUE)
+#' }
+#' 
+#' @export
+calc_n_samples <- function(obj, dataset, cols = NULL, groups = NULL,
+                           out_names = NULL, drop = FALSE, append = FALSE) {
+  # Get count table
+  count_table <- get_taxmap_table(obj, dataset, cols)
+  
+  # Find default columns if needed
+  if (is.null(cols)) {
+    cols <- which(vapply(count_table, is.numeric, logical(1)))
+  }  else { # remove any columns that do not exist
+    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
+  }
+  
+  # Check that count columns are numeric
+  col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
+  if (! all(col_is_num)) {
+    stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
+                limited_print(cols[!col_is_num], type = "silent")))
+  }
+  
+  # Check that groups and output names make sense
+  if (is.null(groups)) {
+    if (is.null(out_names)) { # groups and out_names are NULL
+      out_names <- "n_samples"
+    } else { # groups is NULL, but out_names set
+      if (length(out_names) != length(cols)) {
+        stop("The length of 'cols' and 'out_names' are not equal")
+      }
+    }
+    groups <- rep("placeholder", length(cols))
+  } else {
+    if (length(groups) != length(cols)) {
+      stop("`groups` must be the same length as cols.")
+    }
+    if (length(unique(groups)) != 1 && drop) {
+      stop("Cannot drop second dimension since there are multiple groups specified.")
+    }
+    if (is.null(out_names)) { # groups is set, but out_names is NULL
+      if (is.numeric(groups)) {
+        warning("Numeric groups used without supplying out_name. This will result in numeric column names.")
+      }
+      out_names <- unique(groups)
+    } else { # groups and out_names are both set
+      if (length(out_names) != length(unique(groups))) {
+        stop("The length of 'unique(groups)' and 'out_names' are not equal")       
+      }
+    }
+  }
+  
+  # Check that out_names is a character
+  if (! is.null(out_names) && is.numeric(out_names)){
+    warning("`out_names` is numeric. This will result in numeric column names.")
+  }
+  
+  # Count number of samples
+  output <- lapply(split(cols, groups), function(col_index) {
+    vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > 0), integer(1))
+  })
+  output <- as.data.frame(output, stringsAsFactors = FALSE)
+  
+  # Drop second dimension
+  if (drop) {
+    output <- output[[1]]
+    names(output) <- count_table$taxon_id
+    return(output)
+  } else {
+    # Rename cols
+    colnames(output) <- out_names
+    
+    # Add taxon_id column
+    if (append) {
+      output <- cbind(get_taxmap_table(obj, dataset),
+                      output)
+    } else {
+      output <- cbind(data.frame(taxon_id = count_table$taxon_id, stringsAsFactors = FALSE),
+                      output)
+    }
+    
+    # Convert to tibble and return
+    return(dplyr::as.tbl(output))
+  }
+  
+}
