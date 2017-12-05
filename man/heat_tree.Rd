@@ -234,7 +234,7 @@ Default: Do not save plot.}
 
 \item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.}
 
-\item{repel_force}{The force of which overlapping labels will be repeled from eachother}
+\item{repel_force}{The force of which overlapping labels will be repeled from eachother.}
 
 \item{repel_iter}{The number of iterations used whe repeling labels}
 
@@ -387,6 +387,14 @@ x$data$taxon_counts <- calc_n_samples(x, dataset = "taxon_counts", append = TRUE
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
           edge_color = n_samples)
 
+# Different layouts:
+#  You can use any layout implemented by igraph. You can also specify an
+#  initial layout to seed the main layout with.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          layout = "davidson-harel")
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          layout = "davidson-harel", initial_layout = "reingold-tilford")
+
 # Axis labels:
 #  You can add custom labeles to the legends
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
@@ -400,9 +408,34 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           overlap_avoidance = .5)
           
 # Label overlap avoidance
-#  You can avoid overlapping labels by modifiying the `replel_force` and
-`repel_iter` options.
-heat_tree(node_label = taxon_names, node_size = n_obs, node_color = n_obs, repel_force = 2, repel_iter = 20000)
+#  You can modfiy how label scattering is handled using the `replel_force` and
+`repel_iter` options. You can turn off label scattering using the `repel_labels` option.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          repel_force = 2, repel_iter = 20000)
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          repel_labels = FALSE)
+
+# Setting the size of graph elements: 
+#  You can force nodes, edges, and lables to be a specific size/color range instead
+#  of letting the function optimize it. These options end in `_range`.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_range = c(0.01, .1))
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          edge_color_range = c("black", "#FFFFFF"))
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_label_size_range = c(0.02, 0.02))
+
+# Setting the transformation used:
+#  You can change how raw statistics are converted to color/size using options
+#  ending in _trans.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_trans = "log10 area")
+
+# Setting the interval displayed:
+#  By defualt, the whole range of the statistic provided will be displayed.
+#  You can set what range of values are displayed using options ending in `_interval`.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_interval = c(10, 100))
 
 }
 }

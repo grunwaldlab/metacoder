@@ -27,3 +27,37 @@ example, 0.5 means half the width/height of the graph.}
 Plot a matrix of heat trees for showing parwise comparision. A larger, 
 labelled tree serves as a key for the matrix of smaller unlabelled trees.
 }
+\examples{
+\dontrun{
+# Parse dataset for plotting
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_regex = "^(.+)__(.+)$")
+
+# Convert counts to proportions
+x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
+
+# Get per-taxon counts
+x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
+
+# Calculate difference between treatments
+x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
+                                        sample_ids = hmp_samples$sample_id,
+                                        treatments = hmp_samples$body_site)
+
+# Plot results (might take a few minutes)
+heat_tree_matrix(x,
+                 dataset = "diff_table",
+                 node_size = n_obs,
+                 node_label = taxon_names,
+                 node_color = log2_median_ratio,
+                 node_color_range = diverging_palette(),
+                 node_color_trans = "linear",
+                 node_color_interval = c(-3, 3),
+                 edge_color_interval = c(-3, 3),
+                 node_size_axis_label = "Number of OTUs",
+                 node_color_axis_label = "Log2 ratio median proportions")
+
+}
+
+}
