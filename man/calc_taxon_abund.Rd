@@ -33,7 +33,8 @@ taxon. This is useful to convert per-observation counts (e.g. OTU counts) to
 per-taxon counts.
 }
 \seealso{
-Other calculations: \code{\link{calc_obs_props}},
+Other calculations: \code{\link{calc_n_samples}},
+  \code{\link{calc_obs_props}},
   \code{\link{compare_treatments}},
   \code{\link{rarefy_obs}}
 }

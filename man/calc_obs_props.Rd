@@ -28,7 +28,8 @@ per taxon. If counts have already been summed per taxon, use
 [calc_tax_props()] instead.
 }
 \seealso{
-Other calculations: \code{\link{calc_taxon_abund}},
+Other calculations: \code{\link{calc_n_samples}},
+  \code{\link{calc_taxon_abund}},
   \code{\link{compare_treatments}},
   \code{\link{rarefy_obs}}
 }

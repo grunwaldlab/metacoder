@@ -42,7 +42,7 @@ heat_tree(...)
   node_size_axis_label = NULL, edge_color_axis_label = NULL,
   edge_size_axis_label = NULL, background_color = "#FFFFFF00",
   output_file = NULL, aspect_ratio = 1, repel_labels = TRUE,
-  repel_force = 1e-04, repel_iter = 10000, ...)
+  repel_force = 1, repel_iter = 1000, ...)
 }
 \arguments{
 \item{...}{(other named arguments)
@@ -354,4 +354,54 @@ or setting logical boundaries (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 }
 
+\examples{
+\dontrun{
+# Parse dataset for plotting
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_regex = "^(.+)__(.+)$")
+                   
+# Default appearance:
+#  No parmeters are needed, but the default tree is not too useful
+heat_tree(x)
+
+# A good place to start:
+#  There will always be "taxon_names" and "n_obs" variables, so this is a 
+#  good place to start. This will shown the number of OTUs in this case. 
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
+
+# Plotting read depth:
+#  To plot read depth, you first need to add up the number of reads per taxon.
+#  The function `calc_taxon_abund` is good for this. 
+x$data$taxon_counts <- calc_taxon_abund(x, dataset = "tax_data")
+x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
+heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
+
+# Plotting multiple variables:
+#  You can plot up to 4 quantative variables use node/edge size/color, but it
+#  is usually best to use 2 or 3. The plot below uses node size for number of
+#  OTUs and color for number of reads and edge size for number of samples
+x$data$taxon_counts <- calc_n_samples(x, dataset = "taxon_counts", append = TRUE)
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+          edge_color = n_samples)
+
+# Axis labels:
+#  You can add custom labeles to the legends
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+          edge_color = n_samples, node_size_axis_label = "Number of OTUs", 
+          node_color_axis_label = "Number of reads",
+          edge_color_axis_label = "Number of samples")
+          
+# Overlap avoidance:
+#  You can change how much node overlap avoidance is used.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          overlap_avoidance = .5)
+          
+# Label overlap avoidance
+#  You can avoid overlapping labels by modifiying the `replel_force` and
+`repel_iter` options.
+heat_tree(node_label = taxon_names, node_size = n_obs, node_color = n_obs, repel_force = 2, repel_iter = 20000)
+
+}
+}
 \keyword{internal}

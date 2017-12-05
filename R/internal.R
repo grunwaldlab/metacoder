@@ -1,20 +1,14 @@
-#' Report a error/warning if needed
-#' 
-#' Report a error/warning if needed
-#' NOTE: This function is unusual in that it looks for a varaible names `vigilance` in a parent namespace.
-#' 
-#' @param text The error to report
-#' 
-#' @return \code{NULL}
-#' 
+#' Print something
+#'
+#' The standard print function for this package. This is a wrapper to make
+#' package-wide changes easier.
+#'
+#' @param ... Something to print
+#'
 #' @keywords internal
-vigilant_report <- function(text) {
-  vigilance <- dynGet("vigilance", ifnotfound = "error")
-  text <- paste0(text, "\n",
-                 "To avoid this ", vigilance, ", change the setting of the `vigilance` option")
-  response <- list("error" = stop, "warning" = warning, "message" = message,
-                   "none" = function(text) invisible(NULL))
-  response[[vigilance]](text)
+my_print <- function(...) {
+  text <- paste0(as.character(list(...)), collapse = "")
+  message(text)
 }
 
 

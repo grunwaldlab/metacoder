@@ -303,6 +303,55 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for plotting
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Default appearance:
+#' #  No parmeters are needed, but the default tree is not too useful
+#' heat_tree(x)
+#' 
+#' # A good place to start:
+#' #  There will always be "taxon_names" and "n_obs" variables, so this is a 
+#' #  good place to start. This will shown the number of OTUs in this case. 
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
+#' 
+#' # Plotting read depth:
+#' #  To plot read depth, you first need to add up the number of reads per taxon.
+#' #  The function `calc_taxon_abund` is good for this. 
+#' x$data$taxon_counts <- calc_taxon_abund(x, dataset = "tax_data")
+#' x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
+#' heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
+#' 
+#' # Plotting multiple variables:
+#' #  You can plot up to 4 quantative variables use node/edge size/color, but it
+#' #  is usually best to use 2 or 3. The plot below uses node size for number of
+#' #  OTUs and color for number of reads and edge size for number of samples
+#' x$data$taxon_counts <- calc_n_samples(x, dataset = "taxon_counts", append = TRUE)
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+#'           edge_color = n_samples)
+#' 
+#' # Axis labels:
+#' #  You can add custom labeles to the legends
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+#'           edge_color = n_samples, node_size_axis_label = "Number of OTUs", 
+#'           node_color_axis_label = "Number of reads",
+#'           edge_color_axis_label = "Number of samples")
+#'           
+#' # Overlap avoidance:
+#' #  You can change how much node overlap avoidance is used.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           overlap_avoidance = .5)
+#'           
+#' # Label overlap avoidance
+#' #  You can avoid overlapping labels by modifiying the `replel_force` and
+#' `repel_iter` options.
+#' heat_tree(node_label = taxon_names, node_size = n_obs, node_color = n_obs, repel_force = 2, repel_iter = 20000)
+#' 
+#' }
 #' @keywords internal
 #' @method heat_tree default
 #' @rdname heat_tree
@@ -386,8 +435,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               
                               aspect_ratio = 1,
                               repel_labels = TRUE,
-                              repel_force = 0.0001,
-                              repel_iter = 10000,
+                              repel_force = 1,
+                              repel_iter = 1000,
                               
                               ...) {
   #| ### Verify arguments =========================================================================
@@ -493,6 +542,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| an `igraph` graph object and then the layout is generated for that object. 
   #|
   #| #### Make a graph for each root in the graph -------------------------------------------------
+  my_print("Calculating layout for ", nrow(data), " taxa...")
   get_sub_graphs <- function(taxa) {
     if (length(taxa) == 1) {
       # Make a graph with only a single node
@@ -558,6 +608,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   data$vx_plot <- coords[data$tid_user, 1]
   data$vy_plot <- coords[data$tid_user, 2]
   
+  # Rescale to constant size
+  my_range <- range(c(data$vx_plot, data$vy_plot))
+  to_scale <- c(0, 1)
+  data$vx_plot <- rescale(data$vx_plot, to = to_scale, from = my_range)
+  data$vy_plot <- rescale(data$vy_plot, to = to_scale, from = my_range)
+  
   #| ### Set aspect ration
   data$vx_plot <- data$vx_plot * aspect_ratio
   
@@ -565,6 +621,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #|
   #| #### Optimize node size range --------------------------------------------------------------
   #|
+  if (any(is.na(node_size_range))) {
+    my_print("Optmizing node size range...")
+  }
   # Get range of potential node size ranges - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (nrow(data) > 1) {
     all_pairwise <- molten_dist(x = data$vx_plot, y = data$vy_plot) # get distance between all nodes
@@ -572,7 +631,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     y_diff <- max(data$vy_plot) - min(data$vy_plot)
     square_side_length <- sqrt(x_diff * y_diff)
     if (is.na(node_size_range[1])) { # if minimum node size not set
-      min_range <- c(square_side_length / 500, min(all_pairwise$distance))
+      min_range <- c(0, min(all_pairwise$distance))
     } else {
       min_range <- rep(node_size_range[1], 2) * square_side_length
     }
@@ -585,9 +644,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       vsr_plot <- node_size_range * square_side_length
     } else {
       # Subset pairwise pairs to increase speed - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      max_important_pairs <- 5000 # Takes into account both size and distance
-      max_biggest_pairs <- 5000
-      max_closest_pairs <- 5000
+      max_important_pairs <- 1000 # Takes into account both size and distance
+      max_biggest_pairs <- 1000
+      max_closest_pairs <- 1000
       if (nrow(all_pairwise) > sum(max_important_pairs, max_biggest_pairs, max_closest_pairs)) {
         all_pairwise$size_sum <- data$vs_trans[all_pairwise$index_1] + data$vs_trans[all_pairwise$index_2]
         all_pairwise$importance <- all_pairwise$size_sum / all_pairwise$distance
@@ -618,7 +677,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
         max_size_score <- min(c(1, 1 - (maximum - ideal_max) / maximum))
         range_prop <- minimum / maximum 
         range_size_score <- min(c(1, 1 - abs(range_prop - ideal_range)))
-        overlap_score <- min(c(1, 1 - overlap ^ (0.05 / overlap_avoidance) )) # Totally observation based; might need to be rethought
+        overlap_score <- min(c(1, 1 - overlap ^ (0.08 / overlap_avoidance) )) # Totally observation based; might need to be rethought
         result <- prod(c(min_size_score, max_size_score, range_size_score, overlap_score))
         # print(c(min_size_score, max_size_score, range_size_score, overlap_score, result))
         return(result)
@@ -628,7 +687,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       ga_result <- GA::ga(type = "real-valued", 
                           fitness =  function(x) optimality_stat(x[1], x[2]),
                           min = c(min_range[1], max_range[1]), max = c(min_range[2], max_range[2]),
-                          maxiter = 100, run = 50, popSize = 50, monitor = FALSE)
+                          maxiter = 30, run = 30, popSize = 50, monitor = FALSE, parallel = FALSE)
       vsr_plot <- as.vector(ga_result@solution)
     }
   } else {
@@ -876,7 +935,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                                                point_padding_x = 0, point_padding_y = 0,
                                                                xlim = ranges$x,
                                                                ylim = ranges$y,
-                                                               force = repel_force,
+                                                               force = 1e-06 * repel_force,
                                                                maxiter = repel_iter,
                                                                direction = "both")
       bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
@@ -893,6 +952,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #|
   #| #### Make node legend -----------------------------------------------------------------------
   #|
+  my_print("Making legends...")
   if (make_legend) {
     legend_length <- square_side_length * 0.3 
     
@@ -960,6 +1020,11 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   
   
   #| ### Draw plot ================================================================================
+  # text_boxes <-  label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,  # debug
+  #                                       height = text_data$size, rotation = text_data$rotation,
+  #                                       just = text_data$justification)
+  # text_boxes$group <- rep(seq_along(text_data$label), each = 4)  # debug
+  my_print("Plotting graph...")
   result = tryCatch({
     
     ranges <- get_limits()
@@ -968,8 +1033,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                             fill = element_data$color) +
       ggplot2::guides(fill = "none") +
       ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
-      ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) +
+      ggplot2::scale_y_continuous(expand = c(0,0), limits = ranges$y) + 
       ggplot2::scale_x_continuous(expand = c(0,0), limits = ranges$x) +
+      # ggplot2::geom_polygon(data = text_boxes, mapping = ggplot2::aes(x = x, y = y, group = group), color = "black", fill = NA) + # debug
       ggplot2::theme(panel.grid = ggplot2::element_blank(), 
                      panel.background = ggplot2::element_rect(fill = background_color, colour = background_color),
                      plot.background = ggplot2::element_rect(fill = background_color, colour = background_color),
@@ -985,7 +1051,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       bounds <- bounds[bounds$label != "" & ! is.na(bounds$label), ]
       if (nrow(bounds) > 0) {
         the_plot <- the_plot + ggfittext::geom_fit_text(data = bounds, 
-                                                        grow = FALSE,
+                                                        grow = TRUE,
                                                         min.size = 0,
                                                         # reflow = TRUE,
                                                         color = bounds$color,

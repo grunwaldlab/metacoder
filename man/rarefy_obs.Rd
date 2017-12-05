@@ -31,7 +31,8 @@ is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 which columns are numeric and handles the reformatting needed to use tibbles.
 }
 \seealso{
-Other calculations: \code{\link{calc_obs_props}},
+Other calculations: \code{\link{calc_n_samples}},
+  \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_treatments}}
 }

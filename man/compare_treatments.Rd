@@ -57,6 +57,7 @@ treatments. By default, every pairwise combination of treatments are
 compared. A custom function can be supplied to perform the comparison.
 }
 \seealso{
-Other calculations: \code{\link{calc_obs_props}},
+Other calculations: \code{\link{calc_n_samples}},
+  \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}}, \code{\link{rarefy_obs}}
 }
