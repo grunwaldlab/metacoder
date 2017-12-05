@@ -42,7 +42,7 @@ heat_tree(...)
   node_size_axis_label = NULL, edge_color_axis_label = NULL,
   edge_size_axis_label = NULL, background_color = "#FFFFFF00",
   output_file = NULL, aspect_ratio = 1, repel_labels = TRUE,
-  repel_force = 1, repel_iter = 1000, ...)
+  repel_force = 1, repel_iter = 1000, verbose = FALSE, ...)
 }
 \arguments{
 \item{...}{(other named arguments)
@@ -237,6 +237,8 @@ Default: Do not save plot.}
 \item{repel_force}{The force of which overlapping labels will be repeled from eachother}
 
 \item{repel_iter}{The number of iterations used whe repeling labels}
+
+\item{verbose}{If \code{TRUE} print progress reports as the function runs.}
 }
 \description{
 Plots the distribution of values associated with a taxonomic classification.

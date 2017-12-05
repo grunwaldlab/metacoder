@@ -4,10 +4,12 @@
 \alias{my_print}
 \title{Print something}
 \usage{
-my_print(...)
+my_print(..., verbose = TRUE)
 }
 \arguments{
 \item{...}{Something to print}
+
+\item{verbose}{If \code{FALSE}, do not print anything.}
 }
 \description{
 The standard print function for this package. This is a wrapper to make

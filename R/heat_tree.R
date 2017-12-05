@@ -202,8 +202,9 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' @param aspect_ratio The aspect_ratio of the plot.
 #' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
-#' @param repel_force The force of which overlapping labels will be repeled from eachother
+#' @param repel_force The force of which overlapping labels will be repeled from eachother. 
 #' @param repel_iter The number of iterations used whe repeling labels
+#' @param verbose If \code{TRUE} print progress reports as the function runs.
 #' 
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
@@ -334,6 +335,14 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
 #'           edge_color = n_samples)
 #' 
+#' # Different layouts:
+#' #  You can use any layout implemented by igraph. You can also specify an
+#' #  initial layout to seed the main layout with.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           layout = "davidson-harel")
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           layout = "davidson-harel", initial_layout = "reingold-tilford")
+#' 
 #' # Axis labels:
 #' #  You can add custom labeles to the legends
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
@@ -347,9 +356,34 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'           overlap_avoidance = .5)
 #'           
 #' # Label overlap avoidance
-#' #  You can avoid overlapping labels by modifiying the `replel_force` and
-#' `repel_iter` options.
-#' heat_tree(node_label = taxon_names, node_size = n_obs, node_color = n_obs, repel_force = 2, repel_iter = 20000)
+#' #  You can modfiy how label scattering is handled using the `replel_force` and
+#' `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           repel_force = 2, repel_iter = 20000)
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           repel_labels = FALSE)
+#' 
+#' # Setting the size of graph elements: 
+#' #  You can force nodes, edges, and lables to be a specific size/color range instead
+#' #  of letting the function optimize it. These options end in `_range`.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_range = c(0.01, .1))
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           edge_color_range = c("black", "#FFFFFF"))
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_label_size_range = c(0.02, 0.02))
+#' 
+#' # Setting the transformation used:
+#' #  You can change how raw statistics are converted to color/size using options
+#' #  ending in _trans.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_trans = "log10 area")
+#' 
+#' # Setting the interval displayed:
+#' #  By defualt, the whole range of the statistic provided will be displayed.
+#' #  You can set what range of values are displayed using options ending in `_interval`.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_interval = c(10, 100))
 #' 
 #' }
 #' @keywords internal
@@ -437,6 +471,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               repel_labels = TRUE,
                               repel_force = 1,
                               repel_iter = 1000,
+                              
+                              verbose = FALSE,
                               
                               ...) {
   #| ### Verify arguments =========================================================================
@@ -542,7 +578,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| an `igraph` graph object and then the layout is generated for that object. 
   #|
   #| #### Make a graph for each root in the graph -------------------------------------------------
-  my_print("Calculating layout for ", nrow(data), " taxa...")
+  my_print("Calculating layout for ", nrow(data), " taxa...", verbose = verbose)
   get_sub_graphs <- function(taxa) {
     if (length(taxa) == 1) {
       # Make a graph with only a single node
@@ -622,7 +658,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| #### Optimize node size range --------------------------------------------------------------
   #|
   if (any(is.na(node_size_range))) {
-    my_print("Optmizing node size range...")
+    my_print("Optmizing node size range...", verbose = verbose)
   }
   # Get range of potential node size ranges - - - - - - - - - - - - - - - - - - - - - - - - - - -
   if (nrow(data) > 1) {
@@ -687,7 +723,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       ga_result <- GA::ga(type = "real-valued", 
                           fitness =  function(x) optimality_stat(x[1], x[2]),
                           min = c(min_range[1], max_range[1]), max = c(min_range[2], max_range[2]),
-                          maxiter = 30, run = 30, popSize = 50, monitor = FALSE, parallel = FALSE)
+                          maxiter = 40, run = 30, popSize = 70, monitor = FALSE, parallel = FALSE)
       vsr_plot <- as.vector(ga_result@solution)
     }
   } else {
@@ -952,7 +988,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #|
   #| #### Make node legend -----------------------------------------------------------------------
   #|
-  my_print("Making legends...")
+  my_print("Making legends...", verbose = verbose)
   if (make_legend) {
     legend_length <- square_side_length * 0.3 
     
@@ -1024,7 +1060,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #                                       height = text_data$size, rotation = text_data$rotation,
   #                                       just = text_data$justification)
   # text_boxes$group <- rep(seq_along(text_data$label), each = 4)  # debug
-  my_print("Plotting graph...")
+  my_print("Plotting graph...", verbose = verbose)
   result = tryCatch({
     
     ranges <- get_limits()

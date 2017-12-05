@@ -4,11 +4,14 @@
 #' package-wide changes easier.
 #'
 #' @param ... Something to print
+#' @param verbose If \code{FALSE}, do not print anything.
 #'
 #' @keywords internal
-my_print <- function(...) {
-  text <- paste0(as.character(list(...)), collapse = "")
-  message(text)
+my_print <- function(..., verbose = TRUE) {
+  if (verbose) {
+    text <- paste0(as.character(list(...)), collapse = "")
+    message(text)
+  }
 }
 
 
