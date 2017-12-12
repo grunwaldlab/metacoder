@@ -227,10 +227,10 @@ primersearch.taxmap <- function(input, forward, reverse, mismatch = 5,
   input$obs_data$amplified <- ! is.na(input$obs_data$length)
   input$taxon_funcs <- c(input$taxon_funcs,
                          count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]), numeric(1))
+                           vapply(taxa::obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]), numeric(1))
                          },
                          prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]) / length(x), numeric(1))
+                           vapply(taxa::obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]) / length(x), numeric(1))
                          })
   output <- input
   return(output)

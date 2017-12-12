@@ -25,7 +25,7 @@ unite_ex_data_1 <- extract_tax_data(headers,
 
 }
 \seealso{
-Other example_datasets: \code{\link{bryophytes_ex_data}},
+Other example_fastas: \code{\link{bryophytes_ex_data}},
   \code{\link{contaminants}},
   \code{\link{genbank_ex_data}},
   \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},

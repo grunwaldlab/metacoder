@@ -36,7 +36,7 @@ contaminants <- lookup_tax_data(ids, type = "seq_id", database = "ncbi")
 
 }
 \seealso{
-Other example_datasets: \code{\link{bryophytes_ex_data}},
+Other example_fastas: \code{\link{bryophytes_ex_data}},
   \code{\link{genbank_ex_data}},
   \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
   \code{\link{silva_ex_data}},

@@ -23,7 +23,7 @@ bryophytes_ex_data <- lookup_tax_data(taxon_names,
 
 }
 \seealso{
-Other example_datasets: \code{\link{contaminants}},
+Other example_fastas: \code{\link{contaminants}},
   \code{\link{genbank_ex_data}},
   \code{\link{its1_ex_data}}, \code{\link{pr2_ex_data}},
   \code{\link{silva_ex_data}},

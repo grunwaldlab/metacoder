@@ -52,7 +52,7 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   # Make plot layout
   diff_table <- obj$data[[dataset]]
   treatments <- unique(c(diff_table$treatment_1, diff_table$treatment_2))
-  combinations <- t(combn(seq_along(treatments), 2))
+  combinations <- t(utils::combn(seq_along(treatments), 2))
   layout_matrix <- matrix(rep(NA, (length(treatments))^2), nrow = length(treatments))
   for (index in 1:nrow(combinations)) {
     layout_matrix[combinations[index, 1], combinations[index, 2]] <- index
@@ -61,22 +61,22 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   
   
   # Make individual plots
-  if (label_small_trees) {
-    plot_sub_plot <- function(..., make_legend = FALSE) {
+  plot_sub_plot <- ifelse(label_small_trees,
+    function(..., make_legend = FALSE) {
+      metacoder::heat_tree(..., make_legend = FALSE)
+    },
+    function(..., node_label = NULL, make_legend = FALSE) {
       metacoder::heat_tree(..., make_legend = FALSE)
     }
-  } else {
-    plot_sub_plot <- function(..., node_label = NULL, make_legend = FALSE) {
-      metacoder::heat_tree(..., make_legend = FALSE)
-    }
-  }
+  )
   
   sub_plots <- lapply(seq_len(nrow(combinations)),
                       function(index) {
                         set.seed(seed)
                         obj %>%
                           taxa::filter_obs("diff_table",
-                                           treatment_1 == treatments[combinations[index, 1]] & treatment_2 == treatments[combinations[index, 2]]) %>%
+                                           obj$data$diff_table$treatment_1 == treatments[combinations[index, 1]] &
+                                             obj$data$diff_table$treatment_2 == treatments[combinations[index, 2]]) %>%
                           plot_sub_plot(...)
                       })
   

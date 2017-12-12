@@ -4,8 +4,10 @@
 \alias{write_rdp}
 \title{Write an immitation of the RDP FASTA databse}
 \usage{
-write_rdp(obj, file, tax_names = taxon_names, ranks = rdp_rank,
-  ids = rdp_id, info = seq_name, sequences = rdp_seq)
+write_rdp(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("rdp_rank")[[1]], ids = obj$get_data("rdp_id")[[1]],
+  info = obj$get_data("seq_name")[[1]],
+  sequences = obj$get_data("rdp_seq")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}

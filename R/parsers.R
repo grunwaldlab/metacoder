@@ -184,8 +184,9 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
     output <- taxa::parse_tax_data(tax_data = raw_data,
                                    class_cols = "rankID",
                                    class_sep = ".")
-    # replace taoxon names
-    my_taxon_names <- output$map_data(taxon_ids, taxon)
+    # replace taxon names
+    my_taxon_names <- output$map_data_(output$taxon_ids(),
+                                       output$get_data("taxon")[[1]])
     output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
                                           function(i) {
                                             my_taxon <- output$taxa[[i]]

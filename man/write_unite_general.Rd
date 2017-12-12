@@ -4,9 +4,13 @@
 \alias{write_unite_general}
 \title{Write an immitation of the UNITE general FASTA databse}
 \usage{
-write_unite_general(obj, file, tax_names = taxon_names, ranks = unite_rank,
-  sequences = unite_seq, seq_name = organism, ids = unite_id,
-  gb_acc = acc_num, type = unite_type)
+write_unite_general(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("unite_rank")[[1]],
+  sequences = obj$get_data("unite_seq")[[1]],
+  seq_name = obj$get_data("organism")[[1]],
+  ids = obj$get_data("unite_id")[[1]],
+  gb_acc = obj$get_data("acc_num")[[1]],
+  type = obj$get_data("unite_type")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}

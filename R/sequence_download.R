@@ -230,3 +230,17 @@ ncbi_sequence <- function (ids, batch_size = 100) {
   }
   return(output)
 }
+
+
+#' Get taxonomy levels
+#' 
+#' Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+#'   hierarchy.
+#'   
+#' @keywords internal
+get_taxonomy_levels <- function() {
+  unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
+  unique_levels <- tolower(unique_levels)
+  output <- sort(factor(unique_levels, labels = unique_levels, ordered = TRUE))
+  return(output)
+}

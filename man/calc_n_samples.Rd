@@ -24,10 +24,10 @@ there will be one column in the output for each unique value in
 \item{out_names}{The names of count columns in the output. Must be the length
 1 or same length as \code{unique(groups)}, if used.}
 
-\item{append}{If \code{TRUE}, append results to input table and return.}
-
-\item{If}{\code{groups} is not used, return a vector of the results instead
+\item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}
+
+\item{append}{If \code{TRUE}, append results to input table and return.}
 }
 \value{
 A tibble

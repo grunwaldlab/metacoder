@@ -5,8 +5,9 @@
 \title{Write an immitation of the Greengenes databse}
 \usage{
 write_greengenes(obj, tax_file = NULL, seq_file = NULL,
-  tax_names = taxon_names, ranks = gg_rank, ids = gg_id,
-  sequences = gg_seq)
+  tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("gg_rank")[[1]], ids = obj$get_data("gg_id")[[1]],
+  sequences = obj$get_data("gg_seq")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}

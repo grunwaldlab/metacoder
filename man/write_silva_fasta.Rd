@@ -4,9 +4,12 @@
 \alias{write_silva_fasta}
 \title{Write an immitation of the SILVA FASTA databse}
 \usage{
-write_silva_fasta(obj, file, tax_names = taxon_names,
-  other_names = other_name, ids = ncbi_id, start = start_pos,
-  end = end_pos, sequences = silva_seq)
+write_silva_fasta(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  other_names = obj$get_data("other_name")[[1]],
+  ids = obj$get_data("ncbi_id")[[1]],
+  start = obj$get_data("start_pos")[[1]],
+  end = obj$get_data("end_pos")[[1]],
+  sequences = obj$get_data("silva_seq")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}
