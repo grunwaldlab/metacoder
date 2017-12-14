@@ -225,15 +225,14 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
 #'
 #' @param obj A taxmap object
 #' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{data} that have counts. By
-#'   Default, all numeric columns in \code{data} are used. Takes one of
-#'   the following inputs:
+#' @param cols The names/indexes of columns in \code{dataset} to use. Takes one
+#'   of the following inputs:
 #'   \describe{
-#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'     \item{TRUE/FALSE:}{All columns will used.}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
 #'   corresponding to \code{TRUE} values.}
-#'     \item{Character vector:}{The names of columns to preserve}
-#'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'     \item{Character vector:}{The names of columns to use}
+#'     \item{Numeric vector:}{The indexes of columns to use}
 #'   }
 #' @param other_cols Preserve in the output non-target columns present in the
 #'   input data. The "taxon_id" column will always be preserved. Takes one of
@@ -256,6 +255,16 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
+#' 
+#' # If all cols are used, there are no other cols, only "taxon_id"
+#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = TRUE)
+#' 
+#' # If a subset of target columns is specified, the rest are returned 
+#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3)
+#' 
+#' # Additionally, a subset of other columns can be specified
+#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3,
+#'                                   other_cols = 4:5)
 #'                    
 #' }
 get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
@@ -269,7 +278,12 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
   other_cols <- get_taxmap_cols(obj, dataset, other_cols)
   
   # Remove target cols if present
-  result <- other_cols[! other_cols %in% cols]
+  in_both <- other_cols %in% cols
+  if (sum(in_both) > 0) {
+    warning(paste0("The following columns will be overwritten in the output:\n  ",
+                   limited_print(other_cols[in_both])))
+  }
+  result <- other_cols[! in_both]
   
   # Add taxon id column regardless
   if (! "taxon_id" %in% result) {

@@ -11,15 +11,14 @@ get_taxmap_other_cols(obj, dataset, cols, other_cols = NULL)
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
-\item{cols}{The names/indexes of columns in \code{data} that have counts. By
-Default, all numeric columns in \code{data} are used. Takes one of
-the following inputs:
+\item{cols}{The names/indexes of columns in \code{dataset} to use. Takes one
+of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+  \item{TRUE/FALSE:}{All columns will used.}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
 corresponding to \code{TRUE} values.}
-  \item{Character vector:}{The names of columns to preserve}
-  \item{Numeric vector:}{The indexes of columns to preserve}
+  \item{Character vector:}{The names of columns to use}
+  \item{Numeric vector:}{The indexes of columns to use}
 }}
 
 \item{other_cols}{Preserve in the output non-target columns present in the
@@ -42,6 +41,16 @@ Parse the other_cols option used in many calculation functions.
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
+
+# If all cols are used, there are no other cols, only "taxon_id"
+metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = TRUE)
+
+# If a subset of target columns is specified, the rest are returned 
+metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3)
+
+# Additionally, a subset of other columns can be specified
+metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3,
+                                  other_cols = 4:5)
                    
 }
 }

@@ -8,10 +8,27 @@
 #'
 #' @param obj A taxmap object
 #' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{data} that have counts. By Default,
-#'   all numeric columns in \code{data} are used.
-#' @param other_cols If \code{TRUE}, keep non-count cols in the input data.
-#' The "taxon_id" column will always be preserved. 
+#' @param cols The names/indexes of columns in \code{dataset} to use. By
+#'   default, all numeric columns are used. Takes one of the following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All/No columns will used.}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+#'   corresponding to \code{TRUE} values.}
+#'     \item{Character vector:}{The names of columns to use}
+#'     \item{Numeric vector:}{The indexes of columns to use}
+#'   }
+#' @param other_cols Preserve in the output non-target columns present in the
+#'   input data. The "taxon_id" column will always be preserved. Takes one of
+#'   the following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'   corresponding to \code{TRUE} values.}
+#'     \item{Character vector:}{The names of columns to preserve}
+#'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'   }
+#' @param new_names If supplied, rename the output proportion columns. Must be
+#'   the same length as \code{cold}.
 #'
 #' @return A tibble
 #'
@@ -21,7 +38,7 @@
 #' 
 #' @examples
 #' \dontrun{
-#' # Parse dataset for plotting
+#' # Parse dataset for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
@@ -30,26 +47,27 @@
 #' calc_obs_props(x, "tax_data")
 #' 
 #' # Calculate proportions for a subset of columns
-#' calc_obs_props(x, "tax_data", cols = c("700097433", "700100489", "700111174"))
+#' calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"))
+#' calc_obs_props(x, "tax_data", cols = 4:6)
+#' calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "7"))
 #' 
 #' # Including all other columns in ouput
 #' calc_obs_props(x, "tax_data", other_cols = TRUE)
 #' 
 #' # Inlcuding specific columns in output
-#' 
+#' calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"),
+#'                other_cols = 2:3)
 #' 
 #' 
 #' }
-calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE) {
+calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE, new_names = NULL) {
   
   # Get count table
-  count_table <- get_taxmap_table(obj, dataset, cols)
+  count_table <- get_taxmap_table(obj, dataset)
   
   # Find default columns if needed
   if (is.null(cols)) {
     cols <- which(vapply(count_table, is.numeric, logical(1)))
-  } else { # remove any columns that do not exist
-    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
   
   # Check that count columns are numeric
@@ -59,16 +77,30 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE) {
                 limited_print(cols[!col_is_num], type = "silent")))
   }
   
-  # Calculate proportions
-  count_table[cols] <- lapply(count_table[cols], function(x) x / sum(x))
-  
-  # Remove other columns if specified
-  if (! other_cols) {
-    cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
-    count_table <- count_table[colnames(count_table) %in% cols_to_keep]
+  # Check that new column names are the same length as calculation columns
+  if (is.null(new_names)) {
+    new_names <- cols
+  } else if (length(new_names) != length(cols)) {
+    stop(paste0('The `new_names` option (length = ', length(new_names), 
+                ') must be the same length as the `cols` used (length = ',
+                length(cols), ').'))
   }
   
-  return(count_table)
+  # Find other columns
+  #   These might be added back to the output later
+  cols_to_keep <- get_taxmap_other_cols(obj, dataset, cols, other_cols)
+  
+  # Calculate proportions
+  prop_data <- do.call(cbind, lapply(count_table[cols], function(x) x / sum(x)))
+  colnames(prop_data) <- new_names
+  
+  # Add back other columns if specified
+  prop_data <- cbind(count_table[, cols_to_keep], prop_data)
+  
+  # Convert to tibble
+  prop_data <- dplyr::as_tibble(prop_data)
+  
+  return(prop_data)
 }
 
 

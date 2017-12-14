@@ -4,18 +4,37 @@
 \alias{calc_obs_props}
 \title{Calculate proportions from observation counts}
 \usage{
-calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE)
+calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE,
+  new_names = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
-\item{cols}{The names/indexes of columns in \code{data} that have counts. By Default,
-all numeric columns in \code{data} are used.}
+\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+default, all numeric columns are used. Takes one of the following inputs:
+\describe{
+  \item{TRUE/FALSE:}{All/No columns will used.}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+corresponding to \code{TRUE} values.}
+  \item{Character vector:}{The names of columns to use}
+  \item{Numeric vector:}{The indexes of columns to use}
+}}
 
-\item{other_cols}{If \code{TRUE}, keep non-count cols in the input data.
-The "taxon_id" column will always be preserved.}
+\item{other_cols}{Preserve in the output non-target columns present in the
+input data. The "taxon_id" column will always be preserved. Takes one of
+the following inputs:
+\describe{
+  \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+corresponding to \code{TRUE} values.}
+  \item{Character vector:}{The names of columns to preserve}
+  \item{Numeric vector:}{The indexes of columns to preserve}
+}}
+
+\item{new_names}{If supplied, rename the output proportion columns. Must be
+the same length as \code{cold}.}
 }
 \value{
 A tibble
@@ -29,7 +48,7 @@ per taxon. If counts have already been summed per taxon, use
 }
 \examples{
 \dontrun{
-# Parse dataset for plotting
+# Parse dataset for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
@@ -38,13 +57,16 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 calc_obs_props(x, "tax_data")
 
 # Calculate proportions for a subset of columns
-calc_obs_props(x, "tax_data", cols = c("700097433", "700100489", "700111174"))
+calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"))
+calc_obs_props(x, "tax_data", cols = 4:6)
+calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "7"))
 
 # Including all other columns in ouput
 calc_obs_props(x, "tax_data", other_cols = TRUE)
 
 # Inlcuding specific columns in output
-
+calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"),
+               other_cols = 2:3)
 
 
 }
