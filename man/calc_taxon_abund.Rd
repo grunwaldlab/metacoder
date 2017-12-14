@@ -36,5 +36,5 @@ per-taxon counts.
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_obs_props}},
   \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}
+  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }

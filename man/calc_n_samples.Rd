@@ -68,5 +68,5 @@ calc_n_samples(x, dataset = "tax_data", append = TRUE)
 Other calculations: \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}
+  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }

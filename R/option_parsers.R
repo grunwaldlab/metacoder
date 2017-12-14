@@ -280,7 +280,7 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
   # Remove target cols if present
   in_both <- other_cols %in% cols
   if (sum(in_both) > 0) {
-    warning(paste0("The following columns will be overwritten in the output:\n  ",
+    warning(paste0("The following columns will be replaced in the output:\n  ",
                    limited_print(other_cols[in_both])))
   }
   result <- other_cols[! in_both]

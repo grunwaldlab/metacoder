@@ -1,3 +1,86 @@
+#' Run some function to produce new columns.
+#'
+#' For a given table in a taxmap object, run some function to produce new columns.
+#' This function handles all of the option parsing and formatting of the result.
+#'
+#' @param obj A taxmap object
+#' @param dataset The name of a table in \code{obj}.
+#' @param func The function to apply. Should accept and return a table.
+#' @param cols The names/indexes of columns in \code{dataset} to use. By
+#'   default, all numeric columns are used. Takes one of the following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All/No columns will used.}
+#'     \item{Character vector:}{The names of columns to use}
+#'     \item{Numeric vector:}{The indexes of columns to use}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param other_cols Preserve in the output non-target columns present in the
+#'   input data. New columns will always be on the end. The
+#'   "taxon_id" column will always be preserved in the front. Takes one of the
+#'   following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
+#'     \item{Character vector:}{The names of columns to preserve}
+#'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param new_names If supplied, rename the output proportion columns. Must be
+#'   the same length as \code{cold}.
+#'
+#' @return A tibble
+#' 
+#' @keywords internal
+do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL,
+                                other_cols = FALSE, new_names = NULL) {
+  # Get input table
+  input <- get_taxmap_table(obj, dataset)
+  
+  # Find default columns if needed
+  if (is.null(cols)) {
+    cols <- which(vapply(input, is.numeric, logical(1)))
+    my_print("No `cols` specified, so using all numeric columns:\n  ", 
+             limited_print(names(cols), type = "silent"))
+  }
+  
+  # Parse user input for columns
+  cols <- get_taxmap_cols(obj = obj, dataset = dataset, cols = cols)
+  
+  # Check that count columns are numeric
+  col_is_num <- vapply(input[cols], is.numeric, logical(1))
+  if (! all(col_is_num)) {
+    stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
+                limited_print(cols[!col_is_num], type = "silent")))
+  }
+  
+  # Check that new column names are the same length as calculation columns
+  if (is.null(new_names)) {
+    new_names <- cols
+  } else if (length(new_names) != length(cols)) {
+    stop(paste0('The `new_names` option (length = ', length(new_names), 
+                ') must be the same length as the `cols` used (length = ',
+                length(cols), ').'))
+  }
+  
+  # Find other columns
+  #   These might be added back to the output later
+  cols_to_keep <- get_taxmap_other_cols(obj, dataset, cols, other_cols)
+  
+  # Calculate proportions
+  result <- func(input[, cols])
+  colnames(result) <- new_names
+  
+  # Add back other columns if specified
+  result <- cbind(input[, cols_to_keep], result)
+  
+  # Convert to tibble
+  result <- dplyr::as_tibble(result)
+  
+  return(result)
+}
+
+
 #' Calculate proportions from observation counts
 #'
 #' For a given table in a taxmap object, convert one or more columns containing
@@ -12,20 +95,21 @@
 #'   default, all numeric columns are used. Takes one of the following inputs:
 #'   \describe{
 #'     \item{TRUE/FALSE:}{All/No columns will used.}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-#'   corresponding to \code{TRUE} values.}
 #'     \item{Character vector:}{The names of columns to use}
 #'     \item{Numeric vector:}{The indexes of columns to use}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+#'   corresponding to \code{TRUE} values.}
 #'   }
 #' @param other_cols Preserve in the output non-target columns present in the
-#'   input data. The "taxon_id" column will always be preserved. Takes one of
-#'   the following inputs:
+#'   input data. New columns with proportions will always be on the end. The
+#'   "taxon_id" column will always be preserved in the front. Takes one of the
+#'   following inputs:
 #'   \describe{
 #'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-#'   corresponding to \code{TRUE} values.}
 #'     \item{Character vector:}{The names of columns to preserve}
 #'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'   corresponding to \code{TRUE} values.}
 #'   }
 #' @param new_names If supplied, rename the output proportion columns. Must be
 #'   the same length as \code{cold}.
@@ -47,119 +131,257 @@
 #' calc_obs_props(x, "tax_data")
 #' 
 #' # Calculate proportions for a subset of columns
-#' calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"))
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
 #' calc_obs_props(x, "tax_data", cols = 4:6)
-#' calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "7"))
+#' calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
 #' 
 #' # Including all other columns in ouput
 #' calc_obs_props(x, "tax_data", other_cols = TRUE)
 #' 
 #' # Inlcuding specific columns in output
-#' calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"),
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 #'                other_cols = 2:3)
-#' 
+#'                
+#' # Rename output columns
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                new_names = c("a", "b", "c"))
 #' 
 #' }
-calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE, new_names = NULL) {
-  
-  # Get count table
-  count_table <- get_taxmap_table(obj, dataset)
-  
-  # Find default columns if needed
-  if (is.null(cols)) {
-    cols <- which(vapply(count_table, is.numeric, logical(1)))
-  }
-  
-  # Check that count columns are numeric
-  col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
-  if (! all(col_is_num)) {
-    stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
-                limited_print(cols[!col_is_num], type = "silent")))
-  }
-  
-  # Check that new column names are the same length as calculation columns
-  if (is.null(new_names)) {
-    new_names <- cols
-  } else if (length(new_names) != length(cols)) {
-    stop(paste0('The `new_names` option (length = ', length(new_names), 
-                ') must be the same length as the `cols` used (length = ',
-                length(cols), ').'))
-  }
-  
-  # Find other columns
-  #   These might be added back to the output later
-  cols_to_keep <- get_taxmap_other_cols(obj, dataset, cols, other_cols)
-  
-  # Calculate proportions
-  prop_data <- do.call(cbind, lapply(count_table[cols], function(x) x / sum(x)))
-  colnames(prop_data) <- new_names
-  
-  # Add back other columns if specified
-  prop_data <- cbind(count_table[, cols_to_keep], prop_data)
-  
-  # Convert to tibble
-  prop_data <- dplyr::as_tibble(prop_data)
-  
-  return(prop_data)
+calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
+                           new_names = NULL) {
+  do_calc_on_num_cols(obj, dataset, cols = cols, other_cols = other_cols,
+                      new_names = new_names,
+                      func =  function(count_table) {
+                        do.call(cbind, lapply(count_table, function(x) x / sum(x)))
+                      }
+  )
 }
 
 
-#' Calculate proportions from observation counts
+#' Replace low counts with zero
+#'
+#' For a given table in a taxmap object, convert all counts below a minimum
+#' numer to zero. This is useful for effectivly removing "singletons",
+#' "doubletons", or other low abundance counts.
+#'
+#' @param obj A taxmap object
+#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @param min_count The minimum number of counts needed for a count to remain
+#'   unchanged. Any could less than this will be converted to a zero. For
+#'   example, \code{min_count = 2} would remove singletons.
+#' @param filter_rows If \code{TRUE}, remove any rows (e.g. OTUs) that are all
+#'   zero after low counts are converted to zero.
+#' @param filter_cols If \code{TRUE}, remove any columns (e.g. samples) that are
+#'   all zero after low counts are converted to zero.
+#' @param use_total If \code{TRUE}, the \code{min_count} applies to the total
+#'   count for each row (e.g. OTU counts for all samples), rather than each cell
+#'   in the table. For example \code{use_total = TRUE, min_count = 10} would
+#'   convert all counts of any row to zero if the totol for all counts in that
+#'   row was less than 10.
+#' @param cols The names/indexes of columns in \code{dataset} to use. By
+#'   default, all numeric columns are used. Takes one of the following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All/No columns will used.}
+#'     \item{Character vector:}{The names of columns to use}
+#'     \item{Numeric vector:}{The indexes of columns to use}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param other_cols Preserve in the output non-target columns present in the
+#'   input data. New columns with proportions will always be on the end. The
+#'   "taxon_id" column will always be preserved in the front. Takes one of the
+#'   following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
+#'     \item{Character vector:}{The names of columns to preserve}
+#'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param new_names If supplied, rename the output proportion columns. Must be
+#'   the same length as \code{cold}.
+#'
+#' @return A tibble
+#'
+#' @family calculations
 #' 
+#' @export
+#' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Calculate proportions for all numeric columns
+#' calc_obs_props(x, "tax_data")
+#' 
+#' # Calculate proportions for a subset of columns
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
+#' calc_obs_props(x, "tax_data", cols = 4:6)
+#' calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
+#' 
+#' # Including all other columns in ouput
+#' calc_obs_props(x, "tax_data", other_cols = TRUE)
+#' 
+#' # Inlcuding specific columns in output
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                other_cols = 2:3)
+#'                
+#' # Rename output columns
+#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                new_names = c("a", "b", "c"))
+#' 
+#' }
+zero_low_counts <- function(obj, dataset, min_count = 2, filter_rows = TRUE,
+                            filter_cols = FALSE, use_total = FALSE,
+                            cols = NULL, other_cols = FALSE, new_names = NULL) {
+  
+  # Let user know paramters used
+  if (use_total) {
+    my_print('Converting to zero all counts in rows with totals less than ', min_count, '.')
+  } else {
+    my_print('Converting to zero all counts less than ', min_count, '.')
+  }
+
+  do_it <- function(count_table) {
+    # Convert low counts to zero
+    if (use_total) {
+      row_sums <- rowSums(count_table)
+      to_zero <- row_sums < min_count & row_sums > 0
+      if (sum(to_zero) > 0) {
+        my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
+                 ' rows with total counts less than', min_count, ': ',
+                 limited_print(colnames(count_table)[to_zero], type = "silent"))
+      } else {
+        my_print('No rows found with total counts less than ', min_count, '.')
+      }
+      count_table[to_zero, ] <- 0
+    } else {
+      to_zero <- count_table < min_count & count_table > 0
+      if (sum(to_zero) > 0) {
+        my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
+                 ' counts less than ', min_count, '.')
+      } else {
+        my_print('No counts found less than', min_count, '.')
+      }
+      count_table[to_zero] <- 0
+    }
+    return(count_table)
+  }
+  
+  do_calc_on_num_cols(obj, dataset, cols = cols, other_cols = other_cols,
+                                new_names = new_names, func = do_it)
+}
+
+
+#' @keywords internal
+remove_empty_dims <- function(filter_rows = TRUE, filter_cols = FALSE) {
+  # Remove rows with all zeros
+  if (filter_rows) {
+    to_remove <- rowSums(count_table) <= 0
+    if (sum(to_remove) > 0) {
+      my_print("Removing ", sum(to_remove), ' rows with all zeros:\n  ',
+               limited_print(rownames(count_table)[to_remove], type = "silent"))
+    }
+    count_table <- count_table[! to_remove, ]
+  }
+  
+  # Remove columns with all zeros
+  if (filter_cols) {
+    to_remove <- colSums(count_table) <= 0
+    if (sum(to_remove) > 0) {
+      my_print("Removing ", sum(to_remove), ' columns with all zeros:\n  ',
+               limited_print(colnames(count_table)[to_remove], type = "silent"))
+    }
+    count_table <- count_table[, ! to_remove]
+  }
+}
+
+
+
+#' Calculate rarefied observation counts
+#'
 #' For a given table in a taxmap object, rarefy counts to a constant total. This
 #' is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 #' which columns are numeric and handles the reformatting needed to use tibbles.
-#' 
+#'
 #' @param obj A taxmap object
 #' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{data} that have counts. By 
-#'   Default, all numeric columns in \code{data} are used.
 #' @param sample_size The sample size counts will be rarefied to. This can be 
 #'   either a single integer or a vector of integers of equal length to the 
 #'   number of columns.
-#' @param other_cols If \code{TRUE}, keep non-count cols in the input data.
-#'   The "taxon_id" column will always be preserved.
-#'   
+#' @param cols The names/indexes of columns in \code{dataset} to use. By
+#'   default, all numeric columns are used. Takes one of the following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All/No columns will used.}
+#'     \item{Character vector:}{The names of columns to use}
+#'     \item{Numeric vector:}{The indexes of columns to use}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param other_cols Preserve in the output non-target columns present in the
+#'   input data. New columns with proportions will always be on the end. The
+#'   "taxon_id" column will always be preserved in the front. Takes one of the
+#'   following inputs:
+#'   \describe{
+#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
+#'     \item{Character vector:}{The names of columns to preserve}
+#'     \item{Numeric vector:}{The indexes of columns to preserve}
+#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+#'   corresponding to \code{TRUE} values.}
+#'   }
+#' @param new_names If supplied, rename the output proportion columns. Must be
+#'   the same length as \code{cold}.
+#'
 #' @return A tibble
-#' 
+#'
 #' @family calculations
-#'   
+#' 
 #' @export
-rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, other_cols = FALSE) {
-  
-  # Get count table
-  count_table <- get_taxmap_table(obj, dataset, cols)
-  
-  # Find default columns if needed
-  if (is.null(cols)) {
-    cols <- which(vapply(count_table, is.numeric, logical(1)))
-  } else { # remove any columns that do not exist
-    cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
-  }
-  
-  # Check that columns are numeric
-  col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
-  if (! all(col_is_num)) {
-    stop(paste0("All columns must be numeric. The following columns are not numeric:  ",
-                limited_print(cols[!col_is_num], type = "silent")))
-  }
-  
-  # Calculate minimum count if no sample size is given
-  if (is.null(sample_size)) {
-    sample_size <- min(colSums(count_table[cols]))
-  }
-  
-  # Rarefy
-  count_table[cols] <- dplyr::as.tbl(as.data.frame(t(vegan::rrarefy(t(count_table[cols]), sample = sample_size))))
-
-  # Remove other columns if specified
-  if (! other_cols) {
-    cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
-    count_table <- count_table[colnames(count_table) %in% cols_to_keep]
-  }
-  
-  return(count_table)
+#' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Rarefy all numeric columns
+#' rarefy_obs(x, "tax_data")
+#' 
+#' # Rarefy a subset of columns
+#' rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
+#' rarefy_obs(x, "tax_data", cols = 4:6)
+#' rarefy_obs(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
+#' 
+#' # Including all other columns in ouput
+#' rarefy_obs(x, "tax_data", other_cols = TRUE)
+#' 
+#' # Inlcuding specific columns in output
+#' rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                other_cols = 2:3)
+#'                
+#' # Rename output columns
+#' rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                new_names = c("a", "b", "c"))
+#' 
+#' }
+rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
+                       other_cols = FALSE, new_names = NULL) {
+  do_calc_on_num_cols(obj, dataset, cols = cols, other_cols = other_cols,
+                      new_names = new_names,
+                      func =  function(count_table) {
+                        if (is.null(sample_size)) {
+                          sample_size <- min(colSums(count_table)) # Calculate minimum count if no sample size is given
+                          my_print("Rarefying to ", sample_size, " since that is the lowest sample total.")
+                        }
+                        as.data.frame(t(vegan::rrarefy(t(count_table), sample = sample_size)))
+                      }
+  )
 }
+
 
 
 #' Compare treatments
@@ -383,7 +605,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
   }  else { # remove any columns that do not exist
     cols <- cols[! cols %in% get_invalid_cols(count_table, cols)]
   }
-
+  
   # Check that count columns are numeric
   col_is_num <- vapply(count_table[cols], is.numeric, logical(1))
   if (! all(col_is_num)) {

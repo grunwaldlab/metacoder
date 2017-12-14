@@ -16,21 +16,22 @@ calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE,
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
   \item{TRUE/FALSE:}{All/No columns will used.}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-corresponding to \code{TRUE} values.}
   \item{Character vector:}{The names of columns to use}
   \item{Numeric vector:}{The indexes of columns to use}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+corresponding to \code{TRUE} values.}
 }}
 
 \item{other_cols}{Preserve in the output non-target columns present in the
-input data. The "taxon_id" column will always be preserved. Takes one of
-the following inputs:
+input data. New columns with proportions will always be on the end. The
+"taxon_id" column will always be preserved in the front. Takes one of the
+following inputs:
 \describe{
   \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-corresponding to \code{TRUE} values.}
   \item{Character vector:}{The names of columns to preserve}
   \item{Numeric vector:}{The indexes of columns to preserve}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
+corresponding to \code{TRUE} values.}
 }}
 
 \item{new_names}{If supplied, rename the output proportion columns. Must be
@@ -57,17 +58,20 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 calc_obs_props(x, "tax_data")
 
 # Calculate proportions for a subset of columns
-calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"))
+calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
 calc_obs_props(x, "tax_data", cols = 4:6)
-calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "7"))
+calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
 
 # Including all other columns in ouput
 calc_obs_props(x, "tax_data", other_cols = TRUE)
 
 # Inlcuding specific columns in output
-calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"),
+calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
                other_cols = 2:3)
-
+               
+# Rename output columns
+calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+               new_names = c("a", "b", "c"))
 
 }
 }
@@ -75,5 +79,5 @@ calc_obs_props(x, "tax_data", cols = c("700035653", "700097433", "700100489"),
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}
+  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }
