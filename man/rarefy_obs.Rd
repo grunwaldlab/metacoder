@@ -5,7 +5,7 @@
 \title{Calculate proportions from observation counts}
 \usage{
 rarefy_obs(obj, dataset, cols = NULL, sample_size = NULL,
-  keep_other_cols = TRUE)
+  other_cols = FALSE)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -19,7 +19,7 @@ Default, all numeric columns in \code{data} are used.}
 either a single integer or a vector of integers of equal length to the 
 number of columns.}
 
-\item{keep_other_cols}{If \code{TRUE}, keep non-count cols in the input data.
+\item{other_cols}{If \code{TRUE}, keep non-count cols in the input data.
 The "taxon_id" column will always be preserved.}
 }
 \value{

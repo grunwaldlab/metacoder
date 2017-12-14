@@ -5,7 +5,7 @@
 \title{Compare treatments}
 \usage{
 compare_treatments(obj, dataset, sample_ids, treatments, func = NULL,
-  combinations = NULL, keep_cols = TRUE)
+  combinations = NULL, other_cols = FALSE)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -44,7 +44,7 @@ function(abund_1, abund_2) {
 of vectors, each containing the names of 2 treatments to compare. By 
 default, all pairwise combinations of treatments are compared.}
 
-\item{keep_cols}{If \code{TRUE}, preserve all columns not in 
+\item{other_cols}{If \code{TRUE}, preserve all columns not in 
 \code{sample_ids} in the output. If \code{FALSE}, dont keep other columns. 
 If a column names or indexes are supplied, only preserve those columns.}
 }

@@ -211,65 +211,6 @@ limited_print <- function(chars, prefix = "",
 }
 
 
-#' Get a table from a taxmap object
-#' 
-#' Get a table from a taxmap object and complain if it does not exist.
-#' 
-#' @param obj A taxmap object
-#' @param dataset The name of the table
-#' @param expected_cols The names/indexes of columns expected to exist. If a column is not found, issue a warning.
-#' 
-#' @return A data.frame
-#' 
-#' @keywords internal
-get_taxmap_table <- function(obj, dataset, expected_cols = NULL) {
-  # Check that dataset exists and is a table
-  if (! dataset %in% names(obj$data)) {
-    stop(paste0('The dataset "', dataset,
-                '" is not in the object supplied. Datasets found include:\n  ',
-                limited_print(names(obj$data), type = "silent")), call. = FALSE)
-  }
-  if (! is.data.frame(obj$data[[dataset]])) {
-    stop(paste0('The dataset "', dataset,  '" is not a table.'), call. = FALSE)
-  }
-  
-  # Get table
-  table <- obj$data[[dataset]]
-  
-  # Check that all columns exist
-  if (! is.null(expected_cols)) {
-    invalid_cols <- get_invalid_cols(table, expected_cols)
-    if (length(invalid_cols) > 0) {
-      warning(paste0('The following ', length(invalid_cols),
-                     ' column(s) were not found in dataset "', dataset, '":\n',
-                     limited_print(prefix = "  ", invalid_cols, type = "silent")),
-              call. = FALSE)
-    }
-  }
-
-  # Return without printing
-  return(invisible(table))
-}
-
-
-#' Return invalid column names/indexes
-#' 
-#' Return invalid column names/indexes
-#' 
-#' @param table Table to check
-#' @param cols he names/indexes of columns
-#' 
-#' @keywords internal
-get_invalid_cols <- function(table, cols)  {
-  if (is.numeric(cols)) { # if column indexes
-    invalid_cols <- cols[! cols %in% seq_len(ncol(table))]
-  } else { # if column names
-    invalid_cols <- cols[! cols %in% colnames(table)]
-  }
-  return(invalid_cols)
-}
-
-
 #' @keywords internal
 rad_to_deg <- function(rad) {
   (rad * 180) / (pi)
@@ -279,4 +220,4 @@ rad_to_deg <- function(rad) {
 #' @keywords internal
 deg2rad <- function(deg) {
   (deg * pi) / (180)
-  }
+}

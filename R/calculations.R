@@ -10,7 +10,7 @@
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{data} that have counts. By Default,
 #'   all numeric columns in \code{data} are used.
-#' @param keep_other_cols If \code{TRUE}, keep non-count cols in the input data.
+#' @param other_cols If \code{TRUE}, keep non-count cols in the input data.
 #' The "taxon_id" column will always be preserved. 
 #'
 #' @return A tibble
@@ -18,7 +18,29 @@
 #' @family calculations
 #' 
 #' @export
-calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
+#' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for plotting
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Calculate proportions for all numeric columns
+#' calc_obs_props(x, "tax_data")
+#' 
+#' # Calculate proportions for a subset of columns
+#' calc_obs_props(x, "tax_data", cols = c("700097433", "700100489", "700111174"))
+#' 
+#' # Including all other columns in ouput
+#' calc_obs_props(x, "tax_data", other_cols = TRUE)
+#' 
+#' # Inlcuding specific columns in output
+#' 
+#' 
+#' 
+#' }
+calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE) {
   
   # Get count table
   count_table <- get_taxmap_table(obj, dataset, cols)
@@ -41,7 +63,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
   count_table[cols] <- lapply(count_table[cols], function(x) x / sum(x))
   
   # Remove other columns if specified
-  if (! keep_other_cols) {
+  if (! other_cols) {
     cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
     count_table <- count_table[colnames(count_table) %in% cols_to_keep]
   }
@@ -63,7 +85,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
 #' @param sample_size The sample size counts will be rarefied to. This can be 
 #'   either a single integer or a vector of integers of equal length to the 
 #'   number of columns.
-#' @param keep_other_cols If \code{TRUE}, keep non-count cols in the input data.
+#' @param other_cols If \code{TRUE}, keep non-count cols in the input data.
 #'   The "taxon_id" column will always be preserved.
 #'   
 #' @return A tibble
@@ -71,7 +93,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, keep_other_cols = TRUE) {
 #' @family calculations
 #'   
 #' @export
-rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, keep_other_cols = TRUE) {
+rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, other_cols = FALSE) {
   
   # Get count table
   count_table <- get_taxmap_table(obj, dataset, cols)
@@ -99,7 +121,7 @@ rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, keep_other
   count_table[cols] <- dplyr::as.tbl(as.data.frame(t(vegan::rrarefy(t(count_table[cols]), sample = sample_size))))
 
   # Remove other columns if specified
-  if (! keep_other_cols) {
+  if (! other_cols) {
     cols_to_keep <- c(colnames(count_table[cols]), "taxon_id")
     count_table <- count_table[colnames(count_table) %in% cols_to_keep]
   }
@@ -144,7 +166,7 @@ rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, keep_other
 #' @param combinations Which combinations of treatments to use. Must be a list 
 #'   of vectors, each containing the names of 2 treatments to compare. By 
 #'   default, all pairwise combinations of treatments are compared.
-#' @param keep_cols If \code{TRUE}, preserve all columns not in 
+#' @param other_cols If \code{TRUE}, preserve all columns not in 
 #'   \code{sample_ids} in the output. If \code{FALSE}, dont keep other columns. 
 #'   If a column names or indexes are supplied, only preserve those columns.
 #'   
@@ -188,7 +210,7 @@ rarefy_obs <- function(obj, dataset, cols = NULL, sample_size = NULL, keep_other
 #' @export
 compare_treatments <- function(obj, dataset, sample_ids, treatments,
                                func = NULL, combinations = NULL,
-                               keep_cols = TRUE) {
+                               other_cols = FALSE) {
   # Get abundance by sample data
   abund_data <- get_taxmap_table(obj, dataset, sample_ids)
   
@@ -211,17 +233,20 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
   treatments <- treatments[! sample_ids %in% invalid_cols]
   sample_ids <- sample_ids[! sample_ids %in% invalid_cols]
   
-  # Parse "keep_cols" option
-  if (is.logical(keep_cols)) {
-    if (length(keep_cols) != 1) {
-      stop('The "keep_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.', call. = FALSE)
-    } else if (keep_cols) {
-      keep_cols <- colnames(abund_data)[! colnames(abund_data) %in% sample_ids]
+  # Parse "other_cols" option
+  if (is.logical(other_cols)) {
+    if (length(other_cols) != 1) {
+      stop('The "other_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.', call. = FALSE)
+    } else if (other_cols) {
+      other_cols <- colnames(abund_data)[! colnames(abund_data) %in% sample_ids]
     } else {
-      keep_cols <- c()
+      other_cols <- c()
     }
   } else {
-    not_used <- get_taxmap_table(obj, dataset, keep_cols) # Checks that columns specified are valid
+    not_used <- get_taxmap_table(obj, dataset, other_cols) # Checks that columns specified are valid
+  }
+  if (! "taxon_id" %in% other_cols) {
+    other_cols <- c("taxon_id", other_cols)
   }
   
   # Get every combination of treatments to compare
@@ -275,7 +300,7 @@ compare_treatments <- function(obj, dataset, sample_ids, treatments,
                     output)
     
     # Add in other columns if specified
-    output <- cbind(abund_data[, keep_cols], output)
+    output <- cbind(abund_data[, other_cols], output)
     
     return(output)
   }
@@ -519,3 +544,6 @@ calc_n_samples <- function(obj, dataset, cols = NULL, groups = NULL,
   }
   
 }
+
+
+

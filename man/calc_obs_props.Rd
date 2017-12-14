@@ -4,7 +4,7 @@
 \alias{calc_obs_props}
 \title{Calculate proportions from observation counts}
 \usage{
-calc_obs_props(obj, dataset, cols = NULL, keep_other_cols = TRUE)
+calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -14,7 +14,7 @@ calc_obs_props(obj, dataset, cols = NULL, keep_other_cols = TRUE)
 \item{cols}{The names/indexes of columns in \code{data} that have counts. By Default,
 all numeric columns in \code{data} are used.}
 
-\item{keep_other_cols}{If \code{TRUE}, keep non-count cols in the input data.
+\item{other_cols}{If \code{TRUE}, keep non-count cols in the input data.
 The "taxon_id" column will always be preserved.}
 }
 \value{
@@ -26,6 +26,28 @@ counts to proportions. This is meant to be used with counts associated with
 observations (e.g. OTUs), as opposed to counts that have already been summed
 per taxon. If counts have already been summed per taxon, use
 [calc_tax_props()] instead.
+}
+\examples{
+\dontrun{
+# Parse dataset for plotting
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_regex = "^(.+)__(.+)$")
+                   
+# Calculate proportions for all numeric columns
+calc_obs_props(x, "tax_data")
+
+# Calculate proportions for a subset of columns
+calc_obs_props(x, "tax_data", cols = c("700097433", "700100489", "700111174"))
+
+# Including all other columns in ouput
+calc_obs_props(x, "tax_data", other_cols = TRUE)
+
+# Inlcuding specific columns in output
+
+
+
+}
 }
 \seealso{
 Other calculations: \code{\link{calc_n_samples}},
