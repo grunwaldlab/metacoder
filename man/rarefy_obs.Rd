@@ -5,7 +5,7 @@
 \title{Calculate rarefied observation counts}
 \usage{
 rarefy_obs(obj, dataset, sample_size = NULL, cols = NULL,
-  other_cols = FALSE, new_names = NULL)
+  other_cols = FALSE, out_names = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -38,7 +38,7 @@ following inputs:
 corresponding to \code{TRUE} values.}
 }}
 
-\item{new_names}{If supplied, rename the output proportion columns. Must be
+\item{out_names}{If supplied, rename the output proportion columns. Must be
 the same length as \code{cold}.}
 }
 \value{
@@ -73,7 +73,7 @@ rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
                
 # Rename output columns
 rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
-               new_names = c("a", "b", "c"))
+               out_names = c("a", "b", "c"))
 
 }
 }

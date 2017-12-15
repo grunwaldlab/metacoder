@@ -4,7 +4,7 @@
 \alias{compare_treatments}
 \title{Compare treatments}
 \usage{
-compare_treatments(obj, dataset, sample_ids, treatments, func = NULL,
+compare_treatments(obj, dataset, cols, groups, func = NULL,
   combinations = NULL, other_cols = FALSE)
 }
 \arguments{
@@ -13,16 +13,24 @@ compare_treatments(obj, dataset, sample_ids, treatments, func = NULL,
 \item{dataset}{The name of a table in \code{obj} that contains data for each 
 sample in columns.}
 
-\item{sample_ids}{The names of sample columns in \code{dataset}}
+\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+default, all numeric columns are used. Takes one of the following inputs:
+\describe{
+  \item{TRUE/FALSE:}{All/No columns will used.}
+  \item{Character vector:}{The names of columns to use}
+  \item{Numeric vector:}{The indexes of columns to use}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+corresponding to \code{TRUE} values.}
+}}
 
-\item{treatments}{The treatment associated with each sample. Must be the same
-order and length as \code{sample_ids}.}
+\item{groups}{A vector defining how samples are grouped into "treatments". Must be the same
+order and length as \code{cols}.}
 
 \item{func}{The function to apply for each comparison. For each row in 
-\code{dataset}, for each combination of treatments, this function will 
+\code{dataset}, for each combination of groups, this function will 
 recieve the data for each treatment, passed a two character vecotors.
 Therefor the function must take at least 2 arguments corresponding to the
-two treatments compared. The function should return a vector or list or
+two groups compared. The function should return a vector or list or
 results of a fixed length. If named, the names will be used in the output.
 The names should be consistent as well. A simple example is
 \code{function(x, y) mean(x) - mean(y)}. By default, the following function
@@ -40,12 +48,12 @@ function(abund_1, abund_2) {
 }
 }}
 
-\item{combinations}{Which combinations of treatments to use. Must be a list 
-of vectors, each containing the names of 2 treatments to compare. By 
-default, all pairwise combinations of treatments are compared.}
+\item{combinations}{Which combinations of groups to use. Must be a list 
+of vectors, each containing the names of 2 groups to compare. By 
+default, all pairwise combinations of groups are compared.}
 
 \item{other_cols}{If \code{TRUE}, preserve all columns not in 
-\code{sample_ids} in the output. If \code{FALSE}, dont keep other columns. 
+\code{cols} in the output. If \code{FALSE}, dont keep other columns. 
 If a column names or indexes are supplied, only preserve those columns.}
 }
 \value{
@@ -69,10 +77,10 @@ x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$s
 # Get per-taxon counts
 x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
 
-# Calculate difference between treatments
+# Calculate difference between groups
 x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-                                        sample_ids = hmp_samples$sample_id,
-                                        treatments = hmp_samples$body_site)
+                                        cols = hmp_samples$sample_id,
+                                        groups = hmp_samples$body_site)
 
 # Plot results (might take a few minutes)
 heat_tree_matrix(x,

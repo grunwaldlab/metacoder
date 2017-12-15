@@ -12,8 +12,15 @@ calc_taxon_abund(obj, dataset, cols = NULL, groups = NULL,
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
-\item{cols}{The names/indexes of columns in \code{data} that have counts. By 
-Default, all numeric columns in \code{data} are used.}
+\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+default, all numeric columns are used. Takes one of the following inputs:
+\describe{
+  \item{TRUE/FALSE:}{All/No columns will used.}
+  \item{Character vector:}{The names of columns to use}
+  \item{Numeric vector:}{The indexes of columns to use}
+  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
+corresponding to \code{TRUE} values.}
+}}
 
 \item{groups}{Group counts of multiple columns per treatment/group. This
 should be a vector of group IDs (e.g. character, integer) the same
@@ -31,6 +38,44 @@ A tibble
 For a given table in a taxmap object, sum the values in each column for each 
 taxon. This is useful to convert per-observation counts (e.g. OTU counts) to 
 per-taxon counts.
+}
+\examples{
+\dontrun{
+# Parse dataset for example
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_regex = "^(.+)__(.+)$")
+                   
+# Calculate the taxon abundance for each numeric column (i.e. sample)
+calc_taxon_abund(x, "tax_data")
+
+# Calculate the taxon abundance for a subset of columns
+calc_taxon_abund(x, "tax_data", cols = 4:5)
+calc_taxon_abund(x, "tax_data", cols = c("700035949", "700097855"))
+calc_taxon_abund(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
+
+# Calculate the taxon abundance for groups of columns (e.g. treatments)
+#  Note that we do not need to use the "cols" option for this since all
+#  numeric columns are samples in this dataset. If there were numeric columns
+#  that were not samples present in hmp_samples, the "cols" would be needed.
+calc_taxon_abund(x, "tax_data", groups = hmp_samples$sex)
+calc_taxon_abund(x, "tax_data", groups = hmp_samples$body_site)
+
+# The above example using the "cols" option, even though not needed in this case
+calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
+                 groups = hmp_samples$sex)
+                 
+# Rename the output columns
+calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id[1:10],
+                 out_names = letters[1:10])
+calc_taxon_abund(x, "tax_data", groups = hmp_samples$sex,
+                 out_names = c("Women", "Men"))
+
+# Geting a total for all columns 
+calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
+                 groups = rep("total", nrow(hmp_samples)))
+}
+
 }
 \seealso{
 Other calculations: \code{\link{calc_n_samples}},

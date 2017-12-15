@@ -50,7 +50,7 @@ calc_n_samples(x, dataset = "tax_data")
 calc_n_samples(x, dataset = "tax_data", drop = TRUE)
 
 # Only use some columns
-calc_n_samples(x, dataset = "tax_data", cols =  hmp_samples$sample_id[1:5])
+calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
 
 # Return a count for each treatment
 calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
