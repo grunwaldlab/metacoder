@@ -1,4 +1,5 @@
 library(metacoder)
+library(testthat)
 context("Calculations")
 
 # Make test data set
@@ -8,23 +9,27 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 
 test_that("Counting the number of samples with reads", {
   # Count samples with reads
-  calc_n_samples(x, dataset = "tax_data")
+  result <- calc_n_samples(x, dataset = "tax_data")
+  expect_equal(colnames(result), c("taxon_id", "n_samples"))
+  expect_equivalent(unlist(result[1, "n_samples"]), 17)
   
   # Return a vector instead of a table
-  calc_n_samples(x, dataset = "tax_data", drop = TRUE)
+  result <- calc_n_samples(x, dataset = "tax_data", drop = TRUE)
+  expect_true(is.vector(result))
   
   # Only use some columns
-  calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
+  result <- calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
+  expect_equal(colnames(result), c("taxon_id", "n_samples"))
   
   # Return a count for each treatment
-  calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
+  result <- calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
+  expect_equal(colnames(result), c("taxon_id", unique(hmp_samples$body_site)))
   
   # Rename output columns 
-  calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
-                 out_names = c("A", "B", "C", "D", "E"))
+  result <- calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
+                           out_names = c("A", "B", "C", "D", "E"))
+  expect_equal(colnames(result), c("taxon_id", c("A", "B", "C", "D", "E")))
   
-  # Add results to input table
-  calc_n_samples(x, dataset = "tax_data", append = TRUE)
 })
 
 
