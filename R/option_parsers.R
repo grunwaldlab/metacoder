@@ -82,7 +82,8 @@ get_taxmap_data <- function(obj, dataset) {
   # Check that dataset exists
   error_msg <- paste0('The dataset "', dataset,
                       '" is not in the object supplied. Datasets found include:\n  ',
-                      limited_print(paste0("[", seq_along(obj$data), "] ", names(obj$data)), type = "silent"))
+                      limited_print(paste0("[", seq_along(obj$data), "] ", names(obj$data)),
+                                    type = "silent"))
   if (is.character(dataset)) {
     if (! dataset %in% names(obj$data)) {
       stop(error_msg, call. = FALSE)
@@ -281,7 +282,8 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
   in_both <- other_cols %in% cols
   if (sum(in_both) > 0) {
     warning(paste0("The following columns will be replaced in the output:\n  ",
-                   limited_print(other_cols[in_both])))
+                   limited_print(other_cols[in_both], type = "silent")),
+            call. = FALSE)
   }
   result <- other_cols[! in_both]
   
