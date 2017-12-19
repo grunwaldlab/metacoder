@@ -46,7 +46,7 @@ test_that("Observation proportions", {
   
   result <- calc_obs_props(x, "tax_data", cols = 4:6)
   expect_equal(col_subset, colnames(result)[-1])
-
+  
   result <- calc_obs_props(x, "tax_data",
                            cols = startsWith(colnames(x$data$tax_data), "70001"))
   expect_equal(colnames(x$data$tax_data)[startsWith(colnames(x$data$tax_data), "70001")],
@@ -58,12 +58,12 @@ test_that("Observation proportions", {
   
   # Inlcuding specific columns in output
   result <- calc_obs_props(x, "tax_data", cols = col_subset,
-                 other_cols = 2:3)
+                           other_cols = 2:3)
   expect_true(all(c("otu_id", "lineage") %in% colnames(result)))
   
   # Rename output columns
   result <- calc_obs_props(x, "tax_data", cols = col_subset,
-                 out_names = c("a", "b", "c"))
+                           out_names = c("a", "b", "c"))
   expect_equal(colnames(result), c("taxon_id", "a", "b", "c"))
   
 })
@@ -77,7 +77,7 @@ test_that("Summing counts per taxon", {
   # Calculate the taxon abundance for a subset of columns
   expect_equal(calc_taxon_abund(x, "tax_data", cols = 4:5), 
                calc_taxon_abund(x, "tax_data", cols = c("700035949", "700097855")))
-
+  
   # Calculate the taxon abundance for groups of columns (e.g. treatments)
   #  Note that we do not need to use the "cols" option for this since all
   #  numeric columns are samples in this dataset. If there were numeric columns
@@ -108,8 +108,8 @@ test_that("Comparing groups of samples", {
   
   # Calculate difference between groups
   expect_warning(x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-                                          cols = hmp_samples$sample_id,
-                                          groups = hmp_samples$body_site))
+                                                         cols = hmp_samples$sample_id,
+                                                         groups = hmp_samples$body_site))
   expect_equal(nrow(x$data$diff_table),
                ncol(combn(length(unique(hmp_samples$body_site)), 2)) * nrow(x$data$tax_table))
   
