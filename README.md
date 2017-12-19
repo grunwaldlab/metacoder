@@ -48,3 +48,10 @@ Foster ZSL, Sharpton TJ, Grünwald NJ (2017) Metacoder: An R package for visuali
 ### License
 
 This work is subject to the [MIT License](https://github.com/grunwaldlab/metacoder/blob/master/LICENSE).
+
+### Acknowledgements
+
+This package includes code from the R package [ggrepel](https://github.com/slowkow/ggrepel) to handle label overlap avoidance with permission from the author of [ggrepel](https://github.com/slowkow/ggrepel) [Kamil Slowikowski](https://github.com/slowkow).
+We included the code instead of depending on `ggrepel` becacuse we are using internal functions to `ggrepel` that might change in the future.
+We thank Kamil Slowikowski for letting us use his code and would like to acknowledge his implementation of the label overlap avoidance used in metacoder.
+

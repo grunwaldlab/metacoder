@@ -40,4 +40,6 @@
 #' @author Zachary Foster 
 #' @name metacoder
 #' @docType package
+#' @useDynLib metacoder
+#' @importFrom Rcpp sourceCpp
 NULL

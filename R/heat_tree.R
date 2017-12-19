@@ -304,6 +304,15 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #' 
+#' @section Acknowledgements
+#' 
+#' This package includes code from the R package ggrepel to handle label overlap
+#' avoidance with permission from the author of ggrepel Kamil Slowikowski. We
+#' included the code instead of depending on ggrepel becacuse we are using
+#' internal functions to ggrepel that might change in the future. We thank Kamil
+#' Slowikowski for letting us use his code and would like to acknowledge his
+#' implementation of the label overlap avoidance used in metacoder.
+#' 
 #' @examples
 #' \dontrun{
 #' # Parse dataset for plotting
@@ -700,7 +709,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
         overlap <- (overlap ^ 2) / (scaled_vs[distance$index_1] ^ 2 + scaled_vs[distance$index_2] ^ 2)
         mean(overlap)
       }
-
+      
       # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
       optimality_stat <- function(minimum, maximum) {
         overlap <- find_overlap(minimum, maximum, all_pairwise)
@@ -966,14 +975,16 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     
     if (repel_labels) {
       movable <- text_data$group != "legend"
-      text_data[movable, c("x", "y")] <- ggrepel:::repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
-                                                               boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
-                                                               point_padding_x = 0, point_padding_y = 0,
-                                                               xlim = ranges$x,
-                                                               ylim = ranges$y,
-                                                               force = 1e-06 * repel_force,
-                                                               maxiter = repel_iter,
-                                                               direction = "both")
+      text_data[movable, c("x", "y")] <- repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
+                                                     boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
+                                                     point_padding_x = 0, point_padding_y = 0,
+                                                     xlim = ranges$x,
+                                                     ylim = ranges$y,
+                                                     # hjust = 0.5,
+                                                     # vjust = 0.5,
+                                                     force = 1e-06 * repel_force,
+                                                     maxiter = repel_iter,
+                                                     direction = "both")
       bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                              height = text_data$size, rotation = text_data$rotation,
                              just = text_data$justification)
