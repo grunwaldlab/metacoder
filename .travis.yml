@@ -3,7 +3,10 @@ r:
   - release
   - devel
   - bioc-release
+  - bioc-devel
 
+bioc_required: true
+bioc_use_devel: true
 bioc-packages: BiocInstaller, zlibbioc
 
 sudo: required
