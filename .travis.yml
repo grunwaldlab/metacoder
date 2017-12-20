@@ -4,12 +4,17 @@ r:
   - devel
   - bioc-release
   - bioc-devel
+  
+r_github_packages:
+  - jimhester/covr
+
+r_check_args: "--as-cran"
 
 bioc_required: true
 bioc_use_devel: true
 bioc-packages: BiocInstaller, zlibbioc
 
-sudo: required
+sudo: false
 cran: http://cran.at.r-project.org
 
 cache: packages
