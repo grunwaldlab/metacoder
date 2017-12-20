@@ -45,11 +45,14 @@ Imports:
     ggrepel,
     cowplot,
     GA,
-    Rcpp
+    Rcpp,
+    rhdf5
 Suggests:
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    BiocInstaller,
+    zlibbioc
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Date: 2017-05-22
