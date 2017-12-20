@@ -4,6 +4,8 @@ r:
   - devel
   - bioc-release
 
+bioc-packages: BiocInstaller, rhdf5, zlibbioc
+
 sudo: required
 cran: http://cran.at.r-project.org
 
