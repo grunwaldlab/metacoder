@@ -45,8 +45,7 @@ Imports:
     ggrepel,
     cowplot,
     GA,
-    Rcpp,
-    rhdf5
+    Rcpp
 Suggests:
     knitr,
     rmarkdown,
@@ -57,5 +56,5 @@ VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Date: 2017-05-22
 Encoding: UTF-8
-biocViews: 
+biocViews:
 LinkingTo: Rcpp
