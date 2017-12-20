@@ -277,7 +277,7 @@ If a numeric vector is given, it is mapped to a color scale.
 Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 }
 
-\section{labels}{
+\section{Labels}{
 
 
 The labels of nodes, edges, and trees can be added.
@@ -288,7 +288,7 @@ Tree labels are displayed over their tree.
 Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 }
 
-\section{transformations}{
+\section{Transformations}{
 
 
 Before any numbers specified are mapped to color/size, they can be transformed to make
@@ -308,7 +308,7 @@ A customized function can also be supplied to do the transformation.
 }
 }
 
-\section{ranges}{
+\section{Ranges}{
 
 
 The displayed range of colors and sizes can be explicitly defined or automatically generated.
@@ -321,7 +321,7 @@ Color ranges can be any number of color values as either HEX codes (e.g. \code{#
 color names (e.g. \code{"black"}).
 }
 
-\section{layout}{
+\section{Layout}{
 
 
 Layouts determine the position of nodes on the graph.
@@ -344,7 +344,7 @@ The following \code{character} values are understood:
 }
 }
 
-\section{intervals}{
+\section{Intervals}{
 
 
 This is the minimum and maximum of values displayed on the legend scales.
@@ -354,6 +354,17 @@ By default, the minimum and maximum equals the range of the values used to infer
 Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
 or setting logical boundaries (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
+}
+
+\section{Acknowledgements}{
+
+
+This package includes code from the R package ggrepel to handle label overlap
+avoidance with permission from the author of ggrepel Kamil Slowikowski. We
+included the code instead of depending on ggrepel becacuse we are using
+internal functions to ggrepel that might change in the future. We thank Kamil
+Slowikowski for letting us use his code and would like to acknowledge his
+implementation of the label overlap avoidance used in metacoder.
 }
 
 \examples{

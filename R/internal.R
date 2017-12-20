@@ -221,3 +221,36 @@ rad_to_deg <- function(rad) {
 deg2rad <- function(deg) {
   (deg * pi) / (180)
 }
+
+
+#' Converts decimal numbers to other bases
+#'
+#' Converts from base 10 to other bases represented by a given set of symbols.
+#'
+#' @param numbers One or more numbers to convert.
+#' @param symbols The set of symbols to use for the new base.
+#' @param base The base to convert to.
+#' @param min_length The minimum number of symbols in each result.
+#'
+#' @return character vector
+#'
+#' @keywords internal
+convert_base <- function(numbers, symbols = letters, base = length(symbols),
+                         min_length = 0) {
+  
+  # A modification of the `dec2base` function in the `oro.dicom` package
+  #    Copyright (c) 2015, Brandon Whitcher
+  convert_one <- function (n)  {
+    if (is.na(n)) {
+      return(NA_character_)
+    }
+    max_length <- max(trunc(log(max(n, 1))/log(base)) + 1, min_length)
+    power <- rep(1, length(n)) * base^((max_length - 1):0)
+    n <- n * rep(1, max_length)
+    digits <- floor((n%%(base * power))/power)
+    paste(symbols[digits + 1], collapse = "")
+  }
+  
+  vapply(as.integer(numbers), convert_one, character(1))
+  
+}

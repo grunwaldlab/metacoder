@@ -28,6 +28,8 @@
 #' 
 #' }
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_phyloseq <- function(obj) {
   datasets <- list()
@@ -76,9 +78,9 @@ parse_phyloseq <- function(obj) {
   # Construct output
   tax_cols <- colnames(tax_data)[which(tolower(colnames(tax_data)) %in% possible_ranks)]
   output <- taxa::parse_tax_data(tax_data = tax_data, 
-                           datasets = datasets,
-                           class_cols = tax_cols, 
-                           mappings = mappings)
+                                 datasets = datasets,
+                                 class_cols = tax_cols, 
+                                 mappings = mappings)
   
   # Remove NA taxa
   output$filter_taxa(output$taxon_names() != "NA")
@@ -156,10 +158,10 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   # Read raw data
   if (! are_missing["file"]) {
     raw_data <- utils::read.csv(file_path = file, header = TRUE, sep = "\t",
-                         stringsAsFactors = FALSE)
+                                stringsAsFactors = FALSE)
   } else if (! are_missing["text"]) {
     raw_data <- utils::read.csv(text = text, header = TRUE, sep = "\t",
-                         stringsAsFactors = FALSE)
+                                stringsAsFactors = FALSE)
   } else {
     if (!is.data.frame(table)) {
       stop('The "table" input requires a data.frame or tibble.')
@@ -238,6 +240,8 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
 #' 
 #' @family parsers
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
   # Check that both `file` and `text` are not used together
@@ -296,6 +300,8 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' 
 #' @family parsers
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_qiime_biom <- function(file) {
   # Check that the "biomformat" package has been installed
@@ -343,6 +349,8 @@ parse_qiime_biom <- function(file) {
 #' 
 #' @family parsers
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_newick <- function(file) {
   # Read input
@@ -375,6 +383,8 @@ parse_newick <- function(file) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_unite_general <- function(file, include_seqs = TRUE) {
   # Read file
@@ -436,6 +446,8 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
   # Read file
@@ -502,6 +514,8 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_silva_fasta <- function(file, include_seqs = TRUE) {
   # Read file
@@ -579,6 +593,8 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_greengenes <- function(tax_file, seq_file = NULL) {
   # Parse taxonomy file
@@ -615,6 +631,8 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_phylo  <- function(obj) {
   # Parse edge list
@@ -654,5 +672,5 @@ parse_phylo  <- function(obj) {
                                        edge_length = edge_length,
                                        tip_label = tip_label))
   output$data <- c(output$data, list(tax_data = tax_data))
-  output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
+  output$replace_taxon_ids(convert_base(as.integer(output$taxon_ids())))
 }

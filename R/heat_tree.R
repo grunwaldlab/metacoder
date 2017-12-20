@@ -11,7 +11,7 @@ heat_tree <- function(...) {
 #' @rdname heat_tree
 heat_tree.Taxmap <- function(.input, ...) {
   # Non-standard argument evaluation
-  data <- taxa:::data_used(.input, ...)
+  data <- .input$data_used(...)
   data <- lapply(data, `[`, .input$edge_list$to) # orders everthing the same
   arguments <- c(list(taxon_id = .input$edge_list$to, supertaxon_id = .input$edge_list$from),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
@@ -37,7 +37,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 
 
 
-#===================================================================================================
 #' Plot a taxonomic tree
 #' 
 #' Plots the distribution of values associated with a taxonomic classification.
@@ -234,7 +233,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' If a numeric vector is given, it is mapped to a color scale.
 #' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 #' 
-#' @section labels:
+#' @section Labels:
 #' 
 #' The labels of nodes, edges, and trees can be added.
 #' Node labels are centered over their node.
@@ -243,7 +242,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 #' 
-#' @section transformations:
+#' @section Transformations:
 #' 
 #' Before any numbers specified are mapped to color/size, they can be transformed to make
 #' the mapping non-linear. 
@@ -261,7 +260,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'   \item{"ln area"}{Log base e of circular area}
 #' }
 #' 
-#' @section ranges:
+#' @section Ranges:
 #' 
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
 #' Size ranges are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
@@ -272,7 +271,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Color ranges can be any number of color values as either HEX codes (e.g. \code{#000000}) or
 #' color names (e.g. \code{"black"}).
 #' 
-#' @section layout:
+#' @section Layout:
 #' 
 #' Layouts determine the position of nodes on the graph.
 #' The are implemented using the \code{\link{igraph}} package.
@@ -294,7 +293,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' }
 #' 
 #' 
-#' @section intervals:
+#' @section Intervals:
 #' 
 #' This is the minimum and maximum of values displayed on the legend scales.
 #' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
@@ -304,7 +303,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
 #' 
-#' @section Acknowledgements
+#' @section Acknowledgements:
 #' 
 #' This package includes code from the R package ggrepel to handle label overlap
 #' avoidance with permission from the author of ggrepel Kamil Slowikowski. We

@@ -210,8 +210,8 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
            call. = FALSE)
     }
   } else {
-    stop(paste0("`other_cols` is of the invalid type: ", class(other_cols), ".\n", 
-                'The "other_cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.',
+    stop(paste0("`cols` is of the invalid type: ", class(cols), ".\n", 
+                'The "cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.',
                 call. = FALSE))
   }
   
