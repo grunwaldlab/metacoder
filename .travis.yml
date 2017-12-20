@@ -2,6 +2,7 @@ language: r
 r:
   - release
   - devel
+  - bioc-release
 
 sudo: required
 cran: http://cran.at.r-project.org
