@@ -80,7 +80,8 @@ parse_phyloseq <- function(obj) {
   output <- taxa::parse_tax_data(tax_data = tax_data, 
                                  datasets = datasets,
                                  class_cols = tax_cols, 
-                                 mappings = mappings)
+                                 mappings = mappings,
+                                 named_by_rank = TRUE)
   
   # Remove NA taxa
   output$filter_taxa(output$taxon_names() != "NA")
