@@ -22,7 +22,11 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
     output <- c(output, 
                 paste0("unknown", name_regex, "+"),
                 paste0("Unknown", name_regex, "+"),
-                paste0("UNKNOWN", name_regex, "+"))
+                paste0("UNKNOWN", name_regex, "+"),
+                paste0("unidentified", name_regex, "+"),
+                paste0("Unidentified", name_regex, "+"),
+                paste0("UNIDENTIFIED", name_regex, "+")
+    )
   }
   
   # Add patterns for uncultured taxa
@@ -43,28 +47,54 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
 
 
 
-#' Filter ambiguous taxa
+#' Find ambiguous taxon names
 #'
-#' Filter out taxa with ambiguous names, such as "unknown" or "uncultured". If
+#' Find taxa with ambiguous names, such as "unknown" or "uncultured". If
 #' you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #' 
-#' @param obj A taxmap object
+#' @param taxon_names A taxmap object
 #' @inheritParams ambiguous_patterns 
-#' @param ... Passed to \code{\link[taxa](filter_taxa)}
+#' 
+#' @return TRUE/FALSE vector corresponding to \code{taxon_names}
 #' 
 #' @export
-filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE,
-                                  name_regex = ".", ...) {
+is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE, name_regex = ".") {
   # Get patterns to filter out
   patterns <- ambiguous_patterns(unknown = unknown, uncultured = uncultured,
                                  name_regex = name_regex)
   
   # Find which taxa to filter out 
-  to_keep <- Reduce(`&`, lapply(patterns, function(x) {
-    ! grepl(obj$taxon_names(), pattern = x)
+  Reduce(`|`, lapply(patterns, function(x) {
+    grepl(taxon_names, pattern = x)
   }))
+}
+
+
+#' Filter ambiguous taxon names
+#'
+#' Filter out taxa with ambiguous names, such as "unknown" or "uncultured".
+#' NOTE: some parameters of this function are passed to
+#' \code{\link[taxa]{filter_taxa}} with the "invert" option set to \code{TRUE}.
+#'
+#' If you encounter a taxon name that represents an ambiguous taxon that is not
+#' filtered out by this function, let us know and we will add it.
+#'
+#' @param obj A taxmap object
+#' @inheritParams is_ambiguous
+#' @inheritParams taxa::filter_taxa
+#'
+#' @return TRUE/FALSE vector corresponding to \code{taxon_names}
+#'
+#' @export
+filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE, name_regex = ".", 
+                                  subtaxa = FALSE, drop_obs = TRUE,
+                                  reassign_obs = TRUE, reassign_taxa = TRUE) {
+  # Identify taxa to filter out 
+  to_remove <- is_ambiguous(obj$taxon_names(), unknown = unknown,
+                            uncultured = uncultured, name_regex = name_regex)
   
-  # Filter out taxa
-  taxa::filter_taxa(obj, to_keep, ...)
+  taxa::filter_taxa(obj, to_remove, invert = TRUE, 
+                    subtaxa = subtaxa, drop_obs = drop_obs,
+                    reassign_obs = reassign_obs, reassign_taxa = reassign_taxa)
 }
