@@ -494,34 +494,60 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 
 
 #' Parse SILVA FASTA release
-#' 
+#'
 #' Parses an SILVA FASTA file that can be found at
 #' https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/.
-#' 
+#'
 #' The input file has a format like:
-#' 
-#' \preformatted{
-#' >GCVF01000431.1.2369 Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
+#'
+#' \preformatted{ >GCVF01000431.1.2369
+#' Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
 #' CGUGCACGGUGGAUGCCUUGGCAGCCAGAGGCGAUGAAGGACGUUGUAGCCUGCGAUAAGCUCCGGUUAGGUGGCAAACA
 #' ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
-#' ...
-#' }
-#' 
+#' ... }
+#'
 #' @param file (\code{character} of length 1) The file path to the input file.
+#'   Either \code{file} or \code{input} must be supplied, but not both.
+#' @param input (\code{DNAbin}) An set of sequences already loaded by
+#'   \code{\link[ape]{read.FASTA}} or an equivalent parser. Either \code{file}
+#'   or \code{input} must be supplied, but not both.
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
-#'   
+#' @param as_character (\code{logical} of length 1) If \code{TRUE}, convert the
+#'   \code{DNAbin} produced by \code{\link[ape]{read.FASTA}} to a character
+#'   vector and add it to the table with the parsed header information. NOTE:
+#'   This will require additional RAM to do the conversion, even though the
+#'   output objects are of similar size. For the whole SILVA database,
+#'   converting sequences to characters will likley require more than 8Gb of
+#'   RAM.
+#'
 #' @return \code{\link{taxmap}}
-#'   
+#'
 #' @family parsers
-#'   
+#'
 #' @import taxa
-#' 
+#'
 #' @export
-parse_silva_fasta <- function(file, include_seqs = TRUE) {
+parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE, 
+                              as_character = FALSE) {
+  # Check parameters
+  if (sum(! c(is.null(file), is.null(input))) != 1) {
+    stop(call. = FALSE,
+         "Either `file` or `input` must be supplied, but not both.")
+  }
+  
+  if (! is.null(file) && (! is.character(file) || length(file) != 1)) {
+    stop(call. = FALSE,
+         "`file` must be a character vector of length 1 that is a valid path to a file.")
+  }
+  
   # Read file
-  raw_data <- seqinr::read.fasta(file, as.string = TRUE)
-  raw_headers <- vapply(raw_data, attr, which = "Annot", character(1))
+  if (! is.null(file)) {
+    raw_data <- ape::read.FASTA(file)
+  } else {
+    raw_data <- input
+  }
+  raw_headers <- names(raw_data)
   
   # Make classifications easier to parse
   name_chars <- "A-Za-z0-9.\\-_+ "
@@ -530,13 +556,14 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
   parts <- as.data.frame(parts[, -1], stringsAsFactors = FALSE)
   colnames(parts) <- c("tax", "binom", "common")
   parts$binom <- sub(parts$binom, pattern = "sp\\. ", replacement = "sp\\._")
-  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom)
+  parts$binom <- sub(parts$binom, pattern = "uncultured ", replacement = "uncultured_")
+  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom) 
   parts$binom <- sub(pattern = ";$", replacement = " ", parts$binom)
   headers <- apply(parts, MARGIN = 1, paste0, collapse = "")
   
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
-                                   regex = "^>(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
+                                   regex = "^(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
                                    key = c(ncbi_id = "info",
                                            start_pos = "info",
                                            end_pos = "info",
@@ -554,7 +581,12 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
   
   # Add sequences 
   if (include_seqs) {
-    output$data$tax_data$silva_seq <- toupper(unlist(raw_data))
+    if (as_character) {
+      output$data$tax_data$silva_seq <- DNAbin_to_char(raw_data)
+    } else {
+      output$data$silva_seq <- stats::setNames(raw_data,
+                                               output$data$tax_data$taxon_id)
+    }
   }
   
   # Remove unneeded columns

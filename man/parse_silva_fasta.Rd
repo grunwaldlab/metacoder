@@ -4,13 +4,27 @@
 \alias{parse_silva_fasta}
 \title{Parse SILVA FASTA release}
 \usage{
-parse_silva_fasta(file, include_seqs = TRUE)
+parse_silva_fasta(file = NULL, input = NULL, include_seqs = TRUE,
+  as_character = FALSE)
 }
 \arguments{
-\item{file}{(\code{character} of length 1) The file path to the input file.}
+\item{file}{(\code{character} of length 1) The file path to the input file.
+Either \code{file} or \code{input} must be supplied, but not both.}
+
+\item{input}{(\code{DNAbin}) An set of sequences already loaded by
+\code{\link[ape]{read.FASTA}} or an equivalent parser. Either \code{file}
+or \code{input} must be supplied, but not both.}
 
 \item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include
 sequences in the output object.}
+
+\item{as_character}{(\code{logical} of length 1) If \code{TRUE}, convert the
+\code{DNAbin} produced by \code{\link[ape]{read.FASTA}} to a character
+vector and add it to the table with the parsed header information. NOTE:
+This will require additional RAM to do the conversion, even though the
+output objects are of similar size. For the whole SILVA database,
+converting sequences to characters will likley require more than 8Gb of
+RAM.}
 }
 \value{
 \code{\link{taxmap}}
@@ -22,12 +36,11 @@ https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/.
 \details{
 The input file has a format like:
 
-\preformatted{
->GCVF01000431.1.2369 Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
+\preformatted{ >GCVF01000431.1.2369
+Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
 CGUGCACGGUGGAUGCCUUGGCAGCCAGAGGCGAUGAAGGACGUUGUAGCCUGCGAUAAGCUCCGGUUAGGUGGCAAACA
 ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
-...
-}
+... }
 }
 \seealso{
 Other parsers: \code{\link{parse_greengenes}},
