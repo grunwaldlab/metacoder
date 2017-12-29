@@ -1,0 +1,64 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(metacoder)
+```
+
+## Creating the in silico PCR dataset
+
+### Compare memory usage for character and ape binary
+
+```{r}
+silva_path <- "SILVA_132_SSURef_Nr99_tax_silva.fasta"
+```
+
+
+```{r}
+ape_time <- system.time(ape_silva <- ape::read.FASTA(silva_path))
+print(object.size(ape_silva), units = "auto", standard = "SI") 
+print(ape_time)
+```
+
+I tried the following seqinr parser, but it used over 6Gb RAM before I stopped it.
+It also took a long time compared to the ape parser.
+
+```{r eval=FALSE}
+seqinr_data <- seqinr::read.fasta(silva_path)
+print(object.size(seqinr_data), units = "auto", standard = "SI") 
+```
+
+```{r}
+char_silva <- sapply(as.character(ape_silva[1:100000]), paste0, collapse = "")
+print(pryr::object_size(char_silva), units = "auto", standard = "SI") 
+print(pryr::object_size(ape_silva[1:100000]), units = "auto", standard = "SI") 
+
+```
+
+
+### Parse SILVA FASTA file
+
+```{r}
+raw_silva <- ape::read.FASTA(silva_path)
+first_subset <- sample(seq_along(raw_silva), 10000)
+silva <- parse_silva_fasta(input = raw_silva[first_subset])
+silva <- filter_ambiguous_taxa(silva, subtaxa = TRUE)
+```
+
+
+```{r}
+silva %>%
+  heat_tree(node_color = n_obs, 
+            node_size = n_obs,
+            node_label = taxon_names,
+            output_file = "temp.pdf")
+```
+
+
+### Subset to a reasonable size
+
+
+### Test in silico PCR

@@ -1,4 +1,3 @@
-#===================================================================================================
 #' Execute EMBOSS Primerseach
 #' 
 #' @param seq_path A character vector of length 1. The path to the fasta file containing reference
@@ -10,8 +9,6 @@
 #' @param output_path A character vector of length 1. Where the output of primersearch is saved.
 #' @param program_path A character vector of length 1. The location of the primersearch binary.
 #'   Ideally, it should be in your system's search path.
-#' @param dont_run If TRUE, the command is generated, but not executed. This could be useful if you
-#'   want to execute the command yourself.
 #' @param ... Additional arguments are passed to \code{primersearch}.
 #' 
 #' 
@@ -20,11 +17,12 @@
 #' @seealso \code{\link{parse_primersearch}}
 #' 
 #' @keywords internal
-run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = tempfile(),
-                             program_path = 'primersearch', dont_run = FALSE, ...) {
+run_primersearch <- function(seq_path, primer_path, mismatch = 5,
+                             output_path = tempfile(),
+                             program_path = 'primersearch', ...) {
   # Check if primersearch is installed...
   primersearch_is_installed()
-  extra_args <- as.list(match.call(expand.dots=F))$...
+  extra_args <- as.list(match.call(expand.dots = FALSE))$...
   if (Sys.info()['sysname'] == "Windows") {
     arguments <- c("-seqall", seq_path,
                  "-infile", primer_path,
@@ -44,7 +42,6 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = 
 }
 
 
-#===================================================================================================
 #' Parse EMBOSS primersearch output
 #' 
 #' Parses the output file from EMBOSS primersearch into a data.frame with rows corresponding to 
@@ -55,14 +52,14 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5, output_path = 
 #' 
 #' @keywords internal
 parse_primersearch <- function(file_path) {
-  # Split output into chunks for each primer--------------------------------------------------------
+  # Split output into chunks for each primer
   raw_output <- readLines(file_path)
-  primer_indexes <- grep("Primer name ", raw_output, fixed=TRUE, value=FALSE)
+  primer_indexes <- grep("Primer name ", raw_output, fixed = TRUE, value = FALSE)
   primer_chunk_id <- findInterval(seq_along(raw_output), primer_indexes)
   primer_chunks <- vapply(split(raw_output, primer_chunk_id)[-1],
                           paste, character(1), collapse = "\n")
   names(primer_chunks) <- stringr::str_match(primer_chunks, "Primer name ([^\n]*)")[,2]
-  # Extract amplicon data from each chunk and combine ----------------------------------------------
+  # Extract amplicon data from each chunk and combine
   pattern <- paste("Amplimer ([0-9]+)",
                    "\tSequence: ([^\n]*)",
                    "\t([^\n]*)",
@@ -72,7 +69,7 @@ parse_primersearch <- function(file_path) {
   primer_data <- stringr::str_match_all(primer_chunks, pattern)
   primer_data <- as.data.frame(cbind(rep(names(primer_chunks), vapply(primer_data, nrow, numeric(1))),
                        do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
-  # Reformat amplicon data -------------------------------------------------------------------------
+  # Reformat amplicon data
   colnames(primer_data) <- c("pair_name", "amplimer", "seq_id", "name", "f_primer", "f_index",
                              "f_mismatch",  "r_primer", "r_index", "r_mismatch", "length")
   primer_data <- primer_data[, c("seq_id", "pair_name", "amplimer", "length", 
@@ -85,14 +82,7 @@ parse_primersearch <- function(file_path) {
 } 
 
 
-#' @rdname primersearch
-#' @export
-primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
-  UseMethod("primersearch")
-}
-
-#===================================================================================================
-#' Use EMBOSS primersearch for in silico PCR
+#' UNDER CONSTRUCTION: Use EMBOSS primersearch for in silico PCR
 #' 
 #' A pair of primers are aligned against a set of sequences.
 #' The location of the best hits, quality of match, and predicted amplicons are returned.
@@ -149,18 +139,17 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
 #'           layout = "fruchterman-reingold")
 #' }
 #' 
-#' @method primersearch character
 #' @rdname primersearch
 #' @export
-primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
+primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   
-  # Write temporary fasta file for primersearch input ----------------------------------------------
+  # Write temporary fasta file for primersearch input
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
   on.exit(file.remove(sequence_path))
   writeLines(text = paste0(">", seq_along(input), "\n", input),
              con = sequence_path)
     
-  # Write primer file for primersearch input -------------------------------------------------------
+  # Write primer file for primersearch input
   name_primer <- function(primer) {
     if (is.null(names(primer))) {
       to_be_named <- seq_along(primer)
@@ -180,12 +169,12 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
   utils::write.table(primer_table, primer_path,
               quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
   
-  # Run and parse primersearch ---------------------------------------------------------------------
+  # Run and parse primersearch
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch)
   on.exit(file.remove(output_path))
   output <- parse_primersearch(output_path)
   
-  # Extract amplicon input ---------------------------------------------------------------------
+  # Extract amplicon input
   output$f_primer <- ifelse(vapply(output$f_primer, grepl, x = forward, FUN.VALUE = logical(1)), forward, reverse)
   output$r_primer <- ifelse(vapply(output$r_primer, grepl, x = reverse, FUN.VALUE = logical(1)), reverse, forward)
   output$r_index <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_index + 1
@@ -195,7 +184,9 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
 }
 
 
-#' @method primersearch taxmap
+#' UNDER CONSTRUCTION
+#' 
+#' UNDER CONSTRUCTION
 #' 
 #' @param sequence_col (\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.
 #' @param result_cols (\code{character}) The names of columns to include in the output.
@@ -203,7 +194,7 @@ primersearch.character <- function(input, forward, reverse, mismatch = 5, ...) {
 #' 
 #' @rdname primersearch
 #' @export
-primersearch.taxmap <- function(input, forward, reverse, mismatch = 5,
+primersearch_taxmap <- function(input, forward, reverse, mismatch = 5,
                                     sequence_col = "sequence", result_cols = NULL, ...) {
   if (is.null(input$obs_data[[sequence_col]])) {
     stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))

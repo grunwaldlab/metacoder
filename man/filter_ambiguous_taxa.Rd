@@ -5,8 +5,8 @@
 \title{Filter ambiguous taxon names}
 \usage{
 filter_ambiguous_taxa(obj, unknown = TRUE, uncultured = TRUE,
-  name_regex = ".", subtaxa = FALSE, drop_obs = TRUE,
-  reassign_obs = TRUE, reassign_taxa = TRUE)
+  name_regex = ".", ignore_case = TRUE, subtaxa = FALSE,
+  drop_obs = TRUE, reassign_obs = TRUE, reassign_taxa = TRUE)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -19,6 +19,9 @@ assinged to uncultured organisms (e.g. "uncultured ...").}
 
 \item{name_regex}{The regex code to match a valid character in a taxon name.
 For example, "[a-z]" would mean taxon names can only be lower case letters.}
+
+\item{ignore_case}{If \code{TRUE}, dont consider the case of the text when
+determining a match.}
 
 \item{subtaxa}{(\code{logical} or \code{numeric} of length 1) If \code{TRUE}, include
 subtaxa of taxa passing the filter. Positive numbers indicate the number of

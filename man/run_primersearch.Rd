@@ -5,8 +5,7 @@
 \title{Execute EMBOSS Primerseach}
 \usage{
 run_primersearch(seq_path, primer_path, mismatch = 5,
-  output_path = tempfile(), program_path = "primersearch",
-  dont_run = FALSE, ...)
+  output_path = tempfile(), program_path = "primersearch", ...)
 }
 \arguments{
 \item{seq_path}{A character vector of length 1. The path to the fasta file containing reference
@@ -22,9 +21,6 @@ sequence, and second primer sequence.}
 
 \item{program_path}{A character vector of length 1. The location of the primersearch binary.
 Ideally, it should be in your system's search path.}
-
-\item{dont_run}{If TRUE, the command is generated, but not executed. This could be useful if you
-want to execute the command yourself.}
 
 \item{...}{Additional arguments are passed to \code{primersearch}.}
 }

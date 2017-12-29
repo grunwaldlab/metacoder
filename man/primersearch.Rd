@@ -2,15 +2,12 @@
 % Please edit documentation in R/in_silico_pcr.R
 \name{primersearch}
 \alias{primersearch}
-\alias{primersearch.character}
-\alias{primersearch.taxmap}
-\title{Use EMBOSS primersearch for in silico PCR}
+\alias{primersearch_taxmap}
+\title{UNDER CONSTRUCTION: Use EMBOSS primersearch for in silico PCR}
 \usage{
 primersearch(input, forward, reverse, mismatch = 5, ...)
 
-\method{primersearch}{character}(input, forward, reverse, mismatch = 5, ...)
-
-\method{primersearch}{taxmap}(input, forward, reverse, mismatch = 5,
+primersearch_taxmap(input, forward, reverse, mismatch = 5,
   sequence_col = "sequence", result_cols = NULL, ...)
 }
 \arguments{
@@ -36,6 +33,8 @@ An object of type \code{\link{taxmap}}
 A pair of primers are aligned against a set of sequences.
 The location of the best hits, quality of match, and predicted amplicons are returned.
 Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+
+UNDER CONSTRUCTION
 }
 \section{Installing EMBOSS}{
 
