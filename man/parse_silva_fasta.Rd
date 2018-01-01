@@ -4,8 +4,7 @@
 \alias{parse_silva_fasta}
 \title{Parse SILVA FASTA release}
 \usage{
-parse_silva_fasta(file = NULL, input = NULL, include_seqs = TRUE,
-  as_character = FALSE)
+parse_silva_fasta(file = NULL, input = NULL, include_seqs = TRUE)
 }
 \arguments{
 \item{file}{(\code{character} of length 1) The file path to the input file.
@@ -17,14 +16,6 @@ or \code{input} must be supplied, but not both.}
 
 \item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include
 sequences in the output object.}
-
-\item{as_character}{(\code{logical} of length 1) If \code{TRUE}, convert the
-\code{DNAbin} produced by \code{\link[ape]{read.FASTA}} to a character
-vector and add it to the table with the parsed header information. NOTE:
-This will require additional RAM to do the conversion, even though the
-output objects are of similar size. For the whole SILVA database,
-converting sequences to characters will likley require more than 8Gb of
-RAM.}
 }
 \value{
 \code{\link{taxmap}}

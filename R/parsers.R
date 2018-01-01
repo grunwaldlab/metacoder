@@ -513,13 +513,6 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 #'   or \code{input} must be supplied, but not both.
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
-#' @param as_character (\code{logical} of length 1) If \code{TRUE}, convert the
-#'   \code{DNAbin} produced by \code{\link[ape]{read.FASTA}} to a character
-#'   vector and add it to the table with the parsed header information. NOTE:
-#'   This will require additional RAM to do the conversion, even though the
-#'   output objects are of similar size. For the whole SILVA database,
-#'   converting sequences to characters will likley require more than 8Gb of
-#'   RAM.
 #'
 #' @return \code{\link{taxmap}}
 #'
@@ -528,8 +521,7 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 #' @import taxa
 #'
 #' @export
-parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE, 
-                              as_character = FALSE) {
+parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
   # Check parameters
   if (sum(! c(is.null(file), is.null(input))) != 1) {
     stop(call. = FALSE,
@@ -543,7 +535,7 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE,
   
   # Read file
   if (! is.null(file)) {
-    raw_data <- ape::read.FASTA(file)
+    raw_data <- read_fasta(file)
   } else {
     raw_data <- input
   }
@@ -581,16 +573,12 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE,
   
   # Add sequences 
   if (include_seqs) {
-    if (as_character) {
-      output$data$tax_data$silva_seq <- DNAbin_to_char(raw_data)
-    } else {
-      output$data$silva_seq <- stats::setNames(raw_data,
-                                               output$data$tax_data$taxon_id)
-    }
+    output$data$silva_seq <- stats::setNames(raw_data,
+                                             output$data$tax_data$taxon_id)
   }
   
   # Remove unneeded columns
-  output$data$tax_data$input <- NULL
+  # output$data$tax_data$input <- NULL
   output$data$tax_data$tax_string <- NULL
   
   return(output)
