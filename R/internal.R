@@ -172,6 +172,13 @@ limited_print <- function(chars, prefix = "",
     c(v1,v2)[order(c(ord1,ord2))]
   }
   
+  truncate <- function(x, max_chars = 30, postfix = "[truncated]") {
+    if (nchar(x) > max_chars) {
+      x <- paste0(substr(x, 0, max_chars - nchar(postfix)), postfix)
+    }
+    return(x)
+  }
+  
   q = "'"
   interleaved <- interleave(chars[1:(length(chars) / 2)],
                             rev(chars[(length(chars) / 2 + 1):length(chars)]))
@@ -179,12 +186,16 @@ limited_print <- function(chars, prefix = "",
   if (all(! is_greater_than_max)) {
     max_printed <- length(chars)
   } else {
-    max_printed <- which.max(is_greater_than_max)
+    max_printed <- which.max(is_greater_than_max) - 1
   }
   if (max_printed < length(chars)) {
-    first_part <-  chars[1:as.integer(max_printed / 2 - 0.5)]
-    second_part <-
-      chars[as.integer(length(chars) - (max_printed / 2) + 1.5):length(chars)]
+    if (max_printed < 2) {
+      first_part <- truncate(chars[1])
+      second_part <- truncate(chars[length(chars)])
+    } else {
+      first_part <-  chars[1:ceiling(max_printed / 2)]
+      second_part <- chars[(length(chars) - floor(max_printed / 2) + 1):length(chars)]
+    }
     output <- paste0(paste0(collapse = ", ", first_part),
                      " ... ",
                      paste0(collapse = ", ", second_part),
