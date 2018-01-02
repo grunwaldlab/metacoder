@@ -26,7 +26,7 @@ rev_comp <- function(seqs) {
   
   # Restore case
   seq_list <- lapply(seq_len(length(seq_list)), function(i) {
-    ifelse(seq_case[[i]], toupper(seq_list[[1]]), tolower(seq_list[[1]]))
+    ifelse(seq_case[[i]], toupper(seq_list[[i]]), tolower(seq_list[[i]]))
   })
   
   # Paste back together
@@ -64,7 +64,7 @@ complement <- function(seqs) {
   
   # Restore case
   seq_list <- lapply(seq_len(length(seq_list)), function(i) {
-    ifelse(seq_case[[i]], toupper(seq_list[[1]]), tolower(seq_list[[1]]))
+    ifelse(seq_case[[i]], toupper(seq_list[[i]]), tolower(seq_list[[i]]))
   })
   
   # Paste back together

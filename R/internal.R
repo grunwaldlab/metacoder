@@ -18,7 +18,7 @@ my_print <- function(..., verbose = TRUE) {
 #' get_edge_parents
 #' 
 #' @keywords internal
-get_edge_parents <-function(graph) {
+get_edge_parents <- function(graph) {
   igraph::get.edges(graph, 1:igraph::ecount(graph))[,1]
 }
 

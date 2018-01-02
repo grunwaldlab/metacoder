@@ -70,13 +70,13 @@ parse_primersearch <- function(file_path) {
   primer_data <- as.data.frame(cbind(rep(names(primer_chunks), vapply(primer_data, nrow, numeric(1))),
                        do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
   # Reformat amplicon data
-  colnames(primer_data) <- c("pair_name", "amplimer", "seq_id", "name", "f_primer", "f_index",
-                             "f_mismatch",  "r_primer", "r_index", "r_mismatch", "length")
-  primer_data <- primer_data[, c("seq_id", "pair_name", "amplimer", "length", 
-                               "f_primer", "f_index", "f_mismatch",
-                               "r_primer", "r_index", "r_mismatch")]
-  numeric_cols <- c("amplimer", "length","f_index", "f_mismatch",
-                    "r_index", "r_mismatch", "seq_id")
+  colnames(primer_data) <- c("pair_name", "amplimer", "seq_id", "name", "f_primer", "f_start",
+                             "f_mismatch",  "r_primer", "r_start", "r_mismatch", "length")
+  primer_data <- primer_data[, c("seq_id", "pair_name", "length", 
+                               "f_primer", "f_start", "f_mismatch",
+                               "r_primer", "r_start", "r_mismatch")]
+  numeric_cols <- c("length","f_start", "f_mismatch",
+                    "r_start", "r_mismatch", "seq_id")
   for (col in numeric_cols) primer_data[, col] <- as.numeric(primer_data[, col]) 
   return(primer_data)
 } 
@@ -87,6 +87,41 @@ parse_primersearch <- function(file_path) {
 #' A pair of primers are aligned against a set of sequences.
 #' The location of the best hits, quality of match, and predicted amplicons are returned.
 #' Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+#' 
+#' It can be confusing how the primer sequence relates to the binding sites on a
+#' reference database sequence. A simplified diagram can help. For example, if
+#' the top strand below (5' -> 3') is the database sequence, the forward primer
+#' has the same sequence as the target region, since it will bind to the other
+#' strand (3' -> 5') during PCR and extend on the 3' end. However, the reverse
+#' primer must bind to the database strand, so it will have to be the complement
+#' of the reference sequence. It also has to be reversed to make it in the
+#' standard 5' -> 3' orientation. Therefore, the reverse primer must be the
+#' reverse comlement of its binding site on the reference sequence.
+#' \preformatted{
+#' Primer 1: 5' AAGTACCTTAACGGAATTATAG 3'
+#' Primer 2: 5' GCTCCACCTACGAAACGAAT   3'
+#'  
+#'                                <- TAAGCAAAGCATCCACCTCG 5'
+#' 5' ...AAGTACCTTAACGGAATTATAG......ATTCGTTTCGTAGGTGGAGC... 3'
+#' 
+#' 3' ...TTCATGGAATTGCCTTAATATC......TAAGCAAAGCATCCACCTCG... 5'
+#'    5' AAGTACCTTAACGGAATTATAG ->
+#'}
+#' However, a database might have either the top or the bottom strand as a
+#' reference sequence. Since one implies the sequence of the other, either is
+#' valid, but this is another source of confusion. If we take the diagram above
+#' and rotate it 180 degrees, it would mean the same thing, but which primer we would
+#' want to call "forward" and which we would want to call "reverse" would
+#' change. Databases of a single locus (e.g. Greengenes) will likly have a
+#' convention for which strand will be present, so relative to this convention,
+#' there is a distinct "forward" and "reverse". However, computers dont know
+#' about this convention, so the "forward" primer is whichever primer has the
+#' same sequence as its binding region in the database (as opposed to the
+#' reverse complement). For this reason, primersearch will redefine which primer
+#' is "forward" and which is "reverse" based on how it binds the reference
+#' sequence. See the example code for a demonstration of this.
+#' 
+#' 
 #' 
 #' @param input (\code{character})
 #' @param forward (\code{character} of length 1) The forward primer sequence
@@ -172,14 +207,47 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   # Run and parse primersearch
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch)
   on.exit(file.remove(output_path))
-  output <- parse_primersearch(output_path)
+  output <- dplyr::as_tibble(parse_primersearch(output_path))
+  
+  # Standardize primer regex
+  #   primersearch seems to use some non-standard regex-like thing
+  fix_regex <- function(x) {
+    gsub(x, pattern = "?", replacement = ".", fixed = TRUE)
+  }
+  output$f_primer <- fix_regex(output$f_primer)
+  output$r_primer <- fix_regex(output$r_primer)
+  
+  # Convert from regex to ambiguity codes
+  #   I think most people will expect the ambiguity codes they supplied
+  output$f_primer <- ifelse(vapply(output$f_primer, grepl, x = forward, FUN.VALUE = logical(1)),
+                            forward, reverse)
+  output$r_primer <- ifelse(vapply(output$r_primer, grepl, x = reverse, FUN.VALUE = logical(1)),
+                            reverse, forward)
+  
+  # Make reverse primer position relative to start of the sequence
+  #   primersearch returns the index of the start on the reverse complement
+  output$r_start <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_start - nchar(output$r_primer) + 2
+  
+  # Find the end index of the primer binding site
+  output$f_end <- output$f_start + nchar(output$f_primer) - 1
+  output$r_end <- output$r_start + nchar(output$r_primer) - 1
+  
+  # Extract primer matching region
+  output$f_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+                               input[output$seq_id], output$f_start, output$f_end)) 
+  output$r_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+                               input[output$seq_id], output$r_start, output$r_end))
+  
+  # Reverse complement matching region if the antisense strand is supplied
+  output$f_match <- ifelse(output$f_primer == forward, output$f_match, rev_comp(output$f_match))
+  output$r_match <- ifelse(output$f_primer == forward, output$r_match, rev_comp(output$r_match))
   
   # Extract amplicon input
-  output$f_primer <- ifelse(vapply(output$f_primer, grepl, x = forward, FUN.VALUE = logical(1)), forward, reverse)
-  output$r_primer <- ifelse(vapply(output$r_primer, grepl, x = reverse, FUN.VALUE = logical(1)), reverse, forward)
-  output$r_index <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_index + 1
   output$amplicon <- unlist(Map(function(seq, start, end) substr(seq, start, end),
-                                input[output$seq_id], output$f_index, output$r_index)) 
+                                input[output$seq_id], output$f_end + 1, output$r_start - 1)) 
+  output$product <- paste0(output$f_primer, output$amplicon, rev_comp(output$r_primer))
+  
+  
   return(output)
 }
 
@@ -194,7 +262,7 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
 #' 
 #' @rdname primersearch
 #' @export
-primersearch_taxmap <- function(input, forward, reverse, mismatch = 5,
+primersearch.vector <- function(input, forward, reverse, mismatch = 5,
                                     sequence_col = "sequence", result_cols = NULL, ...) {
   if (is.null(input$obs_data[[sequence_col]])) {
     stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))

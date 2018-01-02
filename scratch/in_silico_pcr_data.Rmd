@@ -57,3 +57,43 @@ file.copy(from = out_path, to = file.path("..", "inst", "extdata", out_path))
 
 
 ### Test in silico PCR
+
+#### Dummy set
+
+```{r}
+rev_comp <- function(my_seq) {
+  toupper(paste0(rev(seqinr::comp(strsplit(my_seq, "")[[1]], ambiguous = TRUE)), collapse = ""))
+}
+
+
+comp <- function(my_seq) {
+  toupper(paste0(seqinr::comp(strsplit(my_seq, "")[[1]], ambiguous = TRUE), collapse = ""))
+}
+
+
+primer_1_site <- "AAGTACCTTAACGGAATTATAG"
+primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
+amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
+seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
+seq_2 <- rev_comp(seq_1)
+
+f_primer <- primer_1_site
+r_primer <- rev_comp(primer_2_site)
+seqs <- c(a = seq_1, b = seq_2)
+
+result <- primersearch(seqs, 
+                       forward = c("p1" = f_primer),
+                       reverse = c("p2" = r_primer))
+```
+
+
+#### Real data set
+
+```{r}
+silva_subset <- parse_silva_fasta(out_path)
+pcr_result <- primersearch(silva_subset$data$silva_seq, 
+                           forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                           reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                           mismatch = 10)
+```
+

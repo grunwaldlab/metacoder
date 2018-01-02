@@ -2,12 +2,12 @@
 % Please edit documentation in R/in_silico_pcr.R
 \name{primersearch}
 \alias{primersearch}
-\alias{primersearch_taxmap}
+\alias{primersearch.vector}
 \title{UNDER CONSTRUCTION: Use EMBOSS primersearch for in silico PCR}
 \usage{
 primersearch(input, forward, reverse, mismatch = 5, ...)
 
-primersearch_taxmap(input, forward, reverse, mismatch = 5,
+primersearch.vector(input, forward, reverse, mismatch = 5,
   sequence_col = "sequence", result_cols = NULL, ...)
 }
 \arguments{
@@ -35,6 +35,40 @@ The location of the best hits, quality of match, and predicted amplicons are ret
 Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 
 UNDER CONSTRUCTION
+}
+\details{
+It can be confusing how the primer sequence relates to the binding sites on a
+reference database sequence. A simplified diagram can help. For example, if
+the top strand below (5' -> 3') is the database sequence, the forward primer
+has the same sequence as the target region, since it will bind to the other
+strand (3' -> 5') during PCR and extend on the 3' end. However, the reverse
+primer must bind to the database strand, so it will have to be the complement
+of the reference sequence. It also has to be reversed to make it in the
+standard 5' -> 3' orientation. Therefore, the reverse primer must be the
+reverse comlement of its binding site on the reference sequence.
+\preformatted{
+Primer 1: 5' AAGTACCTTAACGGAATTATAG 3'
+Primer 2: 5' GCTCCACCTACGAAACGAAT   3'
+ 
+                               <- TAAGCAAAGCATCCACCTCG 5'
+5' ...AAGTACCTTAACGGAATTATAG......ATTCGTTTCGTAGGTGGAGC... 3'
+
+3' ...TTCATGGAATTGCCTTAATATC......TAAGCAAAGCATCCACCTCG... 5'
+   5' AAGTACCTTAACGGAATTATAG ->
+}
+However, a database might have either the top or the bottom strand as a
+reference sequence. Since one implies the sequence of the other, either is
+valid, but this is another source of confusion. If we take the diagram above
+and rotate it 180 degrees, it would mean the same thing, but which primer we would
+want to call "forward" and which we would want to call "reverse" would
+change. Databases of a single locus (e.g. Greengenes) will likly have a
+convention for which strand will be present, so relative to this convention,
+there is a distinct "forward" and "reverse". However, computers dont know
+about this convention, so the "forward" primer is whichever primer has the
+same sequence as its binding region in the database (as opposed to the
+reverse complement). For this reason, primersearch will redefine which primer
+is "forward" and which is "reverse" based on how it binds the reference
+sequence. See the example code for a demonstration of this.
 }
 \section{Installing EMBOSS}{
 
