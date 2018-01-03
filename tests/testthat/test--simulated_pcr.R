@@ -17,7 +17,7 @@ seqs <- c(a = seq_1, b = seq_2)
 
 test_that("primersearch works", {
   skip_on_cran()
-  skip_if_not(metacoder:::primersearch_is_installed())
+  skip_if_not(metacoder:::primersearch_is_installed(must_be_installed = FALSE))
   
   result <- primersearch(seqs, 
                          forward = c("p1" = f_primer),
