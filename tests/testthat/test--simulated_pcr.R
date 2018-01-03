@@ -52,4 +52,28 @@ test_that("primersearch works", {
   expect_equal(result$f_mismatch[2], 0)
   expect_equal(result$r_mismatch[1], 0)
   expect_equal(result$r_mismatch[2], 1)
-})
+  
+  # Can read from a file
+  in_path <- system.file("extdata/silva_subset.fa", package = "metacoder")
+  file_result <- primersearch(file = in_path,
+                              forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                              reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                              mismatch = 10)
+  
+  # Can read ape format (Current example file has U instead of T and this breaks ape)
+  # ape_result <- primersearch(ape::read.FASTA(in_path),
+  #                            forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+  #                            reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+  #                            mismatch = 10)
+
+  # Can read seqinr format
+  seqinr_result <- primersearch(seqinr::read.fasta(in_path, forceDNAtolower = FALSE),
+                                forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                                reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                                mismatch = 10)
+  
+  # Check that all input types return the same object
+  expect_equal(file_result, seqinr_result)
+  # expect_equal(ape_result, seqinr_result) # (Current example file has U instead of T and this breaks ape)
+  
+  })

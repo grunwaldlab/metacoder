@@ -11,9 +11,11 @@
 
 * All taxmap-related manipulation functions have been moved to the [taxa](https://github.com/ropensci/taxa) package.
 * `heat_tree` now uses the `taxmap` class defined in the [taxa](https://github.com/ropensci/taxa) package.
+* Numerous changes (i.e. upgrades) to `primersearch`
 
 ### Improvements
 
+* Upgraded `primersearch` output to be cleaner and have info like the amplicon sequence and primer binding sites.
 * Added functions to identift and remove taxa with ambiguous names like "unknown"
 * code from [ggrepel](https://github.com/slowkow/ggrepel) package now used to avoid overlapping labels. Thanks Kamil Slowikowski!
 * New function `heat_tree_matrix` to make plotting a pairwise matrix of heat trees for comparing treatments.

@@ -25,10 +25,10 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5,
   extra_args <- as.list(match.call(expand.dots = FALSE))$...
   if (Sys.info()['sysname'] == "Windows") {
     arguments <- c("-seqall", seq_path,
-                 "-infile", primer_path,
-                 "-mismatchpercent", mismatch,
-                 "-outfile", output_path,
-                 as.character(extra_args))
+                   "-infile", primer_path,
+                   "-mismatchpercent", mismatch,
+                   "-outfile", output_path,
+                   as.character(extra_args))
     system2(program_path, arguments, stdout = TRUE, stderr = TRUE)
   } else {
     extra_args_string <- paste(names(extra_args), extra_args, collapse = " ", sep = " ")
@@ -68,21 +68,19 @@ parse_primersearch <- function(file_path) {
                    "\tAmplimer length: ([0-9]+) bp", sep = '\n')
   primer_data <- stringr::str_match_all(primer_chunks, pattern)
   primer_data <- as.data.frame(cbind(rep(names(primer_chunks), vapply(primer_data, nrow, numeric(1))),
-                       do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
+                                     do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
   # Reformat amplicon data
-  colnames(primer_data) <- c("pair_name", "amplimer", "seq_id", "name", "f_primer", "f_start",
-                             "f_mismatch",  "r_primer", "r_start", "r_mismatch", "length")
-  primer_data <- primer_data[, c("seq_id", "pair_name", "length", 
-                               "f_primer", "f_start", "f_mismatch",
-                               "r_primer", "r_start", "r_mismatch")]
-  numeric_cols <- c("length","f_start", "f_mismatch",
-                    "r_start", "r_mismatch", "seq_id")
+  colnames(primer_data) <- c("pair_name", "amplimer", "input", "name", "f_primer", "f_start",
+                             "f_mismatch",  "r_primer", "r_start", "r_mismatch")
+  primer_data <- primer_data[, c("input",  "f_primer", "f_start", "f_mismatch",
+                                 "r_primer", "r_start", "r_mismatch")]
+  numeric_cols <- c("f_start", "f_mismatch", "r_start", "r_mismatch", "input")
   for (col in numeric_cols) primer_data[, col] <- as.numeric(primer_data[, col]) 
   return(primer_data)
 } 
 
 
-#' UNDER CONSTRUCTION: Use EMBOSS primersearch for in silico PCR
+#' Use EMBOSS primersearch for in silico PCR
 #' 
 #' A pair of primers are aligned against a set of sequences.
 #' The location of the best hits, quality of match, and predicted amplicons are returned.
@@ -121,15 +119,31 @@ parse_primersearch <- function(file_path) {
 #' is "forward" and which is "reverse" based on how it binds the reference
 #' sequence. See the example code for a demonstration of this.
 #' 
-#' 
-#' 
-#' @param input (\code{character})
+#' @inheritParams parse_seq_input
 #' @param forward (\code{character} of length 1) The forward primer sequence
 #' @param reverse (\code{character} of length 1) The reverse primer sequence
 #' @param mismatch An integer vector of length 1. The percentage of mismatches allowed.
-#' @param ... Unused.
 #' 
-#' @return An object of type \code{\link{taxmap}}
+#' @return A table with one row per predicted amplicon with the following info:
+#' 
+#' \preformatted{
+#'            (f_primer)
+#'    5' AAGTACCTTAACGGAATTATAG ->        (r_primer)
+#'                                <- TAAGCAAAGCATCCACCTCG 5'
+#' 5' ...AAGTACCTTAACGGAATTATAG......ATTCGTTTCGTAGGTGGAGC... 3'
+#'       ^                    ^      ^                  ^
+#'    f_start              f_end   r_rtart             r_end
+#'      
+#'       |--------------------||----||------------------|
+#'              f_match       amplicon       r_match  
+#'       |----------------------------------------------|
+#'                            product
+#'                            
+#'   
+#' f_mismatch: The number of mismatches on the forward primer
+#' r_mismatch: The number of mismatches on the reverse primer
+#' input: The index of the input sequence
+#' }
 #' 
 #' @section Installing EMBOSS:
 #' 
@@ -155,35 +169,77 @@ parse_primersearch <- function(file_path) {
 #' 
 #' ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 #' 
-#' NOTE: This has not been tested by us yet.
-#' 
 #' @examples
 #' \dontrun{
-#' result <- primersearch(rdp_ex_data, 
-#'                        forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-#'                        reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-#'                        mismatch = 10)
-#'                        
-#' heat_tree(result, 
-#'           node_size = n_obs,
-#'           node_label = name,
-#'           node_color = prop_amplified,
-#'           node_color_range = c("red", "yellow", "green"),
+#' 
+#' ### Dummy test data set ###
+#' 
+#' primer_1_site <- "AAGTACCTTAACGGAATTATAG"
+#' primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
+#' amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
+#' seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
+#' seq_2 <- rev_comp(seq_1)
+#' f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
+#' r_primer <- rev_comp(primer_2_site)
+#' seqs <- c(a = seq_1, b = seq_2)
+#' 
+#' result <- primersearch(seqs, forward = f_primer, reverse = r_primer)
+#' 
+#' 
+#' ### Real data set ###
+#' 
+#' # Get example FASTA file
+#' fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+#'                           package = "metacoder")
+#' 
+#' # Parse the FASTA file as a taxmap object
+#' obj <- parse_silva_fasta(fasta_path)
+#' 
+#' # Simulate PCR with primersearch
+#' pcr_result <- primersearch(obj$data$silva_seq, 
+#'                            forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                            reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+#'                            mismatch = 10)
+#' 
+#' # Add result to input table 
+#' #  NOTE: We want to add a function to handle running pcr on a
+#' #        taxmap object directly, but we are still trying to figure out
+#' #        the best way to implement it. For now, do the following:
+#' obj$data$pcr <- pcr_result
+#' obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
+#' 
+#' # Visualize which taxa were amplified
+#' #  This work because only amplicons are returned by `primersearch`
+#' n_amplified <- obj$obs_apply("pcr",
+#'                              function(x) length(unique(x)),
+#'                              value = "input",
+#'                              simplify = TRUE)
+#' prop_amped <- n_amplified / obj$n_obs()
+#' heat_tree(obj,
+#'           node_label = taxon_names, 
+#'           node_color = prop_amped, 
+#'           node_color_range = c("grey", "red", "purple", "green"),
 #'           node_color_trans = "linear",
-#'           node_color_interval = c(0, 1),
-#'           layout = "fruchterman-reingold")
+#'           node_color_axis_label = "Proportion amplified",
+#'           node_size = n_obs,
+#'           node_size_axis_label = "Number of sequences",
+#'           layout = "da", 
+#'           initial_layout = "re")
+#' 
 #' }
 #' 
-#' @rdname primersearch
 #' @export
-primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
+primersearch <- function(input = NULL, file = NULL, forward, reverse, mismatch = 5) {
+  
+  # Read sequence info
+  input <- parse_seq_input(input = input, file = file)
   
   # Write temporary fasta file for primersearch input
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
   on.exit(file.remove(sequence_path))
   writeLines(text = paste0(">", seq_along(input), "\n", input),
              con = sequence_path)
-    
+  
   # Write primer file for primersearch input
   name_primer <- function(primer) {
     if (is.null(names(primer))) {
@@ -202,7 +258,7 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   primer_table <- as.data.frame(stringsAsFactors = FALSE,
                                 cbind(pair_name, forward, reverse))
   utils::write.table(primer_table, primer_path,
-              quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
+                     quote = FALSE, sep = '\t', row.names = FALSE, col.names = FALSE)
   
   # Run and parse primersearch
   output_path <- run_primersearch(sequence_path, primer_path, mismatch = mismatch)
@@ -226,7 +282,7 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   
   # Make reverse primer position relative to start of the sequence
   #   primersearch returns the index of the start on the reverse complement
-  output$r_start <- vapply(input[output$seq_id], nchar, numeric(1)) - output$r_start - nchar(output$r_primer) + 2
+  output$r_start <- vapply(input[output$input], nchar, numeric(1)) - output$r_start - nchar(output$r_primer) + 2
   
   # Find the end index of the primer binding site
   output$f_end <- output$f_start + nchar(output$f_primer) - 1
@@ -234,9 +290,9 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   
   # Extract primer matching region
   output$f_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
-                               input[output$seq_id], output$f_start, output$f_end)) 
+                               input[output$input], output$f_start, output$f_end)) 
   output$r_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
-                               input[output$seq_id], output$r_start, output$r_end))
+                               input[output$input], output$r_start, output$r_end))
   
   # Reverse complement matching region if the antisense strand is supplied
   output$f_match <- ifelse(output$f_primer == forward, output$f_match, rev_comp(output$f_match))
@@ -244,57 +300,19 @@ primersearch <- function(input, forward, reverse, mismatch = 5, ...) {
   
   # Extract amplicon input
   output$amplicon <- unlist(Map(function(seq, start, end) substr(seq, start, end),
-                                input[output$seq_id], output$f_end + 1, output$r_start - 1)) 
+                                input[output$input], output$f_end + 1, output$r_start - 1)) 
+  if (! "amplicon" %in% colnames(output)) { # For empty tables
+    output$amplicon <- character(0)
+  }
   output$product <- paste0(output$f_primer, output$amplicon, rev_comp(output$r_primer))
   
+  # Change order of output table
+  output <- output[, c("input", "f_primer", "r_primer", "f_mismatch", "r_mismatch",
+                       "f_start", "f_end", "r_start", "r_end",
+                       "f_match", "r_match", "amplicon", "product")]
   
   return(output)
 }
-
-
-#' UNDER CONSTRUCTION
-#' 
-#' UNDER CONSTRUCTION
-#' 
-#' @param sequence_col (\code{character} of length 1) The name of the column in \code{obs_data} that has the input sequences.
-#' @param result_cols (\code{character}) The names of columns to include in the output.
-#' By default, all output columns are included.
-#' 
-#' @rdname primersearch
-#' @export
-primersearch.vector <- function(input, forward, reverse, mismatch = 5,
-                                    sequence_col = "sequence", result_cols = NULL, ...) {
-  if (is.null(input$obs_data[[sequence_col]])) {
-    stop(paste0('`sequence_col` "', sequence_col, '" does not exist. Check the input or change the value of the `sequence_col` option.'))
-  }
-  result <- primersearch(input = input$obs_data[[sequence_col]],
-                         forward = forward, reverse = reverse, mismatch = mismatch)
-  seq_id <- result$seq_id
-  result <- result[, colnames(result) != "seq_id", drop = FALSE]
-  pair_name <- result$pair_name
-  if (!is.null(result_cols)) {
-    result <- result[, result_cols, drop = FALSE]
-  }
-  
-  overwritten_cols <-  colnames(input$obs_data)[colnames(input$obs_data) %in% colnames(result)]
-  if (length(overwritten_cols) > 0) {
-    warning(paste0('The following obs_data columns will be overwritten by primersearch:\n',
-                   paste0(collapse = "\n", "    ", overwritten_cols)))
-  }
-  input$obs_data[ , colnames(result)] <- NA
-  input$obs_data[seq_id, colnames(result)] <- result
-  input$obs_data$amplified <- ! is.na(input$obs_data$length)
-  input$taxon_funcs <- c(input$taxon_funcs,
-                         count_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(taxa::obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]), numeric(1))
-                         },
-                         prop_amplified = function(obj, subset = obj$taxon_data$taxon_ids) {
-                           vapply(taxa::obs(obj, subset), function(x) sum(obj$obs_data$amplified[x]) / length(x), numeric(1))
-                         })
-  output <- input
-  return(output)
-}
-
 
 
 #' Test if primersearch is installed
@@ -315,4 +333,56 @@ primersearch_is_installed <- function(must_be_installed = TRUE) {
     stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path. Type '?primersearch' for information on installing EMBOSS.")
   }
   return(invisible(is_installed))
+}
+
+
+#' Read sequences in an unknown format
+#'
+#' Read sequences in an unknown format. This is meant to parse the sequence
+#' input arguments of functions like \code{\link{primersearch}}.
+#' 
+#' @param input (\code{character}) One of the following: 
+#' \describe{
+#'   \item{A character vector of sequences}{See the example below for what this
+#'   looks like. The parser \code{\link{read_fasta}} produces output like this.}
+#'   \item{A list of character vectors}{Each vector should have one base per element.}
+#'   \item{A "DNAbin" object}{This is the result of parsers like
+#'   \code{\link[ape]{read.FASTA}}.}
+#'   \item{A list of "SeqFastadna" objects}{This is the result of parsers like
+#'   \code{\link[seqinr]{read.fasta}}.}
+#'   Either "input" or "file" must be supplied but not both.
+#' }
+#' @param file The path to a FASTA file containing sequences to use. Either
+#'   "input" or "file" must be supplied but not both.
+#' 
+#' @return A named character vector of sequences
+#' 
+#' @keywords internal
+parse_seq_input <- function(input = NULL, file = NULL) {
+  # Check parameters
+  if (sum(! c(is.null(file), is.null(input))) != 1) {
+    stop(call. = FALSE,
+         "Either `file` or `input` must be supplied, but not both.")
+  }
+  
+  if (! is.null(file) && (! is.character(file) || length(file) != 1)) {
+    stop(call. = FALSE,
+         "`file` must be a character vector of length 1 that is a valid path to a file.")
+  }
+
+  # Convert to common format
+  if (! is.null(file)) {
+    result <- read_fasta(file)
+  } else if (length(input) == 0 || class(input) == "character") {
+    result <- input
+  } else if (class(input) == "DNAbin") {
+    result <- toupper(vapply(as.character(input), paste, character(1), collapse = ""))
+  } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
+    result <- vapply(input, paste, character(1), collapse = "")
+  } else {
+    stop(paste0('Could not parse sequence information of class "', class(input), '".'),
+         call. = FALSE)
+  }
+  
+  return(result)
 }
