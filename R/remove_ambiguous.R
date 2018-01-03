@@ -28,7 +28,13 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
                 paste0(name_regex, "*", "UNIDENTIFIED", name_regex, "*"),
                 paste0(name_regex, "*", "Incertae Sedis", name_regex, "*"),
                 paste0(name_regex, "*", "incertae sedis", name_regex, "*"),
-                paste0(name_regex, "*", "INCERTAE SEDIS", name_regex, "*")
+                paste0(name_regex, "*", "INCERTAE SEDIS", name_regex, "*"),
+                paste0(name_regex, "*", "ambiguous", name_regex, "*"),
+                paste0(name_regex, "*", "Ambiguous", name_regex, "*"),
+                paste0(name_regex, "*", "AMBIGUOUS", name_regex, "*"),
+                paste0(name_regex, "*", "unassigned", name_regex, "*"),
+                paste0(name_regex, "*", "Unassigned", name_regex, "*"),
+                paste0(name_regex, "*", "UNASSIGNED", name_regex, "*")
     )
   }
   
