@@ -9,6 +9,11 @@
 #' 
 #' @export
 rev_comp <- function(seqs) {
+  # Handle zero length inputs
+  if (length(seqs) == 0) {
+    return(seqs)
+  }
+  
   # Capture names to restore later
   seq_names <- names(seqs)
   
@@ -50,6 +55,11 @@ rev_comp <- function(seqs) {
 #' 
 #' @export
 complement <- function(seqs) {
+  # Handle zero length inputs
+  if (length(seqs) == 0) {
+    return(seqs)
+  }
+  
   # Capture names to restore later
   seq_names <- names(seqs)
   
@@ -88,6 +98,11 @@ complement <- function(seqs) {
 #' 
 #' @export
 reverse <- function(seqs) {
+  # Handle zero length inputs
+  if (length(seqs) == 0) {
+    return(seqs)
+  }
+  
   # Capture names to restore later
   seq_names <- names(seqs)
   
