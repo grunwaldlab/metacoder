@@ -1,4 +1,3 @@
-#===================================================================================================
 #' Download representative sequences for a taxon
 #' 
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
@@ -6,7 +5,7 @@
 #' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 #' can take a very long time. 
 #' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-#' Use a downloaded database and a parser from the taxa package when possible.
+#' Use a downloaded database and a parser from the \code{taxa} package when possible.
 #' 
 #' @param name (\code{character} of length 1) The taxon to download a sample of sequences for.
 #' @param id (\code{character} of length 1) The taxon id to download a sample of sequences for.
@@ -192,9 +191,6 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
 }
 
 
-
-
-#===================================================================================================
 #' Downloads sequences from ids
 #' 
 #' Downloads the sequences associated with GenBank accession ids.

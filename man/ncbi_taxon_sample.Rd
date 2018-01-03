@@ -56,7 +56,7 @@ Can be used to get a shallow sampling of a vast groups.
 \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 can take a very long time. 
 Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-Use a downloaded database and a parser from the taxa package when possible.
+Use a downloaded database and a parser from the \code{taxa} package when possible.
 }
 \examples{
 \dontrun{
