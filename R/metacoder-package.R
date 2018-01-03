@@ -54,11 +54,11 @@
 #'   \item \code{\link{parse_greengenes}}
 #'   \item \code{\link{parse_mothur_tax_summary}}
 #'   \item \code{\link{parse_mothur_taxonomy}}
-#'   \item \code{\link{parse_newick,}}
+#'   \item \code{\link{parse_newick}}
 #'   \item \code{\link{parse_phyloseq}}
 #'   \item \code{\link{parse_phylo}}
 #'   \item \code{\link{parse_qiime_biom}}
-#'   \item \code{\link{parse_rdp,}}
+#'   \item \code{\link{parse_rdp}}
 #'   \item \code{\link{parse_silva_fasta}}
 #'   \item \code{\link{parse_unite_general}}
 #' }
