@@ -26,8 +26,8 @@ sequence fasta file. This is optional.}
 \description{
 Attempts to save taxonomic information of a taxmap object in the
 mothur `*.taxonomy` format. If the taxmap object was created using
-[parse_mothur_taxonomy()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_mothur_taxonomy}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:

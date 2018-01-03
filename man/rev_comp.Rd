@@ -15,3 +15,12 @@ vector. This is a wrapper for \code{\link[seqinr]{comp}} for character
 vectors instead of lists of character vectors with one value per letter.
 IUPAC ambiguity codes are handled and the upper/lower case is preserved.
 }
+\examples{
+
+rev_comp(c("aagtgGGTGaa", "AAGTGGT"))
+
+}
+\seealso{
+Other sequence transformations: \code{\link{complement}},
+  \code{\link{reverse}}
+}

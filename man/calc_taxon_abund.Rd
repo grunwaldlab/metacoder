@@ -8,7 +8,7 @@ calc_taxon_abund(obj, dataset, cols = NULL, groups = NULL,
   out_names = NULL)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
@@ -35,9 +35,9 @@ length as \code{cols} (or \code{unique(groups)}, if used).}
 A tibble
 }
 \description{
-For a given table in a taxmap object, sum the values in each column for each 
-taxon. This is useful to convert per-observation counts (e.g. OTU counts) to 
-per-taxon counts.
+For a given table in a \code{\link[taxa]{taxmap}} object, sum the values in
+each column for each taxon. This is useful to convert per-observation counts
+(e.g. OTU counts) to per-taxon counts.
 }
 \examples{
 \dontrun{
@@ -80,6 +80,6 @@ calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
 \seealso{
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_obs_props}},
-  \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+  \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
+  \code{\link{zero_low_counts}}
 }

@@ -92,7 +92,8 @@ is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
 #' Filter out taxa with ambiguous names, such as "unknown" or "uncultured".
 #' NOTE: some parameters of this function are passed to
 #' \code{\link[taxa]{filter_taxa}} with the "invert" option set to \code{TRUE}.
-#'
+#' Works the same way as \code{\link[taxa]{filter_taxa}} for the most part.
+#' 
 #' If you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #'
@@ -103,8 +104,9 @@ is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
 #' @return TRUE/FALSE vector corresponding to \code{taxon_names}
 #'
 #' @export
-filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE, name_regex = ".", 
-                                  ignore_case = TRUE, subtaxa = FALSE, drop_obs = TRUE,
+filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE,
+                                  name_regex = ".", ignore_case = TRUE,
+                                  subtaxa = FALSE, drop_obs = TRUE,
                                   reassign_obs = TRUE, reassign_taxa = TRUE) {
   # Identify taxa to filter out 
   to_remove <- is_ambiguous(obj$taxon_names(), unknown = unknown, 

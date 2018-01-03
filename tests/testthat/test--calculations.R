@@ -107,9 +107,9 @@ test_that("Comparing groups of samples", {
   x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
   
   # Calculate difference between groups
-  expect_warning(x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-                                                         cols = hmp_samples$sample_id,
-                                                         groups = hmp_samples$body_site))
+  expect_warning(x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+                                                     cols = hmp_samples$sample_id,
+                                                     groups = hmp_samples$body_site))
   expect_equal(nrow(x$data$diff_table),
                ncol(combn(length(unique(hmp_samples$body_site)), 2)) * nrow(x$data$tax_table))
   

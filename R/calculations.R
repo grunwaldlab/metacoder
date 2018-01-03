@@ -1,12 +1,11 @@
 #' Calculate proportions from observation counts
 #'
-#' For a given table in a taxmap object, convert one or more columns containing
-#' counts to proportions. This is meant to be used with counts associated with
-#' observations (e.g. OTUs), as opposed to counts that have already been summed
-#' per taxon. If counts have already been summed per taxon, use
-#' [calc_tax_props()] instead.
+#' For a given table in a \code{\link[taxa]{taxmap}} object, convert one or more
+#' columns containing counts to proportions. This is meant to be used with
+#' counts associated with observations (e.g. OTUs), as opposed to counts that
+#' have already been summed per taxon.
 #'
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{dataset} to use. By
 #'   default, all numeric columns are used. Takes one of the following inputs:
@@ -77,19 +76,15 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 
 #' Replace low counts with zero
 #'
-#' For a given table in a taxmap object, convert all counts below a minimum
-#' numer to zero. This is useful for effectivly removing "singletons",
-#' "doubletons", or other low abundance counts.
+#' For a given table in a \code{\link[taxa]{taxmap}} object, convert all counts
+#' below a minimum numer to zero. This is useful for effectivly removing
+#' "singletons", "doubletons", or other low abundance counts.
 #'
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param min_count The minimum number of counts needed for a count to remain
 #'   unchanged. Any could less than this will be converted to a zero. For
 #'   example, \code{min_count = 2} would remove singletons.
-#' @param filter_rows If \code{TRUE}, remove any rows (e.g. OTUs) that are all
-#'   zero after low counts are converted to zero.
-#' @param filter_cols If \code{TRUE}, remove any columns (e.g. samples) that are
-#'   all zero after low counts are converted to zero.
 #' @param use_total If \code{TRUE}, the \code{min_count} applies to the total
 #'   count for each row (e.g. OTU counts for all samples), rather than each cell
 #'   in the table. For example \code{use_total = TRUE, min_count = 10} would
@@ -151,8 +146,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #'                out_names = c("a", "b", "c"))
 #' 
 #' }
-zero_low_counts <- function(obj, dataset, min_count = 2, filter_rows = TRUE,
-                            filter_cols = FALSE, use_total = FALSE,
+zero_low_counts <- function(obj, dataset, min_count = 2, use_total = FALSE,
                             cols = NULL, other_cols = FALSE, out_names = NULL) {
   
   # Let user know paramters used
@@ -195,11 +189,11 @@ zero_low_counts <- function(obj, dataset, min_count = 2, filter_rows = TRUE,
 
 #' Calculate rarefied observation counts
 #'
-#' For a given table in a taxmap object, rarefy counts to a constant total. This
+#' For a given table in a \code{\link[taxa]{taxmap}} object, rarefy counts to a constant total. This
 #' is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 #' which columns are numeric and handles the reformatting needed to use tibbles.
 #'
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param sample_size The sample size counts will be rarefied to. This can be 
 #'   either a single integer or a vector of integers of equal length to the 
@@ -276,13 +270,15 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
 
 
 
-#' Compare treatments
+#' Compare groups of samples
 #' 
 #' Apply a function to compare data, usually abundance, from pairs of 
-#' treatments. By default, every pairwise combination of treatments are 
-#' compared. A custom function can be supplied to perform the comparison.
+#' treatments/groups. By default, every pairwise combination of treatments are 
+#' compared. A custom function can be supplied to perform the comparison. The
+#' plotting function \code{\link{heat_tree_matrix}} is useful for visualizing
+#' these results.
 #' 
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains data for each 
 #'   sample in columns.
 #' @param cols The names/indexes of columns in \code{dataset} to use. By
@@ -299,7 +295,7 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
 #' @param func The function to apply for each comparison. For each row in 
 #'   \code{dataset}, for each combination of groups, this function will 
 #'   recieve the data for each treatment, passed a two character vecotors.
-#'   Therefor the function must take at least 2 arguments corresponding to the
+#'   Therefore the function must take at least 2 arguments corresponding to the
 #'   two groups compared. The function should return a vector or list or
 #'   results of a fixed length. If named, the names will be used in the output.
 #'   The names should be consistent as well. A simple example is
@@ -342,9 +338,9 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
 #' x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
 #' 
 #' # Calculate difference between groups
-#' x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-#'                                         cols = hmp_samples$sample_id,
-#'                                         groups = hmp_samples$body_site)
+#' x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+#'                                     cols = hmp_samples$sample_id,
+#'                                     groups = hmp_samples$body_site)
 #'
 #' # Plot results (might take a few minutes)
 #' heat_tree_matrix(x,
@@ -362,9 +358,9 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
 #' }
 #' 
 #' @export
-compare_treatments <- function(obj, dataset, cols, groups,
-                               func = NULL, combinations = NULL,
-                               other_cols = FALSE) {
+compare_groups <- function(obj, dataset, cols, groups,
+                           func = NULL, combinations = NULL,
+                           other_cols = FALSE) {
   # Get abundance by sample data
   abund_data <- get_taxmap_table(obj, dataset)
   
@@ -465,11 +461,11 @@ compare_treatments <- function(obj, dataset, cols, groups,
 
 #' Sum observation values for each taxon
 #' 
-#' For a given table in a taxmap object, sum the values in each column for each 
-#' taxon. This is useful to convert per-observation counts (e.g. OTU counts) to 
-#' per-taxon counts.
+#' For a given table in a \code{\link[taxa]{taxmap}} object, sum the values in
+#' each column for each taxon. This is useful to convert per-observation counts
+#' (e.g. OTU counts) to per-taxon counts.
 #' 
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{dataset} to use. By
 #'   default, all numeric columns are used. Takes one of the following inputs:
@@ -595,12 +591,12 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 }
 
 
-#' Count the number of samples with reads
+#' Count the number of samples
 #'
-#' For a given table in a taxmap object, count the number of samples with
-#' greater than zero reads.
-#'
-#' @param obj A taxmap object
+#' For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
+#' samples with greater than zero occurrences.
+#' 
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj} that contains counts.
 #' @param cols The names/indexes of columns in \code{data} that have counts. By
 #'   Default, all numeric columns in \code{data} are used.

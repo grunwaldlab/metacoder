@@ -33,8 +33,8 @@ sequences. In the example output shown here, this field corresponds to
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 RDP FASTA format. If the taxmap object was created using
-[parse_rdp()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_rdp}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:

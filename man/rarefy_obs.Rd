@@ -8,7 +8,7 @@ rarefy_obs(obj, dataset, sample_size = NULL, cols = NULL,
   other_cols = FALSE, out_names = NULL)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
@@ -45,7 +45,7 @@ the same length as \code{cold}.}
 A tibble
 }
 \description{
-For a given table in a taxmap object, rarefy counts to a constant total. This
+For a given table in a \code{\link[taxa]{taxmap}} object, rarefy counts to a constant total. This
 is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 which columns are numeric and handles the reformatting needed to use tibbles.
 }
@@ -81,6 +81,6 @@ rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_treatments}},
+  \code{\link{compare_groups}},
   \code{\link{zero_low_counts}}
 }

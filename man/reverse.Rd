@@ -14,3 +14,12 @@ Find the reverse of one or more sequences stored as a character
 vector. This is a wrapper for \code{\link{rev}} for character
 vectors instead of lists of character vectors with one value per letter.
 }
+\examples{
+
+reverse(c("aagtgGGTGaa", "AAGTGGT"))
+
+}
+\seealso{
+Other sequence transformations: \code{\link{complement}},
+  \code{\link{rev_comp}}
+}

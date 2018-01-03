@@ -8,7 +8,7 @@ calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE,
   out_names = NULL)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
@@ -41,11 +41,10 @@ the same length as \code{cold}.}
 A tibble
 }
 \description{
-For a given table in a taxmap object, convert one or more columns containing
-counts to proportions. This is meant to be used with counts associated with
-observations (e.g. OTUs), as opposed to counts that have already been summed
-per taxon. If counts have already been summed per taxon, use
-[calc_tax_props()] instead.
+For a given table in a \code{\link[taxa]{taxmap}} object, convert one or more
+columns containing counts to proportions. This is meant to be used with
+counts associated with observations (e.g. OTUs), as opposed to counts that
+have already been summed per taxon.
 }
 \examples{
 \dontrun{
@@ -78,6 +77,6 @@ calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 \seealso{
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+  \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
+  \code{\link{zero_low_counts}}
 }

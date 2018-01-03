@@ -8,10 +8,10 @@ heat_tree_matrix(obj, dataset, label_small_trees = FALSE, key_size = 0.6,
   seed = 1, ...)
 }
 \arguments{
-\item{obj}{A \code{taxmap} object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj$data} that is the output of 
-\code{\link{compare_treatments}} or in the same format.}
+\code{\link{compare_groups}} or in the same format.}
 
 \item{label_small_trees}{If \code{TRUE} add labels to small trees as well as 
 the key tree. Otherwise, only the key tree will be labled.}
@@ -24,8 +24,9 @@ example, 0.5 means half the width/height of the graph.}
 \item{...}{Passed to \code{\link{heat_tree}}. Some options will be overwritten.}
 }
 \description{
-Plot a matrix of heat trees for showing parwise comparision. A larger, 
-labelled tree serves as a key for the matrix of smaller unlabelled trees.
+Plot a matrix of heat trees for showing parwise comparisions. A larger,
+labelled tree serves as a key for the matrix of smaller unlabelled trees. The
+data for this function is typically created with \code{\link{compare_groups}},
 }
 \examples{
 \dontrun{
@@ -41,9 +42,9 @@ x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$s
 x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
 
 # Calculate difference between treatments
-x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-                                        sample_ids = hmp_samples$sample_id,
-                                        treatments = hmp_samples$body_site)
+x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+                                    cols = hmp_samples$sample_id,
+                                    groups = hmp_samples$body_site)
 
 # Plot results (might take a few minutes)
 heat_tree_matrix(x,

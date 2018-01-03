@@ -32,8 +32,8 @@ sequence fasta file. This is optional.}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 Greengenes output format. If the taxmap object was created using
-[parse_greengenes()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_greengenes}}, then it should be able to replicate the
+format exactly with the default settings.
 }
 \details{
 The taxonomy output file has a format like:

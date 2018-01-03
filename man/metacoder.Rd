@@ -49,7 +49,7 @@ There is also a short vignette included for offline use that can be accessed  by
   \item \code{\link{calc_taxon_abund}}
   \item \code{\link{calc_obs_props}}
   \item \code{\link{rarefy_obs}}
-  \item \code{\link{compare_treatments}}
+  \item \code{\link{compare_groups}}
   \item \code{\link{zero_low_counts}}
   \item \code{\link{calc_n_samples}}
   \item \code{\link{filter_ambiguous_taxa}}

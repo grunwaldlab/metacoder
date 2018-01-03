@@ -10,10 +10,22 @@ read_fasta(file_path)
 \item{file_path}{(\code{character} of length 1) The path to a file to read.}
 }
 \value{
-names \code{character}
+named \code{character} vector
 }
 \description{
 Reads a FASTA file. This is the FASTA parser for metacoder. It simply tries
-to read a FASTA into a named character vector with minimal fuss. It does not
-do any checks for valid characters etc.
+to read a FASTA file into a named character vector with minimal fuss. It does
+not do any checks for valid characters etc. Other FASTA parsers you might
+want to consider include \code{\link[ape]{read.FASTA}} or
+\code{\link[seqinr]{read.fasta}}.
+}
+\examples{
+
+# Get example FASTA file
+fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+                          package = "metacoder")
+
+# Read fasta file
+my_seqs <- read_fasta(fasta_path)
+
 }

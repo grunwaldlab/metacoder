@@ -1,11 +1,12 @@
 #' Plot a matrix of heat trees
 #' 
-#' Plot a matrix of heat trees for showing parwise comparision. A larger, 
-#' labelled tree serves as a key for the matrix of smaller unlabelled trees.
+#' Plot a matrix of heat trees for showing parwise comparisions. A larger,
+#' labelled tree serves as a key for the matrix of smaller unlabelled trees. The
+#' data for this function is typically created with \code{\link{compare_groups}},
 #' 
-#' @param obj A \code{taxmap} object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj$data} that is the output of 
-#'   \code{\link{compare_treatments}} or in the same format.
+#'   \code{\link{compare_groups}} or in the same format.
 #' @param label_small_trees If \code{TRUE} add labels to small trees as well as 
 #'   the key tree. Otherwise, only the key tree will be labled.
 #' @param key_size The size of the key tree relative to the whole graph. For
@@ -27,9 +28,9 @@
 #' x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
 #' 
 #' # Calculate difference between treatments
-#' x$data$diff_table <- compare_treatments(x, dataset = "tax_table",
-#'                                         sample_ids = hmp_samples$sample_id,
-#'                                         treatments = hmp_samples$body_site)
+#' x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+#'                                     cols = hmp_samples$sample_id,
+#'                                     groups = hmp_samples$body_site)
 #'
 #' # Plot results (might take a few minutes)
 #' heat_tree_matrix(x,

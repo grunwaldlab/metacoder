@@ -41,8 +41,8 @@ is. Usually "rep" or "ref".}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 UNITE general FASTA format. If the taxmap object was created using
-[parse_unite_general()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_unite_general}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:

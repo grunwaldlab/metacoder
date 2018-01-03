@@ -59,6 +59,7 @@ TRUE/FALSE vector corresponding to \code{taxon_names}
 Filter out taxa with ambiguous names, such as "unknown" or "uncultured".
 NOTE: some parameters of this function are passed to
 \code{\link[taxa]{filter_taxa}} with the "invert" option set to \code{TRUE}.
+Works the same way as \code{\link[taxa]{filter_taxa}} for the most part.
 }
 \details{
 If you encounter a taxon name that represents an ambiguous taxon that is not

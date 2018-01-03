@@ -4,24 +4,17 @@
 \alias{zero_low_counts}
 \title{Replace low counts with zero}
 \usage{
-zero_low_counts(obj, dataset, min_count = 2, filter_rows = TRUE,
-  filter_cols = FALSE, use_total = FALSE, cols = NULL,
-  other_cols = FALSE, out_names = NULL)
+zero_low_counts(obj, dataset, min_count = 2, use_total = FALSE,
+  cols = NULL, other_cols = FALSE, out_names = NULL)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
 \item{min_count}{The minimum number of counts needed for a count to remain
 unchanged. Any could less than this will be converted to a zero. For
 example, \code{min_count = 2} would remove singletons.}
-
-\item{filter_rows}{If \code{TRUE}, remove any rows (e.g. OTUs) that are all
-zero after low counts are converted to zero.}
-
-\item{filter_cols}{If \code{TRUE}, remove any columns (e.g. samples) that are
-all zero after low counts are converted to zero.}
 
 \item{use_total}{If \code{TRUE}, the \code{min_count} applies to the total
 count for each row (e.g. OTU counts for all samples), rather than each cell
@@ -58,9 +51,9 @@ the same length as \code{cold}.}
 A tibble
 }
 \description{
-For a given table in a taxmap object, convert all counts below a minimum
-numer to zero. This is useful for effectivly removing "singletons",
-"doubletons", or other low abundance counts.
+For a given table in a \code{\link[taxa]{taxmap}} object, convert all counts
+below a minimum numer to zero. This is useful for effectivly removing
+"singletons", "doubletons", or other low abundance counts.
 }
 \examples{
 \dontrun{
@@ -94,6 +87,5 @@ calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 Other calculations: \code{\link{calc_n_samples}},
   \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}
+  \code{\link{compare_groups}}, \code{\link{rarefy_obs}}
 }

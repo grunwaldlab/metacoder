@@ -7,6 +7,12 @@
 #' 
 #' @param seqs A character vector with one element per sequence.
 #' 
+#' @family sequence transformations
+#' 
+#' @examples 
+#' 
+#' rev_comp(c("aagtgGGTGaa", "AAGTGGT"))
+#' 
 #' @export
 rev_comp <- function(seqs) {
   # Handle zero length inputs
@@ -53,6 +59,12 @@ rev_comp <- function(seqs) {
 #' 
 #' @param seqs A character vector with one element per sequence.
 #' 
+#' @family sequence transformations
+#' 
+#' @examples 
+#' 
+#' complement(c("aagtgGGTGaa", "AAGTGGT"))
+#' 
 #' @export
 complement <- function(seqs) {
   # Handle zero length inputs
@@ -94,6 +106,12 @@ complement <- function(seqs) {
 #' vectors instead of lists of character vectors with one value per letter.
 #' 
 #' @param seqs A character vector with one element per sequence.
+#' 
+#' @family sequence transformations
+#' 
+#' @examples 
+#' 
+#' reverse(c("aagtgGGTGaa", "AAGTGGT"))
 #' 
 #' @export
 reverse <- function(seqs) {

@@ -2,8 +2,8 @@
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' Greengenes output format. If the taxmap object was created using
-#' [parse_greengenes()], then it should be able to replicate the format
-#' exactly.
+#' \code{\link{parse_greengenes}}, then it should be able to replicate the
+#' format exactly with the default settings.
 #' 
 #' The taxonomy output file has a format like:
 #' 
@@ -90,8 +90,8 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' RDP FASTA format. If the taxmap object was created using
-#' [parse_rdp()], then it should be able to replicate the format
-#' exactly.
+#' \code{\link{parse_rdp}}, then it should be able to replicate the format
+#' exactly with the default settings.
 #' 
 #' The output file has a format like:
 #' 
@@ -153,8 +153,8 @@ write_rdp <- function(obj, file,
 #' 
 #' Attempts to save taxonomic information of a taxmap object in the
 #' mothur `*.taxonomy` format. If the taxmap object was created using
-#' [parse_mothur_taxonomy()], then it should be able to replicate the format
-#' exactly.
+#' \code{\link{parse_mothur_taxonomy}}, then it should be able to replicate the format
+#' exactly with the default settings.
 #' 
 #' The output file has a format like:
 #' 
@@ -226,8 +226,8 @@ write_mothur_taxonomy <- function(obj, file,
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' UNITE general FASTA format. If the taxmap object was created using
-#' [parse_unite_general()], then it should be able to replicate the format
-#' exactly.
+#' \code{\link{parse_unite_general}}, then it should be able to replicate the format
+#' exactly with the default settings.
 #' 
 #' The output file has a format like:
 #' 
@@ -297,8 +297,8 @@ write_unite_general <- function(obj, file,
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' SILVA FASTA format. If the taxmap object was created using
-#' [parse_silva_fasta()], then it should be able to replicate the format
-#' exactly.
+#' \code{\link{parse_silva_fasta}}, then it should be able to replicate the format
+#' exactly with the default settings.
 #' 
 #' The output file has a format like:
 #' 

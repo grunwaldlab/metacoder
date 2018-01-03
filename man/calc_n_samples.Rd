@@ -2,13 +2,13 @@
 % Please edit documentation in R/calculations.R
 \name{calc_n_samples}
 \alias{calc_n_samples}
-\title{Count the number of samples with reads}
+\title{Count the number of samples}
 \usage{
 calc_n_samples(obj, dataset, cols = NULL, groups = NULL, out_names = NULL,
   drop = FALSE, append = FALSE)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
@@ -33,8 +33,8 @@ of a table with one column.}
 A tibble
 }
 \description{
-For a given table in a taxmap object, count the number of samples with
-greater than zero reads.
+For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
+samples with greater than zero occurrences.
 }
 \examples{
 \dontrun{
@@ -67,6 +67,6 @@ calc_n_samples(x, dataset = "tax_data", append = TRUE)
 \seealso{
 Other calculations: \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+  \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
+  \code{\link{zero_low_counts}}
 }
