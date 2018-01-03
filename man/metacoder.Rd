@@ -15,13 +15,11 @@ The goal of the \code{metacoder} package is to provide a set of tools for:
   \item Standardized parsing of taxonomic information from diverse resources.
   \item Visualization of statistics distributed over taxonomic classifications.
   \item Evaluating potential metabarcoding primers for taxonomic specificity.
+  \item Provide flexible functions for analyzing taxonomic and abundance data.
 }
 
 To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with
 external programs, and provides novel functions where needed to allow for entire analyses within R.
-
-To learn how to use the package and what it can do view the package vignettes by typing: 
-\code{browseVignettes("metacoder")}
 }
 \section{Documentation}{
 
@@ -36,12 +34,50 @@ There is also a short vignette included for offline use that can be accessed  by
 
 \itemize{
   \item \code{\link{heat_tree}}
+  \item \code{\link{heat_tree_matrix}}
 }
 
 \strong{In silico PCR:}
 
 \itemize{
   \item \code{\link{primersearch}}
+}
+
+\strong{Analysis:}
+
+\itemize{
+  \item \code{\link{calc_taxon_abund}}
+  \item \code{\link{calc_obs_props}}
+  \item \code{\link{rarefy_obs}}
+  \item \code{\link{compare_treatments}}
+  \item \code{\link{zero_low_counts}}
+  \item \code{\link{calc_n_samples}}
+  \item \code{\link{filter_ambiguous_taxa}}
+}
+
+\strong{Parsers:}
+
+\itemize{
+  \item \code{\link{parse_greengenes}}
+  \item \code{\link{parse_mothur_tax_summary}}
+  \item \code{\link{parse_mothur_taxonomy}}
+  \item \code{\link{parse_newick,}}
+  \item \code{\link{parse_phyloseq}}
+  \item \code{\link{parse_phylo}}
+  \item \code{\link{parse_qiime_biom}}
+  \item \code{\link{parse_rdp,}}
+  \item \code{\link{parse_silva_fasta}}
+  \item \code{\link{parse_unite_general}}
+}
+
+\strong{Writers:}
+
+\itemize{
+  \item \code{\link{write_greengenes}}
+  \item \code{\link{write_mothur_taxonomy}}
+  \item \code{\link{write_rdp}}
+  \item \code{\link{write_silva_fasta}}
+  \item \code{\link{write_unite_general}}
 }
 }
 
