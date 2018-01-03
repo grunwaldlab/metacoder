@@ -1,4 +1,5 @@
 library(metacoder)
+library(testthat)
 context("Input parsing")
 
 test_that("Mothur classify.seqs *.taxonomy parsing", {
@@ -110,7 +111,7 @@ test_that("Newick parsing", {
 test_that("Parsing the UNITE general release fasta", {
   # Reading
   seq_in_path <- "example_data/unite_general.fa"
-  result <- parse_unite_general(seq_in_path)
+  result <- parse_unite_general(file = seq_in_path)
   expect_equal(length(result$taxa), 183)
   expect_equal(length(roots(result)), 1)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "Orbilia_sp")
@@ -131,7 +132,7 @@ test_that("Parsing the UNITE general release fasta", {
 test_that("Parsing the RDP fasta release", {
   # Reading
   seq_in_path <- "example_data/rdp_example.fa"
-  result <- parse_rdp(seq_in_path)
+  result <- parse_rdp(file = seq_in_path)
   expect_equal(length(result$taxa), 26)
   expect_equal(length(roots(result)), 1)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[3]], "Saccharomyces")
@@ -152,7 +153,7 @@ test_that("Parsing the RDP fasta release", {
 test_that("Parsing the SILVA fasta release", {
   # Reading
   seq_in_path <- "example_data/silva_example.fa"
-  result <- parse_silva_fasta(seq_in_path)
+  result <- parse_silva_fasta(file = seq_in_path)
   expect_equal(length(result$taxa), 224)
   expect_equal(length(roots(result)), 2)
   expect_equivalent(result$taxon_names()[result$data$tax_data$taxon_id[5]], "peruviana")

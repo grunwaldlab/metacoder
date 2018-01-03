@@ -345,7 +345,7 @@ write_silva_fasta <- function(obj, file,
   end <- rlang::eval_tidy(rlang::enquo(end), data = data_used)
   sequences <- rlang::eval_tidy(rlang::enquo(sequences), data = data_used)
   
-  # Create sequence file
+  # Create sequence file 
   headers <- vapply(seq_len(length(ids)),
                     FUN.VALUE = character(1),
                     function(i) {
@@ -353,7 +353,7 @@ write_silva_fasta <- function(obj, file,
                                                      include_input = TRUE, simplify = TRUE))
                       my_names <- tax_names[class_ids]
                       my_other <- other_names[class_ids]
-                      my_names <- ifelse(my_other == "",
+                      my_names <- ifelse(my_other == "" | is.na(my_other),
                                          my_names,
                                          paste0(my_names, " (", my_other, ")"))
                       if (length(my_names) >= 2) { # collapse species and genus

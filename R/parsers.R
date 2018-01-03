@@ -376,7 +376,7 @@ parse_newick <- function(file) {
 #' ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT...
 #' }
 #' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
 #'   
@@ -387,14 +387,12 @@ parse_newick <- function(file) {
 #' @import taxa
 #' 
 #' @export
-parse_unite_general <- function(file, include_seqs = TRUE) {
-  # Read file
-  raw_data <- ape::read.FASTA(file)
-  headers <- names(raw_data)
-  seqs <- vapply(as.character(raw_data),
-                 FUN = function(x) paste0(x, collapse = ""),
-                 FUN.VALUE = character(1))
+parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) {
   
+  # Read sequence info
+  seqs <- parse_seq_input(input = input, file = file)
+  headers <- names(seqs)
+
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
                                    regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)\\|(.*)$",
@@ -436,7 +434,7 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 #' ...
 #' }
 #' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include 
 #'   sequences in the output object.
 #' @param add_species (\code{logical} of length 1) If \code{TRUE}, add the
@@ -450,9 +448,10 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 #' @import taxa
 #' 
 #' @export
-parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
-  # Read file
-  raw_data <- ape::read.FASTA(file)
+parse_rdp <- function(input = NULL, file = NULL, include_seqs = TRUE, add_species = FALSE) {
+  
+  # Read sequence info
+  raw_data <- parse_seq_input(input = input, file = file)
   headers <- names(raw_data)
   
   # Add species to classification if present
@@ -478,9 +477,7 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
   
   # Add sequences 
   if (include_seqs) {
-    seqs <- vapply(as.character(raw_data[output$data$tax_data$input]),
-                   FUN = function(x) paste0(x, collapse = ""),
-                   FUN.VALUE = character(1))
+    seqs <- raw_data[output$data$tax_data$input]
     output$data$tax_data$rdp_seq <- tolower(seqs)
   }
   
@@ -506,11 +503,7 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 #' ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
 #' ... }
 #'
-#' @param file (\code{character} of length 1) The file path to the input file.
-#'   Either \code{file} or \code{input} must be supplied, but not both.
-#' @param input (\code{DNAbin}) An set of sequences already loaded by
-#'   \code{\link[ape]{read.FASTA}} or an equivalent parser. Either \code{file}
-#'   or \code{input} must be supplied, but not both.
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
 #'
@@ -522,23 +515,9 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 #'
 #' @export
 parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
-  # Check parameters
-  if (sum(! c(is.null(file), is.null(input))) != 1) {
-    stop(call. = FALSE,
-         "Either `file` or `input` must be supplied, but not both.")
-  }
   
-  if (! is.null(file) && (! is.character(file) || length(file) != 1)) {
-    stop(call. = FALSE,
-         "`file` must be a character vector of length 1 that is a valid path to a file.")
-  }
-  
-  # Read file
-  if (! is.null(file)) {
-    raw_data <- read_fasta(file)
-  } else {
-    raw_data <- input
-  }
+  # Read sequence info
+  raw_data <- parse_seq_input(input = input, file = file)
   raw_headers <- names(raw_data)
   
   # Make classifications easier to parse
@@ -573,13 +552,16 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
   
   # Add sequences 
   if (include_seqs) {
-    output$data$silva_seq <- stats::setNames(raw_data,
-                                             output$data$tax_data$taxon_id)
+    output$data$tax_data$silva_seq <- raw_data
   }
   
   # Remove unneeded columns
   # output$data$tax_data$input <- NULL
   output$data$tax_data$tax_string <- NULL
+  
+  # Filter uninformative rows in class_data
+  output$data$class_data <- output$data$class_data[output$data$class_data$other_name != "", ]
+  output$data$class_data$name <- trimws(output$data$class_data$name)
   
   return(output)
 }
@@ -607,8 +589,10 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
 #' ...
 #' }
 #' 
-#' @param tax_file (\code{character} of length 1) The file path to the greengenes taxonomy file.
-#' @param seq_file (\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.
+#' @param tax_file (\code{character} of length 1) The file path to the
+#'   greengenes taxonomy file.
+#' @param seq_file (\code{character} of length 1) The file path to the
+#'   greengenes sequence fasta file. This is optional.
 #'   
 #' @return \code{\link{taxmap}}
 #'   

@@ -7,12 +7,20 @@
 parse_silva_fasta(file = NULL, input = NULL, include_seqs = TRUE)
 }
 \arguments{
-\item{file}{(\code{character} of length 1) The file path to the input file.
-Either \code{file} or \code{input} must be supplied, but not both.}
+\item{file}{The path to a FASTA file containing sequences to use. Either
+"input" or "file" must be supplied but not both.}
 
-\item{input}{(\code{DNAbin}) An set of sequences already loaded by
-\code{\link[ape]{read.FASTA}} or an equivalent parser. Either \code{file}
-or \code{input} must be supplied, but not both.}
+\item{input}{(\code{character}) One of the following: 
+\describe{
+  \item{A character vector of sequences}{See the example below for what this
+  looks like. The parser \code{\link{read_fasta}} produces output like this.}
+  \item{A list of character vectors}{Each vector should have one base per element.}
+  \item{A "DNAbin" object}{This is the result of parsers like
+  \code{\link[ape]{read.FASTA}}.}
+  \item{A list of "SeqFastadna" objects}{This is the result of parsers like
+  \code{\link[seqinr]{read.fasta}}.}
+  Either "input" or "file" must be supplied but not both.
+}}
 
 \item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include
 sequences in the output object.}

@@ -13,5 +13,4 @@ reverse(seqs)
 Find the reverse of one or more sequences stored as a character
 vector. This is a wrapper for \code{\link{rev}} for character
 vectors instead of lists of character vectors with one value per letter.
-IUPAC ambiguity code are handled and the upper/lower case is preserved.
 }

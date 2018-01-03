@@ -50,9 +50,9 @@ silva_subset %>%
 
 ```{r}
 out_path <- "silva_subset.fa"
-writeChar(paste0(paste0(">", silva_subset$data$tax_data$input, "\n", silva_subset$data$silva_seq), collapse = "\n"),
-          "silva_subset.fa")
-file.copy(from = out_path, to = file.path("..", "inst", "extdata", out_path))
+writeChar(paste0(paste0(">", silva_subset$data$tax_data$input, "\n", silva_subset$data$silva_seq, "\n"), collapse = ""),
+          "silva_subset.fa", eos = NULL)
+file.copy(from = out_path, to = file.path("..", "inst", "extdata", out_path), overwrite = TRUE)
 ```
 
 

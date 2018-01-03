@@ -7,9 +7,11 @@
 parse_greengenes(tax_file, seq_file = NULL)
 }
 \arguments{
-\item{tax_file}{(\code{character} of length 1) The file path to the greengenes taxonomy file.}
+\item{tax_file}{(\code{character} of length 1) The file path to the
+greengenes taxonomy file.}
 
-\item{seq_file}{(\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.}
+\item{seq_file}{(\code{character} of length 1) The file path to the
+greengenes sequence fasta file. This is optional.}
 }
 \value{
 \code{\link{taxmap}}

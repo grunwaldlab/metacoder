@@ -35,7 +35,7 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5,
     command <- gettextf('%s -seqall %s -infile %s -mismatchpercent %s -outfile %s',
                         program_path, seq_path, primer_path, mismatch, output_path)
     if (nchar(extra_args_string) > 0) command <- paste(command, extra_args_string)
-    system(command)
+    system(command, ignore.stdout = TRUE, ignore.stderr = TRUE)
     
   }
   return(output_path)
@@ -333,56 +333,4 @@ primersearch_is_installed <- function(must_be_installed = TRUE) {
     stop("'primersearch' could not be found and is required for this function. Check that the EMBOSS tool kit is installed and is in the program search path. Type '?primersearch' for information on installing EMBOSS.")
   }
   return(invisible(is_installed))
-}
-
-
-#' Read sequences in an unknown format
-#'
-#' Read sequences in an unknown format. This is meant to parse the sequence
-#' input arguments of functions like \code{\link{primersearch}}.
-#' 
-#' @param input (\code{character}) One of the following: 
-#' \describe{
-#'   \item{A character vector of sequences}{See the example below for what this
-#'   looks like. The parser \code{\link{read_fasta}} produces output like this.}
-#'   \item{A list of character vectors}{Each vector should have one base per element.}
-#'   \item{A "DNAbin" object}{This is the result of parsers like
-#'   \code{\link[ape]{read.FASTA}}.}
-#'   \item{A list of "SeqFastadna" objects}{This is the result of parsers like
-#'   \code{\link[seqinr]{read.fasta}}.}
-#'   Either "input" or "file" must be supplied but not both.
-#' }
-#' @param file The path to a FASTA file containing sequences to use. Either
-#'   "input" or "file" must be supplied but not both.
-#' 
-#' @return A named character vector of sequences
-#' 
-#' @keywords internal
-parse_seq_input <- function(input = NULL, file = NULL) {
-  # Check parameters
-  if (sum(! c(is.null(file), is.null(input))) != 1) {
-    stop(call. = FALSE,
-         "Either `file` or `input` must be supplied, but not both.")
-  }
-  
-  if (! is.null(file) && (! is.character(file) || length(file) != 1)) {
-    stop(call. = FALSE,
-         "`file` must be a character vector of length 1 that is a valid path to a file.")
-  }
-
-  # Convert to common format
-  if (! is.null(file)) {
-    result <- read_fasta(file)
-  } else if (length(input) == 0 || class(input) == "character") {
-    result <- input
-  } else if (class(input) == "DNAbin") {
-    result <- toupper(vapply(as.character(input), paste, character(1), collapse = ""))
-  } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
-    result <- vapply(input, paste, character(1), collapse = "")
-  } else {
-    stop(paste0('Could not parse sequence information of class "', class(input), '".'),
-         call. = FALSE)
-  }
-  
-  return(result)
 }
