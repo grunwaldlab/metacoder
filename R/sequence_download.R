@@ -24,33 +24,36 @@
 #'   and \code{max_children} will be used to infer the values of intermediate ranks not
 #'   specified. Linear interpolation between values of spcified ranks will be used to determine
 #'   values of unspecified ranks.
-#' @param min_length (\code{numeric} of length 1) The minimum length of sequences that will be
-#'   returned.
-#' @param max_length (\code{numeric} of length 1) The maximum length of sequences that will be
-#'   returned.
 #' @param min_children (named \code{numeric}) The minimum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks. 
 #' @param max_children (named \code{numeric}) The maximum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
 #' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
-#' @param ... Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.
+#' @inheritParams  traits::ncbi_searcher
 #' 
 #' @examples
-#' \dontrun{
-#' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
-#' data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
-#'                           max_counts = c(phylum = 30), 
-#'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
-#'                           min_length = 600, max_length = 10000)
-#' }
 #' 
-#' @keywords internal
+#' \dontrun{
+#' # Look up 5 ITS sequences from each fungal class
+#' data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
+#'                           entrez_query = '"internal transcribed spacer"[All Fields]')
+#' 
+#' # Look up taxonomic information for sequences
+#' obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
+#' 
+#' # Plot information
+#' filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) %>% 
+#'   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
+#' 
+#' }
+#' @export
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,
                               interpolate_min = TRUE, interpolate_max = TRUE,
-                              min_length = 1, max_length = 10000, 
                               min_children = NULL, max_children = NULL, 
-                              verbose = TRUE, ...) {
+                              seqrange = "1:3000", getrelated = FALSE,
+                              fuzzy = TRUE, limit = 10, entrez_query = NULL,
+                              hypothetical = FALSE, verbose = TRUE) {
  
   run_once <- function(name, id) {
     default_target_max <- 20
@@ -83,7 +86,6 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     target_rank <- factor(target_rank,
                           levels = levels(taxonomy_levels),
                           ordered = TRUE)
-    length_range <- paste(min_length, max_length, sep = ":")
     
     # Generate taxonomic rank filtering limits ------------------------------------------------------
     get_level_limit <- function(user_limits, default_value, default_level, interpolate, 
@@ -160,8 +162,10 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
       # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
       if ((rank %in% taxonomy_levels && rank >= target_rank) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
         cat("Getting sequences for", name, "\n")
-        result <- traits::ncbi_searcher(id = id, limit = 1000, seqrange = length_range,
-                                      hypothetical = TRUE, ...)
+        result <- traits::ncbi_searcher(id = id, seqrange = seqrange, getrelated = getrelated,
+                                        fuzzy = fuzzy, limit = limit, entrez_query = entrez_query,
+                                        hypothetical = hypothetical, verbose = verbose)
+        print(result)
       } else {
         child_ranks <- factor(sub_taxa$childtaxa_rank,
                               levels = levels(taxonomy_levels), ordered = TRUE) 
@@ -187,6 +191,11 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
   if (is.null(id)) id = list(NULL) 
   output <- mapply(run_once, id = id, name = name, SIMPLIFY = FALSE)
   output <- do.call(rbind, output)
+  
+  # Reformat output
+  output <- dplyr::as_tibble(output)
+  colnames(output) <- c("ncbi_name", "seq_length", "gene_desc", "acc_no", "gi_no")  
+  
   return(output)
 }
 
