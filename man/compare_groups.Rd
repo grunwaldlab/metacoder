@@ -28,7 +28,7 @@ order and length as \code{cols}.}
 
 \item{func}{The function to apply for each comparison. For each row in 
 \code{dataset}, for each combination of groups, this function will 
-recieve the data for each treatment, passed a two character vecotors.
+receive the data for each treatment, passed a two character vectors.
 Therefore the function must take at least 2 arguments corresponding to the
 two groups compared. The function should return a vector or list or
 results of a fixed length. If named, the names will be used in the output.

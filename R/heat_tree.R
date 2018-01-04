@@ -44,7 +44,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
 #' numbers (e.g. taxon statistics, such as abundance).
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
-#' Various transforamtions can be applied to numbers sizes/colors are mapped to.
+#' Various transformations can be applied to numbers sizes/colors are mapped to.
 #' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
 #' 
 #' @param taxon_id The unique ids of taxa.
@@ -200,9 +200,9 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Default: Do not save plot.
 #' 
 #' @param aspect_ratio The aspect_ratio of the plot.
-#' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
-#' @param repel_force The force of which overlapping labels will be repeled from eachother. 
-#' @param repel_iter The number of iterations used whe repeling labels
+#' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel package to spread out labels.
+#' @param repel_force The force of which overlapping labels will be repelled from eachother. 
+#' @param repel_iter The number of iterations used when repelling labels
 #' @param verbose If \code{TRUE} print progress reports as the function runs.
 #' 
 #' @param ... (other named arguments)
@@ -214,7 +214,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for displaying statistics for taxa, such as abundance.
-#' Only the relative size of numbers is used, not the values themeselves.
+#' Only the relative size of numbers is used, not the values themselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual sizes displayed on the graph can be set using the range options.
 #' 
@@ -225,7 +225,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for highlighting groups of taxa.
-#' Only the relative size of numbers is used, not the values themeselves.
+#' Only the relative size of numbers is used, not the values themselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual colors displayed on the graph can be set using the range options.
 #' 
@@ -307,7 +307,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' This package includes code from the R package ggrepel to handle label overlap
 #' avoidance with permission from the author of ggrepel Kamil Slowikowski. We
-#' included the code instead of depending on ggrepel becacuse we are using
+#' included the code instead of depending on ggrepel because we are using
 #' internal functions to ggrepel that might change in the future. We thank Kamil
 #' Slowikowski for letting us use his code and would like to acknowledge his
 #' implementation of the label overlap avoidance used in metacoder.
@@ -388,7 +388,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'           node_size_trans = "log10 area")
 #' 
 #' # Setting the interval displayed:
-#' #  By defualt, the whole range of the statistic provided will be displayed.
+#' #  By default, the whole range of the statistic provided will be displayed.
 #' #  You can set what range of values are displayed using options ending in `_interval`.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           node_size_interval = c(10, 100))
@@ -742,10 +742,10 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
-  infer_size_range <- function(specified_range, reference_range, defualt_scale) {
+  infer_size_range <- function(specified_range, reference_range, default_scale) {
     result <- specified_range * square_side_length
     if (is.na(result[1]) && is.na(result[2])) { # If the user has not set range
-      result <- reference_range * defualt_scale
+      result <- reference_range * default_scale
     } else if (is.na(result[1])) { # If the user has set a maximum but not a minimum
       result[1] <- result[2] * reference_range[1] / reference_range[2]
     } else if (is.na(result[2])) { # If the user has set a minimum but not a maximum
@@ -754,7 +754,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     return(result)
   }
   
-  esr_plot <- infer_size_range(edge_size_range, vsr_plot, defualt_scale = 0.5)
+  esr_plot <- infer_size_range(edge_size_range, vsr_plot, default_scale = 0.5)
   data$es_plot <- rescale(data$es_t, to = esr_plot, from = edge_size_interval_trans)
   #|
   #| #### Infer tree size range -------------------------------------------------------------------
@@ -777,9 +777,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     data$tls_user <- sqrt(data$tree_area)
     data$tls_trans <- apply_trans("tls_user") 
   }
-  vlsr_plot <- infer_size_range(node_label_size_range, vsr_plot, defualt_scale = 0.8)
-  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.8)
-  tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
+  vlsr_plot <- infer_size_range(node_label_size_range, vsr_plot, default_scale = 0.8)
+  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, default_scale = 0.8)
+  tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, default_scale = 0.1)
   data$vls_plot <- rescale(data$vls_trans, to = vlsr_plot)
   data$els_plot <- rescale(data$els_trans, to = elsr_plot)
   data$tls_plot <- rescale(data$tls_trans, to = tlsr_plot)

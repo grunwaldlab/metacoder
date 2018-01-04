@@ -27,7 +27,7 @@ parse_rdp(input = NULL, file = NULL, include_seqs = TRUE,
 sequences in the output object.}
 
 \item{add_species}{(\code{logical} of length 1) If \code{TRUE}, add the
-species information to the taxonomy. In this databse, the speceis name
+species information to the taxonomy. In this databse, the species name
 often contains other information as well.}
 }
 \value{

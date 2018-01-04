@@ -1,6 +1,6 @@
 #' Bounding box coords for labels
 #' 
-#' Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinates
+#' Given a position, size, rotation, and justification of a label, calculate the bounding box coordinates
 #' 
 #' @param x Horizontal position of center of text grob
 #' @param y Vertical position of center of text grob
@@ -195,7 +195,7 @@ check_element_length <- function(args) {
 
 #' Transformation functions
 #' 
-#' Functions used by plotting funtions to transform data.
+#' Functions used by plotting functions to transform data.
 #' Calling the function with no parameters returns available function names.
 #' Calling with just the function name returns the transformation function
 #' 

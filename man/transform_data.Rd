@@ -14,7 +14,7 @@ transform_data(func = NULL, data = NULL, inverse = FALSE)
 \item{inverse}{(\code{logical} of length 1) If \code{TRUE}, return the inverse of the selected function.}
 }
 \description{
-Functions used by plotting funtions to transform data.
+Functions used by plotting functions to transform data.
 Calling the function with no parameters returns available function names.
 Calling with just the function name returns the transformation function
 }

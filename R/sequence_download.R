@@ -18,11 +18,11 @@
 #'   taxonomic rank. The names correspond to taxonomic ranks. 
 #' @param interpolate_min (\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
 #'   and \code{min_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   specified. Linear interpolation between values of specified ranks will be used to determine
 #'   values of unspecified ranks.
 #' @param interpolate_max (\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
 #'   and \code{max_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   specified. Linear interpolation between values of specified ranks will be used to determine
 #'   values of unspecified ranks.
 #' @param min_children (named \code{numeric}) The minimum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks. 
@@ -34,6 +34,7 @@
 #' @examples
 #' 
 #' \dontrun{
+#' 
 #' # Look up 5 ITS sequences from each fungal class
 #' data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
 #'                           entrez_query = '"internal transcribed spacer"[All Fields]')
@@ -44,7 +45,6 @@
 #' # Plot information
 #' filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) %>% 
 #'   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
-#' 
 #' }
 #' @export
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,

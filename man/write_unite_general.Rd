@@ -2,7 +2,7 @@
 % Please edit documentation in R/writers.R
 \name{write_unite_general}
 \alias{write_unite_general}
-\title{Write an immitation of the UNITE general FASTA databse}
+\title{Write an imitation of the UNITE general FASTA databse}
 \usage{
 write_unite_general(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("unite_rank")[[1]],

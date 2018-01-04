@@ -39,16 +39,6 @@ get_node_children <- function(graph, node) {
 }
 
 
-#' delete_vetices_and_children
-#' 
-#' @keywords internal
-delete_vetices_and_children <- function(graph, nodes) {
-  nodes <- unlist(sapply(nodes, function(x) get_node_children(graph, x)))
-  graph <- igraph::delete.vertices(graph, nodes)
-  return(graph)
-}
-
-
 #' add_alpha
 #' 
 #' @keywords internal

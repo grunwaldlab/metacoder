@@ -232,11 +232,11 @@ Default: Do not save plot.}
 
 \item{aspect_ratio}{The aspect_ratio of the plot.}
 
-\item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.}
+\item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel package to spread out labels.}
 
-\item{repel_force}{The force of which overlapping labels will be repeled from eachother.}
+\item{repel_force}{The force of which overlapping labels will be repelled from eachother.}
 
-\item{repel_iter}{The number of iterations used whe repeling labels}
+\item{repel_iter}{The number of iterations used when repelling labels}
 
 \item{verbose}{If \code{TRUE} print progress reports as the function runs.}
 }
@@ -246,7 +246,7 @@ Taxonomic classifications can have multiple roots, resulting in multiple trees o
 Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
 numbers (e.g. taxon statistics, such as abundance).
 The displayed range of colors and sizes can be explicitly defined or automatically generated.
-Various transforamtions can be applied to numbers sizes/colors are mapped to.
+Various transformations can be applied to numbers sizes/colors are mapped to.
 Several types of tree layout algorithms from \code{\link{igraph}} can be used.
 }
 \section{size}{
@@ -255,7 +255,7 @@ Several types of tree layout algorithms from \code{\link{igraph}} can be used.
 
 The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 This is useful for displaying statistics for taxa, such as abundance.
-Only the relative size of numbers is used, not the values themeselves.
+Only the relative size of numbers is used, not the values themselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual sizes displayed on the graph can be set using the range options.
 
@@ -268,7 +268,7 @@ factor of its length.
 
 The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 This is useful for highlighting groups of taxa.
-Only the relative size of numbers is used, not the values themeselves.
+Only the relative size of numbers is used, not the values themselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual colors displayed on the graph can be set using the range options.
 
@@ -361,7 +361,7 @@ Note that this is different from the "range" options, which determine the range 
 
 This package includes code from the R package ggrepel to handle label overlap
 avoidance with permission from the author of ggrepel Kamil Slowikowski. We
-included the code instead of depending on ggrepel becacuse we are using
+included the code instead of depending on ggrepel because we are using
 internal functions to ggrepel that might change in the future. We thank Kamil
 Slowikowski for letting us use his code and would like to acknowledge his
 implementation of the label overlap avoidance used in metacoder.
@@ -443,7 +443,7 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           node_size_trans = "log10 area")
 
 # Setting the interval displayed:
-#  By defualt, the whole range of the statistic provided will be displayed.
+#  By default, the whole range of the statistic provided will be displayed.
 #  You can set what range of values are displayed using options ending in `_interval`.
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           node_size_interval = c(10, 100))

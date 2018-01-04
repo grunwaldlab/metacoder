@@ -1,6 +1,6 @@
 #' Plot a matrix of heat trees
 #' 
-#' Plot a matrix of heat trees for showing parwise comparisions. A larger,
+#' Plot a matrix of heat trees for showing parwise comparisons. A larger,
 #' labelled tree serves as a key for the matrix of smaller unlabelled trees. The
 #' data for this function is typically created with \code{\link{compare_groups}},
 #' 
@@ -8,7 +8,7 @@
 #' @param dataset The name of a table in \code{obj$data} that is the output of 
 #'   \code{\link{compare_groups}} or in the same format.
 #' @param label_small_trees If \code{TRUE} add labels to small trees as well as 
-#'   the key tree. Otherwise, only the key tree will be labled.
+#'   the key tree. Otherwise, only the key tree will be labeled.
 #' @param key_size The size of the key tree relative to the whole graph. For
 #'   example, 0.5 means half the width/height of the graph.
 #' @param seed That random seed used to make the graphs.

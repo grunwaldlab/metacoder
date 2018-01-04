@@ -1,4 +1,4 @@
-#' Write an immitation of the Greengenes databse
+#' Write an imitation of the Greengenes databse
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' Greengenes output format. If the taxmap object was created using
@@ -86,7 +86,7 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
 }
 
 
-#' Write an immitation of the RDP FASTA databse
+#' Write an imitation of the RDP FASTA databse
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' RDP FASTA format. If the taxmap object was created using
@@ -149,7 +149,7 @@ write_rdp <- function(obj, file,
 }
 
 
-#' Write an immitation of the Mothur taxonomy file
+#' Write an imitation of the Mothur taxonomy file
 #' 
 #' Attempts to save taxonomic information of a taxmap object in the
 #' mothur `*.taxonomy` format. If the taxmap object was created using
@@ -222,7 +222,7 @@ write_mothur_taxonomy <- function(obj, file,
 }
 
 
-#' Write an immitation of the UNITE general FASTA databse
+#' Write an imitation of the UNITE general FASTA databse
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' UNITE general FASTA format. If the taxmap object was created using
@@ -293,7 +293,7 @@ write_unite_general <- function(obj, file,
   writeLines(seq_content, file)
 }
 
-#' Write an immitation of the SILVA FASTA databse
+#' Write an imitation of the SILVA FASTA databse
 #' 
 #' Attempts to save taxonomic and sequence information of a taxmap object in the
 #' SILVA FASTA format. If the taxmap object was created using

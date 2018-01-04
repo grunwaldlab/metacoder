@@ -438,7 +438,7 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include 
 #'   sequences in the output object.
 #' @param add_species (\code{logical} of length 1) If \code{TRUE}, add the
-#'   species information to the taxonomy. In this databse, the speceis name
+#'   species information to the taxonomy. In this databse, the species name
 #'   often contains other information as well.
 #'   
 #' @return \code{\link{taxmap}}

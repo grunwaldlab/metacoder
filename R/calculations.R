@@ -77,7 +77,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #' Replace low counts with zero
 #'
 #' For a given table in a \code{\link[taxa]{taxmap}} object, convert all counts
-#' below a minimum numer to zero. This is useful for effectivly removing
+#' below a minimum number to zero. This is useful for effectively removing
 #' "singletons", "doubletons", or other low abundance counts.
 #'
 #' @param obj A \code{\link[taxa]{taxmap}} object
@@ -88,7 +88,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #' @param use_total If \code{TRUE}, the \code{min_count} applies to the total
 #'   count for each row (e.g. OTU counts for all samples), rather than each cell
 #'   in the table. For example \code{use_total = TRUE, min_count = 10} would
-#'   convert all counts of any row to zero if the totol for all counts in that
+#'   convert all counts of any row to zero if the total for all counts in that
 #'   row was less than 10.
 #' @param cols The names/indexes of columns in \code{dataset} to use. By
 #'   default, all numeric columns are used. Takes one of the following inputs:
@@ -294,7 +294,7 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
 #'   order and length as \code{cols}.
 #' @param func The function to apply for each comparison. For each row in 
 #'   \code{dataset}, for each combination of groups, this function will 
-#'   recieve the data for each treatment, passed a two character vecotors.
+#'   receive the data for each treatment, passed a two character vectors.
 #'   Therefore the function must take at least 2 arguments corresponding to the
 #'   two groups compared. The function should return a vector or list or
 #'   results of a fixed length. If named, the names will be used in the output.

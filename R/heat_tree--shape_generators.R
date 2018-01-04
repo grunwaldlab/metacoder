@@ -1,5 +1,5 @@
 #===================================================================================================
-#' Makes coordinates for a regualr polygon
+#' Makes coordinates for a regular polygon
 #' 
 #' Generates an n x 2 matrix containing x and y coordinates between 1 and 0 for the points of a 
 #' regular polygon. 

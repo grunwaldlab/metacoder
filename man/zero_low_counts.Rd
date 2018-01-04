@@ -19,7 +19,7 @@ example, \code{min_count = 2} would remove singletons.}
 \item{use_total}{If \code{TRUE}, the \code{min_count} applies to the total
 count for each row (e.g. OTU counts for all samples), rather than each cell
 in the table. For example \code{use_total = TRUE, min_count = 10} would
-convert all counts of any row to zero if the totol for all counts in that
+convert all counts of any row to zero if the total for all counts in that
 row was less than 10.}
 
 \item{cols}{The names/indexes of columns in \code{dataset} to use. By
@@ -52,7 +52,7 @@ A tibble
 }
 \description{
 For a given table in a \code{\link[taxa]{taxmap}} object, convert all counts
-below a minimum numer to zero. This is useful for effectivly removing
+below a minimum number to zero. This is useful for effectively removing
 "singletons", "doubletons", or other low abundance counts.
 }
 \examples{

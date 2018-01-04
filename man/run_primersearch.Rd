@@ -2,7 +2,7 @@
 % Please edit documentation in R/primersearch.R
 \name{run_primersearch}
 \alias{run_primersearch}
-\title{Execute EMBOSS Primerseach}
+\title{Execute EMBOSS Primersearch}
 \usage{
 run_primersearch(seq_path, primer_path, mismatch = 5,
   output_path = tempfile(), program_path = "primersearch", ...)
@@ -28,7 +28,7 @@ Ideally, it should be in your system's search path.}
 The command generated as a character vector of length 1.
 }
 \description{
-Execute EMBOSS Primerseach
+Execute EMBOSS Primersearch
 }
 \seealso{
 \code{\link{parse_primersearch}}

@@ -27,12 +27,12 @@ taxonomic rank. The names correspond to taxonomic ranks.}
 
 \item{interpolate_min}{(\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
 and \code{min_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of spcified ranks will be used to determine
+specified. Linear interpolation between values of specified ranks will be used to determine
 values of unspecified ranks.}
 
 \item{interpolate_max}{(\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
 and \code{max_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of spcified ranks will be used to determine
+specified. Linear interpolation between values of specified ranks will be used to determine
 values of unspecified ranks.}
 
 \item{min_children}{(named \code{numeric}) The minimum number sub-taxa of taxa for a given
@@ -80,8 +80,6 @@ Use a downloaded database and a parser from the \code{taxa} package when possibl
 \examples{
 
 \dontrun{
-ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
-
 
 # Look up 5 ITS sequences from each fungal class
 data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
@@ -93,6 +91,5 @@ obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
 # Plot information
 filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
-
 }
 }

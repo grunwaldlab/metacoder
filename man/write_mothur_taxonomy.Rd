@@ -2,7 +2,7 @@
 % Please edit documentation in R/writers.R
 \name{write_mothur_taxonomy}
 \alias{write_mothur_taxonomy}
-\title{Write an immitation of the Mothur taxonomy file}
+\title{Write an imitation of the Mothur taxonomy file}
 \usage{
 write_mothur_taxonomy(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
   ids = obj$get_data("sequence_id")[[1]],

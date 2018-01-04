@@ -1,4 +1,4 @@
-#' Execute EMBOSS Primerseach
+#' Execute EMBOSS Primersearch
 #' 
 #' @param seq_path A character vector of length 1. The path to the fasta file containing reference
 #'   sequences to search for primer matches in.
@@ -94,7 +94,7 @@ parse_primersearch <- function(file_path) {
 #' primer must bind to the database strand, so it will have to be the complement
 #' of the reference sequence. It also has to be reversed to make it in the
 #' standard 5' -> 3' orientation. Therefore, the reverse primer must be the
-#' reverse comlement of its binding site on the reference sequence.
+#' reverse complement of its binding site on the reference sequence.
 #' \preformatted{
 #' Primer 1: 5' AAGTACCTTAACGGAATTATAG 3'
 #' Primer 2: 5' GCTCCACCTACGAAACGAAT   3'
@@ -110,7 +110,7 @@ parse_primersearch <- function(file_path) {
 #' valid, but this is another source of confusion. If we take the diagram above
 #' and rotate it 180 degrees, it would mean the same thing, but which primer we would
 #' want to call "forward" and which we would want to call "reverse" would
-#' change. Databases of a single locus (e.g. Greengenes) will likly have a
+#' change. Databases of a single locus (e.g. Greengenes) will likely have a
 #' convention for which strand will be present, so relative to this convention,
 #' there is a distinct "forward" and "reverse". However, computers dont know
 #' about this convention, so the "forward" primer is whichever primer has the

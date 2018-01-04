@@ -18,7 +18,7 @@ The goal of the \code{metacoder} package is to provide a set of tools for:
   \item Provide flexible functions for analyzing taxonomic and abundance data.
 }
 
-To accomplish these goals, `metacoder` leverages resources from other R packages, interfaces with
+To accomplish these goals, \code{metacoder} leverages resources from other R packages, interfaces with
 external programs, and provides novel functions where needed to allow for entire analyses within R.
 }
 \section{Documentation}{
@@ -30,7 +30,7 @@ There is also a short vignette included for offline use that can be accessed  by
 
 \code{browseVignettes(package = "metacoder")}
 
-\strong{Plotting taxonomic distribution of data:}
+\strong{Plotting:}
 
 \itemize{
   \item \code{\link{heat_tree}}
@@ -78,6 +78,12 @@ There is also a short vignette included for offline use that can be accessed  by
   \item \code{\link{write_rdp}}
   \item \code{\link{write_silva_fasta}}
   \item \code{\link{write_unite_general}}
+}
+
+\strong{Database querying:}
+
+\itemize{
+  \item \code{\link{ncbi_taxon_sample}}
 }
 }
 

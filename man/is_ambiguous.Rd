@@ -14,7 +14,7 @@ is_ambiguous(taxon_names, unknown = TRUE, uncultured = TRUE,
 placeholders for unknown taxa (e.g. "unknown ...").}
 
 \item{uncultured}{If \code{TRUE}, Remove taxa with names the suggest they are
-assinged to uncultured organisms (e.g. "uncultured ...").}
+assigned to uncultured organisms (e.g. "uncultured ...").}
 
 \item{name_regex}{The regex code to match a valid character in a taxon name.
 For example, "[a-z]" would mean taxon names can only be lower case letters.}

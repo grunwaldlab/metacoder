@@ -2,7 +2,7 @@
 % Please edit documentation in R/writers.R
 \name{write_silva_fasta}
 \alias{write_silva_fasta}
-\title{Write an immitation of the SILVA FASTA databse}
+\title{Write an imitation of the SILVA FASTA databse}
 \usage{
 write_silva_fasta(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
   other_names = obj$get_data("other_name")[[1]],

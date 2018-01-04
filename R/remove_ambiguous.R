@@ -5,7 +5,7 @@
 #' @param unknown If \code{TRUE}, Remove taxa with names the suggest they are
 #'   placeholders for unknown taxa (e.g. "unknown ...").
 #' @param uncultured If \code{TRUE}, Remove taxa with names the suggest they are
-#'   assinged to uncultured organisms (e.g. "uncultured ...").
+#'   assigned to uncultured organisms (e.g. "uncultured ...").
 #' @param unknown If \code{TRUE}, add "^" to front and "$" to the back of each
 #'   pattern to indicate they are to match whole words.
 #' @param name_regex The regex code to match a valid character in a taxon name.
