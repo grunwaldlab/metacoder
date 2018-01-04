@@ -9,7 +9,7 @@
 #'   \item Standardized parsing of taxonomic information from diverse resources.
 #'   \item Visualization of statistics distributed over taxonomic classifications.
 #'   \item Evaluating potential metabarcoding primers for taxonomic specificity.
-#'   \item Provide flexible functions for analyzing taxonomic and abundance data.
+#'   \item Providing flexible functions for analyzing taxonomic and abundance data.
 #' }
 #' 
 #' To accomplish these goals, \code{metacoder} leverages resources from other R packages, interfaces with
@@ -79,7 +79,7 @@
 #'   \item \code{\link{ncbi_taxon_sample}}
 #' }
 #' 
-#' @author Zachary Foster
+#' @author Zachary Foster and Niklaus Grunwald
 #' @name metacoder
 #' @docType package
 #' @useDynLib metacoder

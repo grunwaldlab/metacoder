@@ -35,7 +35,7 @@ often contains other information as well.}
 }
 \description{
 Parses an RDP reference FASTA file that can be found at
-https://rdp.cme.msu.edu/misc/resources.jsp.
+\url{https://rdp.cme.msu.edu/misc/resources.jsp}.
 }
 \details{
 The input file has a format like:

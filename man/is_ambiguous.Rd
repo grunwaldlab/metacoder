@@ -8,7 +8,7 @@ is_ambiguous(taxon_names, unknown = TRUE, uncultured = TRUE,
   name_regex = ".", ignore_case = TRUE)
 }
 \arguments{
-\item{taxon_names}{A taxmap object}
+\item{taxon_names}{A \code{\link[taxa]{taxmap}} object}
 
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
 placeholders for unknown taxa (e.g. "unknown ...").}
@@ -26,7 +26,9 @@ determining a match.}
 TRUE/FALSE vector corresponding to \code{taxon_names}
 }
 \description{
-Find taxa with ambiguous names, such as "unknown" or "uncultured". If you
-encounter a taxon name that represents an ambiguous taxon that is not
+Find taxa with ambiguous names, such as "unknown" or "uncultured".
+}
+\details{
+If you encounter a taxon name that represents an ambiguous taxon that is not
 filtered out by this function, let us know and we will add it.
 }

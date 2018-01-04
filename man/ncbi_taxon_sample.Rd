@@ -71,7 +71,7 @@ available, since this filtering is done after searching NCBI.}
 }
 \description{
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-Can be used to get a shallow sampling of a vast groups. 
+Can be used to get a shallow sampling of vast groups. 
 \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 can take a very long time. 
 Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.

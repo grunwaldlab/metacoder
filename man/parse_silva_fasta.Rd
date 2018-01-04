@@ -30,7 +30,7 @@ sequences in the output object.}
 }
 \description{
 Parses an SILVA FASTA file that can be found at
-https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/.
+\url{https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/}.
 }
 \details{
 The input file has a format like:

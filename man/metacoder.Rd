@@ -15,7 +15,7 @@ The goal of the \code{metacoder} package is to provide a set of tools for:
   \item Standardized parsing of taxonomic information from diverse resources.
   \item Visualization of statistics distributed over taxonomic classifications.
   \item Evaluating potential metabarcoding primers for taxonomic specificity.
-  \item Provide flexible functions for analyzing taxonomic and abundance data.
+  \item Providing flexible functions for analyzing taxonomic and abundance data.
 }
 
 To accomplish these goals, \code{metacoder} leverages resources from other R packages, interfaces with
@@ -88,5 +88,5 @@ There is also a short vignette included for offline use that can be accessed  by
 }
 
 \author{
-Zachary Foster
+Zachary Foster and Niklaus Grunwald
 }

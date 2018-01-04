@@ -1,7 +1,7 @@
 #' Download representative sequences for a taxon
 #' 
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-#' Can be used to get a shallow sampling of a vast groups. 
+#' Can be used to get a shallow sampling of vast groups. 
 #' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 #' can take a very long time. 
 #' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
@@ -165,7 +165,6 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
         result <- traits::ncbi_searcher(id = id, seqrange = seqrange, getrelated = getrelated,
                                         fuzzy = fuzzy, limit = limit, entrez_query = entrez_query,
                                         hypothetical = hypothetical, verbose = verbose)
-        print(result)
       } else {
         child_ranks <- factor(sub_taxa$childtaxa_rank,
                               levels = levels(taxonomy_levels), ordered = TRUE) 

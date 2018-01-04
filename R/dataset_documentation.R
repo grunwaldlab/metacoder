@@ -4,7 +4,7 @@
 #' It contains OTU ids, taxonomic lineages, and the read counts for 50 samples.
 #' See \code{\link{hmp_samples}} for the matching dataset of sample information.
 #' 
-#' The 50 samples were randomly elected such that there were 10 in each of 5
+#' The 50 samples were randomly selected such that there were 10 in each of 5
 #' treatments: "Saliva", "Throat", "Stool", "Right_Antecubital_fossa",
 #' "Anterior_nares". For each treatment, there were 5 samples from men and 5
 #' from women. 
@@ -24,7 +24,7 @@ NULL
 #' matrix stored in \code{\link{hmp_otus}}. The "sample_id" column corresponds
 #' to the column names of \code{\link{hmp_otus}}.
 #'
-#' The 50 samples were randomly elected such that there were 10 in each of 5
+#' The 50 samples were randomly selected such that there were 10 in each of 5
 #' treatments: "Saliva", "Throat", "Stool", "Right_Antecubital_fossa",
 #' "Anterior_nares". For each treatment, there were 5 samples from men and 5
 #' from women. "Right_Antecubital_fossa" was renamed to "Skin" and

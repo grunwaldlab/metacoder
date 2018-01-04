@@ -9,7 +9,7 @@ filter_ambiguous_taxa(obj, unknown = TRUE, uncultured = TRUE,
   drop_obs = TRUE, reassign_obs = TRUE, reassign_taxa = TRUE)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
 placeholders for unknown taxa (e.g. "unknown ...").}
@@ -53,7 +53,7 @@ taxa will be reassigned to the closest supertaxon that passed the filter.
 This is useful for removing intermediate levels of a taxonomy.}
 }
 \value{
-TRUE/FALSE vector corresponding to \code{taxon_names}
+A \code{\link[taxa]{taxmap}} object
 }
 \description{
 Filter out taxa with ambiguous names, such as "unknown" or "uncultured".

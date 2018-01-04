@@ -62,11 +62,12 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
 
 #' Find ambiguous taxon names
 #'
-#' Find taxa with ambiguous names, such as "unknown" or "uncultured". If you
-#' encounter a taxon name that represents an ambiguous taxon that is not
+#' Find taxa with ambiguous names, such as "unknown" or "uncultured".
+#' 
+#' If you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #'
-#' @param taxon_names A taxmap object
+#' @param taxon_names A \code{\link[taxa]{taxmap}} object
 #' @inheritParams ambiguous_patterns
 #' @param ignore_case If \code{TRUE}, dont consider the case of the text when
 #'   determining a match.
@@ -97,11 +98,11 @@ is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
 #' If you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #'
-#' @param obj A taxmap object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @inheritParams is_ambiguous
 #' @inheritParams taxa::filter_taxa
 #'
-#' @return TRUE/FALSE vector corresponding to \code{taxon_names}
+#' @return A \code{\link[taxa]{taxmap}} object
 #'
 #' @export
 filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE,

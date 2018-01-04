@@ -27,9 +27,6 @@ sequences. In the example output shown here, this field corresponds to
 
 \item{sequences}{(\code{character} named by taxon ids) Sequences}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 RDP FASTA format. If the taxmap object was created using
@@ -49,6 +46,5 @@ tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
 \seealso{
 Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_silva_fasta}},
   \code{\link{write_unite_general}}
 }

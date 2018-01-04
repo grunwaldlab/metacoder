@@ -28,5 +28,5 @@ UNDER CONSTRUCTION
 
 ## More inforamtion
 
-This document is only a short introduction to MetacodeR and there is much that is not covered.
+This document is only a short introduction to metacoder and there is much that is not covered.
 For more information, see our website at http://grunwaldlab.github.io/metacoder_documentation/ and our github repository at https://github.com/grunwaldlab/metacoder.

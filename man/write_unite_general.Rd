@@ -35,9 +35,6 @@ numbers}
 \item{type}{(\code{character} named by taxon ids) What type of sequence it
 is. Usually "rep" or "ref".}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 UNITE general FASTA format. If the taxmap object was created using
@@ -56,5 +53,5 @@ ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT.
 \seealso{
 Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}}
+  \code{\link{write_rdp}}
 }

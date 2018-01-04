@@ -33,8 +33,6 @@
 #' @param ids (\code{character} named by taxon ids) Sequence ids
 #' @param sequences (\code{character} named by taxon ids) Sequences
 #'   
-#' @return \code{\link{taxmap}}
-#'   
 #' @family writers
 #'   
 #' @export
@@ -113,8 +111,6 @@ write_greengenes <- function(obj, tax_file = NULL, seq_file = NULL,
 #'   "Sparassis crispa; MBUH-PIRJO&ILKKA94-1587/ss5"
 #' @param sequences (\code{character} named by taxon ids) Sequences
 #'   
-#' @return \code{\link{taxmap}}
-#'   
 #' @family writers
 #'   
 #' @export
@@ -183,8 +179,6 @@ write_rdp <- function(obj, file,
 #' @param ids (\code{character} named by taxon ids) Sequence ids
 #' @param scores TBD
 #'   
-#' @return \code{\link{taxmap}}
-#'   
 #' @family writers
 #'   
 #' @export
@@ -250,8 +244,6 @@ write_mothur_taxonomy <- function(obj, file,
 #'   numbers
 #' @param type (\code{character} named by taxon ids) What type of sequence it
 #'   is. Usually "rep" or "ref".
-#'   
-#' @return \code{\link{taxmap}}
 #'   
 #' @family writers
 #'   
@@ -321,10 +313,6 @@ write_unite_general <- function(obj, file,
 #' @param end (\code{character}) The end position of the
 #' sequence.
 #' @param sequences (\code{character} named by taxon ids) Sequences
-#'   
-#' @return \code{\link{taxmap}}
-#'   
-#' @family writers
 #'   
 #' @export
 write_silva_fasta <- function(obj, file,
