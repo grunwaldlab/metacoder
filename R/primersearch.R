@@ -193,10 +193,10 @@ parse_primersearch <- function(file_path) {
 #'                           package = "metacoder")
 #' 
 #' # Parse the FASTA file as a taxmap object
-#' obj <- parse_silva_fasta(fasta_path)
+#' obj <- parse_silva_fasta(file = fasta_path)
 #' 
 #' # Simulate PCR with primersearch
-#' pcr_result <- primersearch(obj$data$silva_seq, 
+#' pcr_result <- primersearch(obj$data$tax_data$silva_seq, 
 #'                            forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
 #'                            reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
 #'                            mismatch = 10)
