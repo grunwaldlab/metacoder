@@ -31,7 +31,8 @@ Stable releases are available on CRAN and can be installed in the standard way:
 
 The most recent version can be installed from Github:
 
-    devtools::install_github("grunwaldlab/metacoder@dev")
+    devtools::install_github("ropensci/taxa")
+    devtools::install_github("grunwaldlab/metacoder")
     library(metacoder)
     
 
