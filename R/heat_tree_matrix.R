@@ -17,9 +17,9 @@
 #' @examples
 #' \dontrun{
 #' # Parse dataset for plotting
-#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
-#'                    class_regex = "^(.+)__(.+)$")
+#' x <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                     class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                     class_regex = "^(.+)__(.+)$")
 #' 
 #' # Convert counts to proportions
 #' x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
