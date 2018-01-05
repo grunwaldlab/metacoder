@@ -1,5 +1,5 @@
 Package: metacoder
-Title: Tools for Parsing, Manipulating, and Graphing Hierarchical Data
+Title: Tools for Parsing, Manipulating, and Graphing Taxonomic Abundance Data
 Version: 0.2.0
 Authors@R: c( person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
@@ -54,7 +54,7 @@ Suggests:
     zlibbioc
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
-Date: 2018-01-03
+Date: 2018-01-04
 Encoding: UTF-8
 biocViews:
 LinkingTo: Rcpp
