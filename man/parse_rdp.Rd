@@ -34,8 +34,7 @@ often contains other information as well.}
 \code{\link{taxmap}}
 }
 \description{
-Parses an RDP reference FASTA file that can be found at
-\url{https://rdp.cme.msu.edu/misc/resources.jsp}.
+Parses an RDP reference FASTA file.
 }
 \details{
 The input file has a format like:
