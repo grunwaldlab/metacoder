@@ -8,8 +8,6 @@ mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](http://www.r-pk
 [![CRAN
 version](http://www.r-pkg.org/badges/version/metacoder)](https://cran.r-project.org/package=metacoder)
 
-![](readme_figure.png)
-
 An R package for metabarcoding research planning and analysis
 -------------------------------------------------------------
 
