@@ -15,7 +15,8 @@ set.seed(1)
 # Knitr
 library(knitr)
 library(grid)
-opts_chunk$set(dev = 'png', fig.width = 7, fig.height = 7, warning = TRUE, message = TRUE)
+opts_chunk$set(dev = 'png', fig.width = 7, fig.height = 7, warning = TRUE,
+               message = TRUE)
 ```
 
 ## Documentation
