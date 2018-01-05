@@ -422,8 +422,7 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
 
 #' Parse RDP FASTA release
 #' 
-#' Parses an RDP reference FASTA file that can be found at
-#' \url{https://rdp.cme.msu.edu/misc/resources.jsp}.
+#' Parses an RDP reference FASTA file.
 #' 
 #' The input file has a format like:
 #' 
