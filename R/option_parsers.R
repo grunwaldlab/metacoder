@@ -175,6 +175,11 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
     cols <- TRUE
   }
   
+  # Convert factors to characters
+  if (is.factor(cols)) {
+    cols <- as.character(cols)
+  }
+  
   # Convert logical/numeric to column names
   if (is.logical(cols)) {
     if (length(cols) == ncol(my_table)) { # Is a TRUE/FALSE vector
@@ -211,8 +216,8 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
     }
   } else {
     stop(paste0("`cols` is of the invalid type: ", class(cols), ".\n", 
-                'The "cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.',
-                call. = FALSE))
+                'The "cols" option must either be TRUE/FALSE or a vector of valid column names/indexes.'),
+         call. = FALSE)
   }
   
   # Retrun result

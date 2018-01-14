@@ -30,6 +30,20 @@ test_that("Counting the number of samples with reads", {
                            out_names = c("A", "B", "C", "D", "E"))
   expect_equal(colnames(result), c("taxon_id", c("A", "B", "C", "D", "E")))
   
+  # Cols can be factors
+  result <- calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  expect_equal(result, 
+               calc_n_samples(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+  
+  # Cols can be logical
+  expect_equal(result, 
+               calc_n_samples(x, dataset = "tax_data",
+                              cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
+  
+  # Cols can be numeric
+  expect_equal(result, 
+               calc_n_samples(x, dataset = "tax_data",
+                              cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
 
@@ -66,6 +80,20 @@ test_that("Observation proportions", {
                            out_names = c("a", "b", "c"))
   expect_equal(colnames(result), c("taxon_id", "a", "b", "c"))
   
+  # Cols can be factors
+  result <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  expect_equal(result, 
+               calc_obs_props(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+  
+  # Cols can be logical
+  expect_equal(result, 
+               calc_obs_props(x, dataset = "tax_data",
+                              cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
+  
+  # Cols can be numeric
+  expect_equal(result, 
+               calc_obs_props(x, dataset = "tax_data",
+                              cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
 
@@ -96,6 +124,21 @@ test_that("Summing counts per taxon", {
   result <- calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
                              groups = rep("total", nrow(hmp_samples)))
   expect_equal(total_counts, result$total[1])
+  
+  # Cols can be factors
+  result <- calc_taxon_abund(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  expect_equal(result, 
+               calc_taxon_abund(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+  
+  # Cols can be logical
+  expect_equal(result, 
+               calc_taxon_abund(x, dataset = "tax_data",
+                                cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
+  
+  # Cols can be numeric
+  expect_equal(result, 
+               calc_taxon_abund(x, dataset = "tax_data",
+                                cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
 
@@ -120,6 +163,21 @@ test_that("Rarefying observation counts", {
   # Rarefy all numeric columns
   result <- rarefy_obs(x, "tax_data")
   expect_equal(length(unique(colSums(result[, hmp_samples$sample_id]))), 1)
+  
+  # Cols can be factors
+  result <- rarefy_obs(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  expect_equal(result, 
+               rarefy_obs(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+  
+  # Cols can be logical
+  expect_equal(result, 
+               rarefy_obs(x, dataset = "tax_data",
+                          cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
+  
+  # Cols can be numeric
+  expect_equal(result, 
+               rarefy_obs(x, dataset = "tax_data",
+                          cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
 
@@ -127,4 +185,19 @@ test_that("Converting low counts to zero", {
   # Calculate proportions for all numeric columns
   result <- zero_low_counts(x, "tax_data")
   expect_equal(sum(result[, hmp_samples$sample_id] == 1), 0)
+  
+  # Cols can be factors
+  result <- zero_low_counts(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  expect_equal(result, 
+               zero_low_counts(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+  
+  # Cols can be logical
+  expect_equal(result, 
+               zero_low_counts(x, dataset = "tax_data",
+                               cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
+  
+  # Cols can be numeric
+  expect_equal(result, 
+               zero_low_counts(x, dataset = "tax_data",
+                               cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
