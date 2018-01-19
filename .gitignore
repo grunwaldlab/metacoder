@@ -13,3 +13,8 @@ big_data/**
 scratch/*.pdf
 scratch/*.svg
 inst/doc
+
+# Compiled objects
+**.o
+**.so
+**.dll
