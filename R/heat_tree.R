@@ -180,7 +180,8 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' of nodes, passed as input to the \code{layout} algorithm.
 #' See details on layouts.
 #' Default: Not used.
-#' @param make_legend if TRUE...
+#' @param make_node_legend if TRUE, make legend for node size/color mappings. 
+#' @param make_edge_legend if TRUE, make legend for edge size/color mappings. 
 #' @param title Name to print above the graph.
 #' @param title_size The size of the title relative to the rest of the graph. 
 #' 
@@ -463,7 +464,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               margin_size = c(0, 0, 0, 0),
                               layout = "reingold-tilford",
                               initial_layout = "fruchterman-reingold",
-                              make_legend = TRUE,
+                              make_node_legend = TRUE,
+                              make_edge_legend = TRUE,
                               title = NULL,
                               title_size = 0.08,
                               
@@ -999,7 +1001,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| #### Make node legend -----------------------------------------------------------------------
   #|
   my_print("Making legends...", verbose = verbose)
-  if (make_legend) {
+  if (make_node_legend | make_edge_legend) {
     legend_length <- square_side_length * 0.3 
     
     # right_plot_boundry <- max(c(element_data[element_data$y <= legend_length + min(element_data$y), "x"],
@@ -1011,23 +1013,27 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       right_plot_boundry <- max(c(element_data$x, bounds$xmax))
     }
     
-    node_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = min(element_data$y) * 0.9, 
-                                    length = legend_length, 
-                                    width_range = vsr_plot * 2, 
-                                    width_trans_range = range(data$vs_trans) * 2,
-                                    width_stat_range =  node_size_interval,
-                                    group_prefix = "node_legend",
-                                    width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
-                                    color_range = node_color_range,
-                                    color_trans_range = node_color_interval_trans,
-                                    color_stat_range = node_color_interval, 
-                                    color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
-                                    title = "Nodes",
-                                    color_axis_label = node_color_axis_label,
-                                    size_axis_label = node_size_axis_label,
-                                    hide_size = missing(node_size),
-                                    hide_color = missing(node_color))
+    if (make_node_legend) {
+      node_legend <- make_plot_legend(x = right_plot_boundry,
+                                      y = min(element_data$y) * 0.9, 
+                                      length = legend_length, 
+                                      width_range = vsr_plot * 2, 
+                                      width_trans_range = range(data$vs_trans) * 2,
+                                      width_stat_range =  node_size_interval,
+                                      group_prefix = "node_legend",
+                                      width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
+                                      color_range = node_color_range,
+                                      color_trans_range = node_color_interval_trans,
+                                      color_stat_range = node_color_interval, 
+                                      color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
+                                      title = "Nodes",
+                                      color_axis_label = node_color_axis_label,
+                                      size_axis_label = node_size_axis_label,
+                                      hide_size = missing(node_size),
+                                      hide_color = missing(node_color))
+      element_data <- rbind(element_data, node_legend$shapes)
+      text_data <- rbind(text_data, node_legend$labels)
+    }
     #|
     #| #### Make edge legend -----------------------------------------------------------------------
     #|
@@ -1035,25 +1041,27 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     # right_plot_boundry <- max(c(element_data[element_data$y >= max(element_data$y) - legend_length, "x"],
     #                             bounds[bounds$ymax >= max(element_data$y) - legend_length, "xmin"]))
     
-    edge_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = max(element_data$y) - legend_length * 1.3, 
-                                    length = legend_length, 
-                                    width_range = esr_plot * 2, 
-                                    width_trans_range = range(data$vs_trans) * 2,
-                                    width_stat_range =  edge_size_interval,
-                                    group_prefix = "edge_legend",
-                                    width_stat_trans = transform_data(func = edge_size_trans, inverse = TRUE),
-                                    color_range = edge_color_range,
-                                    color_trans_range = edge_color_interval_trans,
-                                    color_stat_range = edge_color_interval, 
-                                    color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
-                                    title = "Edges",
-                                    color_axis_label = edge_color_axis_label,
-                                    size_axis_label = edge_size_axis_label,
-                                    hide_size = missing(edge_size),
-                                    hide_color = missing(edge_color))
-    element_data <- rbind(element_data, node_legend$shapes, edge_legend$shapes)
-    text_data <- rbind(text_data, node_legend$labels, edge_legend$labels)
+    if (make_edge_legend) {
+      edge_legend <- make_plot_legend(x = right_plot_boundry,
+                                      y = max(element_data$y) - legend_length * 1.3, 
+                                      length = legend_length, 
+                                      width_range = esr_plot * 2, 
+                                      width_trans_range = range(data$vs_trans) * 2,
+                                      width_stat_range =  edge_size_interval,
+                                      group_prefix = "edge_legend",
+                                      width_stat_trans = transform_data(func = edge_size_trans, inverse = TRUE),
+                                      color_range = edge_color_range,
+                                      color_trans_range = edge_color_interval_trans,
+                                      color_stat_range = edge_color_interval, 
+                                      color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
+                                      title = "Edges",
+                                      color_axis_label = edge_color_axis_label,
+                                      size_axis_label = edge_size_axis_label,
+                                      hide_size = missing(edge_size),
+                                      hide_color = missing(edge_color))
+      element_data <- rbind(element_data, edge_legend$shapes)
+      text_data <- rbind(text_data, edge_legend$labels)
+    }
     bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                            height = text_data$size, rotation = text_data$rotation,
                            just = text_data$justification)
