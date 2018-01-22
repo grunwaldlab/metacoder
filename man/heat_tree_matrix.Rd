@@ -5,7 +5,7 @@
 \title{Plot a matrix of heat trees}
 \usage{
 heat_tree_matrix(obj, dataset, label_small_trees = FALSE, key_size = 0.6,
-  seed = 1, ...)
+  seed = 1, output_file = NULL, ...)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -20,6 +20,10 @@ the key tree. Otherwise, only the key tree will be labeled.}
 example, 0.5 means half the width/height of the graph.}
 
 \item{seed}{That random seed used to make the graphs.}
+
+\item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+The type of the file will be determined by the extension given.
+Default: Do not save plot.}
 
 \item{...}{Passed to \code{\link{heat_tree}}. Some options will be overwritten.}
 }

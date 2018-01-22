@@ -12,6 +12,9 @@
 #' @param key_size The size of the key tree relative to the whole graph. For
 #'   example, 0.5 means half the width/height of the graph.
 #' @param seed That random seed used to make the graphs.
+#' @param output_file The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+#' The type of the file will be determined by the extension given.
+#' Default: Do not save plot.
 #' @param ... Passed to \code{\link{heat_tree}}. Some options will be overwritten.
 #' 
 #' @examples
@@ -49,7 +52,7 @@
 #' 
 #' @export
 heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
-                             key_size = 0.6, seed = 1, ...) {
+                             key_size = 0.6, seed = 1, output_file = NULL, ...) {
   # Get plot data table 
   diff_table <- get_taxmap_table(obj, dataset)
   
@@ -62,12 +65,12 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   }
   
   # Make individual plots
-  plot_sub_plot <- ifelse(label_small_trees,
-    function(..., make_node_legend = FALSE, make_edge_legend = FALSE) {
-      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE)
+  plot_sub_plot <- ifelse(label_small_trees, # This odd thing is used to overwrite options without evaluation
+    function(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL)
     },
-    function(..., node_label = NULL, make_node_legend = FALSE, make_edge_legend = FALSE) {
-      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE)
+    function(..., node_label = NULL, make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL)
     }
   )
   
@@ -145,6 +148,12 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   }
   
   # Save plot
+  if (!is.null(output_file)) {
+    for (path in output_file) {
+      ggplot2::ggsave(path, matrix_plot, bg = "transparent", width = 10, height = 10)
+    }
+  }
+  
   
   return(matrix_plot)
 }
