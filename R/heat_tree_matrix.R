@@ -63,11 +63,11 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   
   # Make individual plots
   plot_sub_plot <- ifelse(label_small_trees,
-    function(..., make_legend = FALSE) {
-      metacoder::heat_tree(..., make_legend = FALSE)
+    function(..., make_node_legend = FALSE, make_edge_legend = FALSE) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE)
     },
-    function(..., node_label = NULL, make_legend = FALSE) {
-      metacoder::heat_tree(..., make_legend = FALSE)
+    function(..., node_label = NULL, make_node_legend = FALSE, make_edge_legend = FALSE) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE)
     }
   )
   
@@ -143,6 +143,8 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
                                                     width = subgraph_width,
                                                     height = subgraph_height)
   }
+  
+  # Save plot
   
   return(matrix_plot)
 }
