@@ -367,12 +367,8 @@ compare_groups <- function(obj, dataset, cols, groups,
   # Parse columns to use
   cols <- get_numeric_cols(obj, dataset, cols)
   
-  # Check that cols and groups are the same length
-  if (length(groups) != length(cols)) {
-    stop("`groups` (", length(groups),
-         ") must be the same length as `cols` (", length(cols), ").")
-  }
-  
+  # Check groups option
+  groups <- check_option_groups(groups, cols)
   
   # Define defualt function
   if (is.null(func)) {
@@ -536,6 +532,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
   cols <- get_numeric_cols(obj, dataset, cols)
   
   # Check that groups and output names make sense
+  groups <- check_option_groups(groups, cols)
   if (is.null(groups)) {
     if (is.null(out_names)) { # groups and out_names are NULL
       out_names <- colnames(count_table[cols])
@@ -652,6 +649,7 @@ calc_n_samples <- function(obj, dataset, cols = NULL, groups = NULL,
   cols <- get_numeric_cols(obj, dataset, cols)
   
   # Check that groups and output names make sense
+  groups <- check_option_groups(groups, cols)
   if (is.null(groups)) {
     if (is.null(out_names)) { # groups and out_names are NULL
       out_names <- "n_samples"

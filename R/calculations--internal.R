@@ -108,3 +108,53 @@ do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL,
   
   return(result)
 }
+
+
+#' Check option: groups
+#' 
+#' This option is used in a few of the calculation functions
+#' 
+#' @param groups The groups option to check
+#' @param cols The cols option, if applicable
+#'
+#' @keywords internal
+check_option_groups <- function(groups, cols = NULL) {
+  # Do not do checks if NULL
+  if (is.null(groups)) {
+    return(groups)
+  }
+  
+  # Check that groups and cols are the same length
+  if (! is.null(cols)) {
+    if (length(groups) != length(cols)) {
+      stop(call. = FALSE,
+           "`groups` (", length(groups),
+           ") must be the same length as `cols` (", length(cols), ").")
+    }
+  }
+  
+  # Check for odd values
+  if (any(is.na(groups))) {
+    warning(call. = FALSE, 
+            paste0("NA's detected in `groups` option. This might cause problems. Indexes with NA:\n  ",
+                   limited_print(which(is.na(groups)), type = "silent")))
+  }
+  if (any(groups == "")) {
+    warning(call. = FALSE, 
+            paste0("Empty values ('') detected in `groups` option. This might cause problems. Indexes with empty values:\n  ",
+                   limited_print(which(groups == ""), type = "silent")))
+  }
+  if (any(is.nan(groups))) {
+    warning(call. = FALSE, 
+            paste0("NaN's detected in `groups` option. This might cause problems. Indexes with NaN:\n  ",
+                   limited_print(which(is.nan(groups)), type = "silent")))
+  }
+  if (any(is.infinite(groups))) {
+    warning(call. = FALSE, 
+            paste0("Infinite values detected in `groups` option. This might cause problems. Indexes with infinite values:\n  ",
+                   limited_print(which(is.infinite(groups)), type = "silent")))
+  }
+  
+  
+  return(groups)
+}
