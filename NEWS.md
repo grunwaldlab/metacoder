@@ -10,6 +10,7 @@
 ### Improvements
 
 * Node and edge legends can now be excluded individually (Thanks [\@grabear](https://github.com/grabear)!) (issue [#202](https://github.com/grunwaldlab/metacoder/issues/202)).
+* The output of `heat_tree_matrix` always has a 1:1 aspect ratio. (issue [#205](https://github.com/grunwaldlab/metacoder/issues/205))
 
 
 ## metacoder 0.2.0

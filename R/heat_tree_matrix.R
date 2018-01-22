@@ -138,7 +138,8 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
     cowplot::draw_text(gsub("_", " ", vert_label_data$treatment_1), 
                        x = vert_label_data$label_x, y = vert_label_data$label_y, 
                        size = label_size, colour = diverging_palette()[3],
-                       hjust = "center", vjust = "bottom", angle = -90)
+                       hjust = "center", vjust = "bottom", angle = -90) +
+    ggplot2::theme(aspect.ratio = 1)
   for (i in seq_along(sub_plots)) {
     matrix_plot <- matrix_plot + cowplot::draw_plot(sub_plots[[i]], 
                                                     x = matrix_data[i, "x"],
