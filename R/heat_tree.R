@@ -713,7 +713,11 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       
       # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
       optimality_stat <- function(minimum, maximum) {
-        overlap <- find_overlap(minimum, maximum, all_pairwise)
+        if (minimum == 0) {
+          overlap <- 0
+        } else {
+          overlap <- find_overlap(minimum, maximum, all_pairwise)
+        }
         ideal_min <- 0.02
         ideal_max <- 0.3
         ideal_range <- .1
@@ -734,7 +738,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                           fitness =  function(x) optimality_stat(x[1], x[2]),
                           min = c(min_range[1], max_range[1]), max = c(min_range[2], max_range[2]),
                           maxiter = 40, run = 30, popSize = 70, monitor = FALSE, parallel = FALSE)
-      vsr_plot <- as.vector(ga_result@solution)
+      vsr_plot <- as.vector(ga_result@solution[1, ])
     }
   } else {
     square_side_length = 1
