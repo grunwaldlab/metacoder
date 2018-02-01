@@ -76,7 +76,9 @@ test_that("Mothur classify.seqs *.tax.summary  detailed parsing", {
 8	0.1.2.3.7.2.5.1.1	unclassified	1	2	0	2	0	
 9	0.1.2.3.7.2.5.1.1.1	unclassified	1	2	0	2	0"  
   expect_warning(result <- parse_mothur_tax_summary(text = raw_data))
+  expect_warning(result_from_file <- parse_mothur_tax_summary(file = "example_data/mothur_summary.txt"))
   
+  expect_equal(result, result_from_file)
   expect_equal(length(result$taxa), 17)
   expect_equal(length(roots(result)), 1)
   expect_true(all(c("Bacteria", "Actinobacteria") %in% result$taxon_names()))

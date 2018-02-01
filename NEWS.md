@@ -6,6 +6,7 @@
 
 * Fixes numerous bugs in `heat_tree_matrix` that happen when the input data is not exactly like that produced by `compare_groups` (issues [#195](https://github.com/grunwaldlab/metacoder/issues/195), [#196](https://github.com/grunwaldlab/metacoder/issues/196), [#197](https://github.com/grunwaldlab/metacoder/issues/197)). 
 * Fixed how `output_file` was used with `heat_tree_matrix`. Now whole plot is saved instead of last subplot.  (issue [#203](https://github.com/grunwaldlab/metacoder/issues/203))
+* Fixed "unused argument" bug in `parse_mothur_tax_summary` when reading from a file path (issue [#211](https://github.com/grunwaldlab/metacoder/issues/211)).
 
 ### Improvements
 

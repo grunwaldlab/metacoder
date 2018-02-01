@@ -158,7 +158,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
   # Read raw data
   if (! are_missing["file"]) {
-    raw_data <- utils::read.csv(file_path = file, header = TRUE, sep = "\t",
+    raw_data <- utils::read.csv(file = file, header = TRUE, sep = "\t",
                                 stringsAsFactors = FALSE)
   } else if (! are_missing["text"]) {
     raw_data <- utils::read.csv(text = text, header = TRUE, sep = "\t",
