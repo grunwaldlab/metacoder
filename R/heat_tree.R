@@ -39,13 +39,16 @@ heat_tree.Taxmap <- function(.input, ...) {
 
 #' Plot a taxonomic tree
 #' 
-#' Plots the distribution of values associated with a taxonomic classification.
+#' Plots the distribution of values associated with a taxonomic classification/heirarchy.
 #' Taxonomic classifications can have multiple roots, resulting in multiple trees on the same plot.
-#' Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
-#' numbers (e.g. taxon statistics, such as abundance).
-#' The displayed range of colors and sizes can be explicitly defined or automatically generated.
-#' Various transformations can be applied to numbers sizes/colors are mapped to.
-#' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
+#' A tree consists of elements, element protperties, conditions, and mapping properties which are
+#' represented as parameters in the heat_tree object.
+#' The elements (e.g. nodes, edges, lables, and individual trees) are the infrastructure of the heat tree.
+#' The element properties (e.g. size and color) are characteristics that are manipulated by various 
+#' data conditions and mapping properties.  The element properties can be explicitly defined or automatically generated.
+#' The conditions are data (e.g. taxon statistics, such as abundance) represented in the taxmap/metacoder object.
+#' The mapping properties are parameters (e.g. transformations, range, interval, and layout) used to change the 
+#' elements/element properties and how they are used to represent (or not represent) the various conditions.
 #' 
 #' @param taxon_id The unique ids of taxa.
 #' @param supertaxon_id The unique id of supertaxon \code{taxon_id} is a part of.
@@ -209,15 +212,19 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
+#' @section Element Properties
+#'
+#' @section Size:
 #' 
-#' @section size:
 #' 
-#' 
-#' The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
+#' The size of nodes, edges, labels, and trees can be mapped to various conditions.
 #' This is useful for displaying statistics for taxa, such as abundance.
-#' Only the relative size of numbers is used, not the values themselves.
-#' They can be transformed to make the mapping non-linear using the transformation options.
-#' The range of actual sizes displayed on the graph can be set using the range options.
+#' Only the relative size of the condition is used, not the values themselves.
+#' The <element>_size_trans (transformation) parameter can be used to make the mapping non-linear.
+#' The <element>_size_range parameter can be used to proportionately change the size of an
+#' element.
+#' The <element>_size_interval parameter can be used to change the limit at which an element property
+#' will be graphically represented as the minimum/maximum value.
 #' 
 #' Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
 #' factor of its length.
