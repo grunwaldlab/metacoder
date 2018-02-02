@@ -2,11 +2,15 @@
 % Please edit documentation in R/writers.R
 \name{write_unite_general}
 \alias{write_unite_general}
-\title{Write an immitation of the UNITE general FASTA databse}
+\title{Write an imitation of the UNITE general FASTA databse}
 \usage{
-write_unite_general(obj, file, tax_names = taxon_names, ranks = unite_rank,
-  sequences = unite_seq, seq_name = organism, ids = unite_id,
-  gb_acc = acc_num, type = unite_type)
+write_unite_general(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("unite_rank")[[1]],
+  sequences = obj$get_data("unite_seq")[[1]],
+  seq_name = obj$get_data("organism")[[1]],
+  ids = obj$get_data("unite_id")[[1]],
+  gb_acc = obj$get_data("acc_num")[[1]],
+  type = obj$get_data("unite_type")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -31,14 +35,11 @@ numbers}
 \item{type}{(\code{character} named by taxon ids) What type of sequence it
 is. Usually "rep" or "ref".}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 UNITE general FASTA format. If the taxmap object was created using
-[parse_unite_general()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_unite_general}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:
@@ -52,5 +53,5 @@ ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT.
 \seealso{
 Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}}
+  \code{\link{write_rdp}}
 }

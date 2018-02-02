@@ -1,12 +1,11 @@
-#===================================================================================================
 #' Download representative sequences for a taxon
 #' 
 #' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-#' Can be used to get a shallow sampling of a vast groups. 
+#' Can be used to get a shallow sampling of vast groups. 
 #' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 #' can take a very long time. 
 #' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-#' Use a downloaded database and a parser from the taxa package when possible.
+#' Use a downloaded database and a parser from the \code{taxa} package when possible.
 #' 
 #' @param name (\code{character} of length 1) The taxon to download a sample of sequences for.
 #' @param id (\code{character} of length 1) The taxon id to download a sample of sequences for.
@@ -19,39 +18,42 @@
 #'   taxonomic rank. The names correspond to taxonomic ranks. 
 #' @param interpolate_min (\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
 #'   and \code{min_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   specified. Linear interpolation between values of specified ranks will be used to determine
 #'   values of unspecified ranks.
 #' @param interpolate_max (\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
 #'   and \code{max_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of spcified ranks will be used to determine
+#'   specified. Linear interpolation between values of specified ranks will be used to determine
 #'   values of unspecified ranks.
-#' @param min_length (\code{numeric} of length 1) The minimum length of sequences that will be
-#'   returned.
-#' @param max_length (\code{numeric} of length 1) The maximum length of sequences that will be
-#'   returned.
 #' @param min_children (named \code{numeric}) The minimum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks. 
 #' @param max_children (named \code{numeric}) The maximum number sub-taxa of taxa for a given
 #' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
 #' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
-#' @param ... Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.
+#' @inheritParams  traits::ncbi_searcher
 #' 
 #' @examples
-#' \dontrun{
-#' ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
-#' data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
-#'                           max_counts = c(phylum = 30), 
-#'                           entrez_query = "18S[All Fields] AND 28S[All Fields]",
-#'                           min_length = 600, max_length = 10000)
-#' }
 #' 
-#' @keywords internal
+#' \dontrun{
+#' 
+#' # Look up 5 ITS sequences from each fungal class
+#' data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
+#'                           entrez_query = '"internal transcribed spacer"[All Fields]')
+#' 
+#' # Look up taxonomic information for sequences
+#' obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
+#' 
+#' # Plot information
+#' filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) %>% 
+#'   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
+#' }
+#' @export
 ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               min_counts = NULL, max_counts = NULL,
                               interpolate_min = TRUE, interpolate_max = TRUE,
-                              min_length = 1, max_length = 10000, 
                               min_children = NULL, max_children = NULL, 
-                              verbose = TRUE, ...) {
+                              seqrange = "1:3000", getrelated = FALSE,
+                              fuzzy = TRUE, limit = 10, entrez_query = NULL,
+                              hypothetical = FALSE, verbose = TRUE) {
  
   run_once <- function(name, id) {
     default_target_max <- 20
@@ -84,7 +86,6 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     target_rank <- factor(target_rank,
                           levels = levels(taxonomy_levels),
                           ordered = TRUE)
-    length_range <- paste(min_length, max_length, sep = ":")
     
     # Generate taxonomic rank filtering limits ------------------------------------------------------
     get_level_limit <- function(user_limits, default_value, default_level, interpolate, 
@@ -161,8 +162,9 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
       # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
       if ((rank %in% taxonomy_levels && rank >= target_rank) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
         cat("Getting sequences for", name, "\n")
-        result <- traits::ncbi_searcher(id = id, limit = 1000, seqrange = length_range,
-                                      hypothetical = TRUE, ...)
+        result <- traits::ncbi_searcher(id = id, seqrange = seqrange, getrelated = getrelated,
+                                        fuzzy = fuzzy, limit = limit, entrez_query = entrez_query,
+                                        hypothetical = hypothetical, verbose = verbose)
       } else {
         child_ranks <- factor(sub_taxa$childtaxa_rank,
                               levels = levels(taxonomy_levels), ordered = TRUE) 
@@ -188,13 +190,15 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
   if (is.null(id)) id = list(NULL) 
   output <- mapply(run_once, id = id, name = name, SIMPLIFY = FALSE)
   output <- do.call(rbind, output)
+  
+  # Reformat output
+  output <- dplyr::as_tibble(output)
+  colnames(output) <- c("ncbi_name", "seq_length", "gene_desc", "acc_no", "gi_no")  
+  
   return(output)
 }
 
 
-
-
-#===================================================================================================
 #' Downloads sequences from ids
 #' 
 #' Downloads the sequences associated with GenBank accession ids.
@@ -228,5 +232,19 @@ ncbi_sequence <- function (ids, batch_size = 100) {
     ids <- ids[-id_subset]
     Sys.sleep(time = 0.34)
   }
+  return(output)
+}
+
+
+#' Get taxonomy levels
+#' 
+#' Return An ordered factor of taxonomy levels, such as "Subkingdom" and "Order", in order of the
+#'   hierarchy.
+#'   
+#' @keywords internal
+get_taxonomy_levels <- function() {
+  unique_levels <- unique(sapply(strsplit(taxize::rank_ref$ranks, ","), `[`, 1))
+  unique_levels <- tolower(unique_levels)
+  output <- sort(factor(unique_levels, labels = unique_levels, ordered = TRUE))
   return(output)
 }

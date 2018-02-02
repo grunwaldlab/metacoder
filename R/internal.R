@@ -18,7 +18,7 @@ my_print <- function(..., verbose = TRUE) {
 #' get_edge_parents
 #' 
 #' @keywords internal
-get_edge_parents <-function(graph) {
+get_edge_parents <- function(graph) {
   igraph::get.edges(graph, 1:igraph::ecount(graph))[,1]
 }
 
@@ -36,16 +36,6 @@ get_edge_children <- function(graph) {
 #' @keywords internal
 get_node_children <- function(graph, node) {
   which(igraph::shortest.paths(graph, igraph::V(graph)[node], mode="out") != Inf)
-}
-
-
-#' delete_vetices_and_children
-#' 
-#' @keywords internal
-delete_vetices_and_children <- function(graph, nodes) {
-  nodes <- unlist(sapply(nodes, function(x) get_node_children(graph, x)))
-  graph <- igraph::delete.vertices(graph, nodes)
-  return(graph)
 }
 
 
@@ -172,6 +162,13 @@ limited_print <- function(chars, prefix = "",
     c(v1,v2)[order(c(ord1,ord2))]
   }
   
+  truncate <- function(x, max_chars = 30, postfix = "[truncated]") {
+    if (nchar(x) > max_chars) {
+      x <- paste0(substr(x, 0, max_chars - nchar(postfix)), postfix)
+    }
+    return(x)
+  }
+  
   q = "'"
   interleaved <- interleave(chars[1:(length(chars) / 2)],
                             rev(chars[(length(chars) / 2 + 1):length(chars)]))
@@ -179,12 +176,16 @@ limited_print <- function(chars, prefix = "",
   if (all(! is_greater_than_max)) {
     max_printed <- length(chars)
   } else {
-    max_printed <- which.max(is_greater_than_max)
+    max_printed <- which.max(is_greater_than_max) - 1
   }
   if (max_printed < length(chars)) {
-    first_part <-  chars[1:as.integer(max_printed / 2 - 0.5)]
-    second_part <-
-      chars[as.integer(length(chars) - (max_printed / 2) + 1.5):length(chars)]
+    if (max_printed < 2) {
+      first_part <- truncate(chars[1])
+      second_part <- truncate(chars[length(chars)])
+    } else {
+      first_part <-  chars[1:ceiling(max_printed / 2)]
+      second_part <- chars[(length(chars) - floor(max_printed / 2) + 1):length(chars)]
+    }
     output <- paste0(paste0(collapse = ", ", first_part),
                      " ... ",
                      paste0(collapse = ", ", second_part),
@@ -211,65 +212,6 @@ limited_print <- function(chars, prefix = "",
 }
 
 
-#' Get a table from a taxmap object
-#' 
-#' Get a table from a taxmap object and complain if it does not exist.
-#' 
-#' @param obj A taxmap object
-#' @param dataset The name of the table
-#' @param expected_cols The names/indexes of columns expected to exist. If a column is not found, issue a warning.
-#' 
-#' @return A data.frame
-#' 
-#' @keywords internal
-get_taxmap_table <- function(obj, dataset, expected_cols = NULL) {
-  # Check that dataset exists and is a table
-  if (! dataset %in% names(obj$data)) {
-    stop(paste0('The dataset "', dataset,
-                '" is not in the object supplied. Datasets found include:\n  ',
-                limited_print(names(obj$data), type = "silent")), call. = FALSE)
-  }
-  if (! is.data.frame(obj$data[[dataset]])) {
-    stop(paste0('The dataset "', dataset,  '" is not a table.'), call. = FALSE)
-  }
-  
-  # Get table
-  table <- obj$data[[dataset]]
-  
-  # Check that all columns exist
-  if (! is.null(expected_cols)) {
-    invalid_cols <- get_invalid_cols(table, expected_cols)
-    if (length(invalid_cols) > 0) {
-      warning(paste0('The following ', length(invalid_cols),
-                     ' column(s) were not found in dataset "', dataset, '":\n',
-                     limited_print(prefix = "  ", invalid_cols, type = "silent")),
-              call. = FALSE)
-    }
-  }
-
-  # Return without printing
-  return(invisible(table))
-}
-
-
-#' Return invalid column names/indexes
-#' 
-#' Return invalid column names/indexes
-#' 
-#' @param table Table to check
-#' @param cols he names/indexes of columns
-#' 
-#' @keywords internal
-get_invalid_cols <- function(table, cols)  {
-  if (is.numeric(cols)) { # if column indexes
-    invalid_cols <- cols[! cols %in% seq_len(ncol(table))]
-  } else { # if column names
-    invalid_cols <- cols[! cols %in% colnames(table)]
-  }
-  return(invalid_cols)
-}
-
-
 #' @keywords internal
 rad_to_deg <- function(rad) {
   (rad * 180) / (pi)
@@ -279,4 +221,37 @@ rad_to_deg <- function(rad) {
 #' @keywords internal
 deg2rad <- function(deg) {
   (deg * pi) / (180)
+}
+
+
+#' Converts decimal numbers to other bases
+#'
+#' Converts from base 10 to other bases represented by a given set of symbols.
+#'
+#' @param numbers One or more numbers to convert.
+#' @param symbols The set of symbols to use for the new base.
+#' @param base The base to convert to.
+#' @param min_length The minimum number of symbols in each result.
+#'
+#' @return character vector
+#'
+#' @keywords internal
+convert_base <- function(numbers, symbols = letters, base = length(symbols),
+                         min_length = 0) {
+  
+  # A modification of the `dec2base` function in the `oro.dicom` package
+  #    Copyright (c) 2015, Brandon Whitcher
+  convert_one <- function (n)  {
+    if (is.na(n)) {
+      return(NA_character_)
+    }
+    max_length <- max(trunc(log(max(n, 1))/log(base)) + 1, min_length)
+    power <- rep(1, length(n)) * base^((max_length - 1):0)
+    n <- n * rep(1, max_length)
+    digits <- floor((n%%(base * power))/power)
+    paste(symbols[digits + 1], collapse = "")
   }
+  
+  vapply(as.integer(numbers), convert_one, character(1))
+  
+}

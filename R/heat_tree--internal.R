@@ -1,6 +1,6 @@
 #' Bounding box coords for labels
 #' 
-#' Given a position, size, rotation, and justification of a lable, calculate the bounding box coordinates
+#' Given a position, size, rotation, and justification of a label, calculate the bounding box coordinates
 #' 
 #' @param x Horizontal position of center of text grob
 #' @param y Vertical position of center of text grob
@@ -90,10 +90,10 @@ verify_size_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
     if (length(value) != 2) {
-      stop(paste0("Argument ", arg, " must be of length 2."))
+      stop(call. = FALSE, paste0("Argument ", arg, " must be of length 2."))
     }
     if (all(!is.na(value)) && value[2] < value[1]) {
-      stop(paste0("The min value of ", arg, " is greater than its max."))
+      stop(call. = FALSE, paste0("The min value of ", arg, " is greater than its max."))
     }
   }
 }
@@ -110,7 +110,7 @@ verify_trans <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
     if (! is.function(value) && ! value %in% transform_data()) {
-      stop(paste0("Argument '", arg,
+      stop(call. = FALSE, paste0("Argument '", arg,
                   "' must be a function or the name of a built-in transformation function."))
     }
   }
@@ -127,11 +127,12 @@ verify_size <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
     if (any(!is.na(value) & is.na(as.numeric(value)))) {
-      stop(paste0("Argument '", arg, "' is not numeric."))
+      stop(paste0("Argument '", arg, "' is not numeric."), call. = FALSE)
     }
     
     if (any(is.infinite(value))) {
-      warning(paste0('Infinite values found for "', arg,
+      warning(call. = FALSE,
+              paste0('Infinite values found for "', arg,
                      '". These will be graphed in the same way as the largest (Inf) or smallest (-Inf) real number supplied.\n'))
     }
   }
@@ -149,7 +150,7 @@ verify_color_range <- function(args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
     if (any(! grepl("^#[0-9a-fA-F]{3,8}$", value) & ! value %in% grDevices::colors())) {
-      stop(paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
+      stop(call. = FALSE, paste0("Argument '", arg, "' must be hex color codes or a name returned by 'colors()'"))
     }
   }
 }
@@ -194,7 +195,7 @@ check_element_length <- function(args) {
 
 #' Transformation functions
 #' 
-#' Functions used by plotting funtions to transform data.
+#' Functions used by plotting functions to transform data.
 #' Calling the function with no parameters returns available function names.
 #' Calling with just the function name returns the transformation function
 #' 

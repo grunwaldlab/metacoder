@@ -2,10 +2,11 @@
 % Please edit documentation in R/writers.R
 \name{write_mothur_taxonomy}
 \alias{write_mothur_taxonomy}
-\title{Write an immitation of the Mothur taxonomy file}
+\title{Write an imitation of the Mothur taxonomy file}
 \usage{
-write_mothur_taxonomy(obj, file, tax_names = taxon_names, ids = sequence_id,
-  scores = score)
+write_mothur_taxonomy(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  ids = obj$get_data("sequence_id")[[1]],
+  scores = obj$get_data("score")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -19,14 +20,11 @@ sequence fasta file. This is optional.}
 
 \item{scores}{TBD}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic information of a taxmap object in the
 mothur `*.taxonomy` format. If the taxmap object was created using
-[parse_mothur_taxonomy()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_mothur_taxonomy}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:
@@ -51,6 +49,6 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
 }
 \seealso{
 Other writers: \code{\link{write_greengenes}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}},
+  \code{\link{write_rdp}},
   \code{\link{write_unite_general}}
 }

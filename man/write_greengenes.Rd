@@ -2,11 +2,12 @@
 % Please edit documentation in R/writers.R
 \name{write_greengenes}
 \alias{write_greengenes}
-\title{Write an immitation of the Greengenes databse}
+\title{Write an imitation of the Greengenes databse}
 \usage{
 write_greengenes(obj, tax_file = NULL, seq_file = NULL,
-  tax_names = taxon_names, ranks = gg_rank, ids = gg_id,
-  sequences = gg_seq)
+  tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("gg_rank")[[1]], ids = obj$get_data("gg_id")[[1]],
+  sequences = obj$get_data("gg_seq")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -25,14 +26,11 @@ sequence fasta file. This is optional.}
 
 \item{sequences}{(\code{character} named by taxon ids) Sequences}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 Greengenes output format. If the taxmap object was created using
-[parse_greengenes()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_greengenes}}, then it should be able to replicate the
+format exactly with the default settings.
 }
 \details{
 The taxonomy output file has a format like:
@@ -55,6 +53,6 @@ AGAGTTTGATCCTGGCTCAGAATGAACGCTGGCGGCGTGCCTAACACATGCAAGTCGTACGAGAAATCCCGAGC...
 }
 \seealso{
 Other writers: \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}},
+  \code{\link{write_rdp}},
   \code{\link{write_unite_general}}
 }

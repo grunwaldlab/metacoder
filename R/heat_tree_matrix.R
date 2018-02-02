@@ -1,49 +1,88 @@
 #' Plot a matrix of heat trees
 #' 
-#' Plot a matrix of heat trees for showing parwise comparision. A larger, 
-#' labelled tree serves as a key for the matrix of smaller unlabelled trees.
+#' Plot a matrix of heat trees for showing parwise comparisons. A larger,
+#' labelled tree serves as a key for the matrix of smaller unlabelled trees. The
+#' data for this function is typically created with \code{\link{compare_groups}},
 #' 
-#' @param obj A \code{taxmap} object
+#' @param obj A \code{\link[taxa]{taxmap}} object
 #' @param dataset The name of a table in \code{obj$data} that is the output of 
-#'   \code{\link{compare_treatments}} or in the same format.
+#'   \code{\link{compare_groups}} or in the same format.
 #' @param label_small_trees If \code{TRUE} add labels to small trees as well as 
-#'   the key tree. Otherwise, only the key tree will be labled.
+#'   the key tree. Otherwise, only the key tree will be labeled.
 #' @param key_size The size of the key tree relative to the whole graph. For
 #'   example, 0.5 means half the width/height of the graph.
 #' @param seed That random seed used to make the graphs.
+#' @param output_file The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+#' The type of the file will be determined by the extension given.
+#' Default: Do not save plot.
 #' @param ... Passed to \code{\link{heat_tree}}. Some options will be overwritten.
-#'   
+#' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for plotting
+#' x <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                     class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                     class_regex = "^(.+)__(.+)$")
+#' 
+#' # Convert counts to proportions
+#' x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
+#' 
+#' # Get per-taxon counts
+#' x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
+#' 
+#' # Calculate difference between treatments
+#' x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+#'                                     cols = hmp_samples$sample_id,
+#'                                     groups = hmp_samples$body_site)
+#'
+#' # Plot results (might take a few minutes)
+#' heat_tree_matrix(x,
+#'                  dataset = "diff_table",
+#'                  node_size = n_obs,
+#'                  node_label = taxon_names,
+#'                  node_color = log2_median_ratio,
+#'                  node_color_range = diverging_palette(),
+#'                  node_color_trans = "linear",
+#'                  node_color_interval = c(-3, 3),
+#'                  edge_color_interval = c(-3, 3),
+#'                  node_size_axis_label = "Number of OTUs",
+#'                  node_color_axis_label = "Log2 ratio median proportions")
+#' 
+#' }
+#' 
 #' @export
 heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
-                             key_size = 0.6, seed = 1, ...) {
+                             key_size = 0.6, seed = 1, output_file = NULL, ...) {
+  # Get plot data table 
+  diff_table <- get_taxmap_table(obj, dataset)
+  
   # Make plot layout
-  diff_table <- obj$data[[dataset]]
   treatments <- unique(c(diff_table$treatment_1, diff_table$treatment_2))
-  combinations <- t(combn(seq_along(treatments), 2))
+  combinations <- t(utils::combn(seq_along(treatments), 2))
   layout_matrix <- matrix(rep(NA, (length(treatments))^2), nrow = length(treatments))
   for (index in 1:nrow(combinations)) {
     layout_matrix[combinations[index, 1], combinations[index, 2]] <- index
   }
   
-  
-  
   # Make individual plots
-  if (label_small_trees) {
-    plot_sub_plot <- function(..., make_legend = FALSE) {
-      metacoder::heat_tree(..., make_legend = FALSE)
+  plot_sub_plot <- ifelse(label_small_trees, # This odd thing is used to overwrite options without evaluation
+    function(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL)
+    },
+    function(..., node_label = NULL, make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
+      metacoder::heat_tree(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL)
     }
-  } else {
-    plot_sub_plot <- function(..., node_label = NULL, make_legend = FALSE) {
-      metacoder::heat_tree(..., make_legend = FALSE)
-    }
-  }
+  )
   
   sub_plots <- lapply(seq_len(nrow(combinations)),
                       function(index) {
                         set.seed(seed)
                         obj %>%
-                          taxa::filter_obs("diff_table",
-                                           treatment_1 == treatments[combinations[index, 1]] & treatment_2 == treatments[combinations[index, 2]]) %>%
+                          taxa::filter_obs(dataset,
+                                           (diff_table$treatment_1 == treatments[combinations[index, 1]] &
+                                             diff_table$treatment_2 == treatments[combinations[index, 2]]) |
+                                             (diff_table$treatment_1 == treatments[combinations[index, 2]] &
+                                                diff_table$treatment_2 == treatments[combinations[index, 1]])) %>%
                           plot_sub_plot(...)
                       })
   
@@ -99,7 +138,8 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
     cowplot::draw_text(gsub("_", " ", vert_label_data$treatment_1), 
                        x = vert_label_data$label_x, y = vert_label_data$label_y, 
                        size = label_size, colour = diverging_palette()[3],
-                       hjust = "center", vjust = "bottom", angle = -90)
+                       hjust = "center", vjust = "bottom", angle = -90) +
+    ggplot2::theme(aspect.ratio = 1)
   for (i in seq_along(sub_plots)) {
     matrix_plot <- matrix_plot + cowplot::draw_plot(sub_plots[[i]], 
                                                     x = matrix_data[i, "x"],
@@ -107,6 +147,14 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
                                                     width = subgraph_width,
                                                     height = subgraph_height)
   }
+  
+  # Save plot
+  if (!is.null(output_file)) {
+    for (path in output_file) {
+      ggplot2::ggsave(path, matrix_plot, bg = "transparent", width = 10, height = 10)
+    }
+  }
+  
   
   return(matrix_plot)
 }

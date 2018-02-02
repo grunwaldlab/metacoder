@@ -37,12 +37,13 @@ heat_tree(...)
   TRUE, finite = TRUE), edge_color_interval = NULL, node_label_max = 500,
   edge_label_max = 500, tree_label_max = 500, overlap_avoidance = 1,
   margin_size = c(0, 0, 0, 0), layout = "reingold-tilford",
-  initial_layout = "fruchterman-reingold", make_legend = TRUE,
-  title = NULL, title_size = 0.08, node_color_axis_label = NULL,
-  node_size_axis_label = NULL, edge_color_axis_label = NULL,
-  edge_size_axis_label = NULL, background_color = "#FFFFFF00",
-  output_file = NULL, aspect_ratio = 1, repel_labels = TRUE,
-  repel_force = 1, repel_iter = 1000, verbose = FALSE, ...)
+  initial_layout = "fruchterman-reingold", make_node_legend = TRUE,
+  make_edge_legend = TRUE, title = NULL, title_size = 0.08,
+  node_color_axis_label = NULL, node_size_axis_label = NULL,
+  edge_color_axis_label = NULL, edge_size_axis_label = NULL,
+  background_color = "#FFFFFF00", output_file = NULL, aspect_ratio = 1,
+  repel_labels = TRUE, repel_force = 1, repel_iter = 1000,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{...}{(other named arguments)
@@ -205,7 +206,9 @@ of nodes, passed as input to the \code{layout} algorithm.
 See details on layouts.
 Default: Not used.}
 
-\item{make_legend}{if TRUE...}
+\item{make_node_legend}{if TRUE, make legend for node size/color mappings.}
+
+\item{make_edge_legend}{if TRUE, make legend for edge size/color mappings.}
 
 \item{title}{Name to print above the graph.}
 
@@ -232,11 +235,11 @@ Default: Do not save plot.}
 
 \item{aspect_ratio}{The aspect_ratio of the plot.}
 
-\item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.}
+\item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel package to spread out labels.}
 
-\item{repel_force}{The force of which overlapping labels will be repeled from eachother}
+\item{repel_force}{The force of which overlapping labels will be repelled from eachother.}
 
-\item{repel_iter}{The number of iterations used whe repeling labels}
+\item{repel_iter}{The number of iterations used when repelling labels}
 
 \item{verbose}{If \code{TRUE} print progress reports as the function runs.}
 }
@@ -246,7 +249,7 @@ Taxonomic classifications can have multiple roots, resulting in multiple trees o
 Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
 numbers (e.g. taxon statistics, such as abundance).
 The displayed range of colors and sizes can be explicitly defined or automatically generated.
-Various transforamtions can be applied to numbers sizes/colors are mapped to.
+Various transformations can be applied to numbers sizes/colors are mapped to.
 Several types of tree layout algorithms from \code{\link{igraph}} can be used.
 }
 \section{size}{
@@ -255,7 +258,7 @@ Several types of tree layout algorithms from \code{\link{igraph}} can be used.
 
 The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 This is useful for displaying statistics for taxa, such as abundance.
-Only the relative size of numbers is used, not the values themeselves.
+Only the relative size of numbers is used, not the values themselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual sizes displayed on the graph can be set using the range options.
 
@@ -268,7 +271,7 @@ factor of its length.
 
 The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 This is useful for highlighting groups of taxa.
-Only the relative size of numbers is used, not the values themeselves.
+Only the relative size of numbers is used, not the values themselves.
 They can be transformed to make the mapping non-linear using the transformation options.
 The range of actual colors displayed on the graph can be set using the range options.
 
@@ -277,7 +280,7 @@ If a numeric vector is given, it is mapped to a color scale.
 Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 }
 
-\section{labels}{
+\section{Labels}{
 
 
 The labels of nodes, edges, and trees can be added.
@@ -288,7 +291,7 @@ Tree labels are displayed over their tree.
 Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 }
 
-\section{transformations}{
+\section{Transformations}{
 
 
 Before any numbers specified are mapped to color/size, they can be transformed to make
@@ -308,7 +311,7 @@ A customized function can also be supplied to do the transformation.
 }
 }
 
-\section{ranges}{
+\section{Ranges}{
 
 
 The displayed range of colors and sizes can be explicitly defined or automatically generated.
@@ -321,7 +324,7 @@ Color ranges can be any number of color values as either HEX codes (e.g. \code{#
 color names (e.g. \code{"black"}).
 }
 
-\section{layout}{
+\section{Layout}{
 
 
 Layouts determine the position of nodes on the graph.
@@ -344,7 +347,7 @@ The following \code{character} values are understood:
 }
 }
 
-\section{intervals}{
+\section{Intervals}{
 
 
 This is the minimum and maximum of values displayed on the legend scales.
@@ -354,6 +357,17 @@ By default, the minimum and maximum equals the range of the values used to infer
 Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
 or setting logical boundaries (such as \code{c(0,1)} for proportions.
 Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
+}
+
+\section{Acknowledgements}{
+
+
+This package includes code from the R package ggrepel to handle label overlap
+avoidance with permission from the author of ggrepel Kamil Slowikowski. We
+included the code instead of depending on ggrepel because we are using
+internal functions to ggrepel that might change in the future. We thank Kamil
+Slowikowski for letting us use his code and would like to acknowledge his
+implementation of the label overlap avoidance used in metacoder.
 }
 
 \examples{
@@ -387,6 +401,14 @@ x$data$taxon_counts <- calc_n_samples(x, dataset = "taxon_counts", append = TRUE
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
           edge_color = n_samples)
 
+# Different layouts:
+#  You can use any layout implemented by igraph. You can also specify an
+#  initial layout to seed the main layout with.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          layout = "davidson-harel")
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          layout = "davidson-harel", initial_layout = "reingold-tilford")
+
 # Axis labels:
 #  You can add custom labeles to the legends
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
@@ -400,9 +422,34 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           overlap_avoidance = .5)
           
 # Label overlap avoidance
-#  You can avoid overlapping labels by modifiying the `replel_force` and
-`repel_iter` options.
-heat_tree(node_label = taxon_names, node_size = n_obs, node_color = n_obs, repel_force = 2, repel_iter = 20000)
+#  You can modfiy how label scattering is handled using the `replel_force` and
+`repel_iter` options. You can turn off label scattering using the `repel_labels` option.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          repel_force = 2, repel_iter = 20000)
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          repel_labels = FALSE)
+
+# Setting the size of graph elements: 
+#  You can force nodes, edges, and lables to be a specific size/color range instead
+#  of letting the function optimize it. These options end in `_range`.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_range = c(0.01, .1))
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          edge_color_range = c("black", "#FFFFFF"))
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_label_size_range = c(0.02, 0.02))
+
+# Setting the transformation used:
+#  You can change how raw statistics are converted to color/size using options
+#  ending in _trans.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_trans = "log10 area")
+
+# Setting the interval displayed:
+#  By default, the whole range of the statistic provided will be displayed.
+#  You can set what range of values are displayed using options ending in `_interval`.
+heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+          node_size_interval = c(10, 100))
 
 }
 }

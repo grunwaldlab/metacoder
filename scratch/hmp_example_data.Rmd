@@ -43,6 +43,13 @@ remove samples not in abundance data
 hmp_samples <- hmp_samples[hmp_samples$sample_id %in% colnames(hmp_otus), ]
 ```
 
+remove low count samples
+
+```{r}
+hmp_samples <- hmp_samples[colSums(hmp_otus[, as.character(hmp_samples$sample_id)]) >= 1000, ]
+```
+
+
 subsample sites
 
 ```{r}

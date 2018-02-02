@@ -2,7 +2,7 @@
 #' Parse summary.seqs output
 #' 
 #' Extract statistics from the command line output of mothur command \code{summary.seqs} and
-#' return the resutls in a \code{data.frame}
+#' return the results in a \code{data.frame}
 #' 
 #' @param text The text output of \code{summary.seqs}
 #' @param file The path to saved output of \code{summary.seqs}

@@ -2,10 +2,12 @@
 % Please edit documentation in R/writers.R
 \name{write_rdp}
 \alias{write_rdp}
-\title{Write an immitation of the RDP FASTA databse}
+\title{Write an imitation of the RDP FASTA databse}
 \usage{
-write_rdp(obj, file, tax_names = taxon_names, ranks = rdp_rank,
-  ids = rdp_id, info = seq_name, sequences = rdp_seq)
+write_rdp(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+  ranks = obj$get_data("rdp_rank")[[1]], ids = obj$get_data("rdp_id")[[1]],
+  info = obj$get_data("seq_name")[[1]],
+  sequences = obj$get_data("rdp_seq")[[1]])
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -25,14 +27,11 @@ sequences. In the example output shown here, this field corresponds to
 
 \item{sequences}{(\code{character} named by taxon ids) Sequences}
 }
-\value{
-\code{\link{taxmap}}
-}
 \description{
 Attempts to save taxonomic and sequence information of a taxmap object in the
 RDP FASTA format. If the taxmap object was created using
-[parse_rdp()], then it should be able to replicate the format
-exactly.
+\code{\link{parse_rdp}}, then it should be able to replicate the format
+exactly with the default settings.
 }
 \details{
 The output file has a format like:
@@ -47,6 +46,5 @@ tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
 \seealso{
 Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_silva_fasta}},
   \code{\link{write_unite_general}}
 }

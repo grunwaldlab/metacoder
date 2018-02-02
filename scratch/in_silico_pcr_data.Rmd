@@ -1,0 +1,131 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(metacoder)
+```
+
+## Creating the in silico PCR dataset
+
+### Parse SILVA FASTA file
+
+```{r}
+silva_path <- "SILVA_132_SSURef_Nr99_tax_silva.fasta"
+raw_silva <- metacoder::read_fasta(silva_path)
+first_subset <- sample(seq_along(raw_silva), 1000)
+silva <- parse_silva_fasta(input = raw_silva[first_subset])
+silva <- filter_ambiguous_taxa(silva, subtaxa = TRUE, reassign_obs = FALSE)
+silva <- filter_taxa(silva, n_obs > 0)
+```
+
+
+```{r}
+silva %>%
+  heat_tree(node_color = n_obs, 
+            node_size = n_obs,
+            node_label = taxon_names,
+            output_file = "temp.pdf")
+```
+
+
+### Subset to a reasonable size
+
+```{r}
+silva_subset <- filter_taxa(silva, taxon_names == "Bacteria", subtaxa = TRUE)
+```
+
+
+```{r}
+silva_subset %>%
+  heat_tree(node_color = n_obs, 
+            node_size = n_obs,
+            node_label = taxon_names,
+            output_file = "temp.pdf", layout = "da", initial_layout = "re")
+```
+
+### Write FASTA subset
+
+```{r}
+out_path <- "silva_subset.fa"
+writeChar(paste0(paste0(">", silva_subset$data$tax_data$input, "\n", silva_subset$data$silva_seq, "\n"), collapse = ""),
+          "silva_subset.fa", eos = NULL)
+file.copy(from = out_path, to = file.path("..", "inst", "extdata", out_path), overwrite = TRUE)
+```
+
+
+### Test in silico PCR
+
+#### Dummy set
+
+```{r}
+rev_comp <- function(my_seq) {
+  toupper(paste0(rev(seqinr::comp(strsplit(my_seq, "")[[1]], ambiguous = TRUE)), collapse = ""))
+}
+
+
+comp <- function(my_seq) {
+  toupper(paste0(seqinr::comp(strsplit(my_seq, "")[[1]], ambiguous = TRUE), collapse = ""))
+}
+
+
+primer_1_site <- "AAGTACCTTAACGGAATTATAG"
+primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
+amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
+seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
+seq_2 <- rev_comp(seq_1)
+
+f_primer <- primer_1_site
+r_primer <- rev_comp(primer_2_site)
+seqs <- c(a = seq_1, b = seq_2)
+
+result <- primersearch(seqs, 
+                       forward = f_primer,
+                       reverse = r_primer)
+```
+
+
+#### Real data set
+
+```{r}
+# Get example FASTA file
+fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+                          package = "metacoder")
+
+# Parse the FASTA file as a taxmap object
+obj <- parse_silva_fasta(fasta_path)
+
+# Simulate PCR with primersearch
+pcr_result <- primersearch(obj$data$silva_seq, 
+                           forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                           reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                           mismatch = 10)
+
+# Add result to input table 
+#  NOTE: We want to add a function to handle running pcr on a
+#        taxmap object directly, but we are still trying to figure out
+#        the best way to implement it. For now, do the following:
+obj$data$pcr <- pcr_result
+obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
+
+# Visualize which taxa were amplified
+#  This work because only amplicons are returned by `primersearch`
+n_amplified <- obj$obs_apply("pcr",
+                             function(x) length(unique(x)),
+                             value = "input",
+                             simplify = TRUE)
+prop_amped <- n_amplified / obj$n_obs()
+heat_tree(obj,
+          node_label = taxon_names, 
+          node_color = prop_amped, 
+          node_color_range = c("grey", "red", "purple", "green"),
+          node_color_trans = "linear",
+          node_color_axis_label = "Proportion amplified",
+          node_size = n_obs,
+          node_size_axis_label = "Number of sequences",
+          layout = "da", 
+          initial_layout = "re")
+```
+

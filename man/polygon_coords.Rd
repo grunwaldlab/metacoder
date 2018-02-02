@@ -2,7 +2,7 @@
 % Please edit documentation in R/heat_tree--shape_generators.R
 \name{polygon_coords}
 \alias{polygon_coords}
-\title{Makes coordinates for a regualr polygon}
+\title{Makes coordinates for a regular polygon}
 \usage{
 polygon_coords(n = 5, x = 0, y = 0, radius = 1, angle = 0)
 }

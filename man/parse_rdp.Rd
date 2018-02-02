@@ -4,24 +4,37 @@
 \alias{parse_rdp}
 \title{Parse RDP FASTA release}
 \usage{
-parse_rdp(file, include_seqs = TRUE, add_species = FALSE)
+parse_rdp(input = NULL, file = NULL, include_seqs = TRUE,
+  add_species = FALSE)
 }
 \arguments{
-\item{file}{(\code{character} of length 1) The file path to the input file.}
+\item{input}{(\code{character}) One of the following: 
+\describe{
+  \item{A character vector of sequences}{See the example below for what this
+  looks like. The parser \code{\link{read_fasta}} produces output like this.}
+  \item{A list of character vectors}{Each vector should have one base per element.}
+  \item{A "DNAbin" object}{This is the result of parsers like
+  \code{\link[ape]{read.FASTA}}.}
+  \item{A list of "SeqFastadna" objects}{This is the result of parsers like
+  \code{\link[seqinr]{read.fasta}}.}
+  Either "input" or "file" must be supplied but not both.
+}}
+
+\item{file}{The path to a FASTA file containing sequences to use. Either
+"input" or "file" must be supplied but not both.}
 
 \item{include_seqs}{(\code{logical} of length 1) If \code{TRUE}, include 
 sequences in the output object.}
 
 \item{add_species}{(\code{logical} of length 1) If \code{TRUE}, add the
-species information to the taxonomy. In this databse, the speceis name
+species information to the taxonomy. In this databse, the species name
 often contains other information as well.}
 }
 \value{
 \code{\link{taxmap}}
 }
 \description{
-Parses an RDP reference FASTA file that can be found at
-https://rdp.cme.msu.edu/misc/resources.jsp.
+Parses an RDP reference FASTA file.
 }
 \details{
 The input file has a format like:

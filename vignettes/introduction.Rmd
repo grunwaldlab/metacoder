@@ -4,29 +4,257 @@ author: "Zachary S. L. Foster and Niklaus J. Grünwald"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{An introduction to MetacodeR}
+  %\VignetteIndexEntry{An introduction to metacoder}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r home_setup, echo=FALSE, warning=FALSE, message=FALSE}
-options(width = 80)
+options(width = 90)
 set.seed(1)
 # Knitr
 library(knitr)
 library(grid)
-opts_chunk$set(dev = 'png', fig.width = 7, fig.height = 7, warning = FALSE, message = FALSE)
+opts_chunk$set(dev = 'png', fig.width = 7, fig.height = 7, warning = TRUE,
+               message = TRUE)
 ```
-
 
 ## Documentation
 
-This is only a short introduction.
+This is only a short demonstration.
 See the full documentation at http://grunwaldlab.github.io/metacoder_documentation.
 
-UNDER CONSTRUCTION
+## Parsing
 
-## More inforamtion
+Many functions that used to be in `metacoder` have now been moved into the `taxa` package.
+These include the flexible parsers and dplyr-like data-manipulation functions.
+If you have an non-standard data format or want to use the more flexible `taxa` parsers, check out the intro to the taxa package [here](https://github.com/ropensci/taxa).
+`Metacoder` now has functions for parsing specific file formats used in metagenomics research.
+However, for this demonstration, we will be using a parser from the `taxa` package meant for tabular data.
 
-This document is only a short introduction to MetacodeR and there is much that is not covered.
+
+Included in `metacoder` is an example dataset that is a subset of the Human Microbiome Project data.
+This dataset has two parts: 
+
+* An abundance matrix called `hmp_otus`, with samples in columns and OTUs in rows
+* A sample information table called `hmp_samples`, with samples as rows and columns of information describing the samples (e.g. gender).
+
+This is the preferred way to encode this type of abundance information in `metacoder` and `taxa`.
+Lets take a look at this data:
+
+```{r}
+library(metacoder)
+print(hmp_otus)
+print(hmp_samples)
+```
+
+We can parse the taxonomic information in the abundance matrix using a parser from `taxa`:
+
+```{r}
+obj <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                      class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                      class_regex = "^(.+)__(.+)$")
+
+```
+
+This returns a `taxmap` object.
+The `taxmap` class is designed to store any number of tables, lists, or vectors associated with taxonomic information and facilitate manipulating the data in a cohesive way.
+Here is what that object looks like:
+
+```{r}
+print(obj)
+```
+
+## Abundance matrix manipulations
+
+### Removing low-abundance counts
+
+Low-abundance sequences might be the result of sequencing error, so typically we remove any counts/OTUs with less than some number of reads.
+Lets set all counts with less than 5 reads to zero:
+
+```{r}
+obj$data$tax_data <- zero_low_counts(obj, "tax_data", min_count = 5)
+```
+
+There might now be some OTUs with no "real" reads. Lets check:
+
+```{r}
+no_reads <- rowSums(obj$data$tax_data[, hmp_samples$sample_id]) == 0
+sum(no_reads)
+```
+
+It appears that `r sum(no_reads)`  of `r nrow(obj$data$tax_data)` OTUs now have no reads.
+We can remove those OTUs and their associated taxa with `filter_obs`:
+
+```{r}
+obj <- filter_obs(obj, "tax_data", ! no_reads, drop_taxa = TRUE)
+print(obj)
+```
+
+Note how there are fewer taxa now, as well as fewer OTUs.
+This coordinated manipulation of taxonomic and abundance data is one of the main benefits of using the `taxmap` class.
+
+
+### Accounting for un-even sampling
+
+These are raw counts, but people typically work with rarefied counts or proportions to avoid sampling depth biasing the results.
+The function `rarefy_obs` will return the rarefied counts for a table in a taxmap object, but lets use proportions for this demonstration:
+
+```{r}
+obj$data$tax_data <- calc_obs_props(obj, "tax_data")
+print(obj)
+```
+
+
+### Getting per-taxon information
+
+Currently, we have values for the abundance of each OTU, not each taxon.
+To get information on the taxa, we can sum the abundance per-taxon like so:
+
+```{r}
+obj$data$tax_abund <- calc_taxon_abund(obj, "tax_data",
+                                       cols = hmp_samples$sample_id)
+print(obj)
+```
+
+Note that there is now an additional table with one row per taxon.
+
+We can also easily calculate the number of samples have reads for each taxon:
+
+```{r}
+obj$data$tax_occ <- calc_n_samples(obj, "tax_abund", groups = hmp_samples$body_site)
+print(obj)
+```
+
+
+### Plotting taxonomic data
+
+Now that we have per-taxon information, we can plot the information using heat trees.
+The code below plots the number of "Nose" samples that have reads for each taxon.
+It also plots the number of OTUs assigned to each taxon in the overall dataset.
+
+```{r}
+heat_tree(obj, 
+          node_label = taxon_names,
+          node_size = n_obs,
+          node_color = Nose, 
+          node_size_axis_label = "OTU count",
+          node_color_axis_label = "Samples with reads")
+```
+
+Note how we did not have to specify the full path to the variable "Nose", but just its name.
+This is a shorthand for convenience.
+We could have made the same plot using this command:
+
+```{r, eval = FALSE}
+heat_tree(obj, 
+          node_label = obj$taxon_names(),
+          node_size = obj$n_obs(),
+          node_color = obj$data$tax_occ$Nose, 
+          node_size_axis_label = "OTU count",
+          node_color_axis_label = "Samples with reads")
+```
+
+
+### Comparing two treatments/groups
+
+Usually we are interested in how groups of samples compare.
+For example, we might want to know which taxa differ between the nose and throat, or between men and women.
+The function `compare_groups` facilitates these comparisons:
+
+```{r, warning = FALSE}
+obj$data$diff_table <- compare_groups(obj, dataset = "tax_abund",
+                                      cols = hmp_samples$sample_id,
+                                      groups = hmp_samples$sex)
+print(obj$data$diff_table)
+```
+
+We can use this information to create what we call a "differential heat tree", which indicates which taxa are more abundant in each treatment: 
+
+```{r}
+heat_tree(obj, 
+          node_label = taxon_names,
+          node_size = n_obs,
+          node_color = log2_median_ratio, 
+          node_color_interval = c(-2, 2),
+          node_color_range = c("cyan", "gray", "tan"),
+          node_size_axis_label = "OTU count",
+          node_color_axis_label = "Log 2 ratio of median proportions")
+```
+
+In this case, taxa colored tan are more abundant in women and those colored blue are more abundant in men.
+Note that we have not taken into account statistics significance when showing this, so lets do that.
+First, we need to correct for multiple comparisons: 
+
+```{r}
+obj$data$diff_table$wilcox_p_value <- p.adjust(obj$data$diff_table$wilcox_p_value,
+                                               method = "fdr")
+```
+
+If we then look at the distribution of p-values, we can see that none are even close to significant:
+
+```{r}
+hist(obj$data$diff_table$wilcox_p_value) 
+```
+
+There is no need to graph this, but if there still were some significant differences, we could set any difference that is not significant to zero and repeat the last `heat_tree` command.
+
+### Comparing any number of treatments/groups
+
+A single differential heat tree can compare two treatments, but what if you have more?
+Then we can make a matrix of heat trees, one for each pairwise comparison of treatments like so: 
+
+```{r, warning = FALSE}
+obj$data$diff_table <- compare_groups(obj, dataset = "tax_abund",
+                                      cols = hmp_samples$sample_id,
+                                      groups = hmp_samples$body_site)
+print(obj$data$diff_table)
+```
+
+There is a special function to plot this type of data called `heat_tree_matrix`:
+
+```{r}
+heat_tree_matrix(obj,
+                 dataset = "diff_table",
+                 node_size = n_obs,
+                 node_label = taxon_names,
+                 node_color = log2_median_ratio,
+                 node_color_range = diverging_palette(),
+                 node_color_trans = "linear",
+                 node_color_interval = c(-3, 3),
+                 edge_color_interval = c(-3, 3),
+                 node_size_axis_label = "Number of OTUs",
+                 node_color_axis_label = "Log2 ratio median proportions")
+```
+
+
+## More information
+
+This document is only a short introduction to metacoder and there is much that is not covered.
 For more information, see our website at http://grunwaldlab.github.io/metacoder_documentation/ and our github repository at https://github.com/grunwaldlab/metacoder.
+There is also extensive help and examples in the function documentation that can be accessed by, for example, `?heat_tree`.
+
+## Feedback
+
+We welcome any kind of feedback! 
+Let us know if you run into problems by submitting an issue on our Github repo: https://github.com/grunwaldlab/metacoder
+
+## Dependencies
+
+The function that runs *in silico* PCR requires `primersearch` from the EMBOSS tool kit to be installed. This is not an R package, so it is not automatically installed. Type `?primersearch` after installing and loading metacoder for installation instructions.
+
+## Citation
+
+If you use metcoder in a publication, please cite our [article in PLOS Computational Biology](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
+
+Foster ZSL, Sharpton TJ, Grünwald NJ (2017) Metacoder: An R package for visualization and manipulation of community taxonomic diversity data. PLOS Computational Biology 13(2): e1005404. https://doi.org/10.1371/journal.pcbi.1005404
+
+## License
+
+This work is subject to the [MIT License](https://github.com/grunwaldlab/metacoder/blob/master/LICENSE).
+
+## Acknowledgements
+
+This package includes code from the R package [ggrepel](https://github.com/slowkow/ggrepel) to handle label overlap avoidance with permission from the author of [ggrepel](https://github.com/slowkow/ggrepel) [Kamil Slowikowski](https://github.com/slowkow).
+We included the code instead of depending on `ggrepel` because we are using functions internal to `ggrepel` that might change in the future.
+We thank Kamil Slowikowski for letting us use his code and would like to acknowledge his implementation of the label overlap avoidance used in metacoder.

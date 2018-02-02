@@ -28,6 +28,8 @@
 #' 
 #' }
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_phyloseq <- function(obj) {
   datasets <- list()
@@ -76,9 +78,10 @@ parse_phyloseq <- function(obj) {
   # Construct output
   tax_cols <- colnames(tax_data)[which(tolower(colnames(tax_data)) %in% possible_ranks)]
   output <- taxa::parse_tax_data(tax_data = tax_data, 
-                           datasets = datasets,
-                           class_cols = tax_cols, 
-                           mappings = mappings)
+                                 datasets = datasets,
+                                 class_cols = tax_cols, 
+                                 mappings = mappings,
+                                 named_by_rank = TRUE)
   
   # Remove NA taxa
   output$filter_taxa(output$taxon_names() != "NA")
@@ -155,11 +158,11 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
   # Read raw data
   if (! are_missing["file"]) {
-    raw_data <- utils::read.csv(file_path = file, header = TRUE, sep = "\t",
-                         stringsAsFactors = FALSE)
+    raw_data <- utils::read.csv(file = file, header = TRUE, sep = "\t",
+                                stringsAsFactors = FALSE)
   } else if (! are_missing["text"]) {
     raw_data <- utils::read.csv(text = text, header = TRUE, sep = "\t",
-                         stringsAsFactors = FALSE)
+                                stringsAsFactors = FALSE)
   } else {
     if (!is.data.frame(table)) {
       stop('The "table" input requires a data.frame or tibble.')
@@ -184,8 +187,9 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
     output <- taxa::parse_tax_data(tax_data = raw_data,
                                    class_cols = "rankID",
                                    class_sep = ".")
-    # replace taoxon names
-    my_taxon_names <- output$map_data(taxon_ids, taxon)
+    # replace taxon names
+    my_taxon_names <- output$map_data_(output$taxon_ids(),
+                                       output$get_data("taxon")[[1]])
     output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
                                           function(i) {
                                             my_taxon <- output$taxa[[i]]
@@ -236,6 +240,8 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
 #' @return \code{\link{taxmap}}
 #' 
 #' @family parsers
+#' 
+#' @import taxa
 #' 
 #' @export
 parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
@@ -295,6 +301,8 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' 
 #' @family parsers
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_qiime_biom <- function(file) {
   # Check that the "biomformat" package has been installed
@@ -342,6 +350,8 @@ parse_qiime_biom <- function(file) {
 #' 
 #' @family parsers
 #' 
+#' @import taxa
+#' 
 #' @export
 parse_newick <- function(file) {
   # Read input
@@ -366,7 +376,7 @@ parse_newick <- function(file) {
 #' ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT...
 #' }
 #' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
 #'   
@@ -374,15 +384,15 @@ parse_newick <- function(file) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
-parse_unite_general <- function(file, include_seqs = TRUE) {
-  # Read file
-  raw_data <- ape::read.FASTA(file)
-  headers <- names(raw_data)
-  seqs <- vapply(as.character(raw_data),
-                 FUN = function(x) paste0(x, collapse = ""),
-                 FUN.VALUE = character(1))
+parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) {
   
+  # Read sequence info
+  seqs <- parse_seq_input(input = input, file = file)
+  headers <- names(seqs)
+
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
                                    regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)\\|(.*)$",
@@ -412,8 +422,7 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 
 #' Parse RDP FASTA release
 #' 
-#' Parses an RDP reference FASTA file that can be found at
-#' https://rdp.cme.msu.edu/misc/resources.jsp.
+#' Parses an RDP reference FASTA file.
 #' 
 #' The input file has a format like:
 #' 
@@ -424,21 +433,24 @@ parse_unite_general <- function(file, include_seqs = TRUE) {
 #' ...
 #' }
 #' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include 
 #'   sequences in the output object.
 #' @param add_species (\code{logical} of length 1) If \code{TRUE}, add the
-#'   species information to the taxonomy. In this databse, the speceis name
+#'   species information to the taxonomy. In this databse, the species name
 #'   often contains other information as well.
 #'   
 #' @return \code{\link{taxmap}}
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
-parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
-  # Read file
-  raw_data <- ape::read.FASTA(file)
+parse_rdp <- function(input = NULL, file = NULL, include_seqs = TRUE, add_species = FALSE) {
+  
+  # Read sequence info
+  raw_data <- parse_seq_input(input = input, file = file)
   headers <- names(raw_data)
   
   # Add species to classification if present
@@ -464,9 +476,7 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
   
   # Add sequences 
   if (include_seqs) {
-    seqs <- vapply(as.character(raw_data[output$data$tax_data$input]),
-                   FUN = function(x) paste0(x, collapse = ""),
-                   FUN.VALUE = character(1))
+    seqs <- raw_data[output$data$tax_data$input]
     output$data$tax_data$rdp_seq <- tolower(seqs)
   }
   
@@ -480,32 +490,34 @@ parse_rdp <- function(file, include_seqs = TRUE, add_species = FALSE) {
 
 
 #' Parse SILVA FASTA release
-#' 
+#'
 #' Parses an SILVA FASTA file that can be found at
-#' https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/.
-#' 
+#' \url{https://www.arb-silva.de/no_cache/download/archive/release_128/Exports/}.
+#'
 #' The input file has a format like:
-#' 
-#' \preformatted{
-#' >GCVF01000431.1.2369 Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
+#'
+#' \preformatted{ >GCVF01000431.1.2369
+#' Bacteria;Proteobacteria;Gammaproteobacteria;Oceanospiril...
 #' CGUGCACGGUGGAUGCCUUGGCAGCCAGAGGCGAUGAAGGACGUUGUAGCCUGCGAUAAGCUCCGGUUAGGUGGCAAACA
 #' ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
-#' ...
-#' }
-#' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' ... }
+#'
+#' @inheritParams parse_seq_input
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include
 #'   sequences in the output object.
-#'   
+#'
 #' @return \code{\link{taxmap}}
-#'   
+#'
 #' @family parsers
-#'   
+#'
+#' @import taxa
+#'
 #' @export
-parse_silva_fasta <- function(file, include_seqs = TRUE) {
-  # Read file
-  raw_data <- seqinr::read.fasta(file, as.string = TRUE)
-  raw_headers <- vapply(raw_data, attr, which = "Annot", character(1))
+parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
+  
+  # Read sequence info
+  raw_data <- parse_seq_input(input = input, file = file)
+  raw_headers <- names(raw_data)
   
   # Make classifications easier to parse
   name_chars <- "A-Za-z0-9.\\-_+ "
@@ -514,13 +526,14 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
   parts <- as.data.frame(parts[, -1], stringsAsFactors = FALSE)
   colnames(parts) <- c("tax", "binom", "common")
   parts$binom <- sub(parts$binom, pattern = "sp\\. ", replacement = "sp\\._")
-  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom)
+  parts$binom <- sub(parts$binom, pattern = "uncultured ", replacement = "uncultured_")
+  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom) 
   parts$binom <- sub(pattern = ";$", replacement = " ", parts$binom)
   headers <- apply(parts, MARGIN = 1, paste0, collapse = "")
   
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
-                                   regex = "^>(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
+                                   regex = "^(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
                                    key = c(ncbi_id = "info",
                                            start_pos = "info",
                                            end_pos = "info",
@@ -538,12 +551,16 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
   
   # Add sequences 
   if (include_seqs) {
-    output$data$tax_data$silva_seq <- toupper(unlist(raw_data))
+    output$data$tax_data$silva_seq <- raw_data
   }
   
   # Remove unneeded columns
-  output$data$tax_data$input <- NULL
+  # output$data$tax_data$input <- NULL
   output$data$tax_data$tax_string <- NULL
+  
+  # Filter uninformative rows in class_data
+  output$data$class_data <- output$data$class_data[output$data$class_data$other_name != "", ]
+  output$data$class_data$name <- trimws(output$data$class_data$name)
   
   return(output)
 }
@@ -571,13 +588,17 @@ parse_silva_fasta <- function(file, include_seqs = TRUE) {
 #' ...
 #' }
 #' 
-#' @param tax_file (\code{character} of length 1) The file path to the greengenes taxonomy file.
-#' @param seq_file (\code{character} of length 1) The file path to the greengenes sequence fasta file. This is optional.
+#' @param tax_file (\code{character} of length 1) The file path to the
+#'   greengenes taxonomy file.
+#' @param seq_file (\code{character} of length 1) The file path to the
+#'   greengenes sequence fasta file. This is optional.
 #'   
 #' @return \code{\link{taxmap}}
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_greengenes <- function(tax_file, seq_file = NULL) {
   # Parse taxonomy file
@@ -614,6 +635,8 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
 #'   
 #' @family parsers
 #'   
+#' @import taxa
+#' 
 #' @export
 parse_phylo  <- function(obj) {
   # Parse edge list
@@ -653,5 +676,5 @@ parse_phylo  <- function(obj) {
                                        edge_length = edge_length,
                                        tip_label = tip_label))
   output$data <- c(output$data, list(tax_data = tax_data))
-  output$replace_taxon_ids(taxa:::convert_base(as.integer(output$taxon_ids())))
+  output$replace_taxon_ids(convert_base(as.integer(output$taxon_ids())))
 }

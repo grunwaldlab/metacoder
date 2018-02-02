@@ -4,6 +4,20 @@
 
 ### Bug fixes
 
+* Fixes numerous bugs in `heat_tree_matrix` that happen when the input data is not exactly like that produced by `compare_groups` (issues [#195](https://github.com/grunwaldlab/metacoder/issues/195), [#196](https://github.com/grunwaldlab/metacoder/issues/196), [#197](https://github.com/grunwaldlab/metacoder/issues/197)). 
+* Fixed how `output_file` was used with `heat_tree_matrix`. Now whole plot is saved instead of last subplot.  (issue [#203](https://github.com/grunwaldlab/metacoder/issues/203))
+* Fixed "unused argument" bug in `parse_mothur_tax_summary` when reading from a file path (issue [#211](https://github.com/grunwaldlab/metacoder/issues/211)).
+
+### Improvements
+
+* Node and edge legends can now be excluded individually (Thanks [\@grabear](https://github.com/grabear)!) (issue [#202](https://github.com/grunwaldlab/metacoder/issues/202)).
+* The output of `heat_tree_matrix` always has a 1:1 aspect ratio. (issue [#205](https://github.com/grunwaldlab/metacoder/issues/205))
+
+
+## metacoder 0.2.0
+
+### Bug fixes
+
 * Fixed bug in `subtaxa` that caused an error when all of `subset` is `FALSE`. (issue [#143](https://github.com/grunwaldlab/metacoder/issues/143))
 * Fixed bug in `filter_taxa` that caused an error when all taxa are filtered out. (issue [#144](https://github.com/grunwaldlab/metacoder/issues/144))
 
@@ -11,10 +25,13 @@
 
 * All taxmap-related manipulation functions have been moved to the [taxa](https://github.com/ropensci/taxa) package.
 * `heat_tree` now uses the `taxmap` class defined in the [taxa](https://github.com/ropensci/taxa) package.
+* Numerous changes (i.e. upgrades) to `primersearch`
 
 ### Improvements
 
-* `ggrepel` package now used to repel labels to avoid overlapping labels.
+* Upgraded `primersearch` output to be cleaner and have info like the amplicon sequence and primer binding sites.
+* Added functions to identift and remove taxa with ambiguous names like "unknown"
+* code from [ggrepel](https://github.com/slowkow/ggrepel) package now used to avoid overlapping labels. Thanks Kamil Slowikowski!
 * New function `heat_tree_matrix` to make plotting a pairwise matrix of heat trees for comparing treatments.
 * New parser named `parse_mothur_tax_summary` for mothur *.tax.summary file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).
 * New parser named `parse_mothur_taxonomy` for mothur *.taxonomy file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).

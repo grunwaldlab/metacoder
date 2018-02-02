@@ -8,10 +8,10 @@ get_optimal_range(max_range, min_range, resolution, opt_crit, choose_best,
   minimize = TRUE)
 }
 \arguments{
-\item{max_range}{(\code{numeric} of length 2) The min and max boundries to the search space for
+\item{max_range}{(\code{numeric} of length 2) The min and max boundaries to the search space for
 the optimal maximum value.}
 
-\item{min_range}{(\code{numeric} of length 2) The min and max boundries to the search space for
+\item{min_range}{(\code{numeric} of length 2) The min and max boundaries to the search space for
 the optimal minimum value.}
 
 \item{resolution}{(\code{numeric} of length 2) The number of increments in each dimension.}

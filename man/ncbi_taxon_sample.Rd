@@ -6,8 +6,9 @@
 \usage{
 ncbi_taxon_sample(name = NULL, id = NULL, target_rank, min_counts = NULL,
   max_counts = NULL, interpolate_min = TRUE, interpolate_max = TRUE,
-  min_length = 1, max_length = 10000, min_children = NULL,
-  max_children = NULL, verbose = TRUE, ...)
+  min_children = NULL, max_children = NULL, seqrange = "1:3000",
+  getrelated = FALSE, fuzzy = TRUE, limit = 10, entrez_query = NULL,
+  hypothetical = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{name}{(\code{character} of length 1) The taxon to download a sample of sequences for.}
@@ -26,19 +27,13 @@ taxonomic rank. The names correspond to taxonomic ranks.}
 
 \item{interpolate_min}{(\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
 and \code{min_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of spcified ranks will be used to determine
+specified. Linear interpolation between values of specified ranks will be used to determine
 values of unspecified ranks.}
 
 \item{interpolate_max}{(\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
 and \code{max_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of spcified ranks will be used to determine
+specified. Linear interpolation between values of specified ranks will be used to determine
 values of unspecified ranks.}
-
-\item{min_length}{(\code{numeric} of length 1) The minimum length of sequences that will be
-returned.}
-
-\item{max_length}{(\code{numeric} of length 1) The maximum length of sequences that will be
-returned.}
 
 \item{min_children}{(named \code{numeric}) The minimum number sub-taxa of taxa for a given
 rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
@@ -46,26 +41,55 @@ rank must have for its sequences to be searched. The names correspond to taxonom
 \item{max_children}{(named \code{numeric}) The maximum number sub-taxa of taxa for a given
 rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
 
-\item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
+\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of 
+sequence lengths to search for. So \code{"1:1000"} means search for sequences from 1 to 1000
+characters in length.}
 
-\item{...}{Additional arguments are passed to \code{\link[traits]{ncbi_searcher}}.}
+\item{getrelated}{(logical) If \code{TRUE}, gets the longest sequences of a species
+in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match 
+found.}
+
+\item{fuzzy}{(logical) Whether to do fuzzy taxonomic ID search or exact search. If \code{TRUE},
+we use \code{xXarbitraryXx[porgn:__txid<ID>]}, but if \code{FALSE}, we use \code{txid<ID>}.
+Default: \code{FALSE}}
+
+\item{limit}{(\code{numeric}) Number of sequences to search for and return. Max of 10,000.
+If you search for 6000 records, and only 5000 are found, you will of course
+only get 5000 back.}
+
+\item{entrez_query}{(\code{character}; length 1) An Entrez-format query to filter results with.
+This is useful to search for sequences with specific characteristics. The format is the same
+as the one used to seach genbank.
+(\url{https://www.ncbi.nlm.nih.gov/books/NBK3837/#EntrezHelp.Entrez_Searching_Options})}
+
+\item{hypothetical}{(\code{logical}; length 1) If \code{FALSE}, an attempt will be made to not
+return hypothetical or predicted sequences judging from accession number prefixs (XM and XR).
+This can result in less than the \code{limit} being returned even if there are more sequences
+available, since this filtering is done after searching NCBI.}
+
+\item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
 }
 \description{
 Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-Can be used to get a shallow sampling of a vast groups. 
+Can be used to get a shallow sampling of vast groups. 
 \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
 can take a very long time. 
 Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-Use a downloaded database and a parser from the taxa package when possible.
+Use a downloaded database and a parser from the \code{taxa} package when possible.
 }
 \examples{
-\dontrun{
-ncbi_taxon_sample(name = "oomycetes", target_rank = "genus")
-data <- ncbi_taxon_sample(name = "fungi", target_rank = "phylum", 
-                          max_counts = c(phylum = 30), 
-                          entrez_query = "18S[All Fields] AND 28S[All Fields]",
-                          min_length = 600, max_length = 10000)
-}
 
+\dontrun{
+
+# Look up 5 ITS sequences from each fungal class
+data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
+                          entrez_query = '"internal transcribed spacer"[All Fields]')
+
+# Look up taxonomic information for sequences
+obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
+
+# Plot information
+filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
+  heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
 }
-\keyword{internal}
+}

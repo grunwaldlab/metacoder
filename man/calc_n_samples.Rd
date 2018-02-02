@@ -2,13 +2,13 @@
 % Please edit documentation in R/calculations.R
 \name{calc_n_samples}
 \alias{calc_n_samples}
-\title{Count the number of samples with reads}
+\title{Count the number of samples}
 \usage{
 calc_n_samples(obj, dataset, cols = NULL, groups = NULL, out_names = NULL,
   drop = FALSE, append = FALSE)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj} that contains counts.}
 
@@ -24,17 +24,17 @@ there will be one column in the output for each unique value in
 \item{out_names}{The names of count columns in the output. Must be the length
 1 or same length as \code{unique(groups)}, if used.}
 
-\item{append}{If \code{TRUE}, append results to input table and return.}
-
-\item{If}{\code{groups} is not used, return a vector of the results instead
+\item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}
+
+\item{append}{If \code{TRUE}, append results to input table and return.}
 }
 \value{
 A tibble
 }
 \description{
-For a given table in a taxmap object, count the number of samples with
-greater than zero reads.
+For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
+samples with greater than zero occurrences.
 }
 \examples{
 \dontrun{
@@ -50,7 +50,7 @@ calc_n_samples(x, dataset = "tax_data")
 calc_n_samples(x, dataset = "tax_data", drop = TRUE)
 
 # Only use some columns
-calc_n_samples(x, dataset = "tax_data", cols =  hmp_samples$sample_id[1:5])
+calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
 
 # Return a count for each treatment
 calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
@@ -67,6 +67,6 @@ calc_n_samples(x, dataset = "tax_data", append = TRUE)
 \seealso{
 Other calculations: \code{\link{calc_obs_props}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_treatments}},
-  \code{\link{rarefy_obs}}
+  \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
+  \code{\link{zero_low_counts}}
 }

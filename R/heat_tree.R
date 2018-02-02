@@ -11,7 +11,7 @@ heat_tree <- function(...) {
 #' @rdname heat_tree
 heat_tree.Taxmap <- function(.input, ...) {
   # Non-standard argument evaluation
-  data <- taxa:::data_used(.input, ...)
+  data <- .input$data_used(...)
   data <- lapply(data, `[`, .input$edge_list$to) # orders everthing the same
   arguments <- c(list(taxon_id = .input$edge_list$to, supertaxon_id = .input$edge_list$from),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
@@ -37,7 +37,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 
 
 
-#===================================================================================================
 #' Plot a taxonomic tree
 #' 
 #' Plots the distribution of values associated with a taxonomic classification.
@@ -45,7 +44,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Sizes and colors of nodes, edges, labels, and individual trees can be displayed relative to
 #' numbers (e.g. taxon statistics, such as abundance).
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
-#' Various transforamtions can be applied to numbers sizes/colors are mapped to.
+#' Various transformations can be applied to numbers sizes/colors are mapped to.
 #' Several types of tree layout algorithms from \code{\link{igraph}} can be used. 
 #' 
 #' @param taxon_id The unique ids of taxa.
@@ -181,7 +180,8 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' of nodes, passed as input to the \code{layout} algorithm.
 #' See details on layouts.
 #' Default: Not used.
-#' @param make_legend if TRUE...
+#' @param make_node_legend if TRUE, make legend for node size/color mappings. 
+#' @param make_edge_legend if TRUE, make legend for edge size/color mappings. 
 #' @param title Name to print above the graph.
 #' @param title_size The size of the title relative to the rest of the graph. 
 #' 
@@ -201,9 +201,9 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Default: Do not save plot.
 #' 
 #' @param aspect_ratio The aspect_ratio of the plot.
-#' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel pacakge to spread out labels.
-#' @param repel_force The force of which overlapping labels will be repeled from eachother. 
-#' @param repel_iter The number of iterations used whe repeling labels
+#' @param repel_labels If \code{TRUE} (Defualt), use the ggrepel package to spread out labels.
+#' @param repel_force The force of which overlapping labels will be repelled from eachother. 
+#' @param repel_iter The number of iterations used when repelling labels
 #' @param verbose If \code{TRUE} print progress reports as the function runs.
 #' 
 #' @param ... (other named arguments)
@@ -215,7 +215,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' The size of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for displaying statistics for taxa, such as abundance.
-#' Only the relative size of numbers is used, not the values themeselves.
+#' Only the relative size of numbers is used, not the values themselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual sizes displayed on the graph can be set using the range options.
 #' 
@@ -226,7 +226,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
 #' This is useful for highlighting groups of taxa.
-#' Only the relative size of numbers is used, not the values themeselves.
+#' Only the relative size of numbers is used, not the values themselves.
 #' They can be transformed to make the mapping non-linear using the transformation options.
 #' The range of actual colors displayed on the graph can be set using the range options.
 #' 
@@ -234,7 +234,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' If a numeric vector is given, it is mapped to a color scale.
 #' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 #' 
-#' @section labels:
+#' @section Labels:
 #' 
 #' The labels of nodes, edges, and trees can be added.
 #' Node labels are centered over their node.
@@ -243,7 +243,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 #' 
-#' @section transformations:
+#' @section Transformations:
 #' 
 #' Before any numbers specified are mapped to color/size, they can be transformed to make
 #' the mapping non-linear. 
@@ -261,7 +261,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'   \item{"ln area"}{Log base e of circular area}
 #' }
 #' 
-#' @section ranges:
+#' @section Ranges:
 #' 
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
 #' Size ranges are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
@@ -272,7 +272,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Color ranges can be any number of color values as either HEX codes (e.g. \code{#000000}) or
 #' color names (e.g. \code{"black"}).
 #' 
-#' @section layout:
+#' @section Layout:
 #' 
 #' Layouts determine the position of nodes on the graph.
 #' The are implemented using the \code{\link{igraph}} package.
@@ -294,7 +294,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' }
 #' 
 #' 
-#' @section intervals:
+#' @section Intervals:
 #' 
 #' This is the minimum and maximum of values displayed on the legend scales.
 #' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
@@ -303,6 +303,15 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
 #' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
+#' 
+#' @section Acknowledgements:
+#' 
+#' This package includes code from the R package ggrepel to handle label overlap
+#' avoidance with permission from the author of ggrepel Kamil Slowikowski. We
+#' included the code instead of depending on ggrepel because we are using
+#' internal functions to ggrepel that might change in the future. We thank Kamil
+#' Slowikowski for letting us use his code and would like to acknowledge his
+#' implementation of the label overlap avoidance used in metacoder.
 #' 
 #' @examples
 #' \dontrun{
@@ -380,7 +389,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'           node_size_trans = "log10 area")
 #' 
 #' # Setting the interval displayed:
-#' #  By defualt, the whole range of the statistic provided will be displayed.
+#' #  By default, the whole range of the statistic provided will be displayed.
 #' #  You can set what range of values are displayed using options ending in `_interval`.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           node_size_interval = c(10, 100))
@@ -455,7 +464,8 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               margin_size = c(0, 0, 0, 0),
                               layout = "reingold-tilford",
                               initial_layout = "fruchterman-reingold",
-                              make_legend = TRUE,
+                              make_node_legend = TRUE,
+                              make_edge_legend = TRUE,
                               title = NULL,
                               title_size = 0.08,
                               
@@ -700,10 +710,14 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
         overlap <- (overlap ^ 2) / (scaled_vs[distance$index_1] ^ 2 + scaled_vs[distance$index_2] ^ 2)
         mean(overlap)
       }
-
+      
       # Choose base range based on optimality criteria  - - - - - - - - - - - - - - - - - - - - - - - -
       optimality_stat <- function(minimum, maximum) {
-        overlap <- find_overlap(minimum, maximum, all_pairwise)
+        if (minimum == 0) {
+          overlap <- 0
+        } else {
+          overlap <- find_overlap(minimum, maximum, all_pairwise)
+        }
         ideal_min <- 0.02
         ideal_max <- 0.3
         ideal_range <- .1
@@ -724,7 +738,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                           fitness =  function(x) optimality_stat(x[1], x[2]),
                           min = c(min_range[1], max_range[1]), max = c(min_range[2], max_range[2]),
                           maxiter = 40, run = 30, popSize = 70, monitor = FALSE, parallel = FALSE)
-      vsr_plot <- as.vector(ga_result@solution)
+      vsr_plot <- as.vector(ga_result@solution[1, ])
     }
   } else {
     square_side_length = 1
@@ -734,10 +748,10 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #|
   #| #### Infer edge size range -------------------------------------------------------------------
   #|
-  infer_size_range <- function(specified_range, reference_range, defualt_scale) {
+  infer_size_range <- function(specified_range, reference_range, default_scale) {
     result <- specified_range * square_side_length
     if (is.na(result[1]) && is.na(result[2])) { # If the user has not set range
-      result <- reference_range * defualt_scale
+      result <- reference_range * default_scale
     } else if (is.na(result[1])) { # If the user has set a maximum but not a minimum
       result[1] <- result[2] * reference_range[1] / reference_range[2]
     } else if (is.na(result[2])) { # If the user has set a minimum but not a maximum
@@ -746,7 +760,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     return(result)
   }
   
-  esr_plot <- infer_size_range(edge_size_range, vsr_plot, defualt_scale = 0.5)
+  esr_plot <- infer_size_range(edge_size_range, vsr_plot, default_scale = 0.5)
   data$es_plot <- rescale(data$es_t, to = esr_plot, from = edge_size_interval_trans)
   #|
   #| #### Infer tree size range -------------------------------------------------------------------
@@ -769,9 +783,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     data$tls_user <- sqrt(data$tree_area)
     data$tls_trans <- apply_trans("tls_user") 
   }
-  vlsr_plot <- infer_size_range(node_label_size_range, vsr_plot, defualt_scale = 0.8)
-  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, defualt_scale = 0.8)
-  tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, defualt_scale = 0.1)
+  vlsr_plot <- infer_size_range(node_label_size_range, vsr_plot, default_scale = 0.8)
+  elsr_plot <- infer_size_range(edge_label_size_range, esr_plot, default_scale = 0.8)
+  tlsr_plot <- infer_size_range(tree_label_size_range, tsr_plot, default_scale = 0.1)
   data$vls_plot <- rescale(data$vls_trans, to = vlsr_plot)
   data$els_plot <- rescale(data$els_trans, to = elsr_plot)
   data$tls_plot <- rescale(data$tls_trans, to = tlsr_plot)
@@ -966,14 +980,16 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     
     if (repel_labels) {
       movable <- text_data$group != "legend"
-      text_data[movable, c("x", "y")] <- ggrepel:::repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
-                                                               boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
-                                                               point_padding_x = 0, point_padding_y = 0,
-                                                               xlim = ranges$x,
-                                                               ylim = ranges$y,
-                                                               force = 1e-06 * repel_force,
-                                                               maxiter = repel_iter,
-                                                               direction = "both")
+      text_data[movable, c("x", "y")] <- repel_boxes(data_points = as.matrix(text_data[movable, c("x", "y")]),
+                                                     boxes = as.matrix(bounds[movable, c("xmin", "ymin", "xmax", "ymax")]),
+                                                     point_padding_x = 0, point_padding_y = 0,
+                                                     xlim = ranges$x,
+                                                     ylim = ranges$y,
+                                                     # hjust = 0.5,
+                                                     # vjust = 0.5,
+                                                     force = 1e-06 * repel_force,
+                                                     maxiter = repel_iter,
+                                                     direction = "both")
       bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                              height = text_data$size, rotation = text_data$rotation,
                              just = text_data$justification)
@@ -989,7 +1005,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   #| #### Make node legend -----------------------------------------------------------------------
   #|
   my_print("Making legends...", verbose = verbose)
-  if (make_legend) {
+  if (make_node_legend | make_edge_legend) {
     legend_length <- square_side_length * 0.3 
     
     # right_plot_boundry <- max(c(element_data[element_data$y <= legend_length + min(element_data$y), "x"],
@@ -1001,23 +1017,27 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       right_plot_boundry <- max(c(element_data$x, bounds$xmax))
     }
     
-    node_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = min(element_data$y) * 0.9, 
-                                    length = legend_length, 
-                                    width_range = vsr_plot * 2, 
-                                    width_trans_range = range(data$vs_trans) * 2,
-                                    width_stat_range =  node_size_interval,
-                                    group_prefix = "node_legend",
-                                    width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
-                                    color_range = node_color_range,
-                                    color_trans_range = node_color_interval_trans,
-                                    color_stat_range = node_color_interval, 
-                                    color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
-                                    title = "Nodes",
-                                    color_axis_label = node_color_axis_label,
-                                    size_axis_label = node_size_axis_label,
-                                    hide_size = missing(node_size),
-                                    hide_color = missing(node_color))
+    if (make_node_legend) {
+      node_legend <- make_plot_legend(x = right_plot_boundry,
+                                      y = min(element_data$y) * 0.9, 
+                                      length = legend_length, 
+                                      width_range = vsr_plot * 2, 
+                                      width_trans_range = range(data$vs_trans) * 2,
+                                      width_stat_range =  node_size_interval,
+                                      group_prefix = "node_legend",
+                                      width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
+                                      color_range = node_color_range,
+                                      color_trans_range = node_color_interval_trans,
+                                      color_stat_range = node_color_interval, 
+                                      color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
+                                      title = "Nodes",
+                                      color_axis_label = node_color_axis_label,
+                                      size_axis_label = node_size_axis_label,
+                                      hide_size = missing(node_size),
+                                      hide_color = missing(node_color))
+      element_data <- rbind(element_data, node_legend$shapes)
+      text_data <- rbind(text_data, node_legend$labels)
+    }
     #|
     #| #### Make edge legend -----------------------------------------------------------------------
     #|
@@ -1025,25 +1045,27 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     # right_plot_boundry <- max(c(element_data[element_data$y >= max(element_data$y) - legend_length, "x"],
     #                             bounds[bounds$ymax >= max(element_data$y) - legend_length, "xmin"]))
     
-    edge_legend <- make_plot_legend(x = right_plot_boundry,
-                                    y = max(element_data$y) - legend_length * 1.3, 
-                                    length = legend_length, 
-                                    width_range = esr_plot * 2, 
-                                    width_trans_range = range(data$vs_trans) * 2,
-                                    width_stat_range =  edge_size_interval,
-                                    group_prefix = "edge_legend",
-                                    width_stat_trans = transform_data(func = edge_size_trans, inverse = TRUE),
-                                    color_range = edge_color_range,
-                                    color_trans_range = edge_color_interval_trans,
-                                    color_stat_range = edge_color_interval, 
-                                    color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
-                                    title = "Edges",
-                                    color_axis_label = edge_color_axis_label,
-                                    size_axis_label = edge_size_axis_label,
-                                    hide_size = missing(edge_size),
-                                    hide_color = missing(edge_color))
-    element_data <- rbind(element_data, node_legend$shapes, edge_legend$shapes)
-    text_data <- rbind(text_data, node_legend$labels, edge_legend$labels)
+    if (make_edge_legend) {
+      edge_legend <- make_plot_legend(x = right_plot_boundry,
+                                      y = max(element_data$y) - legend_length * 1.3, 
+                                      length = legend_length, 
+                                      width_range = esr_plot * 2, 
+                                      width_trans_range = range(data$vs_trans) * 2,
+                                      width_stat_range =  edge_size_interval,
+                                      group_prefix = "edge_legend",
+                                      width_stat_trans = transform_data(func = edge_size_trans, inverse = TRUE),
+                                      color_range = edge_color_range,
+                                      color_trans_range = edge_color_interval_trans,
+                                      color_stat_range = edge_color_interval, 
+                                      color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
+                                      title = "Edges",
+                                      color_axis_label = edge_color_axis_label,
+                                      size_axis_label = edge_size_axis_label,
+                                      hide_size = missing(edge_size),
+                                      hide_color = missing(edge_color))
+      element_data <- rbind(element_data, edge_legend$shapes)
+      text_data <- rbind(text_data, edge_legend$labels)
+    }
     bounds <- label_bounds(label = text_data$label, x = text_data$x, y = text_data$y,
                            height = text_data$size, rotation = text_data$rotation,
                            just = text_data$justification)

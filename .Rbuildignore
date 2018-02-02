@@ -1,5 +1,6 @@
 ^\.travis\.yml$
 ^README\.html$
+^README\.Rmd$
 ^.+\.Rproj$
 ^\.Rproj\.user$
 ^scratch$
@@ -8,3 +9,4 @@
 ^cran-comments\.md$
 ^readme_figure\.png$
 ^LICENSE$
+^README_files$
