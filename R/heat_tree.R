@@ -299,11 +299,14 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' This is the minimum and maximum of values displayed on the legend scales.
 #' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
-#' These are defined in the same units as element size/color.
-#' By default, the minimum and maximum equals the range of the values used to infer size/color.
+#' When explicitely used, the element's interval will redefine the way the actual value is being represented.
+#' Any value below the element's minimum interval will be graphically represented the same as a value AT the
+#' minimum interval.  Any value above the element's maximum interval will be graphically represented the same
+#' as a value AT the maximum interval.
+#' By default, the minimum and maximum equals the range used to infer the value of the element.
 #' Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
-#' Note that this is different from the "range" options, which determine the range of graphed sizes/colors.
+#' Note that this is different from "range" mapping property, which determines the size/color of graphed elements.
 #' 
 #' @section Acknowledgements:
 #' 
