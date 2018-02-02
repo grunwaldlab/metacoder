@@ -264,6 +264,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @section Ranges:
 #' 
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
+#' When explicitely used, the size range will proportionately increase/decrease the size of a particular element.
 #' Size ranges are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
 #' The units used should be between 0 and 1, representing the proportion of a dimension of the graph.
 #' Since the dimensions of the graph are determined by layout, and not always square, the value
