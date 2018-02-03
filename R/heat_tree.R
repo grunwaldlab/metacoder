@@ -287,10 +287,10 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Color ranges can be any number of color values as either HEX codes (e.g. \code{#000000}) or
 #' color names (e.g. \code{"black"}).
 #' 
-#' @section Layout:
+#' @section layout:
 #' 
-#' Layouts determine the position of nodes on the graph.
-#' The are implemented using the \code{\link{igraph}} package.
+#' Layouts determine the position of node elements on the graph.
+#' They are implemented using the \code{\link{igraph}} package.
 #' Any additional arguments passed to \code{heat_tree} are passed to the  \code{\link{igraph}}
 #' function used.
 #' The following \code{character} values are understood:
@@ -309,18 +309,19 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' }
 #' 
 #' 
-#' @section Intervals:
+#' @section intervals:
 #' 
 #' This is the minimum and maximum of values displayed on the legend scales.
 #' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
-#' When explicitely used, the element's interval will redefine the way the actual value is being represented.
-#' Any value below the element's minimum interval will be graphically represented the same as a value AT the
-#' minimum interval.  Any value above the element's maximum interval will be graphically represented the same
-#' as a value AT the maximum interval.
-#' By default, the minimum and maximum equals the range used to infer the value of the element.
-#' Setting a custom interval is useful for making size/color in multiple graphs correspond to the same statistics,
+#' When explicitely used, the <element>_<property>_interval will redefine the way the actual conditional values are being represented
+#' by setting a limit for the <element>_<property>.
+#' Any condition below the minimum <element>_<property>_interval will be graphically represented the same as a condition AT the
+#' minimum value in the full range of conditional values.  Any value above the maximum <element>_<property>_interval will be graphically 
+#' represented the same as a value AT the maximum value in the full range of conditional values.
+#' By default, the minimum and maximum equals the <element>_<property>_range used to infer the value of the <element>_<property>.
+#' Setting a custom interval is useful for making <element>_<properties> in multiple graphs correspond to the same conditions,
 #' or setting logical boundaries (such as \code{c(0,1)} for proportions.
-#' Note that this is different from "range" mapping property, which determines the size/color of graphed elements.
+#' Note that this is different from the <element>_<property>_range mapping property, which determines the size/color of graphed elements.
 #' 
 #' @section Acknowledgements:
 #' 
