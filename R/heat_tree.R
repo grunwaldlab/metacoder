@@ -214,28 +214,30 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' @section Element Properties
 #'
-#' @section Size:
-#' 
+#' @section Sizes:
 #' 
 #' The size of nodes, edges, labels, and trees can be mapped to various conditions.
 #' This is useful for displaying statistics for taxa, such as abundance.
 #' Only the relative size of the condition is used, not the values themselves.
-#' The <element>_size_trans (transformation) parameter can be used to make the mapping non-linear.
+#' The <element>_size_trans (transformation) parameter can be used to make the size mapping non-linear.
 #' The <element>_size_range parameter can be used to proportionately change the size of an
-#' element.
-#' The <element>_size_interval parameter can be used to change the limit at which an element property
-#' will be graphically represented as the minimum/maximum value.
+#' element based on the condition mapped to that element.
+#' The <element>_size_interval parameter can be used to change the limit at which a condition
+#' will be graphically represented as the same size as the minimum/maximum <element>_size_range.
 #' 
 #' Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
 #' factor of its length.
 #' 
-#' @section colors:
+#' @section Colors:
 #' 
-#' The colors of nodes, edges, labels, and trees can be mapped to arbitrary numbers.
-#' This is useful for highlighting groups of taxa.
-#' Only the relative size of numbers is used, not the values themselves.
-#' They can be transformed to make the mapping non-linear using the transformation options.
-#' The range of actual colors displayed on the graph can be set using the range options.
+#' The colors of nodes, edges, labels, and trees can be mapped to various conditions.
+#' This is useful for visually highlighting/clustering groups of taxa.
+#' Only the relative size of the condition is used, not the values themselves.
+#' The <element>_color_trans (transformation) parameter can be used to make the color mapping non-linear.
+#' The <element>_color_range parameter can be used to proportionately change the color of an
+#' element based on the condition mapped to that element.
+#' The <element>_color_interval parameter can be used to change the limit at which a condition
+#' will be graphically represented as the same color as the minimum/maximum <element>_color_range.
 #' 
 #' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 #' If a numeric vector is given, it is mapped to a color scale.
