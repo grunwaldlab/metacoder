@@ -212,6 +212,18 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @param ... (other named arguments)
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
+#' 
+#' @section Elements
+#'
+#' @section Labels:
+#' 
+#' The labels of nodes, edges, and trees can be added.
+#' Node labels are centered over their node.
+#' Edge labels are displayed over edges, in the same orientation.
+#' Tree labels are displayed over their tree.
+#' 
+#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
+#'
 #' @section Element Properties
 #'
 #' @section Sizes:
@@ -242,15 +254,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 #' If a numeric vector is given, it is mapped to a color scale.
 #' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
-#' 
-#' @section Labels:
-#' 
-#' The labels of nodes, edges, and trees can be added.
-#' Node labels are centered over their node.
-#' Edge labels are displayed over edges, in the same orientation.
-#' Tree labels are displayed over their tree.
-#' 
-#' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
 #' 
 #' @section Transformations:
 #' 
