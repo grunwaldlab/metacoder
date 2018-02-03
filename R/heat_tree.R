@@ -215,7 +215,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' 
 #' @section Elements
 #'
-#' @section Labels:
+#' @section labels:
 #' 
 #' The labels of nodes, edges, and trees can be added.
 #' Node labels are centered over their node.
@@ -226,7 +226,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'
 #' @section Element Properties
 #'
-#' @section Sizes:
+#' @section sizes:
 #' 
 #' The size of nodes, edges, labels, and trees can be mapped to various conditions.
 #' This is useful for displaying statistics for taxa, such as abundance.
@@ -240,7 +240,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Accepts a \code{numeric} vector, the same length \code{taxon_id} or a
 #' factor of its length.
 #' 
-#' @section Colors:
+#' @section colors:
 #' 
 #' The colors of nodes, edges, labels, and trees can be mapped to various conditions.
 #' This is useful for visually highlighting/clustering groups of taxa.
@@ -255,10 +255,12 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' If a numeric vector is given, it is mapped to a color scale.
 #' Hex values or color names can be used (e.g. \code{#000000} or \code{"black"}).
 #' 
-#' @section Transformations:
+#' Mapping Properties
+#'
+#' @section transformations:
 #' 
-#' Before any numbers specified are mapped to color/size, they can be transformed to make
-#' the mapping non-linear. 
+#' Before any conditions specified are mapped to an element property (color/size), they 
+#' can be transformed to make the mapping non-linear. 
 #' Any of the transformations listed below can be used by specifying their name.
 #' A customized function can also be supplied to do the transformation.
 #' 
@@ -273,7 +275,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'   \item{"ln area"}{Log base e of circular area}
 #' }
 #' 
-#' @section Ranges:
+#' @section ranges:
 #' 
 #' The displayed range of colors and sizes can be explicitly defined or automatically generated.
 #' When explicitely used, the size range will proportionately increase/decrease the size of a particular element.
