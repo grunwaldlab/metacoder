@@ -4,10 +4,12 @@
 \alias{parse_newick}
 \title{Parse a Newick file}
 \usage{
-parse_newick(file)
+parse_newick(file = NULL, text = NULL)
 }
 \arguments{
-\item{file}{(\code{character} of length 1) The file path to the input file.}
+\item{file}{(\code{character} of length 1) The file path to the input file. Either \code{file} or \code{text} must be supplied but not both.}
+
+\item{text}{(\code{character} of length 1) The raw text to parse. Either \code{file} or \code{text} must be supplied but not both.}
 }
 \value{
 \code{\link{taxmap}}

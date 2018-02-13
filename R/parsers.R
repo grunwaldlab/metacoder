@@ -149,10 +149,10 @@ parse_phyloseq <- function(obj) {
 parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
   # Check that `file` and `text` and `table` are not used together
-  are_missing <- c(file = missing(file),
-                   text = missing(text),
-                   table = missing(table))
-  if (sum(are_missing) != 2) {
+  are_missing <- c(file = is.null(file),
+                   text = is.null(text),
+                   table = is.null(table))
+  if (sum(are_missing) != 1) {
     stop(paste0('Either "file", "text", or "table" must be supplied, but only one.'))
   }
   
@@ -311,13 +311,19 @@ parse_qiime_biom <- function(file) {
   # Read biom file
   my_biom <- biomformat::read_biom(file)
   
+  # Get taxonomy
+  taxonomy <- biomformat::observation_metadata(my_biom)
+  if (is.null(taxonomy)) {
+    stop(call. = FALSE,
+         'Could not find taxonomy data in "', file,
+         '". If it does have taxonomy data, then it is not where this function expects it to be. ',
+         'If you think this is a bug, let us know at "', repo_url(), '/issues"')
+  }
+  tax_cols <- colnames(taxonomy)
+  
   # Coerce into a matrix
   otu_table <- as.data.frame(as.matrix(biomformat::biom_data(my_biom)))
   otu_table <- cbind(list(otu_id = rownames(taxonomy)), otu_table)
-  
-  # Get taxonomy
-  taxonomy <- biomformat::observation_metadata(my_biom)
-  tax_cols <- colnames(taxonomy)
   
   # Get sample metadata (not used yet)
   metadata <- biomformat::sample_metadata(my_biom)
@@ -344,7 +350,8 @@ parse_qiime_biom <- function(file) {
 #' (dog:20, (elephant:30, horse:60):20):50;
 #' }
 #' 
-#' @param file (\code{character} of length 1) The file path to the input file.
+#' @param file (\code{character} of length 1) The file path to the input file. Either \code{file} or \code{text} must be supplied but not both.
+#' @param text (\code{character} of length 1) The raw text to parse. Either \code{file} or \code{text} must be supplied but not both.
 #' 
 #' @return \code{\link{taxmap}}
 #' 
@@ -353,7 +360,18 @@ parse_qiime_biom <- function(file) {
 #' @import taxa
 #' 
 #' @export
-parse_newick <- function(file) {
+parse_newick <- function(file = NULL, text = NULL) {
+  # Check that `file` and `text` and `table` are not used together
+ if (sum(c(is.null(file), is.null(text))) != 1) {
+    stop(paste0('Either "file" or "text" must be supplied, but not both.'))
+  }
+  
+  # Read raw data
+  if (is.null(file)) {
+    file <- tempfile()
+    readr::write_lines(text, file)
+  }
+  
   # Read input
   raw_data <- phylotate::read_annotated(file, format = "newick")
   

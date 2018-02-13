@@ -255,3 +255,11 @@ convert_base <- function(numbers, symbols = letters, base = length(symbols),
   vapply(as.integer(numbers), convert_one, character(1))
   
 }
+
+#' Return github url
+#' 
+#' Return github url
+#' @keywords internal
+repo_url <- function() {
+  "https://github.com/grunwaldlab/metacoder"  
+}
