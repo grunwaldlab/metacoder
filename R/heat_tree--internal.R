@@ -99,6 +99,30 @@ verify_size_range <- function(args) {
 }
 
 
+#' Look for NAs in parameters
+#' 
+#' Look for NAs in parameters
+#' 
+#' @param args (\code{character}) The names of arguments to verify.
+#' 
+#' @keywords internal
+look_for_na <- function(taxon_ids, args) {
+  for (arg in args) {
+    value <- get(arg, pos = parent.frame())
+    na_taxa <- taxon_ids[is.na(value)]
+    if (length(taxon_ids) == length(value) && length(na_taxa) > 0) {
+      warning(call. = FALSE,
+              'NAs found in the "', arg, '" option. These may cause plotting ',
+              'errors or other strange behavior. NAs can be created if there is not a value for each taxon.',
+              ' The following ', length(na_taxa), ' of ', length(taxon_ids),
+              ' taxa have NAs for the "', arg, '" option:\n ',
+              limited_print(type = "silent", na_taxa))
+    }
+    
+  }
+}
+
+
 #' Verify transformation function parameters
 #' 
 #' Verify transformation function parameters

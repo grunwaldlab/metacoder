@@ -4,6 +4,7 @@ heat_tree <- function(...) {
   UseMethod("heat_tree")
 }
 
+
 #' @param .input An object of type \code{\link{taxmap}}
 #' 
 #' @method heat_tree Taxmap
@@ -520,6 +521,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                          "node_color", "edge_color", "tree_color",
                          "node_label_color", "edge_label_color", "tree_label_color",
                          "node_label", "edge_label", "tree_label"))
+  look_for_na(taxon_id, 
+              c("node_size", "edge_size",
+                "node_label_size", "edge_label_size",  "tree_label_size",
+                "node_color", "edge_color", "tree_color",
+                "node_label_color", "edge_label_color", "tree_label_color",
+                "node_label", "edge_label", "tree_label"))
   verify_size(c("node_size", "edge_size", #"tree_size",
                 "node_label_size", "edge_label_size", "tree_label_size"))
   verify_size_range(c("node_size_range",  "edge_size_range", # "tree_size_range",
