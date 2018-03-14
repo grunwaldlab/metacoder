@@ -81,7 +81,8 @@ obj <- parse_phyloseq(phy)
 # Convert counts to proportions
 obj$data$otu_table <- calc_obs_props(obj,
                                      dataset = "otu_table",
-                                     cols = obj$data$sam_data$sample_ids)
+                                     cols = obj$data$sam_data$sample_ids,
+                                     other_cols = TRUE)
 
 # Calculate per-taxon proportions 
 obj$data$tax_table <- calc_taxon_abund(obj, 
@@ -92,7 +93,8 @@ obj$data$tax_table <- calc_taxon_abund(obj,
 obj$data$diff_table <- compare_treatments(obj,
                                           dataset = "tax_table",
                                           sample_ids = obj$data$sam_data$sample_ids,
-                                          treatments = obj$data$sam_data$status)
+                                          treatments = obj$data$sam_data$status,
+                                          other_cols = TRUE)
 
 # Plot differneces
 color_interval <- c(-5, 5) # The range of values (log 2 ratio of median proportion) to display
