@@ -4,30 +4,42 @@
 \alias{calc_n_samples}
 \title{Count the number of samples}
 \usage{
-calc_n_samples(obj, dataset, cols = NULL, groups = NULL, out_names = NULL,
-  drop = FALSE, append = FALSE)
+calc_n_samples(obj, dataset, cols = NULL, groups = "n_samples",
+  other_cols = FALSE, out_names = NULL, drop = FALSE)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj} that contains counts.}
+\item{dataset}{The name of a table in \code{obj$data}.}
 
-\item{cols}{The names/indexes of columns in \code{data} that have counts. By
-Default, all numeric columns in \code{data} are used.}
+\item{cols}{The columns in \code{dataset} to use. By
+default, all numeric columns are used. Takes one of the following inputs:
+\describe{
+\item{TRUE/FALSE:}{All/No columns will used.}
+\item{Character vector:}{The names of columns to use} \item{Numeric vector:}{The indexes of
+columns to use}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns corresponding to \code{TRUE} values.} }}
 
-\item{groups}{Group counts of multiple columns per treatment/group. This
-should be a vector of group IDs (e.g. character, integer) the same length
-as \code{cols} that defines which samples go in which group. When used,
-there will be one column in the output for each unique value in
-\code{groups}.}
+\item{groups}{Group multiple columns per treatment/group. This should be a
+vector of group IDs (e.g. character, integer) the same length as
+\code{cols} that defines which samples go in which group. When used, there
+will be one column in the output for each unique value in \code{groups}.}
 
-\item{out_names}{The names of count columns in the output. Must be the length
-1 or same length as \code{unique(groups)}, if used.}
+\item{other_cols}{Preserve in the output non-target columns present in the
+input data. New columns will always be on the end. The "taxon_id" column
+will be preserved in the front. Takes one of the following inputs:
+\describe{
+\item{NULL:}{No columns will be added back, not even the taxon id column.}
+\item{TRUE/FALSE:}{All/None of the non-target columns will be preserved.}
+\item{Character vector:}{The names of columns to preserve}
+\item{Numeric vector:}{The indexes of columns to preserve}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns corresponding to \code{TRUE} values.}}}
+
+\item{out_names}{The names of count columns in the output. Must be the same
+length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 
 \item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}
-
-\item{append}{If \code{TRUE}, append results to input table and return.}
 }
 \value{
 A tibble
@@ -59,8 +71,10 @@ calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
 calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
                out_names = c("A", "B", "C", "D", "E"))
 
-# Add results to input table
-calc_n_samples(x, dataset = "tax_data", append = TRUE)
+# Preserve other columns from input
+calc_n_samples(x, dataset = "tax_data", other_cols = TRUE)
+calc_n_samples(x, dataset = "tax_data", other_cols = 2)
+calc_n_samples(x, dataset = "tax_data", other_cols = "otu_id")
 }
 
 }

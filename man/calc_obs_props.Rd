@@ -4,38 +4,39 @@
 \alias{calc_obs_props}
 \title{Calculate proportions from observation counts}
 \usage{
-calc_obs_props(obj, dataset, cols = NULL, other_cols = FALSE,
-  out_names = NULL)
+calc_obs_props(obj, dataset, cols = NULL, groups = NULL,
+  other_cols = FALSE, out_names = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj} that contains counts.}
+\item{dataset}{The name of a table in \code{obj$data}.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{dataset} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All/No columns will used.}
-  \item{Character vector:}{The names of columns to use}
-  \item{Numeric vector:}{The indexes of columns to use}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-corresponding to \code{TRUE} values.}
-}}
+\item{TRUE/FALSE:}{All/No columns will used.}
+\item{Character vector:}{The names of columns to use} \item{Numeric vector:}{The indexes of
+columns to use}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns corresponding to \code{TRUE} values.} }}
+
+\item{groups}{Group multiple columns per treatment/group. This should be a
+vector of group IDs (e.g. character, integer) the same length as
+\code{cols} that defines which samples go in which group. When used, there
+will be one column in the output for each unique value in \code{groups}.}
 
 \item{other_cols}{Preserve in the output non-target columns present in the
-input data. New columns with proportions will always be on the end. The
-"taxon_id" column will always be preserved in the front. Takes one of the
-following inputs:
+input data. New columns will always be on the end. The "taxon_id" column
+will be preserved in the front. Takes one of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-  \item{Character vector:}{The names of columns to preserve}
-  \item{Numeric vector:}{The indexes of columns to preserve}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-corresponding to \code{TRUE} values.}
-}}
+\item{NULL:}{No columns will be added back, not even the taxon id column.}
+\item{TRUE/FALSE:}{All/None of the non-target columns will be preserved.}
+\item{Character vector:}{The names of columns to preserve}
+\item{Numeric vector:}{The indexes of columns to preserve}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns corresponding to \code{TRUE} values.}}}
 
-\item{out_names}{If supplied, rename the output proportion columns. Must be
-the same length as \code{cold}.}
+\item{out_names}{The names of count columns in the output. Must be the same
+length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 }
 \value{
 A tibble
@@ -71,6 +72,11 @@ calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 # Rename output columns
 calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
                out_names = c("a", "b", "c"))
+               
+# Get proportions for groups of samples
+calc_obs_props(x, "tax_data", groups = hmp_samples$sex)
+calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
+               out_names = c("Women", "Men"))
 
 }
 }

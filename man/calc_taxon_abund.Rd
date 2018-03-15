@@ -10,26 +10,23 @@ calc_taxon_abund(obj, dataset, cols = NULL, groups = NULL,
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj} that contains counts.}
+\item{dataset}{The name of a table in \code{obj$data}.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{dataset} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All/No columns will used.}
-  \item{Character vector:}{The names of columns to use}
-  \item{Numeric vector:}{The indexes of columns to use}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-corresponding to \code{TRUE} values.}
-}}
+\item{TRUE/FALSE:}{All/No columns will used.}
+\item{Character vector:}{The names of columns to use} \item{Numeric vector:}{The indexes of
+columns to use}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns corresponding to \code{TRUE} values.} }}
 
-\item{groups}{Group counts of multiple columns per treatment/group. This
-should be a vector of group IDs (e.g. character, integer) the same
-length as \code{cols} that defines which samples go in which group. When
-used, there will be one column in the output for each unique value in
-\code{groups}.}
+\item{groups}{Group multiple columns per treatment/group. This should be a
+vector of group IDs (e.g. character, integer) the same length as
+\code{cols} that defines which samples go in which group. When used, there
+will be one column in the output for each unique value in \code{groups}.}
 
 \item{out_names}{The names of count columns in the output. Must be the same
-length as \code{cols} (or \code{unique(groups)}, if used).}
+length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 }
 \value{
 A tibble

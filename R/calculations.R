@@ -5,30 +5,7 @@
 #' counts associated with observations (e.g. OTUs), as opposed to counts that
 #' have already been summed per taxon.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{dataset} to use. By
-#'   default, all numeric columns are used. Takes one of the following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All/No columns will used.}
-#'     \item{Character vector:}{The names of columns to use}
-#'     \item{Numeric vector:}{The indexes of columns to use}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param other_cols Preserve in the output non-target columns present in the
-#'   input data. New columns with proportions will always be on the end. The
-#'   "taxon_id" column will always be preserved in the front. Takes one of the
-#'   following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-#'     \item{Character vector:}{The names of columns to preserve}
-#'     \item{Numeric vector:}{The indexes of columns to preserve}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param out_names If supplied, rename the output proportion columns. Must be
-#'   the same length as \code{cold}.
+#' @inheritParams do_calc_on_num_cols
 #'
 #' @return A tibble
 #'
@@ -61,14 +38,32 @@
 #' # Rename output columns
 #' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 #'                out_names = c("a", "b", "c"))
+#'                
+#' # Get proportions for groups of samples
+#' calc_obs_props(x, "tax_data", groups = hmp_samples$sex)
+#' calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
+#'                out_names = c("Women", "Men"))
 #' 
 #' }
-calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
-                           out_names = NULL) {
-  do_calc_on_num_cols(obj, dataset, cols = cols, other_cols = other_cols,
-                      out_names = out_names,
-                      func =  function(count_table) {
-                        do.call(cbind, lapply(count_table, function(x) x / sum(x)))
+calc_obs_props <- function(obj, dataset, cols = NULL, groups = NULL,
+                           other_cols = FALSE, out_names = NULL) {
+
+  do_calc_on_num_cols(obj, dataset, cols = cols, groups = groups,
+                      other_cols = other_cols, out_names = out_names,
+                      func =  function(count_table, cols = cols, groups = groups) {
+                        # Explain what is happening 
+                        my_print("Calculating proportions from counts for ", length(cols), " columns ",
+                                 ifelse(length(unique(groups)) == length(unique(cols)), "", paste0("in ", length(unique(groups)), " groups ")),
+                                 "for ", nrow(count_table), ' observations.')
+                        
+                        
+                        # Sum by group
+                        grouped_counts <- dplyr::as_tibble(t(rowsum(t(count_table),
+                                                                    group = groups)))
+                        
+                        # Calculate proportions
+                        do.call(cbind, lapply(grouped_counts, function(x) x / sum(x)))
+                        
                       }
   )
 }
@@ -80,8 +75,7 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #' below a minimum number to zero. This is useful for effectively removing
 #' "singletons", "doubletons", or other low abundance counts.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @inheritParams do_calc_on_num_cols
 #' @param min_count The minimum number of counts needed for a count to remain
 #'   unchanged. Any could less than this will be converted to a zero. For
 #'   example, \code{min_count = 2} would remove singletons.
@@ -90,28 +84,6 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #'   in the table. For example \code{use_total = TRUE, min_count = 10} would
 #'   convert all counts of any row to zero if the total for all counts in that
 #'   row was less than 10.
-#' @param cols The names/indexes of columns in \code{dataset} to use. By
-#'   default, all numeric columns are used. Takes one of the following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All/No columns will used.}
-#'     \item{Character vector:}{The names of columns to use}
-#'     \item{Numeric vector:}{The indexes of columns to use}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param other_cols Preserve in the output non-target columns present in the
-#'   input data. New columns with proportions will always be on the end. The
-#'   "taxon_id" column will always be preserved in the front. Takes one of the
-#'   following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-#'     \item{Character vector:}{The names of columns to preserve}
-#'     \item{Numeric vector:}{The indexes of columns to preserve}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param out_names If supplied, rename the output proportion columns. Must be
-#'   the same length as \code{cold}.
 #'
 #' @return A tibble
 #'
@@ -126,37 +98,30 @@ calc_obs_props <- function(obj, dataset, cols = NULL, other_cols = FALSE,
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
-#' # Calculate proportions for all numeric columns
-#' calc_obs_props(x, "tax_data")
+#' # Default use
+#' zero_low_counts(x, "tax_data")
 #' 
-#' # Calculate proportions for a subset of columns
-#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
-#' calc_obs_props(x, "tax_data", cols = 4:6)
-#' calc_obs_props(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
+#' # Use only a subset of columns
+#' zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"))
+#' zero_low_counts(x, "tax_data", cols = 4:6)
+#' zero_low_counts(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70001"))
 #' 
 #' # Including all other columns in ouput
-#' calc_obs_props(x, "tax_data", other_cols = TRUE)
+#' zero_low_counts(x, "tax_data", other_cols = TRUE)
 #' 
 #' # Inlcuding specific columns in output
-#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
-#'                other_cols = 2:3)
+#' zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                 other_cols = 2:3)
 #'                
 #' # Rename output columns
-#' calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
-#'                out_names = c("a", "b", "c"))
+#' zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
+#'                 out_names = c("a", "b", "c"))
 #' 
 #' }
 zero_low_counts <- function(obj, dataset, min_count = 2, use_total = FALSE,
                             cols = NULL, other_cols = FALSE, out_names = NULL) {
-  
-  # Let user know paramters used
-  if (use_total) {
-    my_print('Converting to zero all counts in rows with totals less than ', min_count, '.')
-  } else {
-    my_print('Converting to zero all counts less than ', min_count, '.')
-  }
 
-  do_it <- function(count_table) {
+  do_it <- function(count_table, cols = cols, groups = groups) {
     # Convert low counts to zero
     if (use_total) {
       row_sums <- rowSums(count_table)
@@ -193,33 +158,10 @@ zero_low_counts <- function(obj, dataset, min_count = 2, use_total = FALSE,
 #' is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 #' which columns are numeric and handles the reformatting needed to use tibbles.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @inheritParams do_calc_on_num_cols
 #' @param sample_size The sample size counts will be rarefied to. This can be 
 #'   either a single integer or a vector of integers of equal length to the 
 #'   number of columns.
-#' @param cols The names/indexes of columns in \code{dataset} to use. By
-#'   default, all numeric columns are used. Takes one of the following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All/No columns will used.}
-#'     \item{Character vector:}{The names of columns to use}
-#'     \item{Numeric vector:}{The indexes of columns to use}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param other_cols Preserve in the output non-target columns present in the
-#'   input data. New columns with proportions will always be on the end. The
-#'   "taxon_id" column will always be preserved in the front. Takes one of the
-#'   following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-#'     \item{Character vector:}{The names of columns to preserve}
-#'     \item{Numeric vector:}{The indexes of columns to preserve}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param out_names If supplied, rename the output proportion columns. Must be
-#'   the same length as \code{cold}.
 #'
 #' @return A tibble
 #'
@@ -258,7 +200,7 @@ rarefy_obs <- function(obj, dataset, sample_size = NULL, cols = NULL,
                        other_cols = FALSE, out_names = NULL) {
   do_calc_on_num_cols(obj, dataset, cols = cols, other_cols = other_cols,
                       out_names = out_names,
-                      func =  function(count_table) {
+                      func =  function(count_table, cols = cols, groups = groups) {
                         if (is.null(sample_size)) {
                           sample_size <- min(colSums(count_table)) # Calculate minimum count if no sample size is given
                           my_print("Rarefying to ", sample_size, " since that is the lowest sample total.")
@@ -461,24 +403,7 @@ compare_groups <- function(obj, dataset, cols, groups,
 #' each column for each taxon. This is useful to convert per-observation counts
 #' (e.g. OTU counts) to per-taxon counts.
 #' 
-#' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{dataset} to use. By
-#'   default, all numeric columns are used. Takes one of the following inputs:
-#'   \describe{
-#'     \item{TRUE/FALSE:}{All/No columns will used.}
-#'     \item{Character vector:}{The names of columns to use}
-#'     \item{Numeric vector:}{The indexes of columns to use}
-#'     \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-#'   corresponding to \code{TRUE} values.}
-#'   }
-#' @param groups Group counts of multiple columns per treatment/group. This
-#'   should be a vector of group IDs (e.g. character, integer) the same
-#'   length as \code{cols} that defines which samples go in which group. When
-#'   used, there will be one column in the output for each unique value in
-#'   \code{groups}.
-#' @param out_names The names of count columns in the output. Must be the same
-#'   length as \code{cols} (or \code{unique(groups)}, if used).
+#' @inheritParams do_calc_on_num_cols
 #'   
 #' @return A tibble
 #'   
@@ -524,66 +449,32 @@ compare_groups <- function(obj, dataset, cols, groups,
 #' 
 calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
                              out_names = NULL) {
-  
-  # Get count table
-  count_table <- get_taxmap_table(obj, dataset)
-  
-  # Parse columns to use
-  cols <- get_numeric_cols(obj, dataset, cols)
-  
-  # Check that groups and output names make sense
-  groups <- check_option_groups(groups, cols)
-  if (is.null(groups)) {
-    if (is.null(out_names)) { # groups and out_names are NULL
-      out_names <- colnames(count_table[cols])
-    } else { # groups is NULL, but out_names set
-      if (length(out_names) != length(cols)) {
-        stop("The length of `cols` (", length(cols),
-             ") and `out_names` (", length(out_names),
-             ") are not equal.")
-      }
-    }
-    groups <- seq_along(cols)
-  } else {
-    if (length(groups) != length(cols)) {
-      stop("`groups` (", length(groups),
-           ") must be the same length as `cols` (", length(cols), ").")
-    }
-    if (is.null(out_names)) { # groups is set, but out_names is NULL
-      if (is.numeric(groups)) {
-        warning("Numeric groups used without supplying out_name. This will result in numeric column names.")
-      }
-      out_names <- unique(groups)
-    } else { # groups and out_names are both set
-      if (length(out_names) != length(unique(groups))) {
-        stop("The length of 'unique(groups)' and 'out_names' are not equal")       
-      }
-    }
+
+  do_it <- function(count_table, cols = cols, groups = groups) {
+    # Alert user 
+    my_print("Summing per-taxon counts from ", length(cols), " columns ",
+             ifelse(length(unique(groups)) == length(unique(cols)), "", paste0("in ", length(unique(groups)), " groups ")),
+             "for ", length(obj$taxon_ids()), ' taxa')
+    
+    # Sum counts per taxon for each sample
+    obs_indexes <- obj$obs(dataset)
+    output <- lapply(split(cols, groups), function(col_index) {
+      vapply(obs_indexes, function(i) sum(unlist(count_table[i, col_index])), numeric(1))
+    })
+    output <- as.data.frame(output, stringsAsFactors = FALSE)
+    
+    return(output)
   }
-  
-  # Check that out_names is a character
-  if (! is.null(out_names) && is.numeric(out_names)){
-    warning("`out_names` is numeric. This will result in numeric column names.")
-  }
-  
-  # Sum counts per taxon for each sample
-  my_print("Summing per-taxon counts from ", length(cols), " columns ",
-           ifelse(length(unique(groups)) == length(unique(cols)), "", paste0("in ", length(unique(groups)), " groups ")),
-           "for ", length(obj$taxon_ids()), ' taxa')
-  obs_indexes <- obj$obs(dataset)
-  output <- lapply(split(cols, groups), function(col_index) {
-    vapply(obs_indexes, function(i) sum(unlist(count_table[i, col_index])), numeric(1))
-  })
-  output <- as.data.frame(output, stringsAsFactors = FALSE)
+
+  output <- do_calc_on_num_cols(obj, dataset, cols = cols, groups = groups, 
+                                other_cols = NULL, out_names = out_names,
+                                func = do_it)
   
   # Add taxon_id column
   output <- cbind(data.frame(taxon_id = obj$taxon_ids(), stringsAsFactors = FALSE),
                   output)
   
-  # Rename cols
-  colnames(output)[-1] <- out_names
-  
-  # Convert to tibble and return
+  # # Convert to tibble and return
   dplyr::as.tbl(output)
 }
 
@@ -593,21 +484,10 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
 #' samples with greater than zero occurrences.
 #' 
-#' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{data} that have counts. By
-#'   Default, all numeric columns in \code{data} are used.
-#' @param groups Group counts of multiple columns per treatment/group. This
-#'   should be a vector of group IDs (e.g. character, integer) the same length
-#'   as \code{cols} that defines which samples go in which group. When used,
-#'   there will be one column in the output for each unique value in
-#'   \code{groups}.
-#' @param out_names The names of count columns in the output. Must be the length
-#'   1 or same length as \code{unique(groups)}, if used.
+#' @inheritParams do_calc_on_num_cols
 #' @param drop If \code{groups} is not used, return a vector of the results instead
 #'   of a table with one column.
-#' @param append If \code{TRUE}, append results to input table and return.
-#'
+#'   
 #' @return A tibble
 #'
 #' @family calculations
@@ -635,81 +515,41 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
 #'                out_names = c("A", "B", "C", "D", "E"))
 #' 
-#' # Add results to input table
-#' calc_n_samples(x, dataset = "tax_data", append = TRUE)
+#' # Preserve other columns from input
+#' calc_n_samples(x, dataset = "tax_data", other_cols = TRUE)
+#' calc_n_samples(x, dataset = "tax_data", other_cols = 2)
+#' calc_n_samples(x, dataset = "tax_data", other_cols = "otu_id")
 #' }
 #' 
 #' @export
-calc_n_samples <- function(obj, dataset, cols = NULL, groups = NULL,
-                           out_names = NULL, drop = FALSE, append = FALSE) {
-  # Get count table
-  count_table <- get_taxmap_table(obj, dataset)
-  
-  # Parse columns to use
-  cols <- get_numeric_cols(obj, dataset, cols)
-  
-  # Check that groups and output names make sense
-  groups <- check_option_groups(groups, cols)
-  if (is.null(groups)) {
-    if (is.null(out_names)) { # groups and out_names are NULL
-      out_names <- "n_samples"
-    } else { # groups is NULL, but out_names set
-      if (length(out_names) != length(cols)) {
-        stop("The length of 'cols' and 'out_names' are not equal")
-      }
-    }
-    groups <- rep("placeholder", length(cols))
-  } else {
-    if (length(groups) != length(cols)) {
-      stop("`groups` (", length(groups),
-           ") must be the same length as `cols` (", length(cols), ").")
-    }
-    if (length(unique(groups)) != 1 && drop) {
-      stop("Cannot drop second dimension since there are multiple groups specified.")
-    }
-    if (is.null(out_names)) { # groups is set, but out_names is NULL
-      if (is.numeric(groups)) {
-        warning("Numeric groups used without supplying out_name. This will result in numeric column names.")
-      }
-      out_names <- unique(groups)
-    } else { # groups and out_names are both set
-      if (length(out_names) != length(unique(groups))) {
-        stop("The length of 'unique(groups)' and 'out_names' are not equal")       
-      }
-    }
+calc_n_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
+                           other_cols = FALSE, out_names = NULL, drop = FALSE) {
+  # Check drop option
+  if (drop && length(unique(groups)) > 1) {
+    stop(call. = FALSE,
+         "Cannot drop dimension (conver to vector) when there are more than one group")
+  }
+
+  do_it <- function(count_table, cols = cols, groups = groups) {
+    # Alert user 
+    my_print("Calculating number of samples with non-zero counts from ", length(cols), " columns ",
+             ifelse(length(unique(groups)) == 1, "", paste0("in ", length(unique(groups)), " groups ")),
+             "for ", length(obj$taxon_ids()), ' observations')
+    
+    # Calculate number of samples
+    output <- lapply(split(cols, groups), function(col_index) {
+      vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > 0), integer(1))
+    })
+    as.data.frame(output, stringsAsFactors = FALSE)
   }
   
-  # Check that out_names is a character
-  if (! is.null(out_names) && is.numeric(out_names)){
-    warning("`out_names` is numeric. This will result in numeric column names.")
-  }
-  
-  # Count number of samples
-  output <- lapply(split(cols, groups), function(col_index) {
-    vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > 0), integer(1))
-  })
-  output <- as.data.frame(output, stringsAsFactors = FALSE)
+  output <- do_calc_on_num_cols(obj, dataset, cols = cols, groups = groups, 
+                                other_cols = other_cols, out_names = out_names, func = do_it)
   
   # Drop second dimension
   if (drop) {
-    output <- output[[1]]
-    names(output) <- count_table$taxon_id
-    return(output)
-  } else {
-    # Rename cols
-    colnames(output) <- out_names
-    
-    # Add taxon_id column
-    if (append) {
-      output <- cbind(get_taxmap_table(obj, dataset),
-                      output)
-    } else {
-      output <- cbind(data.frame(taxon_id = count_table$taxon_id, stringsAsFactors = FALSE),
-                      output)
-    }
-    
-    # Convert to tibble and return
-    return(dplyr::as.tbl(output))
-  }
+    output <- stats::setNames(output[[2]], output$taxon_id)
+  } 
   
+  return(output)
 }

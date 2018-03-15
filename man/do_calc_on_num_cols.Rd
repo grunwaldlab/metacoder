@@ -4,46 +4,49 @@
 \alias{do_calc_on_num_cols}
 \title{Run some function to produce new columns.}
 \usage{
-do_calc_on_num_cols(obj, dataset, func, cols = NULL, other_cols = FALSE,
-  out_names = NULL)
+do_calc_on_num_cols(obj, dataset, func, cols = NULL, groups = NULL,
+  other_cols = FALSE, out_names = NULL)
 }
 \arguments{
-\item{obj}{A taxmap object}
+\item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj}.}
+\item{dataset}{The name of a table in \code{obj$data}.}
 
-\item{func}{The function to apply. Should accept and return a table.}
+\item{func}{The function to apply. Should have the following form:
+\code{function(count_table, cols = cols, groups = groups)} and return a table.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{dataset} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All/No columns will used.}
-  \item{Character vector:}{The names of columns to use}
-  \item{Numeric vector:}{The indexes of columns to use}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns
-corresponding to \code{TRUE} values.}
-}}
+\item{TRUE/FALSE:}{All/No columns will used.}
+\item{Character vector:}{The names of columns to use} \item{Numeric vector:}{The indexes of
+columns to use}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Use the columns corresponding to \code{TRUE} values.} }}
+
+\item{groups}{Group multiple columns per treatment/group. This should be a
+vector of group IDs (e.g. character, integer) the same length as
+\code{cols} that defines which samples go in which group. When used, there
+will be one column in the output for each unique value in \code{groups}.}
 
 \item{other_cols}{Preserve in the output non-target columns present in the
-input data. New columns will always be on the end. The
-"taxon_id" column will always be preserved in the front. Takes one of the
-following inputs:
+input data. New columns will always be on the end. The "taxon_id" column
+will be preserved in the front. Takes one of the following inputs:
 \describe{
-  \item{TRUE/FALSE:}{All non-target columns will be preserved or not.}
-  \item{Character vector:}{The names of columns to preserve}
-  \item{Numeric vector:}{The indexes of columns to preserve}
-  \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns
-corresponding to \code{TRUE} values.}
-}}
+\item{NULL:}{No columns will be added back, not even the taxon id column.}
+\item{TRUE/FALSE:}{All/None of the non-target columns will be preserved.}
+\item{Character vector:}{The names of columns to preserve}
+\item{Numeric vector:}{The indexes of columns to preserve}
+\item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns corresponding to \code{TRUE} values.}}}
 
-\item{out_names}{If supplied, rename the output proportion columns. Must be
-the same length as \code{cold}.}
+\item{out_names}{The names of count columns in the output. Must be the same
+length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 }
 \value{
 A tibble
 }
 \description{
-For a given table in a taxmap object, run some function to produce new columns.
-This function handles all of the option parsing and formatting of the result.
+For a given table in a taxmap object, run some function to produce new
+columns. This function handles all of the option parsing and formatting of
+the result.
 }
 \keyword{internal}
