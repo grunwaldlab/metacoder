@@ -1,4 +1,5 @@
 library(testthat)
-library(metacoder)
+
+suppressPackageStartupMessages(library(metacoder))
 
 test_check("metacoder")

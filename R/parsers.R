@@ -152,7 +152,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   are_missing <- c(file = is.null(file),
                    text = is.null(text),
                    table = is.null(table))
-  if (sum(are_missing) != 1) {
+  if (sum(are_missing) != 2) {
     stop(paste0('Either "file", "text", or "table" must be supplied, but only one.'))
   }
   
@@ -538,7 +538,7 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
   raw_headers <- names(raw_data)
   
   # Make classifications easier to parse
-  name_chars <- "A-Za-z0-9.\\-_+ "
+  name_chars <- "A-Za-z0-9._+ \\-"
   parts <- stringr::str_match(raw_headers,
                               paste0("^(.+;)([", name_chars, "]+)(\\(?.*\\)?)$"))
   parts <- as.data.frame(parts[, -1], stringsAsFactors = FALSE)

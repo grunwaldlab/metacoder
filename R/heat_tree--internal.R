@@ -110,7 +110,7 @@ look_for_na <- function(taxon_ids, args) {
   for (arg in args) {
     value <- get(arg, pos = parent.frame())
     na_taxa <- taxon_ids[is.na(value)]
-    if (length(taxon_ids) == length(value) && length(na_taxa) > 0) {
+    if (length(taxon_ids) == length(value) && length(na_taxa) > 0 && length(taxon_ids) != 1) {
       warning(call. = FALSE,
               'NAs found in the "', arg, '" option. These may cause plotting ',
               'errors or other strange behavior. NAs can be created if there is not a value for each taxon.',
