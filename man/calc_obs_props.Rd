@@ -81,7 +81,11 @@ calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
 }
 }
 \seealso{
-Other calculations: \code{\link{calc_n_samples}},
+Other calculations: \code{\link{calc_group_mean}},
+  \code{\link{calc_group_median}},
+  \code{\link{calc_group_rsd}},
+  \code{\link{calc_group_stat}},
+  \code{\link{calc_n_samples}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
   \code{\link{zero_low_counts}}

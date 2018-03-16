@@ -1,3 +1,229 @@
+#' Calculate means of groups of columns
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' grouping factor and return row means in a table.
+#'
+#' @inheritParams do_calc_on_num_cols
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'
+#' # Calculate the means for each group
+#' calc_group_mean(x, "tax_data", hmp_samples$sex)
+#'
+#' # Use only some columns
+#' calc_group_mean(x, "tax_data", hmp_samples$sex[4:20],
+#'                 cols = hmp_samples$sample_id[4:20])
+#'
+#' # Including all other columns in ouput
+#' calc_group_mean(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = TRUE)
+#'
+#' # Inlcuding specific columns in output
+#' calc_group_mean(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = 2)
+#' calc_group_mean(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = "otu_id")
+#'
+#' # Rename output columns
+#' calc_group_mean(x, "tax_data", groups = hmp_samples$sex,
+#'                out_names = c("Women", "Men"))
+#'
+#' }
+calc_group_mean <- function(obj, dataset, groups, cols = NULL,
+                            other_cols = FALSE, out_names = NULL) {
+  
+  calc_group_stat(obj, dataset, func = mean, groups = groups, cols = cols,
+                  other_cols = other_cols, out_names = out_names)
+}
+
+
+#' Relative standard deviations of groups of columns
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' grouping factor and return the relative standard deviation for each row in a
+#' table. The relative standard deviation is the standard deviation divided by
+#' the mean of a set of numbers. It is useful for comparing the variation when
+#' magnitude of sets of number are very different.
+#'
+#' @inheritParams do_calc_on_num_cols
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'
+#' # Calculate the RSD for each group
+#' calc_group_rsd(x, "tax_data", hmp_samples$sex)
+#'
+#' # Use only some columns
+#' calc_group_rsd(x, "tax_data", hmp_samples$sex[4:20],
+#'                 cols = hmp_samples$sample_id[4:20])
+#'
+#' # Including all other columns in ouput
+#' calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = TRUE)
+#'
+#' # Inlcuding specific columns in output
+#' calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = 2)
+#' calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
+#'                 other_cols = "otu_id")
+#'
+#' # Rename output columns
+#' calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
+#'                out_names = c("Women", "Men"))
+#'
+#' }
+calc_group_rsd <- function(obj, dataset, groups, cols = NULL,
+                             other_cols = FALSE, out_names = NULL) {
+  rsd <- function(x, na.rm = FALSE) {
+    stats::sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
+  }
+  calc_group_stat(obj, dataset, func = rsd, groups = groups, cols = cols,
+                  other_cols = other_cols, out_names = out_names)
+}
+
+
+#' Calculate medians of groups of columns
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' grouping factor and return row medians in a table.
+#'
+#' @inheritParams do_calc_on_num_cols
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'
+#' # Calculate the medians for each group
+#' calc_group_median(x, "tax_data", hmp_samples$sex)
+#'
+#' # Use only some columns
+#' calc_group_median(x, "tax_data", hmp_samples$sex[4:20],
+#'                   cols = hmp_samples$sample_id[4:20])
+#'
+#' # Including all other columns in ouput
+#' calc_group_median(x, "tax_data", groups = hmp_samples$sex,
+#'                   other_cols = TRUE)
+#'
+#' # Inlcuding specific columns in output
+#' calc_group_median(x, "tax_data", groups = hmp_samples$sex,
+#'                   other_cols = 2)
+#' calc_group_median(x, "tax_data", groups = hmp_samples$sex,
+#'                   other_cols = "otu_id")
+#'
+#' # Rename output columns
+#' calc_group_median(x, "tax_data", groups = hmp_samples$sex,
+#'                   out_names = c("Women", "Men"))
+#'
+#' }
+calc_group_median <- function(obj, dataset, groups, cols = NULL,
+                            other_cols = FALSE, out_names = NULL) {
+  
+  calc_group_stat(obj, dataset, func = stats::median, groups = groups, cols = cols,
+                  other_cols = other_cols, out_names = out_names)
+}
+
+
+#' Apply a function to groups of columns
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
+#' rows in groups of columns. The result of the function is used to create new
+#' columns. This is eqivalant to splitting columns of a table by a factor and
+#' using \code{apply} on each group.
+#'
+#' @inheritParams do_calc_on_num_cols
+#' @param func The function to apply. It should take a vector and return a
+#'   single value. For example, \code{\link{max}} or \code{\link{mean}} could
+#'   be used.
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'
+#' # Apply a function to every value without grouping 
+#' calc_group_stat(x, "tax_data", function(v) v > 3)
+#' 
+#' # Calculate the means for each group
+#' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex)
+#' 
+#' # Calculate the variation for each group
+#' calc_group_stat(x, "tax_data", sd, groups = hmp_samples$body_site)
+#'
+#' # Different ways to use only some columns
+#' calc_group_stat(x, "tax_data", function(v) v > 3,
+#'                 cols = c("700035949", "700097855", "700100489"))
+#' calc_group_stat(x, "tax_data", function(v) v > 3,
+#'                 cols = 4:6)
+#' calc_group_stat(x, "tax_data", function(v) v > 3,
+#'                 cols = startsWith(colnames(x$data$tax_data), "70001"))
+#' 
+#' # Including all other columns in ouput
+#' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
+#'                 other_cols = TRUE)
+#'
+#' # Inlcuding specific columns in output
+#' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
+#'                 other_cols = 2)
+#' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
+#'                 other_cols = "otu_id")
+#'
+#' # Rename output columns
+#' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
+#'                out_names = c("Women", "Men"))
+#'
+#' }
+calc_group_stat <- function(obj, dataset, func, groups = NULL, cols = NULL,
+                            other_cols = FALSE, out_names = NULL) {
+  
+  do_calc_on_num_cols(obj, dataset, cols = cols, groups = groups,
+                      other_cols = other_cols, out_names = out_names,
+                      func =  function(count_table, cols = cols, groups = groups) {
+                        as.data.frame(lapply(split(cols, groups), function(col_index) {
+                          apply(count_table[, col_index], MARGIN = 1, FUN = func)
+                        }))
+                      }
+  )
+}
+
+
 #' Calculate proportions from observation counts
 #'
 #' For a given table in a \code{\link[taxa]{taxmap}} object, convert one or more
