@@ -354,8 +354,7 @@ zero_low_counts <- function(obj, dataset, min_count = 2, use_total = FALSE,
       to_zero <- row_sums < min_count & row_sums > 0
       if (sum(to_zero) > 0) {
         my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
-                 ' rows with total counts less than', min_count, ': ',
-                 limited_print(colnames(count_table)[to_zero], type = "silent"))
+                 ' rows with total counts less than ', min_count)
       } else {
         my_print('No rows found with total counts less than ', min_count, '.')
       }

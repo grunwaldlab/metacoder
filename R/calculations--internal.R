@@ -23,8 +23,12 @@ get_numeric_cols <- function(obj, dataset, cols = NULL) {
   # Find default columns if needed
   if (is.null(cols)) {
     cols <- which(vapply(input, is.numeric, logical(1)))
-    my_print("No `cols` specified, so using all numeric columns:\n  ", 
-             limited_print(names(cols), type = "silent"))
+    if (length(cols) > 0) {
+      my_print("No `cols` specified, so using all numeric columns:\n  ", 
+               limited_print(names(cols), type = "silent"))
+    } else {
+      my_print("No `cols` specified and no numeric columns can be found.")
+    }
   }
   
   # Parse user input for columns
@@ -92,7 +96,8 @@ do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL, groups = NULL,
       out_names <- colnames(input[cols])
     } else { # groups is NULL, but out_names set
       if (length(out_names) != length(cols)) {
-        stop("The length of `cols` (", length(cols),
+        stop(call. = FALSE,
+             "The length of `cols` (", length(cols),
              ") and `out_names` (", length(out_names),
              ") are not equal.")
       }
@@ -100,34 +105,48 @@ do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL, groups = NULL,
     groups <- seq_along(cols)
   } else {
     if (length(groups) != length(cols)) {
-      stop("`groups` (", length(groups),
+      stop(call. = FALSE,
+           "`groups` (", length(groups),
            ") must be the same length as `cols` (", length(cols), ").")
     }
     if (is.null(out_names)) { # groups is set, but out_names is NULL
       if (is.numeric(groups)) {
-        warning("Numeric groups used without supplying 'out_names'. This will result in numeric column names.")
+        warning(call. = FALSE,
+                "Numeric groups used without supplying 'out_names'. This will result in numeric column names.")
       }
       out_names <- unique(groups)
     } else { # groups and out_names are both set
       if (length(out_names) != length(unique(groups))) {
-        stop("The length of 'unique(groups)' and 'out_names' are not equal")       
+        stop(call. = FALSE,
+             "The length of 'unique(groups)' and 'out_names' are not equal")       
       }
     }
   }
   
   # Check that out_names is a character
   if (! is.null(out_names) && is.numeric(out_names)){
-    warning("`out_names` is numeric. This will result in numeric column names.")
+    warning(call. = FALSE,
+            "  `out_names` is numeric. This will result in numeric column names.")
   }
   
   # Do calculaton
-  result <- func(input[, cols], cols = cols, groups = groups)
-  colnames(result) <- out_names
+  if (length(cols) < 1) {
+    warning(call. = FALSE,
+            "  No cols specified. No calculation will be done.")
+    result <- NULL
+  } else {
+    result <- func(input[, cols], cols = cols, groups = groups)
+    colnames(result) <- out_names
+  }
   
   # Add back other columns if specified
   if (! is.null(other_cols)) {
     cols_to_keep <- get_taxmap_other_cols(obj, dataset, cols, other_cols)
-    result <- cbind(input[, cols_to_keep], result)
+    if (is.null(result)) {
+      result <- input[, cols_to_keep]
+    } else {
+      result <- cbind(input[, cols_to_keep], result)
+    }
   }
   
   # Convert to tibble
