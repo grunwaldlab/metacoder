@@ -365,7 +365,7 @@ zero_low_counts <- function(obj, dataset, min_count = 2, use_total = FALSE,
         my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
                  ' counts less than ', min_count, '.')
       } else {
-        my_print('No counts found less than', min_count, '.')
+        my_print('No counts found less than ', min_count, '.')
       }
       count_table[to_zero] <- 0
     }
