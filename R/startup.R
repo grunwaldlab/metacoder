@@ -13,7 +13,7 @@ startup_msg <- function() {
          ' visualization and manipulation of community taxonomic diversity data." ',
          crayon::italic('PLOS Computational Biology'), ', ', crayon::bold('13'),
          '(2), pp. 1-15. doi: 10.1371/journal.pcbi.1005404\n\n',
-         'Enter `citation(metacoder")` for a BibTeX entry for this citation.')
+         'Enter `citation("metacoder")` for a BibTeX entry for this citation.')
 }
 
 
