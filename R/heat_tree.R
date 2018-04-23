@@ -13,7 +13,14 @@ heat_tree <- function(...) {
 heat_tree.Taxmap <- function(.input, ...) {
   # Non-standard argument evaluation
   data <- .input$data_used(...)
-  data <- lapply(data, `[`, .input$edge_list$to) # orders everthing the same
+  data <- lapply(data,
+                 function(x) { # orders everthing the same
+                   if (is.null(names(x))) {
+                     return(x)
+                   } else {
+                     return(x[.input$edge_list$to])
+                   }
+                 })
   arguments <- c(list(taxon_id = .input$edge_list$to, supertaxon_id = .input$edge_list$from),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
