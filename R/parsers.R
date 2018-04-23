@@ -1,37 +1,43 @@
 #' Convert a phyloseq to taxmap
-#' 
+#'
 #' Converts a phyloseq object to a taxmap object.
-#' 
+#'
 #' @param obj A phyloseq object
-#' 
+#' @param class_regex A regular expression used to parse data in the taxon
+#'   names. There must be a capture group (a pair of parentheses) for each item
+#'   in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
+#'   how this works.
+#' @inheritParams taxa::parse_tax_data
+#'
 #' @return A taxmap object
-#' 
+#'
 #' @family parsers
-#' 
+#'
 #' @examples \dontrun{
-#' 
+#'
 #' # Install phyloseq to get example data
 #' # source('http://bioconductor.org/biocLite.R')
 #' # biocLite('phyloseq')
-#' 
+#'
 #' # Parse example dataset
 #' library(phyloseq)
 #' data(GlobalPatterns)
 #' x <- parse_phyloseq(GlobalPatterns)
-#' 
+#'
 #' # Plot data
 #' heat_tree(x,
 #'           node_size = n_obs,
 #'           node_color = n_obs,
 #'           node_label = taxon_names,
 #'           tree_label = taxon_names)
-#' 
+#'
 #' }
-#' 
+#'
 #' @import taxa
-#' 
+#'
 #' @export
-parse_phyloseq <- function(obj) {
+parse_phyloseq <- function(obj, class_regex = "(.*)",
+                           class_key = "taxon_name") {
   datasets <- list()
   mappings <- c()
   
@@ -76,12 +82,14 @@ parse_phyloseq <- function(obj) {
   }
   
   # Construct output
-  tax_cols <- colnames(tax_data)[which(tolower(colnames(tax_data)) %in% possible_ranks)]
+  tax_cols <- colnames(tax_data)
   output <- taxa::parse_tax_data(tax_data = tax_data, 
                                  datasets = datasets,
                                  class_cols = tax_cols, 
                                  mappings = mappings,
-                                 named_by_rank = TRUE)
+                                 named_by_rank = TRUE,
+                                 class_regex = class_regex,
+                                 class_key = class_key)
   
   # Remove NA taxa
   output$filter_taxa(output$taxon_names() != "NA")
@@ -296,6 +304,11 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' http://geoffreyzahn.com/getting-your-otu-table-into-r/.
 #' 
 #' @param file (\code{character} of length 1) The file path to the input file.
+#' @param class_regex A regular expression used to parse data in the taxon
+#'   names. There must be a capture group (a pair of parentheses) for each item
+#'   in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
+#'   how this works.
+#' @inheritParams taxa::parse_tax_data
 #' 
 #' @return A taxmap object
 #' 
@@ -304,7 +317,8 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' @import taxa
 #' 
 #' @export
-parse_qiime_biom <- function(file) {
+parse_qiime_biom <- function(file, class_regex = "(.*)",
+                             class_key = "taxon_name") {
   # Check that the "biomformat" package has been installed
   check_for_pkg("biomformat")
   
@@ -333,7 +347,9 @@ parse_qiime_biom <- function(file) {
                                  class_cols = colnames(taxonomy),
                                  datasets = list(otu_table = otu_table),
                                  mappings = c("{{name}}" = "{{name}}"),
-                                 include_tax_data = FALSE)
+                                 include_tax_data = FALSE,
+                                 class_regex = class_regex,
+                                 class_key = class_key)
   
   return(output)
 }

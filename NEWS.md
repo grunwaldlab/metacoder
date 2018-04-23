@@ -9,6 +9,7 @@
 * Fixed "unused argument" bug in `parse_mothur_tax_summary` when reading from a file path (issue [#211](https://github.com/grunwaldlab/metacoder/issues/211)).
 * Fixed bug when in `zero_low_counts` when using `use_total = TRUE` (issue [#227](https://github.com/grunwaldlab/metacoder/issues/227)).
 * Numerous other small fixes.
+* Fixed `parse_phyloseq` error when arbitrary rank names were used.
 
 
 ### Improvements
