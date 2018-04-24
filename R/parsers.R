@@ -298,6 +298,7 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' Parse a BIOM output from QIIME
 #' 
 #' Parses a file in BIOM format from QIIME into a taxmap object.
+#' This also seems to work with files from MEGAN.
 #' I have not tested if it works with other BIOM files. 
 #' 
 #' This function was inspired by the tutorial created by Geoffrey Zahn at 
@@ -335,21 +336,39 @@ parse_qiime_biom <- function(file, class_regex = "(.*)",
   }
   tax_cols <- colnames(taxonomy)
   
+  # Get OTU IDs
+  if (is.data.frame(taxonomy)) {
+    otu_ids <- rownames(taxonomy)
+  } else {
+    otu_ids <- names(taxonomy)
+  }
+  
   # Coerce into a matrix
-  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(my_biom)))
-  otu_table <- cbind(list(otu_id = rownames(taxonomy)), otu_table)
+  otu_table <- as.data.frame(as.matrix(biomformat::biom_data(my_biom)),
+                             stringsAsFactors = FALSE)
+  otu_table <- cbind(list(otu_id = otu_ids), otu_table,
+                     stringsAsFactors = FALSE)
   
   # Get sample metadata (not used yet)
   metadata <- biomformat::sample_metadata(my_biom)
   
   # Create a taxmap object
-  output <- taxa::parse_tax_data(tax_data = taxonomy,
-                                 class_cols = colnames(taxonomy),
-                                 datasets = list(otu_table = otu_table),
-                                 mappings = c("{{name}}" = "{{name}}"),
-                                 include_tax_data = FALSE,
-                                 class_regex = class_regex,
-                                 class_key = class_key)
+  if (is.data.frame(taxonomy)) {
+    output <- taxa::parse_tax_data(tax_data = taxonomy,
+                                   class_cols = colnames(taxonomy),
+                                   datasets = list(otu_table = otu_table),
+                                   mappings = c("{{name}}" = "{{name}}"),
+                                   include_tax_data = FALSE,
+                                   class_regex = class_regex,
+                                   class_key = class_key)
+  } else {
+    output <- taxa::parse_tax_data(tax_data = taxonomy,
+                                   datasets = list(otu_table = otu_table),
+                                   mappings = c("{{name}}" = "{{name}}"),
+                                   include_tax_data = FALSE,
+                                   class_regex = class_regex,
+                                   class_key = class_key)
+  }
   
   return(output)
 }
