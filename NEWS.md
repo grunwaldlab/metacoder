@@ -1,6 +1,6 @@
 # News 
 
-## Current
+##  metacoder 0.2.1
 
 ### Bug fixes
 

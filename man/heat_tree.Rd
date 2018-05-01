@@ -255,10 +255,6 @@ The conditions are data (e.g. taxon statistics, such as abundance) represented i
 The mapping properties are parameters (e.g. transformations, range, interval, and layout) used to change the 
 elements/element properties and how they are used to represent (or not represent) the various conditions.
 }
-\section{Elements}{
-NA
-}
-
 \section{labels}{
 
 
@@ -268,10 +264,6 @@ Edge labels are displayed over edges, in the same orientation.
 Tree labels are displayed over their tree.
 
 Accepts a vector, the same length \code{taxon_id} or a factor of its length.
-}
-
-\section{Element Properties}{
-NA
 }
 
 \section{sizes}{
@@ -476,4 +468,3 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 
 }
 }
-\keyword{internal}

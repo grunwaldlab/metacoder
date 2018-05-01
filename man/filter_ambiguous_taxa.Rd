@@ -66,3 +66,12 @@ Works the same way as \code{\link[taxa]{filter_taxa}} for the most part.
 If you encounter a taxon name that represents an ambiguous taxon that is not
 filtered out by this function, let us know and we will add it.
 }
+\examples{
+obj <- parse_tax_data(c("Plantae;Solanaceae;Solanum;lycopersicum",
+                        "Plantae;Solanaceae;Solanum;tuberosum",
+                        "Plantae;Solanaceae;Solanum;unknown",
+                        "Plantae;Solanaceae;Solanum;uncultured",
+                        "Plantae;UNIDENTIFIED"))
+filter_ambiguous_taxa(obj)
+
+}

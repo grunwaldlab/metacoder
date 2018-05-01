@@ -73,6 +73,9 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
 #'   determining a match.
 #'
 #' @return TRUE/FALSE vector corresponding to \code{taxon_names}
+#' 
+#' @examples 
+#' is_ambiguous(c("unknown", "uncultured", "homo sapiens", "kfdsjfdljsdf"))
 #'
 #' @export
 is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
@@ -103,6 +106,14 @@ is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
 #' @inheritParams taxa::filter_taxa
 #'
 #' @return A \code{\link[taxa]{taxmap}} object
+#'
+#' @examples 
+#' obj <- parse_tax_data(c("Plantae;Solanaceae;Solanum;lycopersicum",
+#'                         "Plantae;Solanaceae;Solanum;tuberosum",
+#'                         "Plantae;Solanaceae;Solanum;unknown",
+#'                         "Plantae;Solanaceae;Solanum;uncultured",
+#'                         "Plantae;UNIDENTIFIED"))
+#' filter_ambiguous_taxa(obj)
 #'
 #' @export
 filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE,

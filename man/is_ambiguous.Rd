@@ -32,3 +32,7 @@ Find taxa with ambiguous names, such as "unknown" or "uncultured".
 If you encounter a taxon name that represents an ambiguous taxon that is not
 filtered out by this function, let us know and we will add it.
 }
+\examples{
+is_ambiguous(c("unknown", "uncultured", "homo sapiens", "kfdsjfdljsdf"))
+
+}

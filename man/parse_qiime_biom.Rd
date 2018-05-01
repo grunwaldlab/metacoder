@@ -34,6 +34,7 @@ A taxmap object
 }
 \description{
 Parses a file in BIOM format from QIIME into a taxmap object.
+This also seems to work with files from MEGAN.
 I have not tested if it works with other BIOM files.
 }
 \details{

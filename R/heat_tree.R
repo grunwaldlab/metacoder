@@ -221,8 +221,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Passed to the \code{\link{igraph}} layout function used.
 #' 
 #' 
-#' @section Elements
-#'
 #' @section labels:
 #' 
 #' The labels of nodes, edges, and trees can be added.
@@ -231,8 +229,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' Tree labels are displayed over their tree.
 #' 
 #' Accepts a vector, the same length \code{taxon_id} or a factor of its length.
-#'
-#' @section Element Properties
 #'
 #' @section sizes:
 #' 
@@ -422,7 +418,6 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'           node_size_interval = c(10, 100))
 #' 
 #' }
-#' @keywords internal
 #' @method heat_tree default
 #' @rdname heat_tree
 heat_tree.default <- function(taxon_id, supertaxon_id, 
