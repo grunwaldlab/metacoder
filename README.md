@@ -52,30 +52,37 @@ This is the preferred way to encode this type of abundance information in `metac
 ``` r
 library(metacoder)
 #> Loading required package: taxa
+#> This is metacoder verison 0.2.1 (stable). If you use metacoder for published research, please cite our paper:
+#> 
+#> Foster Z, Sharpton T and Grunwald N (2017). "Metacoder: An R package for visualization and manipulation of community taxonomic diversity data." PLOS Computational Biology, 13(2), pp. 1-15. doi: 10.1371/journal.pcbi.1005404
+#> 
+#> Enter `citation("metacoder")` for a BibTeX entry for this citation.
 print(hmp_otus)
 #> # A tibble: 1,000 x 52
-#>    otu_id lineage `700… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700…
-#>    <chr>  <chr>   <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
-#>  1 OTU_9… r__Roo…     0     2     1     0     0     0     0     0     0     0     2     6
-#>  2 OTU_9… r__Roo…     0     0     0     0     0     0     0     0     0     0     0     0
-#>  3 OTU_9… r__Roo…     0     1     0     0     0     0     0     0     0     0     1     1
-#>  4 OTU_9… r__Roo…     8    36    10     5    66    38     8     4    17    21     0     0
-#>  5 OTU_9… r__Roo…     3    25     0     0     0     1     0     0     0     0    10    67
-#>  6 OTU_9… r__Roo…    42   277    16    22    85   211    20    33    44    52     0     0
-#>  7 OTU_9… r__Roo…     4    17    21     1    74    12     5    15    13   115     0     0
-#>  8 OTU_9… r__Roo…     0     0     0     0     0     0     0     0     4     1     0     0
-#>  9 OTU_9… r__Roo…     0     0     0     0     0     0     0     0     0     0     0     7
-#> 10 OTU_9… r__Roo…     0     0     0     0     1     0     0     0     0     0     0     0
-#> # ... with 990 more rows, and 38 more variables: `700103488` <int>, `700096869` <int>,
-#> #   `700107379` <int>, `700096422` <int>, `700102417` <int>, `700114168` <int>,
-#> #   `700037540` <int>, `700106397` <int>, `700113498` <int>, `700033743` <int>,
-#> #   `700105205` <int>, `700024238` <int>, `700034183` <int>, `700038390` <int>,
-#> #   `700015973` <int>, `700038124` <int>, `700107206` <int>, `700037403` <int>,
-#> #   `700098429` <int>, `700101224` <int>, `700114615` <int>, `700024234` <int>,
-#> #   `700108596` <int>, `700101076` <int>, `700105882` <int>, `700016902` <int>,
-#> #   `700102242` <int>, `700038231` <int>, `700109394` <int>, `700102530` <int>,
-#> #   `700108229` <int>, `700099013` <int>, `700098680` <int>, `700106938` <int>,
-#> #   `700014916` <int>, `700095535` <int>, `700102367` <int>, `700101358` <int>
+#>    otu_id lineage `700035949` `700097855` `700100489` `700111314` `700033744` `700109581`
+#>    <chr>  <chr>         <int>       <int>       <int>       <int>       <int>       <int>
+#>  1 OTU_9… r__Roo…           0           2           1           0           0           0
+#>  2 OTU_9… r__Roo…           0           0           0           0           0           0
+#>  3 OTU_9… r__Roo…           0           1           0           0           0           0
+#>  4 OTU_9… r__Roo…           8          36          10           5          66          38
+#>  5 OTU_9… r__Roo…           3          25           0           0           0           1
+#>  6 OTU_9… r__Roo…          42         277          16          22          85         211
+#>  7 OTU_9… r__Roo…           4          17          21           1          74          12
+#>  8 OTU_9… r__Roo…           0           0           0           0           0           0
+#>  9 OTU_9… r__Roo…           0           0           0           0           0           0
+#> 10 OTU_9… r__Roo…           0           0           0           0           1           0
+#> # ... with 990 more rows, and 44 more variables: `700111044` <int>, `700101365` <int>,
+#> #   `700100431` <int>, `700016050` <int>, `700032425` <int>, `700024855` <int>,
+#> #   `700103488` <int>, `700096869` <int>, `700107379` <int>, `700096422` <int>,
+#> #   `700102417` <int>, `700114168` <int>, `700037540` <int>, `700106397` <int>,
+#> #   `700113498` <int>, `700033743` <int>, `700105205` <int>, `700024238` <int>,
+#> #   `700034183` <int>, `700038390` <int>, `700015973` <int>, `700038124` <int>,
+#> #   `700107206` <int>, `700037403` <int>, `700098429` <int>, `700101224` <int>,
+#> #   `700114615` <int>, `700024234` <int>, `700108596` <int>, `700101076` <int>,
+#> #   `700105882` <int>, `700016902` <int>, `700102242` <int>, `700038231` <int>,
+#> #   `700109394` <int>, `700102530` <int>, `700108229` <int>, `700099013` <int>,
+#> #   `700098680` <int>, `700106938` <int>, `700014916` <int>, `700095535` <int>,
+#> #   `700102367` <int>, `700101358` <int>
 print(hmp_samples)
 #> # A tibble: 50 x 3
 #> # Groups:   body_site, sex [10]
@@ -112,29 +119,34 @@ print(obj)
 #>   2 data sets:
 #>     tax_data:
 #>       # A tibble: 1,000 x 53
-#>         taxo… otu_… line… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700…
-#>         <chr> <chr> <chr> <int> <int> <int> <int> <int> <int> <int> <int> <int> <int>
-#>       1 dm    OTU_… r__R…     0     2     1     0     0     0     0     0     0     0
-#>       2 dn    OTU_… r__R…     0     0     0     0     0     0     0     0     0     0
-#>       3 do    OTU_… r__R…     0     1     0     0     0     0     0     0     0     0
-#>       # ... with 997 more rows, and 40 more variables: `700032425` <int>,
-#>       #   `700024855` <int>, `700103488` <int>, `700096869` <int>, `700107379` <int>,
-#>       #   `700096422` <int>, `700102417` <int>, `700114168` <int>, `700037540` <int>,
-#>       #   `700106397` <int>, `700113498` <int>, `700033743` <int>, `700105205` <int>,
-#>       #   `700024238` <int>, `700034183` <int>, `700038390` <int>, `700015973` <int>,
-#>       #   `700038124` <int>, `700107206` <int>, `700037403` <int>, `700098429` <int>,
-#>       #   `700101224` <int>, `700114615` <int>, `700024234` <int>, `700108596` <int>,
-#>       #   `700101076` <int>, `700105882` <int>, `700016902` <int>, `700102242` <int>,
-#>       #   `700038231` <int>, `700109394` <int>, `700102530` <int>, `700108229` <int>,
-#>       #   `700099013` <int>, `700098680` <int>, `700106938` <int>, `700014916` <int>,
+#>         taxon_id otu_id lineage `700035949` `700097855` `700100489` `700111314`
+#>         <chr>    <chr>  <chr>         <int>       <int>       <int>       <int>
+#>       1 dm       OTU_9… r__Roo…           0           2           1           0
+#>       2 dn       OTU_9… r__Roo…           0           0           0           0
+#>       3 do       OTU_9… r__Roo…           0           1           0           0
+#>       # ... with 997 more rows, and 46 more variables: `700033744` <int>,
+#>       #   `700109581` <int>, `700111044` <int>, `700101365` <int>,
+#>       #   `700100431` <int>, `700016050` <int>, `700032425` <int>,
+#>       #   `700024855` <int>, `700103488` <int>, `700096869` <int>,
+#>       #   `700107379` <int>, `700096422` <int>, `700102417` <int>,
+#>       #   `700114168` <int>, `700037540` <int>, `700106397` <int>,
+#>       #   `700113498` <int>, `700033743` <int>, `700105205` <int>,
+#>       #   `700024238` <int>, `700034183` <int>, `700038390` <int>,
+#>       #   `700015973` <int>, `700038124` <int>, `700107206` <int>,
+#>       #   `700037403` <int>, `700098429` <int>, `700101224` <int>,
+#>       #   `700114615` <int>, `700024234` <int>, `700108596` <int>,
+#>       #   `700101076` <int>, `700105882` <int>, `700016902` <int>,
+#>       #   `700102242` <int>, `700038231` <int>, `700109394` <int>,
+#>       #   `700102530` <int>, `700108229` <int>, `700099013` <int>,
+#>       #   `700098680` <int>, `700106938` <int>, `700014916` <int>,
 #>       #   `700095535` <int>, `700102367` <int>, `700101358` <int>
 #>     class_data:
 #>       # A tibble: 5,922 x 5
-#>         taxon_id input_index tax_rank tax_name            regex_match           
-#>         <chr>          <int> <chr>    <chr>               <chr>                 
-#>       1 ab                 1 r        Root                r__Root               
-#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria     
-#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacteria
+#>         taxon_id input_index tax_rank tax_name            regex_match          
+#>         <chr>          <int> <chr>    <chr>               <chr>                
+#>       1 ab                 1 r        Root                r__Root              
+#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria    
+#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacter…
 #>       # ... with 5,919 more rows
 #>   0 functions:
 ```
@@ -148,7 +160,6 @@ Low-abundance sequences might be the result of sequencing error, so typically we
 
 ``` r
 obj$data$tax_data <- zero_low_counts(obj, "tax_data", min_count = 5)
-#> Converting to zero all counts less than 5.
 #> No `cols` specified, so using all numeric columns:
 #>    700035949, 700097855, 700100489 ... 700095535, 700102367, 700101358
 #> Zeroing 4325 of 50000 counts less than 5.
@@ -173,30 +184,35 @@ print(obj)
 #>   2 data sets:
 #>     tax_data:
 #>       # A tibble: 789 x 51
-#>         taxo… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700… `700…
-#>         <chr> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>       1 dm        0     0     0     0     0     0     0     0     0     0     0  6.00
-#>       2 dn        0     0     0     0     0     0     0     0     0     0     0  0   
-#>       3 do        0     0     0     0     0     0     0     0     0     0     0  0   
-#>       # ... with 786 more rows, and 38 more variables: `700103488` <dbl>,
-#>       #   `700096869` <dbl>, `700107379` <dbl>, `700096422` <dbl>, `700102417` <dbl>,
-#>       #   `700114168` <dbl>, `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
-#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>, `700034183` <dbl>,
-#>       #   `700038390` <dbl>, `700015973` <dbl>, `700038124` <dbl>, `700107206` <dbl>,
-#>       #   `700037403` <dbl>, `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
-#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>, `700105882` <dbl>,
-#>       #   `700016902` <dbl>, `700102242` <dbl>, `700038231` <dbl>, `700109394` <dbl>,
-#>       #   `700102530` <dbl>, `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
-#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>, `700102367` <dbl>,
-#>       #   `700101358` <dbl>
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>         <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 dm                0.          0.          0.          0.          0.
+#>       2 dn                0.          0.          0.          0.          0.
+#>       3 do                0.          0.          0.          0.          0.
+#>       # ... with 786 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>       #   `700102367` <dbl>, `700101358` <dbl>
 #>     class_data:
-#>       # A tibble: 5,922 x 5
-#>         taxon_id input_index tax_rank tax_name            regex_match           
-#>         <chr>          <int> <chr>    <chr>               <chr>                 
-#>       1 ab                 1 r        Root                r__Root               
-#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria     
-#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacteria
-#>       # ... with 5,919 more rows
+#>       # A tibble: 5,903 x 5
+#>         taxon_id input_index tax_rank tax_name            regex_match          
+#>         <chr>          <int> <chr>    <chr>               <chr>                
+#>       1 ab                 1 r        Root                r__Root              
+#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria    
+#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacter…
+#>       # ... with 5,900 more rows
 #>   0 functions:
 ```
 
@@ -210,6 +226,7 @@ These are raw counts, but people typically work with rarefied counts or proporti
 obj$data$tax_data <- calc_obs_props(obj, "tax_data")
 #> No `cols` specified, so using all numeric columns:
 #>    700035949, 700097855, 700100489 ... 700095535, 700102367, 700101358
+#> Calculating proportions from counts for 50 columns for 789 observations.
 print(obj)
 #> <Taxmap>
 #>   155 taxa: ab. Root, ac. Proteobacteria ... gs. Clostridium
@@ -217,30 +234,35 @@ print(obj)
 #>   2 data sets:
 #>     tax_data:
 #>       # A tibble: 789 x 51
-#>         taxon… `7000… `7000… `7001… `7001… `7000… `700… `700… `700… `700… `700… `700…
-#>         <chr>   <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>       1 dm          0      0      0      0      0     0     0     0     0     0     0
-#>       2 dn          0      0      0      0      0     0     0     0     0     0     0
-#>       3 do          0      0      0      0      0     0     0     0     0     0     0
-#>       # ... with 786 more rows, and 39 more variables: `700024855` <dbl>,
-#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>, `700096422` <dbl>,
-#>       #   `700102417` <dbl>, `700114168` <dbl>, `700037540` <dbl>, `700106397` <dbl>,
-#>       #   `700113498` <dbl>, `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
-#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>, `700038124` <dbl>,
-#>       #   `700107206` <dbl>, `700037403` <dbl>, `700098429` <dbl>, `700101224` <dbl>,
-#>       #   `700114615` <dbl>, `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
-#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>, `700038231` <dbl>,
-#>       #   `700109394` <dbl>, `700102530` <dbl>, `700108229` <dbl>, `700099013` <dbl>,
-#>       #   `700098680` <dbl>, `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>         <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 dm                0.          0.          0.          0.          0.
+#>       2 dn                0.          0.          0.          0.          0.
+#>       3 do                0.          0.          0.          0.          0.
+#>       # ... with 786 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
 #>       #   `700102367` <dbl>, `700101358` <dbl>
 #>     class_data:
-#>       # A tibble: 5,922 x 5
-#>         taxon_id input_index tax_rank tax_name            regex_match           
-#>         <chr>          <int> <chr>    <chr>               <chr>                 
-#>       1 ab                 1 r        Root                r__Root               
-#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria     
-#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacteria
-#>       # ... with 5,919 more rows
+#>       # A tibble: 5,903 x 5
+#>         taxon_id input_index tax_rank tax_name            regex_match          
+#>         <chr>          <int> <chr>    <chr>               <chr>                
+#>       1 ab                 1 r        Root                r__Root              
+#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria    
+#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacter…
+#>       # ... with 5,900 more rows
 #>   0 functions:
 ```
 
@@ -259,48 +281,58 @@ print(obj)
 #>   3 data sets:
 #>     tax_data:
 #>       # A tibble: 789 x 51
-#>         taxon… `7000… `7000… `7001… `7001… `7000… `700… `700… `700… `700… `700… `700…
-#>         <chr>   <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>       1 dm          0      0      0      0      0     0     0     0     0     0     0
-#>       2 dn          0      0      0      0      0     0     0     0     0     0     0
-#>       3 do          0      0      0      0      0     0     0     0     0     0     0
-#>       # ... with 786 more rows, and 39 more variables: `700024855` <dbl>,
-#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>, `700096422` <dbl>,
-#>       #   `700102417` <dbl>, `700114168` <dbl>, `700037540` <dbl>, `700106397` <dbl>,
-#>       #   `700113498` <dbl>, `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
-#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>, `700038124` <dbl>,
-#>       #   `700107206` <dbl>, `700037403` <dbl>, `700098429` <dbl>, `700101224` <dbl>,
-#>       #   `700114615` <dbl>, `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
-#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>, `700038231` <dbl>,
-#>       #   `700109394` <dbl>, `700102530` <dbl>, `700108229` <dbl>, `700099013` <dbl>,
-#>       #   `700098680` <dbl>, `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>         <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 dm                0.          0.          0.          0.          0.
+#>       2 dn                0.          0.          0.          0.          0.
+#>       3 do                0.          0.          0.          0.          0.
+#>       # ... with 786 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
 #>       #   `700102367` <dbl>, `700101358` <dbl>
 #>     class_data:
-#>       # A tibble: 5,922 x 5
-#>         taxon_id input_index tax_rank tax_name            regex_match           
-#>         <chr>          <int> <chr>    <chr>               <chr>                 
-#>       1 ab                 1 r        Root                r__Root               
-#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria     
-#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacteria
-#>       # ... with 5,919 more rows
+#>       # A tibble: 5,903 x 5
+#>         taxon_id input_index tax_rank tax_name            regex_match          
+#>         <chr>          <int> <chr>    <chr>               <chr>                
+#>       1 ab                 1 r        Root                r__Root              
+#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria    
+#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacter…
+#>       # ... with 5,900 more rows
 #>     tax_abund:
 #>       # A tibble: 155 x 51
-#>         taxon… `7000… `700097… `7001… `70011… `7000… `700109… `70011… `70010… `70010…
-#>       * <chr>   <dbl>    <dbl>  <dbl>   <dbl>  <dbl>    <dbl>   <dbl>   <dbl>   <dbl>
-#>       1 ab      1.00   1.00      1.00  1.00    1.00   1.00    1.00    1.00    1.00   
-#>       2 ac      0.206  0.0262    0     0.252   0.225  0.00187 0       0.00736 0.0938 
-#>       3 ad      0      0.00269   0     0.0417  0      0       0.00439 0       0.00708
-#>       # ... with 152 more rows, and 41 more variables: `700016050` <dbl>,
-#>       #   `700032425` <dbl>, `700024855` <dbl>, `700103488` <dbl>, `700096869` <dbl>,
-#>       #   `700107379` <dbl>, `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
-#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>, `700033743` <dbl>,
-#>       #   `700105205` <dbl>, `700024238` <dbl>, `700034183` <dbl>, `700038390` <dbl>,
-#>       #   `700015973` <dbl>, `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
-#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>, `700024234` <dbl>,
-#>       #   `700108596` <dbl>, `700101076` <dbl>, `700105882` <dbl>, `700016902` <dbl>,
-#>       #   `700102242` <dbl>, `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
-#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>, `700106938` <dbl>,
-#>       #   `700014916` <dbl>, `700095535` <dbl>, `700102367` <dbl>, `700101358` <dbl>
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>       * <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 ab             1.00      1.00             1.      1.00         1.00 
+#>       2 ac             0.206     0.0262           0.      0.252        0.225
+#>       3 ad             0.        0.00269          0.      0.0417       0.   
+#>       # ... with 152 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>       #   `700102367` <dbl>, `700101358` <dbl>
 #>   0 functions:
 ```
 
@@ -312,6 +344,7 @@ We can also easily calculate the number of samples have reads for each taxon:
 obj$data$tax_occ <- calc_n_samples(obj, "tax_abund", groups = hmp_samples$body_site)
 #> No `cols` specified, so using all numeric columns:
 #>    700035949, 700097855, 700100489 ... 700095535, 700102367, 700101358
+#> Calculating number of samples with non-zero counts from 50 columns in 5 groups for 155 observations
 print(obj)
 #> <Taxmap>
 #>   155 taxa: ab. Root, ac. Proteobacteria ... gs. Clostridium
@@ -319,48 +352,58 @@ print(obj)
 #>   4 data sets:
 #>     tax_data:
 #>       # A tibble: 789 x 51
-#>         taxon… `7000… `7000… `7001… `7001… `7000… `700… `700… `700… `700… `700… `700…
-#>         <chr>   <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>       1 dm          0      0      0      0      0     0     0     0     0     0     0
-#>       2 dn          0      0      0      0      0     0     0     0     0     0     0
-#>       3 do          0      0      0      0      0     0     0     0     0     0     0
-#>       # ... with 786 more rows, and 39 more variables: `700024855` <dbl>,
-#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>, `700096422` <dbl>,
-#>       #   `700102417` <dbl>, `700114168` <dbl>, `700037540` <dbl>, `700106397` <dbl>,
-#>       #   `700113498` <dbl>, `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
-#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>, `700038124` <dbl>,
-#>       #   `700107206` <dbl>, `700037403` <dbl>, `700098429` <dbl>, `700101224` <dbl>,
-#>       #   `700114615` <dbl>, `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
-#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>, `700038231` <dbl>,
-#>       #   `700109394` <dbl>, `700102530` <dbl>, `700108229` <dbl>, `700099013` <dbl>,
-#>       #   `700098680` <dbl>, `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>         <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 dm                0.          0.          0.          0.          0.
+#>       2 dn                0.          0.          0.          0.          0.
+#>       3 do                0.          0.          0.          0.          0.
+#>       # ... with 786 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
 #>       #   `700102367` <dbl>, `700101358` <dbl>
 #>     class_data:
-#>       # A tibble: 5,922 x 5
-#>         taxon_id input_index tax_rank tax_name            regex_match           
-#>         <chr>          <int> <chr>    <chr>               <chr>                 
-#>       1 ab                 1 r        Root                r__Root               
-#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria     
-#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacteria
-#>       # ... with 5,919 more rows
+#>       # A tibble: 5,903 x 5
+#>         taxon_id input_index tax_rank tax_name            regex_match          
+#>         <chr>          <int> <chr>    <chr>               <chr>                
+#>       1 ab                 1 r        Root                r__Root              
+#>       2 ac                 1 p        Proteobacteria      p__Proteobacteria    
+#>       3 aj                 1 c        Gammaproteobacteria c__Gammaproteobacter…
+#>       # ... with 5,900 more rows
 #>     tax_abund:
 #>       # A tibble: 155 x 51
-#>         taxon… `7000… `700097… `7001… `70011… `7000… `700109… `70011… `70010… `70010…
-#>       * <chr>   <dbl>    <dbl>  <dbl>   <dbl>  <dbl>    <dbl>   <dbl>   <dbl>   <dbl>
-#>       1 ab      1.00   1.00      1.00  1.00    1.00   1.00    1.00    1.00    1.00   
-#>       2 ac      0.206  0.0262    0     0.252   0.225  0.00187 0       0.00736 0.0938 
-#>       3 ad      0      0.00269   0     0.0417  0      0       0.00439 0       0.00708
-#>       # ... with 152 more rows, and 41 more variables: `700016050` <dbl>,
-#>       #   `700032425` <dbl>, `700024855` <dbl>, `700103488` <dbl>, `700096869` <dbl>,
-#>       #   `700107379` <dbl>, `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
-#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>, `700033743` <dbl>,
-#>       #   `700105205` <dbl>, `700024238` <dbl>, `700034183` <dbl>, `700038390` <dbl>,
-#>       #   `700015973` <dbl>, `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
-#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>, `700024234` <dbl>,
-#>       #   `700108596` <dbl>, `700101076` <dbl>, `700105882` <dbl>, `700016902` <dbl>,
-#>       #   `700102242` <dbl>, `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
-#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>, `700106938` <dbl>,
-#>       #   `700014916` <dbl>, `700095535` <dbl>, `700102367` <dbl>, `700101358` <dbl>
+#>         taxon_id `700035949` `700097855` `700100489` `700111314` `700033744`
+#>       * <chr>          <dbl>       <dbl>       <dbl>       <dbl>       <dbl>
+#>       1 ab             1.00      1.00             1.      1.00         1.00 
+#>       2 ac             0.206     0.0262           0.      0.252        0.225
+#>       3 ad             0.        0.00269          0.      0.0417       0.   
+#>       # ... with 152 more rows, and 45 more variables: `700109581` <dbl>,
+#>       #   `700111044` <dbl>, `700101365` <dbl>, `700100431` <dbl>,
+#>       #   `700016050` <dbl>, `700032425` <dbl>, `700024855` <dbl>,
+#>       #   `700103488` <dbl>, `700096869` <dbl>, `700107379` <dbl>,
+#>       #   `700096422` <dbl>, `700102417` <dbl>, `700114168` <dbl>,
+#>       #   `700037540` <dbl>, `700106397` <dbl>, `700113498` <dbl>,
+#>       #   `700033743` <dbl>, `700105205` <dbl>, `700024238` <dbl>,
+#>       #   `700034183` <dbl>, `700038390` <dbl>, `700015973` <dbl>,
+#>       #   `700038124` <dbl>, `700107206` <dbl>, `700037403` <dbl>,
+#>       #   `700098429` <dbl>, `700101224` <dbl>, `700114615` <dbl>,
+#>       #   `700024234` <dbl>, `700108596` <dbl>, `700101076` <dbl>,
+#>       #   `700105882` <dbl>, `700016902` <dbl>, `700102242` <dbl>,
+#>       #   `700038231` <dbl>, `700109394` <dbl>, `700102530` <dbl>,
+#>       #   `700108229` <dbl>, `700099013` <dbl>, `700098680` <dbl>,
+#>       #   `700106938` <dbl>, `700014916` <dbl>, `700095535` <dbl>,
+#>       #   `700102367` <dbl>, `700101358` <dbl>
 #>     tax_occ:
 #>       # A tibble: 155 x 6
 #>         taxon_id  Nose Saliva  Skin Stool Throat
@@ -408,18 +451,18 @@ obj$data$diff_table <- compare_groups(obj, dataset = "tax_abund",
                                       groups = hmp_samples$sex)
 print(obj$data$diff_table)
 #> # A tibble: 155 x 7
-#>    taxon_id treatment_1 treatment_2 log2_median_ratio median_diff mean_diff wilcox_p_val…
-#>    <chr>    <chr>       <chr>                   <dbl>       <dbl>     <dbl>         <dbl>
-#>  1 ab       female      male                    0          0        0             NaN    
-#>  2 ac       female      male                    0.380      0.0229   0.0379          0.470
-#>  3 ad       female      male                   -0.434     -0.0449  -0.0199          0.907
-#>  4 ae       female      male                   -1.68      -0.0475  -0.0753          0.335
-#>  5 af       female      male                    0.649      0.116    0.0614          0.386
-#>  6 ag       female      male                    0          0       -0.00275         0.732
-#>  7 ah       female      male                    0          0       -0.00140         0.602
-#>  8 aj       female      male                    1.24       0.0162  -0.0129          0.680
-#>  9 ak       female      male                    0          0        0.00121         0.416
-#> 10 al       female      male                   -0.542     -0.0541  -0.0211          0.969
+#>    taxon_id treatment_1 treatment_2 log2_median_rat… median_diff mean_diff wilcox_p_value
+#>    <chr>    <chr>       <chr>                  <dbl>       <dbl>     <dbl>          <dbl>
+#>  1 ab       female      male                   0.         0.       0.             NaN    
+#>  2 ac       female      male                   0.380      0.0229   0.0379           0.470
+#>  3 ad       female      male                  -0.434     -0.0449  -0.0199           0.907
+#>  4 ae       female      male                  -1.68      -0.0475  -0.0753           0.335
+#>  5 af       female      male                   0.649      0.116    0.0614           0.386
+#>  6 ag       female      male                   0.         0.      -0.00275          0.732
+#>  7 ah       female      male                   0.         0.      -0.00140          0.602
+#>  8 aj       female      male                   1.24       0.0162  -0.0129           0.680
+#>  9 ak       female      male                   0.         0.       0.00121          0.416
+#> 10 al       female      male                  -0.542     -0.0541  -0.0211           0.969
 #> # ... with 145 more rows
 ```
 
@@ -431,6 +474,7 @@ heat_tree(obj,
           node_size = n_obs,
           node_color = log2_median_ratio, 
           node_color_interval = c(-2, 2),
+          edge_color_interval = c(-2, 2),
           node_color_range = c("cyan", "gray", "tan"),
           node_size_axis_label = "OTU count",
           node_color_axis_label = "Log 2 ratio of median proportions")
@@ -465,18 +509,18 @@ obj$data$diff_table <- compare_groups(obj, dataset = "tax_abund",
                                       groups = hmp_samples$body_site)
 print(obj$data$diff_table)
 #> # A tibble: 1,550 x 7
-#>    taxon_id treatment_1 treatment_2 log2_median_ratio median_diff mean_diff wilcox_p_val…
-#>    <chr>    <chr>       <chr>                   <dbl>       <dbl>     <dbl>         <dbl>
-#>  1 ab       Nose        Saliva                   0         0         0        NaN        
-#>  2 ac       Nose        Saliva                -  2.62     -0.167    -0.128      0.0172   
-#>  3 ad       Nose        Saliva                -  7.68     -0.274    -0.265      0.000163 
-#>  4 ae       Nose        Saliva                   5.36      0.616     0.595      0.0000108
-#>  5 af       Nose        Saliva                -  1.23     -0.260    -0.159      0.0433   
-#>  6 ag       Nose        Saliva                -Inf        -0.0228   -0.0436     0.0000874
-#>  7 ah       Nose        Saliva                   0         0         0        NaN        
-#>  8 aj       Nose        Saliva                -  3.83     -0.103    -0.0803     0.00707  
-#>  9 ak       Nose        Saliva                -Inf        -0.0174   -0.0174     0.00156  
-#> 10 al       Nose        Saliva                -Inf        -0.258    -0.248      0.000149 
+#>    taxon_id treatment_1 treatment_2 log2_median_rat… median_diff mean_diff wilcox_p_value
+#>    <chr>    <chr>       <chr>                  <dbl>       <dbl>     <dbl>          <dbl>
+#>  1 ab       Nose        Saliva                  0.        0.        0.        NaN        
+#>  2 ac       Nose        Saliva                 -2.62     -0.167    -0.128       0.0172   
+#>  3 ad       Nose        Saliva                 -7.68     -0.274    -0.265       0.000163 
+#>  4 ae       Nose        Saliva                  5.36      0.616     0.595       0.0000108
+#>  5 af       Nose        Saliva                 -1.23     -0.260    -0.159       0.0433   
+#>  6 ag       Nose        Saliva               -Inf        -0.0228   -0.0436      0.0000874
+#>  7 ah       Nose        Saliva                  0.        0.        0.        NaN        
+#>  8 aj       Nose        Saliva                 -3.83     -0.103    -0.0803      0.00707  
+#>  9 ak       Nose        Saliva               -Inf        -0.0174   -0.0174      0.00156  
+#> 10 al       Nose        Saliva               -Inf        -0.258    -0.248       0.000149 
 #> # ... with 1,540 more rows
 ```
 
