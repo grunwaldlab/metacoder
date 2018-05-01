@@ -210,10 +210,9 @@ parse_primersearch <- function(file_path) {
 #' 
 #' # Visualize which taxa were amplified
 #' #  This work because only amplicons are returned by `primersearch`
-#' n_amplified <- obj$obs_apply("pcr",
-#'                              function(x) length(unique(x)),
-#'                              value = "input",
-#'                              simplify = TRUE)
+#' n_amplified <- unlist(obj$obs_apply("pcr",
+#'                                     function(x) length(unique(x)),
+#'                                     value = "input"))
 #' prop_amped <- n_amplified / obj$n_obs()
 #' heat_tree(obj,
 #'           node_label = taxon_names, 

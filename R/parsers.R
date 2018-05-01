@@ -573,16 +573,17 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
   raw_headers <- names(raw_data)
   
   # Make classifications easier to parse
-  name_chars <- "A-Za-z0-9._+ \\-"
+  name_chars <- "A-Za-z0-9._+ ='\"\\-"
   parts <- stringr::str_match(raw_headers,
                               paste0("^(.+;)([", name_chars, "]+)(\\(?.*\\)?)$"))
   parts <- as.data.frame(parts[, -1], stringsAsFactors = FALSE)
   colnames(parts) <- c("tax", "binom", "common")
   parts$binom <- sub(parts$binom, pattern = "sp\\. ", replacement = "sp\\._")
   parts$binom <- sub(parts$binom, pattern = "uncultured ", replacement = "uncultured_")
-  parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom) 
+  # parts$binom <- gsub(pattern = " ", replacement = ";", parts$binom) 
   parts$binom <- sub(pattern = ";$", replacement = " ", parts$binom)
   headers <- apply(parts, MARGIN = 1, paste0, collapse = "")
+  headers <- gsub(headers, pattern = "\\[|\\]", replacement = "")
   
   # Create taxmap object
   output <- taxa::extract_tax_data(tax_data = headers,
