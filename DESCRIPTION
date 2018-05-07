@@ -48,7 +48,8 @@ Imports:
     cowplot,
     GA,
     Rcpp,
-    crayon
+    crayon,
+    svglite
 Suggests:
     knitr,
     rmarkdown,
