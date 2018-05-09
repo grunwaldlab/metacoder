@@ -712,7 +712,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' @inheritParams do_calc_on_num_cols
 #' @param drop If \code{groups} is not used, return a vector of the results instead
 #'   of a table with one column.
-#' @param min_value The minimum number a sample must have for it to be counted as present.
+#' @param more_than A sample must have greater than this value for it to be counted as present.
 #'   
 #' @return A tibble
 #'
@@ -753,7 +753,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' @export
 calc_n_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
                            other_cols = FALSE, out_names = NULL, drop = FALSE,
-                           min_value = 1) {
+                           more_than = 0) {
   # Check drop option
   if (drop && length(unique(groups)) > 1) {
     stop(call. = FALSE,
@@ -762,13 +762,13 @@ calc_n_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
 
   do_it <- function(count_table, cols = cols, groups = groups) {
     # Alert user 
-    my_print("Calculating number of samples with a value of at least ", min_value, " for ", length(cols), " columns ",
+    my_print("Calculating number of samples with a value greater than ", more_than, " for ", length(cols), " columns ",
              ifelse(length(unique(groups)) == 1, "", paste0("in ", length(unique(groups)), " groups ")),
              "for ", nrow(count_table), ' observations')
     
     # Calculate number of samples
     output <- lapply(split(cols, groups), function(col_index) {
-      vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] >= min_value), integer(1))
+      vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > more_than), integer(1))
     })
     as.data.frame(output, stringsAsFactors = FALSE)
   }

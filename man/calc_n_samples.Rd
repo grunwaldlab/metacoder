@@ -5,7 +5,7 @@
 \title{Count the number of samples}
 \usage{
 calc_n_samples(obj, dataset, cols = NULL, groups = "n_samples",
-  other_cols = FALSE, out_names = NULL, drop = FALSE, min_value = 1)
+  other_cols = FALSE, out_names = NULL, drop = FALSE, more_than = 0)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -41,7 +41,7 @@ length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 \item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}
 
-\item{min_value}{The minimum number a sample must have for it to be counted as present.}
+\item{more_than}{A sample must have greater than this value for it to be counted as present.}
 }
 \value{
 A tibble

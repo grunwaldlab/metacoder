@@ -6,6 +6,10 @@
 
 * Fixed bug in `calc_n_samples` where the message reported the number of taxa instead of the number of rows in the table.
 
+### Improvements
+
+* Added `more_than` option to `calc_n_samples` so that users can set the minimum threshold for whether a sample is counted or not instead of it always 1.
+
 ##  metacoder 0.2.1
 
 ### Bug fixes
