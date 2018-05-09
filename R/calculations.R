@@ -759,7 +759,7 @@ calc_n_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
     # Alert user 
     my_print("Calculating number of samples with non-zero counts from ", length(cols), " columns ",
              ifelse(length(unique(groups)) == 1, "", paste0("in ", length(unique(groups)), " groups ")),
-             "for ", length(obj$taxon_ids()), ' observations')
+             "for ", nrow(count_table), ' observations')
     
     # Calculate number of samples
     output <- lapply(split(cols, groups), function(col_index) {

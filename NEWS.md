@@ -1,5 +1,11 @@
 # News 
 
+## Current
+
+### Bug fixes
+
+* Fixed bug in `calc_n_samples` where the message reported the number of taxa instead of the number of rows in the table.
+
 ##  metacoder 0.2.1
 
 ### Bug fixes
