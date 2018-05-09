@@ -707,7 +707,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' Count the number of samples
 #'
 #' For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
-#' samples with greater than a minimum value.
+#' samples (i.e. columns) with greater than a minimum value.
 #' 
 #' @inheritParams do_calc_on_num_cols
 #' @param drop If \code{groups} is not used, return a vector of the results instead
@@ -729,7 +729,7 @@ calc_taxon_abund <- function(obj, dataset, cols = NULL, groups = NULL,
 #' calc_n_samples(x, dataset = "tax_data")
 #' 
 #' # Count samples with at least 5 reads
-#' calc_n_samples(x, dataset = "tax_data", min_value = 5)
+#' calc_n_samples(x, dataset = "tax_data", more_than = 5)
 #' 
 #' # Return a vector instead of a table
 #' calc_n_samples(x, dataset = "tax_data", drop = TRUE)
@@ -769,6 +769,87 @@ calc_n_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
     # Calculate number of samples
     output <- lapply(split(cols, groups), function(col_index) {
       vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > more_than), integer(1))
+    })
+    as.data.frame(output, stringsAsFactors = FALSE)
+  }
+  
+  output <- do_calc_on_num_cols(obj, dataset, cols = cols, groups = groups, 
+                                other_cols = other_cols, out_names = out_names, func = do_it)
+  
+  # Drop second dimension
+  if (drop) {
+    output <- stats::setNames(output[[2]], output$taxon_id)
+  } 
+  
+  return(output)
+}
+
+
+#' Calculate the proportion of samples
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, calculate the
+#' proportion of samples (i.e. columns) with greater than a minimum value.
+#' 
+#' @inheritParams do_calc_on_num_cols
+#' @param drop If \code{groups} is not used, return a vector of the results instead
+#'   of a table with one column.
+#' @param more_than A sample must have greater than this value for it to be counted as present.
+#'   
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for example
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Count samples with at least one read
+#' calc_prop_samples(x, dataset = "tax_data")
+#' 
+#' # Count samples with at least 5 reads
+#' calc_prop_samples(x, dataset = "tax_data", more_than = 5)
+#' 
+#' # Return a vector instead of a table
+#' calc_prop_samples(x, dataset = "tax_data", drop = TRUE)
+#' 
+#' # Only use some columns
+#' calc_prop_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
+#' 
+#' # Return a count for each treatment
+#' calc_prop_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
+#' 
+#' # Rename output columns 
+#' calc_prop_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
+#'                out_names = c("A", "B", "C", "D", "E"))
+#' 
+#' # Preserve other columns from input
+#' calc_prop_samples(x, dataset = "tax_data", other_cols = TRUE)
+#' calc_prop_samples(x, dataset = "tax_data", other_cols = 2)
+#' calc_prop_samples(x, dataset = "tax_data", other_cols = "otu_id")
+#' }
+#' 
+#' @export
+calc_prop_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
+                              other_cols = FALSE, out_names = NULL, drop = FALSE,
+                              more_than = 0) {
+  # Check drop option
+  if (drop && length(unique(groups)) > 1) {
+    stop(call. = FALSE,
+         "Cannot drop dimension (conver to vector) when there are more than one group")
+  }
+  
+  do_it <- function(count_table, cols = cols, groups = groups) {
+    # Alert user 
+    my_print("Calculating the proportion of samples with a value greater than ", more_than, " for ", length(cols), " columns ",
+             ifelse(length(unique(groups)) == 1, "", paste0("in ", length(unique(groups)), " groups ")),
+             "for ", nrow(count_table), ' observations')
+    
+    # Calculate number of samples
+    output <- lapply(split(cols, groups), function(col_index) {
+      vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > more_than), integer(1)) / length(col_index)
     })
     as.data.frame(output, stringsAsFactors = FALSE)
   }

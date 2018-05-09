@@ -48,7 +48,7 @@ A tibble
 }
 \description{
 For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
-samples with greater than a minimum value.
+samples (i.e. columns) with greater than a minimum value.
 }
 \examples{
 \dontrun{
@@ -61,7 +61,7 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 calc_n_samples(x, dataset = "tax_data")
 
 # Count samples with at least 5 reads
-calc_n_samples(x, dataset = "tax_data", min_value = 5)
+calc_n_samples(x, dataset = "tax_data", more_than = 5)
 
 # Return a vector instead of a table
 calc_n_samples(x, dataset = "tax_data", drop = TRUE)
@@ -89,6 +89,7 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{calc_group_rsd}},
   \code{\link{calc_group_stat}},
   \code{\link{calc_obs_props}},
+  \code{\link{calc_prop_samples}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
   \code{\link{zero_low_counts}}

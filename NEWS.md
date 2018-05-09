@@ -9,6 +9,7 @@
 ### Improvements
 
 * Added `more_than` option to `calc_n_samples` so that users can set the minimum threshold for whether a sample is counted or not instead of it always 1.
+* Added `calc_prop_samples` function for calculating the proportion of samples with a value greater than 0 (issues [#233](https://github.com/grunwaldlab/metacoder/issues/233).
 
 ##  metacoder 0.2.1
 
