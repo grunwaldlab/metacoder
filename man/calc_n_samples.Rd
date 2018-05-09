@@ -5,7 +5,7 @@
 \title{Count the number of samples}
 \usage{
 calc_n_samples(obj, dataset, cols = NULL, groups = "n_samples",
-  other_cols = FALSE, out_names = NULL, drop = FALSE)
+  other_cols = FALSE, out_names = NULL, drop = FALSE, min_value = 1)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -40,13 +40,15 @@ length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 
 \item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}
+
+\item{min_value}{The minimum number a sample must have for it to be counted as present.}
 }
 \value{
 A tibble
 }
 \description{
 For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
-samples with greater than zero occurrences.
+samples with greater than a minimum value.
 }
 \examples{
 \dontrun{
@@ -55,8 +57,11 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
                    
-# Count samples with reads
+# Count samples with at least one read
 calc_n_samples(x, dataset = "tax_data")
+
+# Count samples with at least 5 reads
+calc_n_samples(x, dataset = "tax_data", min_value = 5)
 
 # Return a vector instead of a table
 calc_n_samples(x, dataset = "tax_data", drop = TRUE)
