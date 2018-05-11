@@ -2,6 +2,7 @@
 
 S3method(heat_tree,Taxmap)
 export("%>%")
+export(as_phyloseq)
 export(calc_group_mean)
 export(calc_group_median)
 export(calc_group_rsd)

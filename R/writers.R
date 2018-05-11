@@ -353,3 +353,5 @@ write_silva_fasta <- function(obj, file,
                     })
   seqinr::write.fasta(as.list(sequences), headers, file, as.string = TRUE, nbchar = 80)
 }
+
+
