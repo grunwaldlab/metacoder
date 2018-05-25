@@ -88,6 +88,7 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{calc_n_samples}},
   \code{\link{calc_prop_samples}},
   \code{\link{calc_taxon_abund}},
-  \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
-  \code{\link{zero_low_counts}}
+  \code{\link{compare_groups}},
+  \code{\link{counts_to_presence}},
+  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }

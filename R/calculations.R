@@ -864,3 +864,47 @@ calc_prop_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
   
   return(output)
 }
+
+
+#' Apply a function to groups of columns
+#'
+#' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
+#' rows in groups of columns. The result of the function is used to create new
+#' columns. This is eqivalant to splitting columns of a table by a factor and
+#' using \code{apply} on each group.
+#'
+#' @inheritParams do_calc_on_num_cols
+#' @param threshold The value a number must be greater than to count as present.
+#'   By, default, anything above 0 is considered present.
+#' @param func The function to apply. It should take a vector and return a
+#'   single value. For example, \code{\link{max}} or \code{\link{mean}} could be
+#'   used.
+#'
+#' @return A tibble
+#'
+#' @family calculations
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Parse dataset for examples
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'
+#' # Convert count to presence/absence
+#' counts_to_presence(x, "tax_data")
+#'
+#' # Check if there are any reads in each group of samples
+#' counts_to_presence(x, "tax_data", groups = hmp_samples$body_site)
+#'
+#' }
+counts_to_presence <- function(obj, dataset, threshold = 0, groups = NULL,
+                               cols = NULL, other_cols = FALSE,
+                               out_names = NULL) {
+  
+  calc_group_stat(obj, dataset = dataset, func = function(v) any(v > threshold),
+                  groups = groups, cols = cols, other_cols = other_cols,
+                  out_names = out_names)
+}

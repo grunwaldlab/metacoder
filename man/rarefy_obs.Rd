@@ -83,5 +83,6 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{calc_prop_samples}},
   \code{\link{calc_taxon_abund}},
   \code{\link{compare_groups}},
+  \code{\link{counts_to_presence}},
   \code{\link{zero_low_counts}}
 }
