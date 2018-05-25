@@ -93,10 +93,39 @@ as_phyloseq <- function(obj,
   rownames(ps_tax_table) <- rownames(tax_table)
   
   # Get sample data
+  sample_table <- get_expected_data(obj, input = sample_data,
+                                    default = "sample_data",
+                                    expected_class = "data.frame")
+  if (! is.null(sample_table)) {
+    # Get sample IDs
+    if (sample_id_col %in% colnames(sample_table)) {
+      sample_ids <- sample_table[[sample_id_col]]
+    } else {
+      stop('Sample data table does not have an sample ID column named "', sample_id_col,
+           '". Use the "sample_id_col" option if it is named something else.')
+    }
+    
+    # Check for sample infor not in the sample table
+    if (! is.null(otu_table)) {
+      unnkown_cols <- colnames(parsed_otu_table)[colnames(parsed_otu_table) %in% sample_ids]
+      if (length(unnkown_cols) > 0) {
+        warning('The OTU table contains the following samples that do not appear in the sample data table:',
+                limited_print(prefix = "  ", type = "silent", unnkown_cols))
+      }
+    }
+    
+    # reformt
+    ps_sample_table <- as.data.frame(sample_table)
+    rownames(ps_sample_table) <- ps_sample_table[[sample_id_col]]
+    ps_sample_table <- ps_sample_table[colnames(ps_sample_table) != sample_id_col]
+    ps_sample_table <- phyloseq::sample_data(ps_sample_table)
+  } 
+
   
   # Make phyloseq object
-    phyloseq::phyloseq(phyloseq::otu_table(parsed_otu_table, taxa_are_rows = TRUE),
-                       ps_tax_table)
+  phyloseq::phyloseq(phyloseq::otu_table(parsed_otu_table, taxa_are_rows = TRUE),
+                     ps_tax_table,
+                     ps_sample_table)
 }
 
 
