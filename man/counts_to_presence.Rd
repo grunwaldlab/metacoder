@@ -4,13 +4,16 @@
 \alias{counts_to_presence}
 \title{Apply a function to groups of columns}
 \usage{
-counts_to_presence(obj, dataset, groups = NULL, cols = NULL,
-  other_cols = FALSE, out_names = NULL)
+counts_to_presence(obj, dataset, threshold = 0, groups = NULL,
+  cols = NULL, other_cols = FALSE, out_names = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
 \item{dataset}{The name of a table in \code{obj$data}.}
+
+\item{threshold}{The value a number must be greater than to count as present.
+By, default, anything above 0 is considered present.}
 
 \item{groups}{Group multiple columns per treatment/group. This should be a
 vector of group IDs (e.g. character, integer) the same length as
@@ -39,8 +42,8 @@ will be preserved in the front. Takes one of the following inputs:
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 
 \item{func}{The function to apply. It should take a vector and return a
-single value. For example, \code{\link{max}} or \code{\link{mean}} could
-be used.}
+single value. For example, \code{\link{max}} or \code{\link{mean}} could be
+used.}
 }
 \value{
 A tibble

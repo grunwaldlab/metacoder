@@ -81,10 +81,22 @@ as_phyloseq <- function(obj,
     rownames(parsed_otu_table) <- otu_ids
   }
   
-  # Get
+  # Get taxonomy table
+  if (is.null(otu_table)) {
+    tax_table <- as.matrix(obj$taxonomy_table())
+    rownames(tax_table) <- obj$taxon_ids()
+  } else {
+    tax_table <- as.matrix(obj$taxonomy_table(subset = otu_taxon_ids))
+    rownames(tax_table) <- otu_ids
+  }
+  ps_tax_table <- phyloseq::tax_table(tax_table)
+  rownames(ps_tax_table) <- rownames(tax_table)
+  
+  # Get sample data
   
   # Make phyloseq object
-  phyloseq(otu_table(parsed_otu_table, taxa_are_rows = TRUE))
+    phyloseq::phyloseq(phyloseq::otu_table(parsed_otu_table, taxa_are_rows = TRUE),
+                       ps_tax_table)
 }
 
 
