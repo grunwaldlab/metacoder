@@ -197,3 +197,13 @@ test_that("Parsing/writing the greengenes database", {
   file.remove(tax_out_path)
   file.remove(seq_out_path)
 })
+
+
+test_that("Converting to phyloseq", {
+  # test round-trip
+  library(phyloseq)
+  data(enterotype)
+  expect_warning(x <- parse_phyloseq(enterotype))
+  y <- as_phyloseq(x)
+  expect_equivalent(enterotype, y)
+})

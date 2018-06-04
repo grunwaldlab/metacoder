@@ -105,11 +105,12 @@ as_phyloseq <- function(obj,
            '". Use the "sample_id_col" option if it is named something else.')
     }
     
-    # Check for sample infor not in the sample table
+    # Check for sample information not in the sample table
     if (! is.null(otu_table)) {
-      unnkown_cols <- colnames(parsed_otu_table)[colnames(parsed_otu_table) %in% sample_ids]
+      unnkown_cols <- colnames(parsed_otu_table)[! colnames(parsed_otu_table) %in% sample_ids]
       if (length(unnkown_cols) > 0) {
-        warning('The OTU table contains the following samples that do not appear in the sample data table:',
+        warning('The OTU table contains the following ', length(unnkown_cols),
+                ' of ', ncol(parsed_otu_table), ' samples that do not appear in the sample data table:\n',
                 limited_print(prefix = "  ", type = "silent", unnkown_cols))
       }
     }
@@ -119,13 +120,20 @@ as_phyloseq <- function(obj,
     rownames(ps_sample_table) <- ps_sample_table[[sample_id_col]]
     ps_sample_table <- ps_sample_table[colnames(ps_sample_table) != sample_id_col]
     ps_sample_table <- phyloseq::sample_data(ps_sample_table)
-  } 
-
+  } else {
+    ps_sample_table <- NULL
+  }
+  
+  # Get phylogenetic tree
+  my_phy_tree <- get_expected_data(obj, input = phy_tree, default = "phy_tree",
+                                   expected_class = "phylo")
+  
   
   # Make phyloseq object
   phyloseq::phyloseq(phyloseq::otu_table(parsed_otu_table, taxa_are_rows = TRUE),
                      ps_tax_table,
-                     ps_sample_table)
+                     ps_sample_table,
+                     my_phy_tree)
 }
 
 

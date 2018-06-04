@@ -61,16 +61,16 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   if (! is.null(obj@sam_data)) {
     sam_data <- as.data.frame(as.list(obj@sam_data), stringsAsFactors = FALSE)
     if (! is.null(rownames(obj@sam_data))) {
-      sam_data <- cbind(sample_ids = rownames(obj@sam_data), sam_data)
+      sam_data <- cbind(sample_id = rownames(obj@sam_data), sam_data)
     }
     sam_data[] <- lapply(sam_data, as.character)
-    datasets <- c(datasets, list(sam_data = sam_data))
+    datasets <- c(datasets, list(sample_data = sam_data))
     mappings <- c(mappings, NA)
   }
   
   # Parse phylogenetic tree
   if (! is.null(obj@phy_tree)) {
-    datasets <- c(datasets, list(phylo_tree = obj@phy_tree))
+    datasets <- c(datasets, list(phy_tree = obj@phy_tree))
     mappings <- c(mappings, NA)
   }
   
