@@ -40,10 +40,6 @@ will be preserved in the front. Takes one of the following inputs:
 
 \item{out_names}{The names of count columns in the output. Must be the same
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
-
-\item{func}{The function to apply. It should take a vector and return a
-single value. For example, \code{\link{max}} or \code{\link{mean}} could be
-used.}
 }
 \value{
 A tibble

@@ -876,10 +876,7 @@ calc_prop_samples <- function(obj, dataset, cols = NULL, groups = "n_samples",
 #' @inheritParams do_calc_on_num_cols
 #' @param threshold The value a number must be greater than to count as present.
 #'   By, default, anything above 0 is considered present.
-#' @param func The function to apply. It should take a vector and return a
-#'   single value. For example, \code{\link{max}} or \code{\link{mean}} could be
-#'   used.
-#'
+#'   
 #' @return A tibble
 #'
 #' @family calculations

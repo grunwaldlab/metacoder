@@ -36,7 +36,7 @@ as_phyloseq(obj, otu_table = NULL, otu_id_col = "otu_id",
 \describe{
   \item{\code{NULL}}{Look for a tree named "phy_tree" in `obj$data` with tip labels matching OTU ids. If it exists, use it.}
   \item{\code{character}}{The name of the tree stored in `obj$data` with tip labels matching OTU ids.}
-  \item{\code{\code{\link[ape]{phylo}}}}{A tree with tip labels matching OTU ids.}
+  \item{\code{\link[ape]{phylo}}}{A tree with tip labels matching OTU ids.}
   \item{\code{FALSE}}{Do not include a tree, even if "phy_tree" exists in `obj$data`}
 }}
 }
