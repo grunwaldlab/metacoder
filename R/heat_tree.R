@@ -24,6 +24,14 @@ heat_tree.Taxmap <- function(.input, ...) {
   arguments <- c(list(taxon_id = .input$edge_list$to, supertaxon_id = .input$edge_list$from),
                  lazyeval::lazy_eval(lazyeval::lazy_dots(...), data = data))
   
+  # Check for common mistakes
+  # func_not_vars <- c("taxon_name", "taxon_rank")
+  invalid_input <- vapply(arguments, is.function, logical(1))
+  if (any(invalid_input)) {
+    stop(paste0("Function given to parameter '", names(invalid_input)[invalid_input][1], "'",
+                " Did you use taxon_name/taxon_rank instead of taxon_names/taxon_ranks perhaps?"))
+  }
+  
   # Use variable name for scale axis labels
   if (! "node_color_axis_label" %in% names(arguments)) {
     arguments$node_color_axis_label <- deparse(as.list(match.call())$node_color)

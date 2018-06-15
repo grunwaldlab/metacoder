@@ -19,8 +19,9 @@ verify_taxmap <- function(obj) {
 
 #' Get a data set from a taxmap object
 #' 
-#' Get a data set from a taxmap object and complain if it does not exist.
-#' This is intended to be used to parse options in other functions.
+#' NOTE: This will be replaced by the function `get_dataset` in the `taxa`
+#' pacakge. Get a data set from a taxmap object and complain if it does not
+#' exist. This is intended to be used to parse options in other functions.
 #' 
 #' @param obj A taxmap object
 #' @param dataset Which data set to use. Can be any of the following:
