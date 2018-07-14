@@ -57,7 +57,9 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
   diff_table <- get_taxmap_table(obj, dataset)
   
   # Make plot layout
-  treatments <- unique(c(diff_table$treatment_1, diff_table$treatment_2))
+  treat_1 <- as.character(diff_table$treatment_1)
+  treat_2 <- as.character(diff_table$treatment_2)
+  treatments <- unique(c(treat_1, treat_2))
   combinations <- t(utils::combn(seq_along(treatments), 2))
   layout_matrix <- matrix(rep(NA, (length(treatments))^2), nrow = length(treatments))
   for (index in 1:nrow(combinations)) {
@@ -79,10 +81,10 @@ heat_tree_matrix <- function(obj, dataset, label_small_trees =  FALSE,
                         set.seed(seed)
                         obj %>%
                           taxa::filter_obs(dataset,
-                                           (diff_table$treatment_1 == treatments[combinations[index, 1]] &
-                                             diff_table$treatment_2 == treatments[combinations[index, 2]]) |
-                                             (diff_table$treatment_1 == treatments[combinations[index, 2]] &
-                                                diff_table$treatment_2 == treatments[combinations[index, 1]])) %>%
+                                           (treat_1 == treatments[combinations[index, 1]] &
+                                              treat_2 == treatments[combinations[index, 2]]) |
+                                             (treat_1 == treatments[combinations[index, 2]] &
+                                                treat_2 == treatments[combinations[index, 1]])) %>%
                           plot_sub_plot(...)
                       })
   
