@@ -5,6 +5,7 @@
 ### Bug fixes
 
 * Fixed bug in `calc_n_samples` where the message reported the number of taxa instead of the number of rows in the table.
+# Fixed bug in `heat_tree_matrix` that happened when factors were used for treatments (issue [#240](https://github.com/grunwaldlab/metacoder/issues/240).
 
 ### Improvements
 
