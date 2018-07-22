@@ -508,7 +508,7 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
     dplyr::select(taxon_id , everything()) 
   
   # Make per-taxon table
-  output$data$tax_amp_stats <- dplyr::tibble(taxon_ids = obj$taxon_ids(),
+  output$data$tax_amp_stats <- dplyr::tibble(taxon_id = obj$taxon_ids(),
                                              query_count = n_obs(output, sequences),
                                              seq_count = vapply(obs(output, data = "amplicons"),
                                                                     FUN.VALUE = numeric(1),
