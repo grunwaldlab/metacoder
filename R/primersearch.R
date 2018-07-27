@@ -252,13 +252,14 @@ parse_primersearch <- function(file_path) {
 primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismatch = 5) {
   
   # Read sequence info
-  input <- parse_seq_input(input = input, file = file)
+  input <- parse_seq_input(input = input, file = file, output_format = "DNAbin")
   
   # Write temporary fasta file for primersearch input
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
   on.exit(file.remove(sequence_path))
-  writeLines(text = paste0(">", seq_along(input), "\n", input),
-             con = sequence_path)
+  # writeLines(text = paste0(">", seq_along(input), "\n", input),
+  #            con = sequence_path)
+  ape::write.FASTA(stats::setNames(input, seq_along(input)), file = sequence_path)
   
   # Write primer file for primersearch input
   name_primer <- function(primer) {
@@ -302,16 +303,16 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
   
   # Make reverse primer position relative to start of the sequence
   #   primersearch returns the index of the start on the reverse complement
-  output$r_start <- vapply(input[output$input], nchar, numeric(1)) - output$r_start - nchar(output$r_primer) + 2
+  output$r_start <- vapply(input[output$input], length, numeric(1)) - output$r_start - nchar(output$r_primer) + 2
   
   # Find the end index of the primer binding site
   output$f_end <- output$f_start + nchar(output$f_primer) - 1
   output$r_end <- output$r_start + nchar(output$r_primer) - 1
   
   # Extract primer matching region
-  output$f_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+  output$f_match <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
                                input[output$input], output$f_start, output$f_end)) 
-  output$r_match <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+  output$r_match <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
                                input[output$input], output$r_start, output$r_end))
   
   # Reverse complement matching region if the antisense strand is supplied
@@ -319,7 +320,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
   output$r_match <- ifelse(output$f_primer == forward, output$r_match, rev_comp(output$r_match))
   
   # Extract amplicon input
-  output$amplicon <- unlist(Map(function(seq, start, end) substr(seq, start, end),
+  output$amplicon <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
                                 input[output$input], output$f_end + 1, output$r_start - 1)) 
   if (! "amplicon" %in% colnames(output)) { # For empty tables
     output$amplicon <- character(0)

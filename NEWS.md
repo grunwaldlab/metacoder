@@ -11,10 +11,15 @@
 
 * Added `more_than` option to `calc_n_samples` so that users can set the minimum threshold for whether a sample is counted or not instead of it always 1.
 * Added `calc_prop_samples` function for calculating the proportion of samples with a value greater than 0 (issues [#233](https://github.com/grunwaldlab/metacoder/issues/233).
+* primersearch is faster and takes less memory by using `ape::DNAbin` objects internally.
 
 ### New features
 
 * `taxmap` objects can be converted to `phyloseq` objects using `as_phyloseq`.
+
+### Changes
+
+* `primersearch` now takes and returns a `taxmap` object. `primersearch_raw` is a new function that behaves like the old `primersearch` did, returning a table.
 
 ##  metacoder 0.2.1
 

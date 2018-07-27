@@ -4,7 +4,7 @@
 \alias{parse_seq_input}
 \title{Read sequences in an unknown format}
 \usage{
-parse_seq_input(input = NULL, file = NULL)
+parse_seq_input(input = NULL, file = NULL, output_format = "character")
 }
 \arguments{
 \item{input}{(\code{character}) One of the following: 
@@ -21,6 +21,8 @@ parse_seq_input(input = NULL, file = NULL)
 
 \item{file}{The path to a FASTA file containing sequences to use. Either
 "input" or "file" must be supplied but not both.}
+
+\item{output_format}{The format of the sequences returned. Either "character" or "DNAbin"}
 }
 \value{
 A named character vector of sequences

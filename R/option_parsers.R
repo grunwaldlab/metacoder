@@ -320,11 +320,12 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
 #' }
 #' @param file The path to a FASTA file containing sequences to use. Either
 #'   "input" or "file" must be supplied but not both.
+#' @param output_format The format of the sequences returned. Either "character" or "DNAbin"
 #' 
 #' @return A named character vector of sequences
 #' 
 #' @keywords internal
-parse_seq_input <- function(input = NULL, file = NULL) {
+parse_seq_input <- function(input = NULL, file = NULL, output_format = "character") {
   # Check parameters
   if (sum(! c(is.null(file), is.null(input))) != 1) {
     stop(call. = FALSE,
@@ -337,17 +338,38 @@ parse_seq_input <- function(input = NULL, file = NULL) {
   }
   
   # Convert to common format
-  if (! is.null(file)) {
-    result <- read_fasta(file)
-  } else if (length(input) == 0 || class(input) == "character") {
-    result <- input
-  } else if (class(input) == "DNAbin") {
-    result <- toupper(vapply(as.character(input), paste, character(1), collapse = ""))
-  } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
-    result <- vapply(input, paste, character(1), collapse = "")
+  if (output_format == "character") {
+    if (! is.null(file)) {
+      result <- read_fasta(file)
+    } else if (length(input) == 0 || class(input) == "character") {
+      result <- input
+    } else if (class(input) == "DNAbin") {
+      result <- toupper(vapply(as.character(input), paste, character(1), collapse = ""))
+    } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
+      result <- vapply(input, paste, character(1), collapse = "")
+    } else {
+      stop(paste0('Could not parse sequence information of class "', class(input), '".'),
+           call. = FALSE)
+    }
+  } else if (output_format == "DNAbin") {
+    if (! is.null(file)) {
+      result <- ape::read.FASTA(file)
+    } else if (length(input) == 0 || class(input) == "character") {
+      result <- ape::as.DNAbin(strsplit(input, split = ""))
+    } else if (class(input) == "DNAbin") {
+      result <- input
+    } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
+      input <- lapply(input, function(x) {
+        attributes(x) <- NULL
+        return(x)
+      })
+      result <- ape::as.DNAbin(input)
+    } else {
+      stop(paste0('Could not parse sequence information of class "', class(input), '".'),
+           call. = FALSE)
+    }
   } else {
-    stop(paste0('Could not parse sequence information of class "', class(input), '".'),
-         call. = FALSE)
+    stop(paste0('Invalid output format "', output_format, '".'))
   }
   
   return(result)
