@@ -772,7 +772,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
       # Use genetic algorithm to pick range
       ga_result <- GA::ga(type = "real-valued", 
                           fitness =  function(x) optimality_stat(x[1], x[2]),
-                          min = c(min_range[1], max_range[1]), max = c(min_range[2], max_range[2]),
+                          lower = c(min_range[1], max_range[1]), upper = c(min_range[2], max_range[2]),
                           maxiter = 40, run = 30, popSize = 70, monitor = FALSE, parallel = FALSE)
       vsr_plot <- as.vector(ga_result@solution[1, ])
     }
