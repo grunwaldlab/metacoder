@@ -19,9 +19,9 @@ test_that("primersearch works", {
   skip_on_cran()
   skip_if_not(metacoder:::primersearch_is_installed(must_be_installed = FALSE))
   
-  result <- primersearch(seqs, 
-                         forward = c("p1" = f_primer),
-                         reverse = c("p2" = r_primer))
+  result <- primersearch_raw(seqs, 
+                             forward = c("p1" = f_primer),
+                             reverse = c("p2" = r_primer))
   
   # Primer start indexes
   expect_equal(result$f_start[1], nchar("AA") + 1)
@@ -55,10 +55,10 @@ test_that("primersearch works", {
   
   # Can read from a file
   in_path <- system.file("extdata/silva_subset.fa", package = "metacoder")
-  file_result <- primersearch(file = in_path,
-                              forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-                              reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-                              mismatch = 10)
+  file_result <- primersearch_raw(file = in_path,
+                                  forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                                  reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                                  mismatch = 10)
   
   # Can read ape format (Current example file has U instead of T and this breaks ape)
   # ape_result <- primersearch(ape::read.FASTA(in_path),
@@ -67,10 +67,10 @@ test_that("primersearch works", {
   #                            mismatch = 10)
 
   # Can read seqinr format
-  seqinr_result <- primersearch(seqinr::read.fasta(in_path, forceDNAtolower = FALSE),
-                                forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-                                reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-                                mismatch = 10)
+  seqinr_result <- primersearch_raw(seqinr::read.fasta(in_path, forceDNAtolower = FALSE),
+                                    forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                                    reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                                    mismatch = 10)
   
   # Check that all input types return the same object
   expect_equal(file_result, seqinr_result)

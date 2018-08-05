@@ -332,6 +332,10 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
                        "f_start", "f_end", "r_start", "r_end",
                        "f_match", "r_match", "amplicon", "product")]
   
+  # Make all sequences upper case
+  cols_with_seqs <- c("f_primer", "r_primer", "f_match", "r_match", "amplicon", "product")
+  output[cols_with_seqs] <- lapply(output[cols_with_seqs], toupper)
+  
   return(output)
 }
 

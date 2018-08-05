@@ -320,12 +320,13 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
 #' }
 #' @param file The path to a FASTA file containing sequences to use. Either
 #'   "input" or "file" must be supplied but not both.
-#' @param output_format The format of the sequences returned. Either "character" or "DNAbin"
+#' @param output_format The format of the sequences returned. Either "character" or "DNAbin".
+#' @param u_to_t If `TRUE`, then "U" in the sequence will be converted to "T".
 #' 
 #' @return A named character vector of sequences
 #' 
 #' @keywords internal
-parse_seq_input <- function(input = NULL, file = NULL, output_format = "character") {
+parse_seq_input <- function(input = NULL, file = NULL, output_format = "character", u_to_t = TRUE) {
   # Check parameters
   if (sum(! c(is.null(file), is.null(input))) != 1) {
     stop(call. = FALSE,
@@ -351,10 +352,20 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
       stop(paste0('Could not parse sequence information of class "', class(input), '".'),
            call. = FALSE)
     }
+    
+    if (u_to_t) {
+      result <- vapply(result, FUN = gsub, FUN.VALUE = character(1),
+                       pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+    }
+    
   } else if (output_format == "DNAbin") {
     if (! is.null(file)) {
       result <- ape::read.FASTA(file)
     } else if (length(input) == 0 || class(input) == "character") {
+      if (u_to_t) {
+        input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
+                        pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+      }
       result <- ape::as.DNAbin(strsplit(input, split = ""))
     } else if (class(input) == "DNAbin") {
       result <- input
@@ -363,6 +374,10 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
         attributes(x) <- NULL
         return(x)
       })
+      if (u_to_t) {
+        input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
+                        pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+      }
       result <- ape::as.DNAbin(input)
     } else {
       stop(paste0('Could not parse sequence information of class "', class(input), '".'),
