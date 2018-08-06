@@ -20,6 +20,7 @@
 ### Changes
 
 * `primersearch` now takes and returns a `taxmap` object. `primersearch_raw` is a new function that behaves like the old `primersearch` did, returning a table.
+* The `dataset` option of many functions has been renamed to `data` to match the option name in the `taxa` pacakge.
 
 ##  metacoder 0.2.1
 

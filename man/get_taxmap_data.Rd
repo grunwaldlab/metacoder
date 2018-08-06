@@ -4,12 +4,12 @@
 \alias{get_taxmap_data}
 \title{Get a data set from a taxmap object}
 \usage{
-get_taxmap_data(obj, dataset)
+get_taxmap_data(obj, data)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
-\item{dataset}{Which data set to use. Can be any of the following:
+\item{data}{Which data set to use. Can be any of the following:
 \describe{
   \item{Name}{The name of the data set to use.}
   \item{Index}{The index of the data set to use.}
@@ -25,7 +25,7 @@ exist. This is intended to be used to parse options in other functions.
 }
 \examples{
 \dontrun{
-# Parse dataset
+# Parse data
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")

@@ -4,18 +4,18 @@
 \alias{do_calc_on_num_cols}
 \title{Run some function to produce new columns.}
 \usage{
-do_calc_on_num_cols(obj, dataset, func, cols = NULL, groups = NULL,
+do_calc_on_num_cols(obj, data, func, cols = NULL, groups = NULL,
   other_cols = FALSE, out_names = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data}.}
+\item{data}{The name of a table in \code{obj$data}.}
 
 \item{func}{The function to apply. Should have the following form:
 \code{function(count_table, cols = cols, groups = groups)} and return a table.}
 
-\item{cols}{The columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
 \item{TRUE/FALSE:}{All/No columns will used.}

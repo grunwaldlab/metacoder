@@ -4,19 +4,19 @@
 \alias{rarefy_obs}
 \title{Calculate rarefied observation counts}
 \usage{
-rarefy_obs(obj, dataset, sample_size = NULL, cols = NULL,
-  other_cols = FALSE, out_names = NULL)
+rarefy_obs(obj, data, sample_size = NULL, cols = NULL, other_cols = FALSE,
+  out_names = NULL, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data}.}
+\item{data}{The name of a table in \code{obj$data}.}
 
 \item{sample_size}{The sample size counts will be rarefied to. This can be 
 either a single integer or a vector of integers of equal length to the 
 number of columns.}
 
-\item{cols}{The columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
 \item{TRUE/FALSE:}{All/No columns will used.}
@@ -36,6 +36,8 @@ will be preserved in the front. Takes one of the following inputs:
 
 \item{out_names}{The names of count columns in the output. Must be the same
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \value{
 A tibble
@@ -47,7 +49,7 @@ which columns are numeric and handles the reformatting needed to use tibbles.
 }
 \examples{
 \dontrun{
-# Parse dataset for examples
+# Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")

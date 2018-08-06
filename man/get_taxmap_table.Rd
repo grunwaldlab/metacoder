@@ -4,12 +4,12 @@
 \alias{get_taxmap_table}
 \title{Get a table from a taxmap object}
 \usage{
-get_taxmap_table(obj, dataset)
+get_taxmap_table(obj, data)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
-\item{dataset}{Which data set to use. Can be any of the following:
+\item{data}{Which data set to use. Can be any of the following:
 \describe{
   \item{Name}{The name of the data set to use.}
   \item{Index}{The index of the data set to use.}

@@ -4,16 +4,16 @@
 \alias{compare_groups}
 \title{Compare groups of samples}
 \usage{
-compare_groups(obj, dataset, cols, groups, func = NULL, combinations = NULL,
-  other_cols = FALSE)
+compare_groups(obj, data, cols, groups, func = NULL, combinations = NULL,
+  other_cols = FALSE, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj} that contains data for each 
+\item{data}{The name of a table in \code{obj} that contains data for each 
 sample in columns.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+\item{cols}{The names/indexes of columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
   \item{TRUE/FALSE:}{All/No columns will used.}
@@ -27,7 +27,7 @@ corresponding to \code{TRUE} values.}
 order and length as \code{cols}.}
 
 \item{func}{The function to apply for each comparison. For each row in 
-\code{dataset}, for each combination of groups, this function will 
+\code{data}, for each combination of groups, this function will 
 receive the data for each treatment, passed as two character vectors.
 Therefore the function must take at least 2 arguments corresponding to the
 two groups compared. The function should return a vector or list of
@@ -55,6 +55,8 @@ default, all pairwise combinations of groups are compared.}
 \item{other_cols}{If \code{TRUE}, preserve all columns not in 
 \code{cols} in the output. If \code{FALSE}, dont keep other columns. 
 If a column names or indexes are supplied, only preserve those columns.}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \value{
 A tibble
@@ -68,25 +70,25 @@ these results.
 }
 \examples{
 \dontrun{
-# Parse dataset for plotting
+# Parse data for plotting
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
 
 # Convert counts to proportions
-x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
+x$data$otu_table <- calc_obs_props(x, data = "tax_data", cols = hmp_samples$sample_id)
 
 # Get per-taxon counts
-x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
+x$data$tax_table <- calc_taxon_abund(x, data = "otu_table", cols = hmp_samples$sample_id)
 
 # Calculate difference between groups
-x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+x$data$diff_table <- compare_groups(x, data = "tax_table",
                                     cols = hmp_samples$sample_id,
                                     groups = hmp_samples$body_site)
 
 # Plot results (might take a few minutes)
 heat_tree_matrix(x,
-                 dataset = "diff_table",
+                 data = "diff_table",
                  node_size = n_obs,
                  node_label = taxon_names,
                  node_color = log2_median_ratio,

@@ -9,40 +9,40 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 
 test_that("Counting the number of samples with reads", {
   # Count samples with reads
-  result <- calc_n_samples(x, dataset = "tax_data")
+  result <- calc_n_samples(x, data = "tax_data")
   expect_equal(colnames(result), c("taxon_id", "n_samples"))
   expect_equivalent(unlist(result[1, "n_samples"]), 17)
   
   # Return a vector instead of a table
-  result <- calc_n_samples(x, dataset = "tax_data", drop = TRUE)
+  result <- calc_n_samples(x, data = "tax_data", drop = TRUE)
   expect_true(is.vector(result))
   
   # Only use some columns
-  result <- calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1:5])
+  result <- calc_n_samples(x, data = "tax_data", cols = hmp_samples$sample_id[1:5])
   expect_equal(colnames(result), c("taxon_id", "n_samples"))
   
   # Return a count for each treatment
-  result <- calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site)
+  result <- calc_n_samples(x, data = "tax_data", groups = hmp_samples$body_site)
   expect_equal(colnames(result), c("taxon_id", unique(hmp_samples$body_site)))
   
   # Rename output columns 
-  result <- calc_n_samples(x, dataset = "tax_data", groups = hmp_samples$body_site,
+  result <- calc_n_samples(x, data = "tax_data", groups = hmp_samples$body_site,
                            out_names = c("A", "B", "C", "D", "E"))
   expect_equal(colnames(result), c("taxon_id", c("A", "B", "C", "D", "E")))
   
   # Cols can be factors
-  result <- calc_n_samples(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  result <- calc_n_samples(x, data = "tax_data", cols = hmp_samples$sample_id[1])
   expect_equal(result, 
-               calc_n_samples(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+               calc_n_samples(x, data = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
   
   # Cols can be logical
   expect_equal(result, 
-               calc_n_samples(x, dataset = "tax_data",
+               calc_n_samples(x, data = "tax_data",
                               cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
   
   # Cols can be numeric
   expect_equal(result, 
-               calc_n_samples(x, dataset = "tax_data",
+               calc_n_samples(x, data = "tax_data",
                               cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
@@ -81,18 +81,18 @@ test_that("Observation proportions", {
   expect_equal(colnames(result), c("taxon_id", "a", "b", "c"))
   
   # Cols can be factors
-  result <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  result <- calc_obs_props(x, data = "tax_data", cols = hmp_samples$sample_id[1])
   expect_equal(result, 
-               calc_obs_props(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+               calc_obs_props(x, data = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
   
   # Cols can be logical
   expect_equal(result, 
-               calc_obs_props(x, dataset = "tax_data",
+               calc_obs_props(x, data = "tax_data",
                               cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
   
   # Cols can be numeric
   expect_equal(result, 
-               calc_obs_props(x, dataset = "tax_data",
+               calc_obs_props(x, data = "tax_data",
                               cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
@@ -126,31 +126,31 @@ test_that("Summing counts per taxon", {
   expect_equal(total_counts, result$total[1])
   
   # Cols can be factors
-  result <- calc_taxon_abund(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  result <- calc_taxon_abund(x, data = "tax_data", cols = hmp_samples$sample_id[1])
   expect_equal(result, 
-               calc_taxon_abund(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+               calc_taxon_abund(x, data = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
   
   # Cols can be logical
   expect_equal(result, 
-               calc_taxon_abund(x, dataset = "tax_data",
+               calc_taxon_abund(x, data = "tax_data",
                                 cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
   
   # Cols can be numeric
   expect_equal(result, 
-               calc_taxon_abund(x, dataset = "tax_data",
+               calc_taxon_abund(x, data = "tax_data",
                                 cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
 
 test_that("Comparing groups of samples", {
   # Convert counts to proportions
-  x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
+  x$data$otu_table <- calc_obs_props(x, data = "tax_data", cols = hmp_samples$sample_id)
   
   # Get per-taxon counts
-  x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
+  x$data$tax_table <- calc_taxon_abund(x, data = "otu_table", cols = hmp_samples$sample_id)
   
   # Calculate difference between groups
-  expect_warning(x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+  expect_warning(x$data$diff_table <- compare_groups(x, data = "tax_table",
                                                      cols = hmp_samples$sample_id,
                                                      groups = hmp_samples$body_site))
   expect_equal(nrow(x$data$diff_table),
@@ -165,18 +165,18 @@ test_that("Rarefying observation counts", {
   expect_equal(length(unique(colSums(result[, hmp_samples$sample_id]))), 1)
   
   # Cols can be factors
-  result <- rarefy_obs(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  result <- rarefy_obs(x, data = "tax_data", cols = hmp_samples$sample_id[1])
   expect_equal(result, 
-               rarefy_obs(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+               rarefy_obs(x, data = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
   
   # Cols can be logical
   expect_equal(result, 
-               rarefy_obs(x, dataset = "tax_data",
+               rarefy_obs(x, data = "tax_data",
                           cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
   
   # Cols can be numeric
   expect_equal(result, 
-               rarefy_obs(x, dataset = "tax_data",
+               rarefy_obs(x, data = "tax_data",
                           cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })
 
@@ -187,17 +187,17 @@ test_that("Converting low counts to zero", {
   expect_equal(sum(result[, hmp_samples$sample_id] == 1), 0)
   
   # Cols can be factors
-  result <- zero_low_counts(x, dataset = "tax_data", cols = hmp_samples$sample_id[1])
+  result <- zero_low_counts(x, data = "tax_data", cols = hmp_samples$sample_id[1])
   expect_equal(result, 
-               zero_low_counts(x, dataset = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
+               zero_low_counts(x, data = "tax_data", cols = as.factor(hmp_samples$sample_id[1])))
   
   # Cols can be logical
   expect_equal(result, 
-               zero_low_counts(x, dataset = "tax_data",
+               zero_low_counts(x, data = "tax_data",
                                cols = colnames(x$data$tax_data) == hmp_samples$sample_id[1]))
   
   # Cols can be numeric
   expect_equal(result, 
-               zero_low_counts(x, dataset = "tax_data",
+               zero_low_counts(x, data = "tax_data",
                                cols = which(colnames(x$data$tax_data) == hmp_samples$sample_id[1])))
 })

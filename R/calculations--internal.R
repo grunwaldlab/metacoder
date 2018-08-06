@@ -4,8 +4,8 @@
 #' If not, return all numeric columns.
 #' 
 #' @param obj A taxmap object
-#' @param dataset The name of a table in \code{obj}.
-#' @param cols The names/indexes of columns in \code{dataset} to use. By
+#' @param data The name of a table in \code{obj}.
+#' @param cols The names/indexes of columns in \code{data} to use. By
 #'   default, all numeric columns are used. Takes one of the following inputs:
 #'   \describe{
 #'     \item{TRUE/FALSE:}{All/No columns will used.}
@@ -16,9 +16,9 @@
 #'   }
 #'   
 #' @keywords internal
-get_numeric_cols <- function(obj, dataset, cols = NULL) {
+get_numeric_cols <- function(obj, data, cols = NULL) {
   # Get input table
-  input <- get_taxmap_table(obj, dataset)
+  input <- get_taxmap_table(obj, data)
   
   # Find default columns if needed
   if (is.null(cols)) {
@@ -32,7 +32,7 @@ get_numeric_cols <- function(obj, dataset, cols = NULL) {
   }
   
   # Parse user input for columns
-  cols <- get_taxmap_cols(obj = obj, dataset = dataset, cols = cols)
+  cols <- get_taxmap_cols(obj = obj, data = data, cols = cols)
   
   # Check that count columns are numeric
   col_is_num <- vapply(input[cols], is.numeric, logical(1))
@@ -52,10 +52,10 @@ get_numeric_cols <- function(obj, dataset, cols = NULL) {
 #' the result.
 #'
 #' @param obj A \code{\link[taxa]{taxmap}} object
-#' @param dataset The name of a table in \code{obj$data}.
+#' @param data The name of a table in \code{obj$data}.
 #' @param func The function to apply. Should have the following form:
 #'   \code{function(count_table, cols = cols, groups = groups)} and return a table.
-#' @param cols The columns in \code{dataset} to use. By
+#' @param cols The columns in \code{data} to use. By
 #'   default, all numeric columns are used. Takes one of the following inputs:
 #'   \describe{
 #'   \item{TRUE/FALSE:}{All/No columns will used.}
@@ -81,13 +81,13 @@ get_numeric_cols <- function(obj, dataset, cols = NULL) {
 #' @return A tibble
 #'
 #' @keywords internal
-do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL, groups = NULL,
+do_calc_on_num_cols <- function(obj, data, func, cols = NULL, groups = NULL,
                                 other_cols = FALSE, out_names = NULL) {
   # Get input table
-  input <- get_taxmap_table(obj, dataset)
+  input <- get_taxmap_table(obj, data)
   
   # Parse columns to use
-  cols <- get_numeric_cols(obj, dataset, cols)
+  cols <- get_numeric_cols(obj, data, cols)
   
   # Check that cols, groups and output names make sense
   groups <- check_option_groups(groups, cols)
@@ -141,7 +141,7 @@ do_calc_on_num_cols <- function(obj, dataset, func, cols = NULL, groups = NULL,
   
   # Add back other columns if specified
   if (! is.null(other_cols)) {
-    cols_to_keep <- get_taxmap_other_cols(obj, dataset, cols, other_cols)
+    cols_to_keep <- get_taxmap_other_cols(obj, data, cols, other_cols)
     if (is.null(result)) {
       result <- input[, cols_to_keep]
     } else {

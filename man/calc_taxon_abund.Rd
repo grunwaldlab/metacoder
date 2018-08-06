@@ -4,15 +4,15 @@
 \alias{calc_taxon_abund}
 \title{Sum observation values for each taxon}
 \usage{
-calc_taxon_abund(obj, dataset, cols = NULL, groups = NULL,
-  out_names = NULL)
+calc_taxon_abund(obj, data, cols = NULL, groups = NULL, out_names = NULL,
+  dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data}.}
+\item{data}{The name of a table in \code{obj$data}.}
 
-\item{cols}{The columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
 \item{TRUE/FALSE:}{All/No columns will used.}
@@ -27,6 +27,8 @@ will be one column in the output for each unique value in \code{groups}.}
 
 \item{out_names}{The names of count columns in the output. Must be the same
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \value{
 A tibble
@@ -38,7 +40,7 @@ each column for each taxon. This is useful to convert per-observation counts
 }
 \examples{
 \dontrun{
-# Parse dataset for example
+# Parse data for example
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
@@ -53,7 +55,7 @@ calc_taxon_abund(x, "tax_data", cols = startsWith(colnames(x$data$tax_data), "70
 
 # Calculate the taxon abundance for groups of columns (e.g. treatments)
 #  Note that we do not need to use the "cols" option for this since all
-#  numeric columns are samples in this dataset. If there were numeric columns
+#  numeric columns are samples in this data. If there were numeric columns
 #  that were not samples present in hmp_samples, the "cols" would be needed.
 calc_taxon_abund(x, "tax_data", groups = hmp_samples$sex)
 calc_taxon_abund(x, "tax_data", groups = hmp_samples$body_site)

@@ -4,13 +4,13 @@
 \alias{heat_tree_matrix}
 \title{Plot a matrix of heat trees}
 \usage{
-heat_tree_matrix(obj, dataset, label_small_trees = FALSE, key_size = 0.6,
-  seed = 1, output_file = NULL, ...)
+heat_tree_matrix(obj, data, label_small_trees = FALSE, key_size = 0.6,
+  seed = 1, output_file = NULL, ..., dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data} that is the output of 
+\item{data}{The name of a table in \code{obj$data} that is the output of 
 \code{\link{compare_groups}} or in the same format.}
 
 \item{label_small_trees}{If \code{TRUE} add labels to small trees as well as 
@@ -26,6 +26,8 @@ The type of the file will be determined by the extension given.
 Default: Do not save plot.}
 
 \item{...}{Passed to \code{\link{heat_tree}}. Some options will be overwritten.}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \description{
 Plot a matrix of heat trees for showing parwise comparisons. A larger,
@@ -40,19 +42,19 @@ x <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                     class_regex = "^(.+)__(.+)$")
 
 # Convert counts to proportions
-x$data$otu_table <- calc_obs_props(x, dataset = "tax_data", cols = hmp_samples$sample_id)
+x$data$otu_table <- calc_obs_props(x, data = "tax_data", cols = hmp_samples$sample_id)
 
 # Get per-taxon counts
-x$data$tax_table <- calc_taxon_abund(x, dataset = "otu_table", cols = hmp_samples$sample_id)
+x$data$tax_table <- calc_taxon_abund(x, data = "otu_table", cols = hmp_samples$sample_id)
 
 # Calculate difference between treatments
-x$data$diff_table <- compare_groups(x, dataset = "tax_table",
+x$data$diff_table <- compare_groups(x, data = "tax_table",
                                     cols = hmp_samples$sample_id,
                                     groups = hmp_samples$body_site)
 
 # Plot results (might take a few minutes)
 heat_tree_matrix(x,
-                 dataset = "diff_table",
+                 data = "diff_table",
                  node_size = n_obs,
                  node_label = taxon_names,
                  node_color = log2_median_ratio,

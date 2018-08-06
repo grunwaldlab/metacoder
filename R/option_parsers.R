@@ -24,7 +24,7 @@ verify_taxmap <- function(obj) {
 #' exist. This is intended to be used to parse options in other functions.
 #' 
 #' @param obj A taxmap object
-#' @param dataset Which data set to use. Can be any of the following:
+#' @param data Which data set to use. Can be any of the following:
 #'   \describe{
 #'     \item{Name}{The name of the data set to use.}
 #'     \item{Index}{The index of the data set to use.}
@@ -39,7 +39,7 @@ verify_taxmap <- function(obj) {
 #' 
 #' @examples
 #' \dontrun{
-#' # Parse dataset
+#' # Parse data
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
@@ -58,45 +58,45 @@ verify_taxmap <- function(obj) {
 #' print(metacoder:::get_taxmap_table(x, c(T, F, F))) # invalid
 #'                    
 #' }
-get_taxmap_data <- function(obj, dataset) {
+get_taxmap_data <- function(obj, data) {
   # Check that obj is a taxmap object
   verify_taxmap(obj)
   
   # Convert logicals to numerics 
-  if (is.logical(dataset)) {
-    if (length(dataset) != length(obj$data)) {
+  if (is.logical(data)) {
+    if (length(data) != length(obj$data)) {
       stop("When using a TRUE/FALSE vector to specify the data set, it must be the same length as the number of data sets",
            call. = FALSE)
     } else {
-      dataset <- which(dataset)
+      data <- which(data)
     }
   }
   
   # Check for multiple/no values
-  if (length(dataset) == 0) {
+  if (length(data) == 0) {
     stop('No dataset specified.', call. = FALSE)
   }
-  if (length(dataset) > 1) {
+  if (length(data) > 1) {
     stop('Only one dataset can be used.', call. = FALSE)
   }
   
-  # Check that dataset exists
-  error_msg <- paste0('The dataset "', dataset,
+  # Check that data exists
+  error_msg <- paste0('The dataset "', data,
                       '" is not in the object supplied. Datasets found include:\n  ',
                       limited_print(paste0("[", seq_along(obj$data), "] ", names(obj$data)),
                                     type = "silent"))
-  if (is.character(dataset)) {
-    if (! dataset %in% names(obj$data)) {
+  if (is.character(data)) {
+    if (! data %in% names(obj$data)) {
       stop(error_msg, call. = FALSE)
     }
-  } else if (is.numeric(dataset)) {
-    if (! dataset %in% seq_along(obj$data)) {
+  } else if (is.numeric(data)) {
+    if (! data %in% seq_along(obj$data)) {
       stop(error_msg, call. = FALSE)
     }
   }
   
   # Return without printing
-  return(invisible(obj$data[[dataset]]))
+  return(invisible(obj$data[[data]]))
 }
 
 
@@ -112,13 +112,13 @@ get_taxmap_data <- function(obj, dataset) {
 #' @family option parsers
 #' 
 #' @keywords internal
-get_taxmap_table <- function(obj, dataset) {
+get_taxmap_table <- function(obj, data) {
   # Get the data set and do checks
-  table <- get_taxmap_data(obj, dataset)
+  table <- get_taxmap_data(obj, data)
   
-  # Check that the dataset is a table
+  # Check that the data is a table
   if (! is.data.frame(table)) {
-    stop(paste0('The dataset "', dataset,  '" is not a table.'), call. = FALSE)
+    stop(paste0('The dataset "', data,  '" is not a table.'), call. = FALSE)
   }
   
   # Return without printing
@@ -131,7 +131,7 @@ get_taxmap_table <- function(obj, dataset) {
 #' Convert logical, names, or indexes to column names and check that they exist.
 #' 
 #' @param obj A taxmap object
-#' @param dataset The name of a table in \code{obj} that contains counts.
+#' @param data The name of a table in \code{obj} that contains counts.
 #' @param cols The columns in the data set to use. Takes one of
 #'   the following inputs:
 #'   \describe{
@@ -148,7 +148,7 @@ get_taxmap_table <- function(obj, dataset) {
 #' 
 #' @examples
 #' \dontrun{
-#' # Parse dataset
+#' # Parse data
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
@@ -167,9 +167,9 @@ get_taxmap_table <- function(obj, dataset) {
 #' metacoder:::parse_taxmap_cols(x, "tax_data", startsWith(colnames(x$data$tax_data), "7"))
 #'                    
 #' }
-get_taxmap_cols <- function(obj, dataset, cols = NULL) {
+get_taxmap_cols <- function(obj, data, cols = NULL) {
   # Get table used. This checks the obj as well
-  my_table <- get_taxmap_table(obj, dataset)
+  my_table <- get_taxmap_table(obj, data)
   
   # If NULL, return all cols
   if (is.null(cols)) {
@@ -194,7 +194,7 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
     } else { # Incorrect length of TRUE/FALSE vector
       stop(paste0("When specifying columns with a TRUE/FALSE vector, it must be", 
                   "either a single value or have a length equal to the number of", 
-                  "columns in '", dataset, "'."),
+                  "columns in '", data, "'."),
            call. = FALSE)
     }
   } else if (is.character(cols)) { # Is already column names
@@ -202,7 +202,7 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
     if (length(invalid_cols) == 0) {
       result <- cols
     } else {
-      stop(paste0('The following ', length(invalid_cols), ' column(s) are not in "', dataset, '":\n  ',
+      stop(paste0('The following ', length(invalid_cols), ' column(s) are not in "', data, '":\n  ',
                   limited_print(invalid_cols, type = "silent")),
            call. = FALSE)
     }
@@ -211,7 +211,7 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
     if (length(invalid_cols) == 0) {
       result <- colnames(my_table)[cols]
     } else {
-      stop(paste0('The following ', length(invalid_cols), ' column indexes are not valid for "', dataset, '":\n  ',
+      stop(paste0('The following ', length(invalid_cols), ' column indexes are not valid for "', data, '":\n  ',
                   limited_print(invalid_cols, type = "silent")),
            call. = FALSE)
     }
@@ -231,8 +231,8 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
 #' Parse the other_cols option used in many calculation functions.
 #'
 #' @param obj A taxmap object
-#' @param dataset The name of a table in \code{obj} that contains counts.
-#' @param cols The names/indexes of columns in \code{dataset} to use. Takes one
+#' @param data The name of a table in \code{obj} that contains counts.
+#' @param cols The names/indexes of columns in \code{data} to use. Takes one
 #'   of the following inputs:
 #'   \describe{
 #'     \item{TRUE/FALSE:}{All columns will used.}
@@ -258,31 +258,31 @@ get_taxmap_cols <- function(obj, dataset, cols = NULL) {
 #' 
 #' @examples
 #' \dontrun{
-#' # Parse dataset for examples
+#' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #' 
 #' # If all cols are used, there are no other cols, only "taxon_id"
-#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = TRUE)
+#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = TRUE)
 #' 
 #' # If a subset of target columns is specified, the rest are returned 
-#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3)
+#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3)
 #' 
 #' # Additionally, a subset of other columns can be specified
-#' metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3,
+#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3,
 #'                                   other_cols = 4:5)
 #'                    
 #' }
-get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
+get_taxmap_other_cols <- function(obj, data, cols, other_cols = NULL) {
   # Get table used 
-  my_table <- get_taxmap_table(obj, dataset)
+  my_table <- get_taxmap_table(obj, data)
   
   # Get target cols
-  cols <- get_taxmap_cols(obj, dataset, cols)
+  cols <- get_taxmap_cols(obj, data, cols)
   
   # Get other cols
-  other_cols <- get_taxmap_cols(obj, dataset, other_cols)
+  other_cols <- get_taxmap_cols(obj, data, other_cols)
   
   # Remove target cols if present
   in_both <- other_cols %in% cols

@@ -4,20 +4,20 @@
 \alias{calc_group_rsd}
 \title{Relative standard deviations of groups of columns}
 \usage{
-calc_group_rsd(obj, dataset, groups, cols = NULL, other_cols = FALSE,
-  out_names = NULL)
+calc_group_rsd(obj, data, groups, cols = NULL, other_cols = FALSE,
+  out_names = NULL, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data}.}
+\item{data}{The name of a table in \code{obj$data}.}
 
 \item{groups}{Group multiple columns per treatment/group. This should be a
 vector of group IDs (e.g. character, integer) the same length as
 \code{cols} that defines which samples go in which group. When used, there
 will be one column in the output for each unique value in \code{groups}.}
 
-\item{cols}{The columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
 \item{TRUE/FALSE:}{All/No columns will used.}
@@ -37,6 +37,8 @@ will be preserved in the front. Takes one of the following inputs:
 
 \item{out_names}{The names of count columns in the output. Must be the same
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \value{
 A tibble
@@ -50,7 +52,7 @@ magnitude of sets of number are very different.
 }
 \examples{
 \dontrun{
-# Parse dataset for examples
+# Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")

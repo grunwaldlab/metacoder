@@ -4,12 +4,12 @@
 \alias{get_taxmap_cols}
 \title{Get a column subset}
 \usage{
-get_taxmap_cols(obj, dataset, cols = NULL)
+get_taxmap_cols(obj, data, cols = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
-\item{dataset}{The name of a table in \code{obj} that contains counts.}
+\item{data}{The name of a table in \code{obj} that contains counts.}
 
 \item{cols}{The columns in the data set to use. Takes one of
 the following inputs:
@@ -26,7 +26,7 @@ Convert logical, names, or indexes to column names and check that they exist.
 }
 \examples{
 \dontrun{
-# Parse dataset
+# Parse data
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")

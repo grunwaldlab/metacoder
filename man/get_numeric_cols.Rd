@@ -4,14 +4,14 @@
 \alias{get_numeric_cols}
 \title{Get numeric columns from taxmap table}
 \usage{
-get_numeric_cols(obj, dataset, cols = NULL)
+get_numeric_cols(obj, data, cols = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
-\item{dataset}{The name of a table in \code{obj}.}
+\item{data}{The name of a table in \code{obj}.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. By
+\item{cols}{The names/indexes of columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
   \item{TRUE/FALSE:}{All/No columns will used.}

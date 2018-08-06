@@ -404,7 +404,7 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
 # Plotting read depth:
 #  To plot read depth, you first need to add up the number of reads per taxon.
 #  The function `calc_taxon_abund` is good for this. 
-x$data$taxon_counts <- calc_taxon_abund(x, dataset = "tax_data")
+x$data$taxon_counts <- calc_taxon_abund(x, data = "tax_data")
 x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
 heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
 
@@ -412,7 +412,7 @@ heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
 #  You can plot up to 4 quantative variables use node/edge size/color, but it
 #  is usually best to use 2 or 3. The plot below uses node size for number of
 #  OTUs and color for number of reads and edge size for number of samples
-x$data$n_samples <- calc_n_samples(x, dataset = "taxon_counts")
+x$data$n_samples <- calc_n_samples(x, data = "taxon_counts")
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
           edge_color = n_samples)
 

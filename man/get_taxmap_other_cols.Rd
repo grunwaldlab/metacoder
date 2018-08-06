@@ -4,14 +4,14 @@
 \alias{get_taxmap_other_cols}
 \title{Parse the other_cols option}
 \usage{
-get_taxmap_other_cols(obj, dataset, cols, other_cols = NULL)
+get_taxmap_other_cols(obj, data, cols, other_cols = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
 
-\item{dataset}{The name of a table in \code{obj} that contains counts.}
+\item{data}{The name of a table in \code{obj} that contains counts.}
 
-\item{cols}{The names/indexes of columns in \code{dataset} to use. Takes one
+\item{cols}{The names/indexes of columns in \code{data} to use. Takes one
 of the following inputs:
 \describe{
   \item{TRUE/FALSE:}{All columns will used.}
@@ -37,19 +37,19 @@ Parse the other_cols option used in many calculation functions.
 }
 \examples{
 \dontrun{
-# Parse dataset for examples
+# Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
 
 # If all cols are used, there are no other cols, only "taxon_id"
-metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = TRUE)
+metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = TRUE)
 
 # If a subset of target columns is specified, the rest are returned 
-metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3)
+metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3)
 
 # Additionally, a subset of other columns can be specified
-metacoder:::get_taxmap_other_cols(x, dataset = "tax_data", cols = 2:3,
+metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3,
                                   other_cols = 4:5)
                    
 }

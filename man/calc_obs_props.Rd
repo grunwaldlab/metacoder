@@ -4,15 +4,15 @@
 \alias{calc_obs_props}
 \title{Calculate proportions from observation counts}
 \usage{
-calc_obs_props(obj, dataset, cols = NULL, groups = NULL,
-  other_cols = FALSE, out_names = NULL)
+calc_obs_props(obj, data, cols = NULL, groups = NULL, other_cols = FALSE,
+  out_names = NULL, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{dataset}{The name of a table in \code{obj$data}.}
+\item{data}{The name of a table in \code{obj$data}.}
 
-\item{cols}{The columns in \code{dataset} to use. By
+\item{cols}{The columns in \code{data} to use. By
 default, all numeric columns are used. Takes one of the following inputs:
 \describe{
 \item{TRUE/FALSE:}{All/No columns will used.}
@@ -37,6 +37,8 @@ will be preserved in the front. Takes one of the following inputs:
 
 \item{out_names}{The names of count columns in the output. Must be the same
 length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+
+\item{dataset}{DEPRECIATED. use "data" instead.}
 }
 \value{
 A tibble
@@ -49,7 +51,7 @@ have already been summed per taxon.
 }
 \examples{
 \dontrun{
-# Parse dataset for examples
+# Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
