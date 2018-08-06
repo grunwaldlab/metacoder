@@ -263,3 +263,40 @@ convert_base <- function(numbers, symbols = letters, base = length(symbols),
 repo_url <- function() {
   "https://github.com/grunwaldlab/metacoder"  
 }
+
+
+#' Make a temporary file U's replaced with T
+#' 
+#' Make a temporary fasta file U's replaced with T without reading in whole file.
+#' 
+#' @param file_path
+#' 
+#' @return A path to a temporary file.
+#' 
+#' @keywords internal
+make_fasta_with_u_replaced <- function(file_path) {
+  
+  # Create temporary file path
+  output_path <- tempfile()
+  output_con <- file(output_path, open = "w")
+  
+  # Open file for reading
+  input_con <- file(file_path, open = "r")
+  
+  # Replace U's with T's one line at a time
+  while(length(line <- readLines(input_con, n = 1)) > 0) {
+    if (! startsWith(line, ">")) {
+      line <- gsub(line, pattern = "U", replacement = "T", fixed = TRUE)
+      line <- gsub(line, pattern = "u", replacement = "t", fixed = TRUE)
+    }
+    writeLines(line, output_con)
+  }
+  
+  # Close file connections
+  close(output_con)
+  close(input_con)
+  
+  # Return path to temporary file
+  return(output_path)
+  
+}

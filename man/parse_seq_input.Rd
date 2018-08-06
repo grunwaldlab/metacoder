@@ -5,7 +5,7 @@
 \title{Read sequences in an unknown format}
 \usage{
 parse_seq_input(input = NULL, file = NULL, output_format = "character",
-  u_to_t = TRUE)
+  u_to_t = FALSE)
 }
 \arguments{
 \item{input}{(\code{character}) One of the following: 

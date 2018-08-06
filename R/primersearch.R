@@ -252,7 +252,7 @@ parse_primersearch <- function(file_path) {
 primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismatch = 5) {
   
   # Read sequence info
-  input <- parse_seq_input(input = input, file = file, output_format = "DNAbin")
+  input <- parse_seq_input(input = input, file = file, output_format = "DNAbin", u_to_t = TRUE)
   
   # Write temporary fasta file for primersearch input
   sequence_path <- tempfile("primersearch_sequence_input_", fileext = ".fasta")
@@ -310,18 +310,18 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
   output$r_end <- output$r_start + nchar(output$r_primer) - 1
   
   # Extract primer matching region
-  output$f_match <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
-                               input[output$input], output$f_start, output$f_end)) 
-  output$r_match <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
-                               input[output$input], output$r_start, output$r_end))
+  output$f_match <- unlist(Map(function(seq_index, start, end) paste0(as.character(input[seq_index])[[1]][start:end], collapse = ""),
+                               output$input, output$f_start, output$f_end)) 
+  output$r_match <- unlist(Map(function(seq_index, start, end) paste0(as.character(input[seq_index])[[1]][start:end], collapse = ""),
+                               output$input, output$r_start, output$r_end))
   
   # Reverse complement matching region if the antisense strand is supplied
   output$f_match <- ifelse(output$f_primer == forward, output$f_match, rev_comp(output$f_match))
   output$r_match <- ifelse(output$f_primer == forward, output$r_match, rev_comp(output$r_match))
   
   # Extract amplicon input
-  output$amplicon <- unlist(Map(function(seq, start, end) paste0(as.character(seq[start:end]), collapse = ""),
-                                input[output$input], output$f_end + 1, output$r_start - 1)) 
+  output$amplicon <- unlist(Map(function(seq_index, start, end) paste0(as.character(input[seq_index])[[1]][start:end], collapse = ""),
+                                output$input, output$f_end + 1, output$r_start - 1)) 
   if (! "amplicon" %in% colnames(output)) { # For empty tables
     output$amplicon <- character(0)
   }

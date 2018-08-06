@@ -61,10 +61,10 @@ test_that("primersearch works", {
                                   mismatch = 10)
   
   # Can read ape format (Current example file has U instead of T and this breaks ape)
-  # ape_result <- primersearch(ape::read.FASTA(in_path),
-  #                            forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-  #                            reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-  #                            mismatch = 10)
+  # ape_result <- primersearch_raw(ape::read.FASTA(in_path),
+  #                                forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+  #                                reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+  #                                mismatch = 10)
 
   # Can read seqinr format
   seqinr_result <- primersearch_raw(seqinr::read.fasta(in_path, forceDNAtolower = FALSE),

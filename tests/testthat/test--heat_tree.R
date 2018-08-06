@@ -36,3 +36,8 @@ test_that("Plotting with infinite inputs works ", {
                            node_size = x,
                            node_color = x))
 })
+
+
+if (file.exists("Rplots.pdf")) {
+  file.remove("Rplots.pdf")
+}

@@ -326,7 +326,7 @@ get_taxmap_other_cols <- function(obj, dataset, cols, other_cols = NULL) {
 #' @return A named character vector of sequences
 #' 
 #' @keywords internal
-parse_seq_input <- function(input = NULL, file = NULL, output_format = "character", u_to_t = TRUE) {
+parse_seq_input <- function(input = NULL, file = NULL, output_format = "character", u_to_t = FALSE) {
   # Check parameters
   if (sum(! c(is.null(file), is.null(input))) != 1) {
     stop(call. = FALSE,
@@ -355,16 +355,23 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
     
     if (u_to_t) {
       result <- vapply(result, FUN = gsub, FUN.VALUE = character(1),
-                       pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+                       pattern = "U", replacement = "T", fixed = TRUE)
+      result <- vapply(result, FUN = gsub, FUN.VALUE = character(1),
+                       pattern = "u", replacement = "t", fixed = TRUE)
     }
     
   } else if (output_format == "DNAbin") {
     if (! is.null(file)) {
+      if (u_to_t) {
+        file <- make_fasta_with_u_replaced(file)
+      }
       result <- ape::read.FASTA(file)
     } else if (length(input) == 0 || class(input) == "character") {
       if (u_to_t) {
         input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
-                        pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+                        pattern = "U", replacement = "T", fixed = TRUE)
+        input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
+                        pattern = "u", replacement = "t", fixed = TRUE)
       }
       result <- ape::as.DNAbin(strsplit(input, split = ""))
     } else if (class(input) == "DNAbin") {
@@ -375,8 +382,8 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
         return(x)
       })
       if (u_to_t) {
-        input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
-                        pattern = "U", replacement = "T", ignore.case = TRUE, fixed = TRUE)
+        input <- lapply(input, gsub, pattern = "U", replacement = "T", fixed = TRUE)
+        input <- lapply(input, gsub, pattern = "u", replacement = "t", fixed = TRUE)
       }
       result <- ape::as.DNAbin(input)
     } else {
