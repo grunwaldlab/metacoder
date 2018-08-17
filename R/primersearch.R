@@ -204,7 +204,7 @@ parse_primersearch <- function(file_path) {
 #' r_primer <- rev_comp(primer_2_site)
 #' seqs <- c(a = seq_1, b = seq_2)
 #' 
-#' result <- primersearch(seqs, forward = f_primer, reverse = r_primer)
+#' result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
 #' 
 #' 
 #' ### Real data set ###
@@ -217,10 +217,10 @@ parse_primersearch <- function(file_path) {
 #' obj <- parse_silva_fasta(file = fasta_path)
 #' 
 #' # Simulate PCR with primersearch
-#' pcr_result <- primersearch(obj$data$tax_data$silva_seq, 
-#'                            forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-#'                            reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-#'                            mismatch = 10)
+#' pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
+#'                                forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                                reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+#'                                mismatch = 10)
 #' 
 #' # Add result to input table 
 #' #  NOTE: We want to add a function to handle running pcr on a
@@ -503,9 +503,13 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
   }
   
   # Make copy of input object to construct output
-  output <- obj$clone(deep = TRUE)
+  output <- obj
 
   # Run primer search
+  if ("amplicons" %in% names(output$data)) {
+    warning(call. = FALSE,
+            'The existing dataset "amplicons" will be overwritten.')
+  }
   output$data$amplicons <- primersearch_raw(input = sequences, forward = forward,
                                    reverse = reverse, mismatch = mismatch) %>%
     dplyr::mutate(taxon_id = names(sequences)[input]) %>%
@@ -513,6 +517,10 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
     dplyr::select(taxon_id , everything()) 
   
   # Make per-taxon table
+  if ("tax_amp_stats" %in% names(output$data)) {
+    warning(call. = FALSE,
+            'The existing dataset "tax_amp_stats" will be overwritten.')
+  }
   output$data$tax_amp_stats <- dplyr::tibble(taxon_id = obj$taxon_ids(),
                                              query_count = n_obs(output, sequences),
                                              seq_count = vapply(obs(output, data = "amplicons"),

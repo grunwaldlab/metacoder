@@ -130,7 +130,7 @@ f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
 r_primer <- rev_comp(primer_2_site)
 seqs <- c(a = seq_1, b = seq_2)
 
-result <- primersearch(seqs, forward = f_primer, reverse = r_primer)
+result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
 
 
 ### Real data set ###
@@ -143,10 +143,10 @@ fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
 obj <- parse_silva_fasta(file = fasta_path)
 
 # Simulate PCR with primersearch
-pcr_result <- primersearch(obj$data$tax_data$silva_seq, 
-                           forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-                           reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-                           mismatch = 10)
+pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
+                               forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                               reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                               mismatch = 10)
 
 # Add result to input table 
 #  NOTE: We want to add a function to handle running pcr on a
