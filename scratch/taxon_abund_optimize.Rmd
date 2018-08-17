@@ -1,0 +1,87 @@
+---
+title: "Untitled"
+author: "Zachary Foster"
+date: "August 16, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(metacoder)
+library(profvis)
+library(ggplot2)
+```
+
+```{r}
+x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_regex = "^(.+)__(.+)$")
+
+```
+
+
+
+
+```{r}
+profvis({
+  calc_taxon_abund(x, "tax_data")
+})
+```
+
+
+## Effect of column number
+
+```{r}
+run_time <- vapply(1:50, FUN.VALUE = numeric(1), function(n) {
+  x <- select_obs(x, "tax_data", 1:n + 3)
+  system.time(calc_taxon_abund(x, "tax_data"))[1]
+})
+```
+
+```{r}
+data <- data.frame(col_num = 1:50, 
+                   run_time = run_time)
+ggplot(data, aes(x = col_num, y = run_time)) +
+  geom_point()
+```
+
+linear, needs parallel processing
+
+
+## Effect of row number
+
+```{r}
+run_time <- vapply(seq(1, 1000, by = 20), FUN.VALUE = numeric(1), function(n) {
+  x <- sample_n_obs(x, "tax_data", n)
+  system.time(calc_taxon_abund(x, "tax_data"))[1]
+})
+```
+
+```{r}
+data <- data.frame(col_num = 1:50, 
+                   run_time = run_time)
+ggplot(data, aes(x = col_num, y = run_time)) +
+  geom_point()
+```
+
+
+## Effect of taxon number
+
+```{r}
+data <- lapply(seq(.05, 1, by = 0.05), function(p) {
+  x = x$clone(deep = T)
+  x$sample_frac_taxa(size = print(p), supertaxa = TRUE)
+  c(run_time = system.time(calc_taxon_abund(x, "tax_data"))[1], n_taxa = length(taxon_names(x)))
+})
+data <- do.call( rbind, data)
+```
+
+```{r}
+ggplot(as.data.frame(data), aes(x = n_taxa, y = run_time.user.self)) +
+  geom_point()
+```
