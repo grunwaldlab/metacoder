@@ -399,8 +399,8 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
   do_it <- function(count_table, cols = cols, groups = groups) {
     # Convert low counts to zero
     if (use_total) {
-      row_sums <- rowSums(count_table)
-      to_zero <- row_sums < min_count & row_sums > 0
+      row_sums <- rowSums(count_table, na.rm = TRUE)
+      to_zero <- (! is.na(row_sums)) & row_sums < min_count & row_sums > 0
       if (sum(to_zero) > 0) {
         my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
                  ' rows with total counts less than ', min_count)
@@ -409,7 +409,7 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
       }
       count_table[to_zero, ] <- 0
     } else {
-      to_zero <- count_table < min_count & count_table > 0
+      to_zero <- (! is.na(count_table)) & count_table < min_count & count_table > 0
       if (sum(to_zero) > 0) {
         my_print("Zeroing ", sum(to_zero), ' of ', length(to_zero),
                  ' counts less than ', min_count, '.')
@@ -607,13 +607,15 @@ compare_groups <- function(obj, data, cols, groups,
   # Define defualt function
   if (is.null(func)) {
     func <- function(abund_1, abund_2) {
-      log_ratio <- log2(stats::median(abund_1) / stats::median(abund_2))
+      median_1 <- stats::median(abund_1, na.rm = TRUE)
+      median_2 <- stats::median(abund_2, na.rm = TRUE)
+      log_ratio <- log2(median_1 / median_2)
       if (is.nan(log_ratio)) {
         log_ratio <- 0
       }
       list(log2_median_ratio = log_ratio,
-           median_diff = stats::median(abund_1) - stats::median(abund_2),
-           mean_diff = mean(abund_1) - mean(abund_2),
+           median_diff = median_1 - median_2,
+           mean_diff = mean(abund_1, na.rm = TRUE) - mean(abund_2, na.rm = TRUE),
            wilcox_p_value = stats::wilcox.test(abund_1, abund_2)$p.value)
     }
   }

@@ -5,7 +5,9 @@
 ### Bug fixes
 
 * Fixed bug in `calc_n_samples` where the message reported the number of taxa instead of the number of rows in the table.
-# Fixed bug in `heat_tree_matrix` that happened when factors were used for treatments (issue [#240](https://github.com/grunwaldlab/metacoder/issues/240).
+* Fixed bug in `heat_tree_matrix` that happened when factors were used for treatments (issue [#240](https://github.com/grunwaldlab/metacoder/issues/240).
+* `zero_low_counts` now ignores `NA`s instead of odd error.
+* `compare_groups` now ignores `NA`s instaed of returning `NaN`
 
 ### Improvements
 
@@ -19,7 +21,7 @@
 
 ### Changes
 
-* `primersearch` now takes and returns a `taxmap` object. `primersearch_raw` is a new function that behaves like the old `primersearch` did, returning a table.
+* `primersearch` now takes and returns a `taxmap` object with results added as tables. `primersearch_raw` is a new function that behaves like the old `primersearch` did, returning a table.
 * The `dataset` option of many functions has been renamed to `data` to match the option name in the `taxa` pacakge.
 
 ##  metacoder 0.2.1

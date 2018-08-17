@@ -35,6 +35,9 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
                 paste0(name_regex, "*", "unassigned", name_regex, "*"),
                 paste0(name_regex, "*", "Unassigned", name_regex, "*"),
                 paste0(name_regex, "*", "UNASSIGNED", name_regex, "*")
+                paste0(name_regex, "*", "possible", name_regex, "*"),
+                paste0(name_regex, "*", "Possible", name_regex, "*"),
+                paste0(name_regex, "*", "POSSIBLE", name_regex, "*")
     )
   }
   
@@ -47,6 +50,9 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
                 paste0(name_regex, "*", "candidatus", name_regex, "*"),
                 paste0(name_regex, "*", "Candidatus", name_regex, "*"),
                 paste0(name_regex, "*", "CANDIDATUS", name_regex, "*")
+                paste0(name_regex, "*", "metagenome", name_regex, "*"),
+                paste0(name_regex, "*", "Metagenome", name_regex, "*"),
+                paste0(name_regex, "*", "METAGENOME", name_regex, "*")
     )
   }
   
