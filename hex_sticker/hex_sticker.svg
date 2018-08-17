@@ -16,9 +16,9 @@
    viewBox="0 0 181 209"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (unknown)"
    sodipodi:docname="hex_sticker.svg"
-   inkscape:export-filename="/media/fosterz/external_ssd/files/work/r_packages/metacoder/hex_sticker/hex_sticker.png"
+   inkscape:export-filename="/media/zachary/external_ssd/files/work/r_packages/metacoder/hex_sticker/hex_sticker.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -614,9 +614,9 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4342"
-       id="linearGradient6191"
+       id="linearGradient3920"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.73592483,0,0,0.73592483,23.009798,47.103992)"
+       gradientTransform="matrix(0.73592483,0,0,0.73592483,23.009453,47.103992)"
        x1="14.023927"
        y1="140.50542"
        x2="169.39206"
@@ -629,16 +629,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.6526271"
-     inkscape:cx="170.3245"
-     inkscape:cy="150.59088"
+     inkscape:zoom="3.1436464"
+     inkscape:cx="80.002636"
+     inkscape:cy="121.18607"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
      units="px"
-     inkscape:window-width="1855"
-     inkscape:window-height="1056"
-     inkscape:window-x="65"
+     inkscape:window-width="1015"
+     inkscape:window-height="1896"
+     inkscape:window-x="3065"
      inkscape:window-y="24"
      inkscape:window-maximized="1">
     <inkscape:grid
@@ -699,7 +699,7 @@
      inkscape:label="Tree">
     <g
        id="g7355"
-       transform="matrix(0.16142783,0,0,0.16142783,31.256636,27.150342)"
+       transform="matrix(0.16142783,0,0,0.16142783,32.387245,27.150342)"
        style="filter:url(#filter4541)"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
@@ -1144,15 +1144,14 @@
        id="flowRoot7597" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:21.45957375px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient6191);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="31.381388"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:url(#linearGradient3920);fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="31.381044"
        y="158.50562"
-       id="text4328"
-       sodipodi:linespacing="125%"><tspan
+       id="text4328"><tspan
          sodipodi:role="line"
-         x="31.381388"
+         x="31.381044"
          y="158.50562"
          id="tspan4336"
-         style="fill:url(#linearGradient6191);fill-opacity:1">metacoder</tspan></text>
+         style="font-size:21.45957375px;line-height:1.25;fill:url(#linearGradient3920);fill-opacity:1">metacoder</tspan></text>
   </g>
 </svg>
