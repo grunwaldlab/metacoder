@@ -764,7 +764,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
       vapply(obs_indexes, function(i) sum(unlist(count_table[i, col_index])), numeric(1))
     })
     output <- as.data.frame(output, stringsAsFactors = FALSE)
-    
+     
     return(output)
   }
 
@@ -852,7 +852,10 @@ calc_taxon_abund_new <- function(obj, data, cols = NULL, groups = NULL,
     # Sum counts per taxon for each sample
     obs_indexes <- obj$obs(data)
     output <- lapply(split(cols, groups), function(col_index) {
-      vapply(obs_indexes, function(i) sum(count_table[i, col_index]), numeric(1))
+      col_subset <- count_table[, col_index]
+      vapply(obs_indexes, function(i) {
+        sum(col_subset[i, ])
+      }, numeric(1))
     })
     output <- as.data.frame(output, stringsAsFactors = FALSE)
     

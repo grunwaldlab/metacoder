@@ -29,7 +29,7 @@ x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 
 ```{r}
 profvis({
-  calc_taxon_abund(x, "tax_data")
+  calc_taxon_abund_new(x, "tax_data")
 })
 ```
 
@@ -39,7 +39,7 @@ profvis({
 ```{r}
 run_time <- vapply(1:50, FUN.VALUE = numeric(1), function(n) {
   x <- select_obs(x, "tax_data", 1:n + 3)
-  system.time(calc_taxon_abund(x, "tax_data"))[1]
+  system.time(calc_taxon_abund_new(x, "tax_data"))[1]
 })
 ```
 
@@ -57,8 +57,8 @@ linear, needs parallel processing
 
 ```{r}
 run_time <- vapply(seq(1, 1000, by = 20), FUN.VALUE = numeric(1), function(n) {
-  x <- sample_n_obs(x, "tax_data", n)
-  system.time(calc_taxon_abund(x, "tax_data"))[1]
+  x <- x$sample_n_obs("tax_data", n)
+  system.time(calc_taxon_abund_new(x, "tax_data"))[1]
 })
 ```
 
@@ -75,8 +75,8 @@ ggplot(data, aes(x = col_num, y = run_time)) +
 ```{r}
 data <- lapply(seq(.05, 1, by = 0.05), function(p) {
   x = x$clone(deep = T)
-  x$sample_frac_taxa(size = print(p), supertaxa = TRUE)
-  c(run_time = system.time(calc_taxon_abund(x, "tax_data"))[1], n_taxa = length(taxon_names(x)))
+  x$sample_frac_taxa(size = p, supertaxa = TRUE)
+  c(run_time = system.time(calc_taxon_abund_new(x, "tax_data"))[1], n_taxa = length(taxon_names(x)))
 })
 data <- do.call( rbind, data)
 ```
