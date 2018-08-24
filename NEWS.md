@@ -19,6 +19,7 @@
 ### New features
 
 * `taxmap` objects can be converted to `phyloseq` objects using `as_phyloseq`.
+* Added parser for uBiome data.
 
 ### Changes
 
