@@ -4,7 +4,8 @@
 \alias{write_mothur_taxonomy}
 \title{Write an imitation of the Mothur taxonomy file}
 \usage{
-write_mothur_taxonomy(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+write_mothur_taxonomy(obj, file,
+  tax_names = obj$get_data("taxon_names")[[1]],
   ids = obj$get_data("sequence_id")[[1]],
   scores = obj$get_data("score")[[1]])
 }
@@ -52,3 +53,4 @@ Other writers: \code{\link{write_greengenes}},
   \code{\link{write_rdp}},
   \code{\link{write_unite_general}}
 }
+\concept{writers}

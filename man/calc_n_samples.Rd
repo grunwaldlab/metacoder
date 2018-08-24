@@ -5,8 +5,8 @@
 \title{Count the number of samples}
 \usage{
 calc_n_samples(obj, data, cols = NULL, groups = "n_samples",
-  other_cols = FALSE, out_names = NULL, drop = FALSE, more_than = 0,
-  dataset = NULL)
+  other_cols = FALSE, out_names = NULL, drop = FALSE,
+  more_than = 0, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -98,3 +98,4 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{counts_to_presence}},
   \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }
+\concept{calculations}

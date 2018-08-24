@@ -4,11 +4,12 @@
 \alias{ncbi_taxon_sample}
 \title{Download representative sequences for a taxon}
 \usage{
-ncbi_taxon_sample(name = NULL, id = NULL, target_rank, min_counts = NULL,
-  max_counts = NULL, interpolate_min = TRUE, interpolate_max = TRUE,
-  min_children = NULL, max_children = NULL, seqrange = "1:3000",
-  getrelated = FALSE, fuzzy = TRUE, limit = 10, entrez_query = NULL,
-  hypothetical = FALSE, verbose = TRUE)
+ncbi_taxon_sample(name = NULL, id = NULL, target_rank,
+  min_counts = NULL, max_counts = NULL, interpolate_min = TRUE,
+  interpolate_max = TRUE, min_children = NULL, max_children = NULL,
+  seqrange = "1:3000", getrelated = FALSE, fuzzy = TRUE,
+  limit = 10, entrez_query = NULL, hypothetical = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{name}{(\code{character} of length 1) The taxon to download a sample of sequences for.}

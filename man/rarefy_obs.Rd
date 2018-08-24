@@ -4,8 +4,8 @@
 \alias{rarefy_obs}
 \title{Calculate rarefied observation counts}
 \usage{
-rarefy_obs(obj, data, sample_size = NULL, cols = NULL, other_cols = FALSE,
-  out_names = NULL, dataset = NULL)
+rarefy_obs(obj, data, sample_size = NULL, cols = NULL,
+  other_cols = FALSE, out_names = NULL, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -88,3 +88,4 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{counts_to_presence}},
   \code{\link{zero_low_counts}}
 }
+\concept{calculations}

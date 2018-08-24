@@ -92,3 +92,4 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{counts_to_presence}},
   \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }
+\concept{calculations}

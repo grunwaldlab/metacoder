@@ -4,8 +4,9 @@
 \alias{zero_low_counts}
 \title{Replace low counts with zero}
 \usage{
-zero_low_counts(obj, data, min_count = 2, use_total = FALSE, cols = NULL,
-  other_cols = FALSE, out_names = NULL, dataset = NULL)
+zero_low_counts(obj, data, min_count = 2, use_total = FALSE,
+  cols = NULL, other_cols = FALSE, out_names = NULL,
+  dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -94,3 +95,4 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{counts_to_presence}},
   \code{\link{rarefy_obs}}
 }
+\concept{calculations}

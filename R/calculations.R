@@ -610,7 +610,7 @@ compare_groups <- function(obj, data, cols, groups,
       median_1 <- stats::median(abund_1, na.rm = TRUE)
       median_2 <- stats::median(abund_2, na.rm = TRUE)
       log_ratio <- log2(median_1 / median_2)
-      if (is.nan(log_ratio)) {
+      if (is.nan(log_ratio) | is.na(log_ratio)) {
         log_ratio <- 0
       }
       list(log2_median_ratio = log_ratio,

@@ -60,4 +60,5 @@ Other option parsers: \code{\link{get_taxmap_cols}},
   \code{\link{get_taxmap_table}},
   \code{\link{verify_taxmap}}
 }
+\concept{option parsers}
 \keyword{internal}

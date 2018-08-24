@@ -4,8 +4,8 @@
 \alias{ambiguous_patterns}
 \title{Get patterns for ambiguous taxa}
 \usage{
-ambiguous_patterns(unknown = TRUE, uncultured = TRUE, whole_match = FALSE,
-  name_regex = ".")
+ambiguous_patterns(unknown = TRUE, uncultured = TRUE,
+  whole_match = FALSE, name_regex = ".")
 }
 \arguments{
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are

@@ -19,4 +19,5 @@ Other option parsers: \code{\link{get_taxmap_cols}},
   \code{\link{get_taxmap_other_cols}},
   \code{\link{get_taxmap_table}}
 }
+\concept{option parsers}
 \keyword{internal}

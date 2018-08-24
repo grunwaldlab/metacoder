@@ -24,3 +24,4 @@ complement(c("aagtgGGTGaa", "AAGTGGT"))
 Other sequence transformations: \code{\link{rev_comp}},
   \code{\link{reverse}}
 }
+\concept{sequence transformations}

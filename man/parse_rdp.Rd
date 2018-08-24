@@ -54,5 +54,7 @@ Other parsers: \code{\link{parse_greengenes}},
   \code{\link{parse_phylo}},
   \code{\link{parse_qiime_biom}},
   \code{\link{parse_silva_fasta}},
+  \code{\link{parse_ubiome}},
   \code{\link{parse_unite_general}}
 }
+\concept{parsers}

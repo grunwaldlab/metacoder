@@ -4,8 +4,9 @@
 \alias{counts_to_presence}
 \title{Apply a function to groups of columns}
 \usage{
-counts_to_presence(obj, data, threshold = 0, groups = NULL, cols = NULL,
-  other_cols = FALSE, out_names = NULL, dataset = NULL)
+counts_to_presence(obj, data, threshold = 0, groups = NULL,
+  cols = NULL, other_cols = FALSE, out_names = NULL,
+  dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -79,3 +80,4 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{compare_groups}}, \code{\link{rarefy_obs}},
   \code{\link{zero_low_counts}}
 }
+\concept{calculations}

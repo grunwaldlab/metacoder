@@ -4,7 +4,8 @@
 \alias{write_unite_general}
 \title{Write an imitation of the UNITE general FASTA databse}
 \usage{
-write_unite_general(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+write_unite_general(obj, file,
+  tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("unite_rank")[[1]],
   sequences = obj$get_data("unite_seq")[[1]],
   seq_name = obj$get_data("organism")[[1]],
@@ -55,3 +56,4 @@ Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
   \code{\link{write_rdp}}
 }
+\concept{writers}

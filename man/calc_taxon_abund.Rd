@@ -4,8 +4,8 @@
 \alias{calc_taxon_abund}
 \title{Sum observation values for each taxon}
 \usage{
-calc_taxon_abund(obj, data, cols = NULL, groups = NULL, out_names = NULL,
-  dataset = NULL)
+calc_taxon_abund(obj, data, cols = NULL, groups = NULL,
+  out_names = NULL, dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -88,4 +88,5 @@ Other calculations: \code{\link{calc_group_mean}},
   \code{\link{counts_to_presence}},
   \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
 }
+\concept{calculations}
 \keyword{internal}

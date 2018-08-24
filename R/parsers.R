@@ -732,3 +732,58 @@ parse_phylo  <- function(obj) {
   output$data <- c(output$data, list(tax_data = tax_data))
   output$replace_taxon_ids(convert_base(as.integer(output$taxon_ids())))
 }
+
+
+
+
+#' Converts the uBiome file format to taxmap
+#' 
+#' Converts the uBiome file format to taxmap. NOTE: This is experimental and might not work if
+#' uBiome changes their format. Contact the maintainers if you encounter problems/
+#' 
+#' The input file has a format like:
+#' 
+#' \preformatted{
+#'  tax_name,tax_rank,count,count_norm,taxon,parent
+#'  root,root,29393,1011911,1,
+#'  Bacteria,superkingdom,29047,1000000,2,131567
+#'  Campylobacter,genus,23,791,194,72294
+#'  Flavobacterium,genus,264,9088,237,49546
+#' }
+#' 
+#' @param file (\code{character} of length 1) The file path to the input file. 
+#'   Either "file", or "table" must be used, but only one.
+#' @param table (\code{character} of length 1) An already parsed data.frame or
+#'   tibble. Either "file", or "table" must be used, but only one.
+#' 
+#' @return \code{\link{taxmap}}
+#' 
+#' @family parsers
+#' 
+#' @export
+parse_ubiome <- function(file = NULL, table = NULL) {
+  
+  # Check that `file` and `text` and `table` are not used together
+  are_missing <- c(file = is.null(file),
+                   text = is.null(table))
+  if (sum(are_missing) != 1) {
+    stop(paste0('Either "file" or "table" must be supplied, but not both.'))
+  }
+  
+  # Read raw data
+  if (is.null(file)) {
+    raw_data <- table
+  } else {
+    raw_data <- readr::read_csv(file)
+  }
+  
+  # Make taxmap object
+  output <- parse_edge_list(input = raw_data,
+                            taxon_id = "taxon",
+                            supertaxon_id = "parent",
+                            taxon_name = "tax_name",
+                            taxon_rank = "tax_rank")
+  
+  return(output)
+}
+

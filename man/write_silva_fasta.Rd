@@ -4,7 +4,8 @@
 \alias{write_silva_fasta}
 \title{Write an imitation of the SILVA FASTA databse}
 \usage{
-write_silva_fasta(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+write_silva_fasta(obj, file,
+  tax_names = obj$get_data("taxon_names")[[1]],
   other_names = obj$get_data("other_name")[[1]],
   ids = obj$get_data("ncbi_id")[[1]],
   start = obj$get_data("start_pos")[[1]],

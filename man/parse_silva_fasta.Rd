@@ -48,5 +48,7 @@ Other parsers: \code{\link{parse_greengenes}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
   \code{\link{parse_phylo}},
   \code{\link{parse_qiime_biom}}, \code{\link{parse_rdp}},
+  \code{\link{parse_ubiome}},
   \code{\link{parse_unite_general}}
 }
+\concept{parsers}

@@ -5,7 +5,8 @@
 \title{Write an imitation of the RDP FASTA databse}
 \usage{
 write_rdp(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
-  ranks = obj$get_data("rdp_rank")[[1]], ids = obj$get_data("rdp_id")[[1]],
+  ranks = obj$get_data("rdp_rank")[[1]],
+  ids = obj$get_data("rdp_id")[[1]],
   info = obj$get_data("seq_name")[[1]],
   sequences = obj$get_data("rdp_seq")[[1]])
 }
@@ -48,3 +49,4 @@ Other writers: \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
   \code{\link{write_unite_general}}
 }
+\concept{writers}

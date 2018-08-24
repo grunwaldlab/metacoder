@@ -21,4 +21,5 @@ from women.
 \seealso{
 Other hmp_data: \code{\link{hmp_samples}}
 }
+\concept{hmp_data}
 \keyword{data}

@@ -31,4 +31,5 @@ Other option parsers: \code{\link{get_taxmap_cols}},
   \code{\link{get_taxmap_other_cols}},
   \code{\link{verify_taxmap}}
 }
+\concept{option parsers}
 \keyword{internal}
