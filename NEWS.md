@@ -1,6 +1,6 @@
 # News 
 
-## Current
+##  metacoder 0.3.0
 
 ### Bug fixes
 
@@ -13,7 +13,7 @@
 
 * Added `more_than` option to `calc_n_samples` so that users can set the minimum threshold for whether a sample is counted or not instead of it always 1.
 * Added `calc_prop_samples` function for calculating the proportion of samples with a value greater than 0 (issues [#233](https://github.com/grunwaldlab/metacoder/issues/233).
-* primersearch is faster and takes less memory by using `ape::DNAbin` objects internally.
+* `primersearch` is faster and takes less memory by using `ape::DNAbin` objects internally.
 * Made `calc_taxon_abund` about 5x faster.
 
 ### New features
@@ -24,7 +24,8 @@
 ### Changes
 
 * `primersearch` now takes and returns a `taxmap` object with results added as tables. `primersearch_raw` is a new function that behaves like the old `primersearch` did, returning a table.
-* The `dataset` option of many functions has been renamed to `data` to match the option name in the `taxa` pacakge.
+* The `dataset` option of many functions has been renamed to `data` to match the option name in the `taxa` package.
+* Numerous spelling fixes.
 
 ##  metacoder 0.2.1
 

@@ -182,7 +182,7 @@ calc_group_median <- function(obj, data, groups, cols = NULL,
 #'
 #' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
 #' rows in groups of columns. The result of the function is used to create new
-#' columns. This is eqivalant to splitting columns of a table by a factor and
+#' columns. This is equivalent to splitting columns of a table by a factor and
 #' using \code{apply} on each group.
 #'
 #' @inheritParams do_calc_on_num_cols
@@ -604,7 +604,7 @@ compare_groups <- function(obj, data, cols, groups,
   # Check groups option
   groups <- check_option_groups(groups, cols)
   
-  # Define defualt function
+  # Define default function
   if (is.null(func)) {
     func <- function(abund_1, abund_2) {
       median_1 <- stats::median(abund_1, na.rm = TRUE)
@@ -971,7 +971,7 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #'
 #' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
 #' rows in groups of columns. The result of the function is used to create new
-#' columns. This is eqivalant to splitting columns of a table by a factor and
+#' columns. This is equivalent to splitting columns of a table by a factor and
 #' using \code{apply} on each group.
 #'
 #' @inheritParams do_calc_on_num_cols

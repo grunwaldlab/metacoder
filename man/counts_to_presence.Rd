@@ -50,7 +50,7 @@ A tibble
 \description{
 For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
 rows in groups of columns. The result of the function is used to create new
-columns. This is eqivalant to splitting columns of a table by a factor and
+columns. This is equivalent to splitting columns of a table by a factor and
 using \code{apply} on each group.
 }
 \examples{

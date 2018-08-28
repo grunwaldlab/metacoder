@@ -1,6 +1,6 @@
 #' Plot a matrix of heat trees
 #' 
-#' Plot a matrix of heat trees for showing parwise comparisons. A larger,
+#' Plot a matrix of heat trees for showing pairwise comparisons. A larger,
 #' labelled tree serves as a key for the matrix of smaller unlabelled trees. The
 #' data for this function is typically created with \code{\link{compare_groups}},
 #' 

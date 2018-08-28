@@ -490,7 +490,7 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
 #' @param include_seqs (\code{logical} of length 1) If \code{TRUE}, include 
 #'   sequences in the output object.
 #' @param add_species (\code{logical} of length 1) If \code{TRUE}, add the
-#'   species information to the taxonomy. In this databse, the species name
+#'   species information to the taxonomy. In this database, the species name
 #'   often contains other information as well.
 #'   
 #' @return \code{\link{taxmap}}
@@ -787,3 +787,52 @@ parse_ubiome <- function(file = NULL, table = NULL) {
   return(output)
 }
 
+
+#' Convert a table with an edge list to taxmap
+#'
+#' Converts a table containing an edge list into a [taxa::taxmap()] object.
+#' An "edge list" is two columns in a table, where each row defines a taxon-supertaxon relationship.
+#' The contents of the edge list will be used as taxon IDs.
+#' The whole table will be included as a data set in the output object.
+#'
+#' @param input A table containing an edge list encoded by two columns.
+#' @param taxon_id The name/index of the column containing the taxon IDs.
+#' @param supertaxon_id The name/index of the column containing the taxon IDs for the supertaxon of the IDs in `taxon_col`.
+#'
+#' @family parsers
+#'
+#' @keywords internal
+parse_edge_list <- function(input, taxon_id, supertaxon_id, taxon_name, taxon_rank = NULL) {
+  
+  # Create empty taxmap object
+  output <- taxmap()
+  
+  # Make taxon ID characters
+  input[taxon_id] <- as.character(input[[taxon_id]])
+  input[supertaxon_id] <- as.character(input[[supertaxon_id]])
+  
+  # Add edge list
+  output$edge_list <- data.frame(from = input[[supertaxon_id]],
+                                 to = input[[taxon_id]],
+                                 stringsAsFactors = FALSE)
+  
+  # Add taxa
+  output$taxa <- lapply(seq_len(nrow(input)), function(i) {
+    my_name <- input[[taxon_name]][i]
+    if (is.null(taxon_rank)) {
+      my_rank <- NULL
+    } else {
+      my_rank <- input[[taxon_rank]][i]
+    }
+    my_id <- input[[taxon_id]][i]
+    taxon(name = my_name, rank = my_rank, id = my_id)
+  })
+  names(output$taxa) <- input[[taxon_id]]
+  
+  # Add data
+  input <- dplyr::mutate(input, taxon_id = taxon_ids(output))
+  input <- dplyr::select(input, taxon_id, everything())
+  output$data <- list(input = input)
+  
+  return(output)
+}

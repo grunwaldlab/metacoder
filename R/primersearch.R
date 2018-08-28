@@ -345,7 +345,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' 
 #' A pair of primers are aligned against a set of sequences. A
 #' \code{\link[taxa]{taxmap}} object with two tables is returned: a table with
-#' information for each predicited amplicon, quality of match, and predicted
+#' information for each predicted amplicon, quality of match, and predicted
 #' amplicons, and a table with per-taxon amplification statistics. Requires the
 #' EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 #' 
@@ -389,6 +389,8 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #'   an external variable (i.e. not in \code{obj$data}), it must be named by
 #'   taxon IDs or have the same length as the number of taxa in \code{obj}.
 #'   Currently, only character vectors are accepted.
+#' @param clone If \code{TRUE}, make a copy of the input object and add on the results (like most R
+#'   functions). If \code{FALSE}, the input will be changed without saving the result, which uses less RAM.
 #' @inheritParams primersearch_raw
 #' 
 #' @return A copy of the input \code{\link[taxa]{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
@@ -469,11 +471,39 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' 
 #' @examples
 #' \dontrun{
+#' # Get example FASTA file
+#' fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+#'                           package = "metacoder")
 #' 
+#' # Parse the FASTA file as a taxmap object
+#' obj <- parse_silva_fasta(file = fasta_path)
+#' 
+#' # Simulate PCR with primersearch
+#' # Have to replace Us with Ts in sequences since primersearch
+#' #   does not understand Us.
+#' obj <- primersearch(obj,
+#'                     gsub(silva_seq, pattern = "U", replace = "T"), 
+#'                     forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                     reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+#'                     mismatch = 10)
+#'                            
+#' # Plot what did not ampilify                          
+#' obj %>%
+#'   filter_taxa(prop_amplified < 1) %>%
+#'   heat_tree(node_label = taxon_names, 
+#'             node_color = prop_amplified, 
+#'             node_color_range = c("grey", "red", "purple", "green"),
+#'             node_color_trans = "linear",
+#'             node_color_axis_label = "Proportion amplified",
+#'             node_size = n_obs,
+#'             node_size_axis_label = "Number of sequences",
+#'             layout = "da", 
+#'             initial_layout = "re")
 #' } 
 #' 
+#' @importFrom rlang .data
 #' @export
-primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
+primersearch <- function(obj, seqs, forward, reverse, mismatch = 5, clone = TRUE) {
   # Non-standard argument evaluation
   data_used <- eval(substitute(obj$data_used(seqs)))
   sequences <- lazyeval::lazy_eval(lazyeval::lazy(seqs), data = data_used)
@@ -503,7 +533,11 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
   }
   
   # Make copy of input object to construct output
-  output <- obj
+  if (clone) {
+    output <- obj$clone(deep = TRUE)
+  } else {
+    output <- obj
+  }
 
   # Run primer search
   if ("amplicons" %in% names(output$data)) {
@@ -511,9 +545,9 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
             'The existing dataset "amplicons" will be overwritten.')
   }
   output$data$amplicons <- primersearch_raw(input = sequences, forward = forward,
-                                   reverse = reverse, mismatch = mismatch) %>%
-    dplyr::mutate(taxon_id = names(sequences)[input]) %>%
-    dplyr::rename(seq_index = input) %>%
+                                            reverse = reverse, mismatch = mismatch) %>%
+    dplyr::mutate(taxon_id = names(sequences)[.data$input]) %>%
+    dplyr::rename(seq_index = .data$input) %>%
     dplyr::select(taxon_id , everything()) 
   
   # Make per-taxon table
@@ -521,23 +555,24 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
     warning(call. = FALSE,
             'The existing dataset "tax_amp_stats" will be overwritten.')
   }
-  output$data$tax_amp_stats <- dplyr::tibble(taxon_id = obj$taxon_ids(),
-                                             query_count = n_obs(output, sequences),
-                                             seq_count = vapply(obs(output, data = "amplicons"),
+  output$data$tax_amp_stats <- dplyr::tibble("taxon_id" = output$taxon_ids(),
+                                             "query_count" = vapply(output$obs(sequences), length, numeric(1)),
+                                             "seq_count" = vapply(output$obs("amplicons"),
                                                                     FUN.VALUE = numeric(1),
                                                                     FUN = function(i) length(unique(output$data$amplicons$seq_index[i]))),
-                                             amp_count = n_obs(output, "amplicons"),
-                                             amplified = amp_count > 0)
+                                             "amp_count" = vapply(output$obs("amplicons"), length, numeric(1)))
+  output$data$tax_amp_stats$amplified <- output$data$tax_amp_stats$amp_count > 0
   
   # Check for multiple amplicons per sequence
   amp_per_seq_data <- output$data$amplicons %>%
-    dplyr::group_by(seq_index) %>%
+    dplyr::group_by(.data$seq_index) %>%
     dplyr::count() %>%
-    dplyr::mutate(taxon_id = names(sequences)[seq_index], multiple = n > 1)
+    dplyr::mutate(taxon_id = names(sequences)[.data$seq_index],
+                  multiple = .data$n > 1)
   output$data$tax_amp_stats$multiple <- unlist(output$obs_apply(amp_per_seq_data, function(i) any(amp_per_seq_data$multiple)))
   
   # Calculate proportion amplified
-  output$mutate_obs("tax_amp_stats", prop_amplified = seq_count / query_count)
+  output$data$tax_amp_stats$prop_amplified <- output$data$tax_amp_stats$seq_count / output$data$tax_amp_stats$query_count
   
   # Calculate amplicon length stats
   output$mutate_obs("tax_amp_stats",
@@ -545,7 +580,7 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
                       if (length(s) == 0) {
                         return(NA_real_)
                       } else {
-                        return(median(nchar(s)))
+                        return(stats::median(nchar(s)))
                       }
                     })),
                     min_amp_len = unlist(output$obs_apply("amplicons", value = "amplicon", func = function(s) {
@@ -566,7 +601,7 @@ primersearch <- function(obj, seqs, forward, reverse, mismatch = 5) {
                       if (length(s) == 0) {
                         return(NA_real_)
                       } else {
-                        return(median(nchar(s)))
+                        return(stats::median(nchar(s)))
                       }
                     })),
                     min_prod_len = unlist(output$obs_apply("amplicons", value = "product", func = function(s) {

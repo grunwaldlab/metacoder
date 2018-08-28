@@ -135,7 +135,7 @@ Default: \code{"area"}.}
 Default: \code{"area"}.}
 
 \item{node_size_range}{See details on ranges.
-Defualt: Optimize to balance overlaps and range size.}
+Default: Optimize to balance overlaps and range size.}
 
 \item{edge_size_range}{See details on ranges.
 Default: relative to node size range.}
@@ -235,7 +235,7 @@ Default: Do not save plot.}
 
 \item{aspect_ratio}{The aspect_ratio of the plot.}
 
-\item{repel_labels}{If \code{TRUE} (Defualt), use the ggrepel package to spread out labels.}
+\item{repel_labels}{If \code{TRUE} (Default), use the ggrepel package to spread out labels.}
 
 \item{repel_force}{The force of which overlapping labels will be repelled from eachother.}
 
@@ -246,7 +246,7 @@ Default: Do not save plot.}
 \description{
 Plots the distribution of values associated with a taxonomic classification/heirarchy.
 Taxonomic classifications can have multiple roots, resulting in multiple trees on the same plot.
-A tree consists of elements, element protperties, conditions, and mapping properties which are
+A tree consists of elements, element properties, conditions, and mapping properties which are
 represented as parameters in the heat_tree object.
 The elements (e.g. nodes, edges, lables, and individual trees) are the infrastructure of the heat tree.
 The element properties (e.g. size and color) are characteristics that are manipulated by various 
@@ -325,7 +325,7 @@ A customized function can also be supplied to do the transformation.
 
 
 The displayed range of colors and sizes can be explicitly defined or automatically generated.
-When explicitely used, the size range will proportionately increase/decrease the size of a particular element.
+When explicitly used, the size range will proportionately increase/decrease the size of a particular element.
 Size ranges are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
 The units used should be between 0 and 1, representing the proportion of a dimension of the graph.
 Since the dimensions of the graph are determined by layout, and not always square, the value
@@ -363,7 +363,7 @@ The following \code{character} values are understood:
 
 This is the minimum and maximum of values displayed on the legend scales.
 Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
-When explicitely used, the <element>_<property>_interval will redefine the way the actual conditional values are being represented
+When explicitly used, the <element>_<property>_interval will redefine the way the actual conditional values are being represented
 by setting a limit for the <element>_<property>.
 Any condition below the minimum <element>_<property>_interval will be graphically represented the same as a condition AT the
 minimum value in the full range of conditional values.  Any value above the maximum <element>_<property>_interval will be graphically 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/writers.R
 \name{write_rdp}
 \alias{write_rdp}
-\title{Write an imitation of the RDP FASTA databse}
+\title{Write an imitation of the RDP FASTA database}
 \usage{
 write_rdp(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("rdp_rank")[[1]],

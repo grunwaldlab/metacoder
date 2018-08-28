@@ -4,7 +4,7 @@
 \alias{primersearch}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
-primersearch(obj, seqs, forward, reverse, mismatch = 5)
+primersearch(obj, seqs, forward, reverse, mismatch = 5, clone = TRUE)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object.}
@@ -20,6 +20,9 @@ Currently, only character vectors are accepted.}
 \item{reverse}{(\code{character} of length 1) The reverse primer sequence}
 
 \item{mismatch}{An integer vector of length 1. The percentage of mismatches allowed.}
+
+\item{clone}{If \code{TRUE}, make a copy of the input object and add on the results (like most R
+functions). If \code{FALSE}, the input will be changed without saving the result, which uses less RAM.}
 }
 \value{
 A copy of the input \code{\link[taxa]{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
@@ -77,7 +80,7 @@ The other table contains per-taxon information about the PCR, with one row per t
 \description{
 A pair of primers are aligned against a set of sequences. A
 \code{\link[taxa]{taxmap}} object with two tables is returned: a table with
-information for each predicited amplicon, quality of match, and predicted
+information for each predicted amplicon, quality of match, and predicted
 amplicons, and a table with per-taxon amplification statistics. Requires the
 EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
 }
@@ -144,7 +147,34 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 
 \examples{
 \dontrun{
+# Get example FASTA file
+fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+                          package = "metacoder")
 
+# Parse the FASTA file as a taxmap object
+obj <- parse_silva_fasta(file = fasta_path)
+
+# Simulate PCR with primersearch
+# Have to replace Us with Ts in sequences since primersearch
+#   does not understand Us.
+obj <- primersearch(obj,
+                    gsub(silva_seq, pattern = "U", replace = "T"), 
+                    forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                    reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                    mismatch = 10)
+                           
+# Plot what did not ampilify                          
+obj \%>\%
+  filter_taxa(prop_amplified < 1) \%>\%
+  heat_tree(node_label = taxon_names, 
+            node_color = prop_amplified, 
+            node_color_range = c("grey", "red", "purple", "green"),
+            node_color_trans = "linear",
+            node_color_axis_label = "Proportion amplified",
+            node_size = n_obs,
+            node_size_axis_label = "Number of sequences",
+            layout = "da", 
+            initial_layout = "re")
 } 
 
 }

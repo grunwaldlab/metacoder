@@ -2,7 +2,7 @@
 % Please edit documentation in R/writers.R
 \name{write_greengenes}
 \alias{write_greengenes}
-\title{Write an imitation of the Greengenes databse}
+\title{Write an imitation of the Greengenes database}
 \usage{
 write_greengenes(obj, tax_file = NULL, seq_file = NULL,
   tax_names = obj$get_data("taxon_names")[[1]],
