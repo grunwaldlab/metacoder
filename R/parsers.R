@@ -92,7 +92,15 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
                                  class_key = class_key)
   
   # Remove NA taxa
-  output$filter_taxa(output$taxon_names() != "NA")
+  withCallingHandlers({
+    output$filter_taxa(output$taxon_names() != "NA")
+  }, warning=function(w) {
+    if (conditionMessage(w) %in% c(
+      'There is no "taxon_id" column in the data set "3", so there are no taxon IDs.',
+      'The data set "4" is named, but not named by taxon ids.'
+    ))
+      invokeRestart("muffleWarning")
+  })
   
   # Move OTU table to front of data if it is there
   if ("otu_table" %in% names(output$data)) {
