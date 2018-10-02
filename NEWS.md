@@ -1,5 +1,11 @@
 # News 
 
+## Current
+
+### Bug fixes
+
+* `calc_taxon_abund` no longer errors when a taxon has no observations associated with it.
+
 ##  metacoder 0.3.0
 
 ### Bug fixes

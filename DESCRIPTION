@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for Parsing, Manipulating, and Graphing Taxonomic Abundance Data
-Version: 0.3.0
+Version: 0.3.0.9001
 Authors@R: c(person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
