@@ -44,6 +44,8 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   # Parse taxonomic data
   possible_ranks <- unique(unlist(strsplit(taxa::ranks_ref$ranks, split = ",")))
   tax_data <- as.data.frame(obj@tax_table, stringsAsFactors = FALSE)
+  tax_cols <- colnames(tax_data)
+  tax_data <- cbind(data.frame(otu_id = rownames(tax_data), stringsAsFactors = FALSE), tax_data)
   
   # Parse OTU tables
   if (! is.null(obj@otu_table)) {
@@ -82,7 +84,6 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   }
   
   # Construct output
-  tax_cols <- colnames(tax_data)
   output <- taxa::parse_tax_data(tax_data = tax_data, 
                                  datasets = datasets,
                                  class_cols = tax_cols, 
