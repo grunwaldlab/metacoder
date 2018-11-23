@@ -5,6 +5,7 @@
 ### Bug fixes
 
 * `calc_taxon_abund` no longer errors when a taxon has no observations associated with it.
+* New `heat_tree_matrix` options to change size and color of row and column labels. 
 
 ##  metacoder 0.3.0
 

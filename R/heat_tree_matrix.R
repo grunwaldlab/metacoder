@@ -15,6 +15,12 @@
 #' @param output_file The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
 #' The type of the file will be determined by the extension given.
 #' Default: Do not save plot.
+#' @param row_label_color The color of the row labels on the right side of the matrix. Default:
+#'   based on the node_color_range.
+#' @param col_label_color The color of the columns labels along the top of the matrix. Default:
+#'   based on the node_color_range.
+#' @param row_label_size The size of the row labels on the right side of the matrix. Default: 12.
+#' @param col_label_size The size of the columns labels along the top of the matrix. Default: 12.
 #' @param ... Passed to \code{\link{heat_tree}}. Some options will be overwritten.
 #' @param dataset DEPRECIATED. use "data" instead.
 #' 
@@ -54,6 +60,9 @@
 #' @export
 heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
                              key_size = 0.6, seed = 1, output_file = NULL,
+                             row_label_color = diverging_palette()[3],
+                             col_label_color = diverging_palette()[1], 
+                             row_label_size = 12, col_label_size = 12,
                              ..., dataset = NULL) {
   
   # Check for use of "dataset"
@@ -140,16 +149,15 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   vert_label_data$label_y <- vert_label_data$y + subgraph_height / 2 # center of rotated label 
   
   # Make plot
-  label_size <- 12
   matrix_plot <- cowplot::ggdraw() + 
     cowplot::draw_plot(key_plot, x = 0, y = 0, width = key_size, height = key_size) +
     cowplot::draw_text(gsub("_", " ", horz_label_data$treatment_2), 
                        x = horz_label_data$label_x, y = horz_label_data$label_y, 
-                       size = label_size, colour = diverging_palette()[1],
+                       size = col_label_size, colour = col_label_color,
                        hjust = "center", vjust = "bottom") +
     cowplot::draw_text(gsub("_", " ", vert_label_data$treatment_1), 
                        x = vert_label_data$label_x, y = vert_label_data$label_y, 
-                       size = label_size, colour = diverging_palette()[3],
+                       size = row_label_size, colour = row_label_color,
                        hjust = "center", vjust = "bottom", angle = -90) +
     ggplot2::theme(aspect.ratio = 1)
   for (i in seq_along(sub_plots)) {
