@@ -52,20 +52,116 @@
 #'   character value representing a color, either hex code or color name. See the "color" section
 #'   below for more information. Default: black.
 #'
-#' @param node_size_trans See details on transformations. Default: \code{"area"}.
-#' @param edge_size_trans See details on transformations. Default: same as \code{node_size_trans}.
-#' @param node_label_size_trans See details on transformations. Default: same as
+#' @param node_size_trans How the numbers used to determine node size is transformed before being
+#'   mapped to node size. See details on transformations. Default: \code{"area"}.
+#' @param edge_size_trans How the numbers used to determine edge size is transformed before being
+#'   mapped to edge size. See details on transformations. Default: same as \code{node_size_trans}.
+#' @param node_label_size_trans How the numbers used to determine node label size is transformed
+#'   before being mapped to node label size. See details on transformations. Default: same as
 #'   \code{node_size_trans}.
-#' @param edge_label_size_trans See details on transformations. Default: same as
-#'   \code{edge_size_trans}.
-#' @param tree_label_size_trans See details on transformations. Default: \code{"area"}.
-#' @param node_color_trans See details on transformations. Default: \code{"linear"}.
-#' @param edge_color_trans See details on transformations. Default: same as node color
+#' @param edge_label_size_trans How the numbers used to determine edge label size is transformed
+#'   before being mapped to edge label size. See details on transformations. See details on
+#'   transformations. Default: same as \code{edge_size_trans}.
+#' @param tree_label_size_trans How the numbers used to determine subtree label size is transformed
+#'   before being mapped to subtree label size. See details on transformations. See details on
+#'   transformations. Default: \code{"area"}.
+#' @param node_color_trans How the numbers used to determine node color is transformed before being
+#'   mapped to node color. See details on transformations. Default: \code{"linear"}.
+#' @param edge_color_trans How the numbers used to determine edge color is transformed before being
+#'   mapped to edge color. See details on transformations. Default: same as node color
 #'   transformation.
-#' @param node_label_color_trans See details on transformations. Default: \code{"linear"}.
-#' @param edge_label_color_trans See details on transformations. Default: \code{"linear"}.
-#' @param tree_label_color_trans See details on transformations. Default: \code{"linear"}.
+#' @param node_label_color_trans How the numbers used to determine node label color is transformed
+#'   before being mapped to node label color. See details on transformations. Default:
+#'   \code{"linear"}.
+#' @param edge_label_color_trans How the numbers used to determine edge label color is transformed
+#'   before being mapped to edge label color. See details on transformations. Default:
+#'   \code{"linear"}.
+#' @param tree_label_color_trans How the numbers used to determine subtree label color is
+#'   transformed before being mapped to subtree label color. See details on transformations.
+#'   Default: \code{"linear"}.
 #'
+#' @param node_size_range The minimum and maximum diameter of nodes, as a length 2 numeric vector,
+#'   in units of proportion of graph size. For example \code{c(0.01, 0.02)} would make nodes between
+#'   1% and 2% of graph size. See details on size ranges. Default: Optimize to balance overlaps and
+#'   range size.
+#' @param edge_size_range The minimum and maximum width of edges, as a length 2 numeric vector, in
+#'   units of proportion of graph size. For example \code{c(0.01, 0.02)} would make edge widths
+#'   between 1% and 2% of graph size. See details on size ranges. Default: One half of node
+#'   diameter.
+#' @param node_label_size_range The minimum and maximum size of node label text, as a length 2
+#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
+#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
+#'   node size.
+#' @param edge_label_size_range The minimum and maximum size of edge label text, as a length 2
+#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
+#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
+#'   edge size.
+#' @param tree_label_size_range The minimum and maximum size of tree label text, as a length 2
+#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
+#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
+#'   subtree size.
+#'
+#' @param node_color_range A series of colors used to make the color ramp used for nodes, as a
+#'   character vector of colors. See details on color ranges below for more information. Default:
+#'   Color-blind friendly palette.
+#' @param edge_color_range A series of colors used to make the color ramp used for edges, as a
+#'   character vector of colors. See details on color ranges below for more information. Default:
+#'   Color-blind friendly palette.
+#' @param node_label_color_range A series of colors used to make the color ramp used for node
+#'   labels, as a character vector of colors. See details on color ranges below for more
+#'   information. Default: Color-blind friendly palette.
+#' @param edge_label_color_range A series of colors used to make the color ramp used for edge
+#'   labels, as a character vector of colors. See details on color ranges below for more
+#'   information. Default: Color-blind friendly palette.
+#' @param tree_label_color_range A series of colors used to make the color ramp used for subtree
+#'   labels, as a character vector of colors. See details on color ranges below for more
+#'   information. Default: Color-blind friendly palette.
+#'
+#' @param node_size_interval A numeric vector of length 2 that sets the minimum and maximum values
+#'   represented by node size. See details on intervals below for more information. Default: The
+#'   range of values in \code{node_size}.
+#' @param node_color_interval A numeric vector of length 2 that sets the minimum and maximum values
+#'   represented by node color. See details on intervals below for more information. Default: The
+#'   range of values in \code{node_color}.
+#' @param edge_size_interval A numeric vector of length 2 that sets the minimum and maximum values
+#'   represented by edge size. See details on intervals below for more information. Default: The
+#'   range of values in \code{edge_size}.
+#' @param edge_color_interval A numeric vector of length 2 that sets the minimum and maximum values
+#'   represented by edge color. See details on intervals below for more information. Default: The
+#'   range of values in \code{edge_color}.
+#'
+#' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins, measured in
+#'   proportion of graphic area. c(left, right, bottom, top). Default: \code{0, 0, 0, 0}.
+#' @param aspect_ratio The aspect_ratio of the plot. Default: determined by layout. 
+#'
+#' @param layout The layout algorithm used to position nodes. See details on layouts. Default:
+#'   \code{"reingold-tilford"}.
+#' @param initial_layout he layout algorithm used to set the initial position of nodes, passed as
+#'   input to the \code{layout} algorithm. See details on layouts. Default: Not used.
+#'
+#' @param make_node_legend if TRUE, make legend for node size/color mappings. Default: TRUE.
+#' @param make_edge_legend if TRUE, make legend for edge size/color mappings. Default: TRUE.
+#' @param title Text to print above the graph.
+#' @param title_size The size of the title relative to the rest of the graph. For example a value of
+#'   \code{.05} will make the title text's height 5% of the graph's size.
+#' @param node_color_axis_label The label on the scale axis corresponding to \code{node_color}.
+#'   Default: The expression given to \code{node_color}.
+#' @param node_size_axis_label The label on the scale axis corresponding to \code{node_size}.
+#'   Default: The expression given to \code{node_size}.
+#' @param edge_color_axis_label The label on the scale axis corresponding to \code{edge_color}.
+#'   Default: The expression given to \code{edge_color}.
+#' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
+#'   Default: The expression given to \code{edge_size}.
+#' @param background_color The background color of the plot. Default: Transparent
+#' @param output_file The path to one or more files to save the plot in using
+#'   \code{\link[ggplot2]{ggsave}}. The type of the file will be determined by the extension given.
+#'   Default: Do not save plot.
+#'
+#' @param repel_labels If \code{TRUE}, use code from the ggrepel package to spread out labels. Default: TRUE.
+#' @param repel_force The force of which overlapping labels will be repelled from eachother. Default: 1.
+#' @param repel_iter The number of iterations used when repelling labels. Default: 1000.
+#'
+#' @param ... (other named arguments) Passed to the \code{\link{igraph}} layout function used.
 #'
 #' @section labels:
 #'
@@ -107,15 +203,208 @@
 #'   Before any conditions specified are mapped to an element property (color/size), they can be
 #'   transformed to make the mapping non-linear. Any of the transformations listed below can be used
 #'   by specifying their name. A customized function can also be supplied to do the transformation.
+#'
+#'   \describe{ \item{"linear"}{Proportional to radius/diameter of node} \item{"area"}{circular
+#'   area; better perceptual accuracy than \code{"linear"} for sizes} \item{"log10"}{Log base 10 of
+#'   radius} \item{"log2"}{Log base 2 of radius} \item{"ln"}{Log base e of radius} \item{"log10
+#'   area"}{Log base 10 of circular area} \item{"log2 area"}{Log base 2 of circular area} \item{"ln
+#'   area"}{Log base e of circular area} }
+#'
+#' @section size ranges:
+#'
+#'   The displayed range of sizes can be explicitly defined or automatically generated. Size ranges
+#'   are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
+#'   The units used should be between 0 and 1, representing the proportion of a dimension of the
+#'   graph. Since the dimensions of the graph are determined by layout, and not always square, the
+#'   value that \code{1} corresponds to is the square root of the graph area (i.e. the side of a
+#'   square with the same area as the plotted space).
+#'
+#' @section color ranges:
+#'
+#'   The displayed range of colors used to represent numeric information, defined as a character
+#'   vector of two or more colors. Colors can be specified as color names (any returned by
+#'   \code{\link[grDevices]{colors}}) or
+#'   \href{https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}{hexadecimal color codes}.
 #'   
-#'   \describe{
-#'     \item{"linear"}{Proportional to radius/diameter of node}
-#'     \item{"area"}{circular area; better perceptual accuracy than \code{"linear"} for sizes}
-#'     \item{"log10"}{Log base 10 of radius}
-#'     \item{"log2"}{Log base 2 of radius}
-#'     \item{"ln"}{Log base e of radius}
-#'     \item{"log10 area"}{Log base 10 of circular area}
-#'     \item{"log2 area"}{Log base 2 of circular area}
-#'     \item{"ln area"}{Log base e of circular area}
-#'   }
-#'   
+#' @section layout:
+#' 
+#' Layouts determine the position of node elements on the graph.
+#' They are implemented using the \code{\link{igraph}} package.
+#' Any additional arguments passed to \code{heat_tree} are passed to the  \code{\link{igraph}}
+#' function used.
+#' The following \code{character} values are understood:
+#' 
+#' \describe{
+#'   \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose the layout.}
+#'   \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like layout.}
+#'   \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated annealing.}
+#'   \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
+#'   \item{"graphopt"}{Use \code{\link[igraph]{with_graphopt}}. A force-directed layout.}
+#'   \item{"mds"}{Use \code{\link[igraph]{with_mds}}. Multidimensional scaling.}
+#'   \item{"fruchterman-reingold"}{Use \code{\link[igraph]{with_fr}}. A force-directed layout.}
+#'   \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of springs.}
+#'   \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
+#'   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
+#' }
+#' 
+#' 
+#' @section intervals:
+#' 
+#' This is the minimum and maximum of values displayed on the legend scales.
+#' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
+#' Any value below the minimum will be graphically represented the same as a value at the
+#' minimum.  Any value above the maximum will likewise be 
+#' represented the same way a value at the maximum value would be.
+#' Setting a custom interval is useful for stopping a few outliers from obscuring other differences.
+#' Note that this is different from the *_range options, which determine the actual size/color of graphed elements.
+#' 
+#' @section Acknowledgements:
+#' 
+#' This package includes code from the R package ggrepel to handle label overlap
+#' avoidance with permission from the author of ggrepel Kamil Slowikowski. We
+#' included the code instead of depending on ggrepel because we are using
+#' internal functions to ggrepel that might change in the future. We thank Kamil
+#' Slowikowski for letting us use his code and would like to acknowledge his
+#' implementation of the label overlap avoidance used in metacoder.
+#' 
+#' @examples
+#' \dontrun{
+#' # Parse dataset for plotting
+#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_regex = "^(.+)__(.+)$")
+#'                    
+#' # Default appearance:
+#' #  No parmeters are needed, but the default tree is not too useful
+#' heat_tree(x)
+#' 
+#' # A good place to start:
+#' #  There will always be "taxon_names" and "n_obs" variables, so this is a 
+#' #  good place to start. This will shown the number of OTUs in this case. 
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
+#' 
+#' # Plotting read depth:
+#' #  To plot read depth, you first need to add up the number of reads per taxon.
+#' #  The function `calc_taxon_abund` is good for this. 
+#' x$data$taxon_counts <- calc_taxon_abund(x, data = "tax_data")
+#' x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
+#' heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
+#' 
+#' # Plotting multiple variables:
+#' #  You can plot up to 4 quantative variables use node/edge size/color, but it
+#' #  is usually best to use 2 or 3. The plot below uses node size for number of
+#' #  OTUs and color for number of reads and edge size for number of samples
+#' x$data$n_samples <- calc_n_samples(x, data = "taxon_counts")
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+#'           edge_color = n_samples)
+#' 
+#' # Different layouts:
+#' #  You can use any layout implemented by igraph. You can also specify an
+#' #  initial layout to seed the main layout with.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           layout = "davidson-harel")
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           layout = "davidson-harel", initial_layout = "reingold-tilford")
+#' 
+#' # Axis labels:
+#' #  You can add custom labeles to the legends
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
+#'           edge_color = n_samples, node_size_axis_label = "Number of OTUs", 
+#'           node_color_axis_label = "Number of reads",
+#'           edge_color_axis_label = "Number of samples")
+#'           
+#' # Overlap avoidance:
+#' #  You can change how much node overlap avoidance is used.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           overlap_avoidance = .5)
+#'           
+#' # Label overlap avoidance
+#' #  You can modfiy how label scattering is handled using the `replel_force` and
+#' `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           repel_force = 2, repel_iter = 20000)
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           repel_labels = FALSE)
+#' 
+#' # Setting the size of graph elements: 
+#' #  You can force nodes, edges, and lables to be a specific size/color range instead
+#' #  of letting the function optimize it. These options end in `_range`.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_range = c(0.01, .1))
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           edge_color_range = c("black", "#FFFFFF"))
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_label_size_range = c(0.02, 0.02))
+#' 
+#' # Setting the transformation used:
+#' #  You can change how raw statistics are converted to color/size using options
+#' #  ending in _trans.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_trans = "log10 area")
+#' 
+#' # Setting the interval displayed:
+#' #  By default, the whole range of the statistic provided will be displayed.
+#' #  You can set what range of values are displayed using options ending in `_interval`.
+#' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
+#'           node_size_interval = c(10, 100))
+#' 
+#' }
+#' 
+#' @export
+heat_tree <- function(obj,
+                      node_label = NULL,
+                      edge_label = NULL,
+                      tree_label = NULL,
+                      node_size = n_subtaxa,
+                      edge_size = node_size,
+                      node_label_size = node_size,
+                      edge_label_size = edge_size,
+                      tree_label_size = node_size,
+                      node_color = 'grey',
+                      edge_color = node_color,
+                      node_label_color = 'black',
+                      edge_label_color = 'black',
+                      tree_label_color = 'black',
+                      node_size_trans = 'area',
+                      edge_size_trans = node_size_trans,
+                      node_label_size_trans = "linear",
+                      edge_label_size_trans = "linear",
+                      tree_label_size_trans = "linear",
+                      node_color_trans = "linear",
+                      edge_color_trans = node_color_trans,
+                      node_label_color_trans = "linear",
+                      edge_label_color_trans = "linear",
+                      tree_label_color_trans = "linear",
+                      node_size_range = NULL,
+                      edge_size_range = node_size_range,
+                      node_label_size_range = node_size_range,
+                      edge_label_size_range = NULL,
+                      tree_label_size_range = NULL,
+                      node_color_range = quantative_palette(),
+                      edge_color_range = node_color_range,
+                      node_label_color_range = NULL,
+                      edge_label_color_range = NULL,
+                      tree_label_color_range = NULL,
+                      node_size_interval = NULL,
+                      node_color_interval = NULL,
+                      edge_size_interval = NULL,
+                      edge_color_interval = NULL,
+                      margin_size = 0,
+                      aspect_ratio = 1,
+                      layout = "reingold-tilford",
+                      initial_layout = NULL,
+                      make_node_legend = TRUE,
+                      make_edge_legend = TRUE,
+                      title = NULL,
+                      title_size = 0.1,
+                      node_color_axis_label = NULL,
+                      node_size_axis_label = NULL,
+                      edge_color_axis_label = NULL,
+                      edge_size_axis_label = NULL,
+                      background_color = "#FFFFFF00",
+                      output_file = NULL,
+                      repel_labels = TRUE,
+                      repel_force = 1,
+                      repel_iter = 1000) {
+  
+}
