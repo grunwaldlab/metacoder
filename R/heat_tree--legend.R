@@ -47,7 +47,7 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   }
 
     # If size and color are the same, only show color scale
-  if (hide_color == FALSE && width_stat_range == color_stat_range && isTRUE(all.equal(width_stat_trans, color_stat_trans))) {
+  if (hide_color == FALSE && all(width_stat_range == color_stat_range) && isTRUE(all.equal(width_stat_trans, color_stat_trans))) {
     hide_size = TRUE
   }
   
