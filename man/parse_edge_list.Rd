@@ -21,7 +21,8 @@ The contents of the edge list will be used as taxon IDs.
 The whole table will be included as a data set in the output object.
 }
 \seealso{
-Other parsers: \code{\link{parse_greengenes}},
+Other parsers: \code{\link{parse_dada2}},
+  \code{\link{parse_greengenes}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},

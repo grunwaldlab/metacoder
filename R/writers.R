@@ -314,6 +314,8 @@ write_unite_general <- function(obj, file,
 #' sequence.
 #' @param sequences (\code{character} named by taxon ids) Sequences
 #'   
+#' @family writers
+#' 
 #' @export
 write_silva_fasta <- function(obj, file,
                               tax_names = obj$get_data("taxon_names")[[1]], 
@@ -352,6 +354,61 @@ write_silva_fasta <- function(obj, file,
                              paste(my_names, collapse = ";"))
                     })
   seqinr::write.fasta(as.list(sequences), headers, file, as.string = TRUE, nbchar = 80)
+}
+
+
+
+
+#' Make a imitation of the dada2 ASV abundance matrix
+#' 
+#' Attempts to save the abundance matrix stored as a table in a taxmap object in the
+#' dada2 ASV abundance matrix format. If the taxmap object was created using
+#' \code{\link{parse_dada2}}, then it should be able to replicate the format
+#' exactly with the default settings.
+#' 
+#' @param obj A taxmap object
+#' @param asv_table The name of the abundance matrix in the taxmap object to use.
+#' @param asv_id The name of the column in \code{asv_table} with unique ASV ids or sequences.
+#' 
+#' @return A numeric \code{matrix} with rows as samples and columns as ASVs
+#'   
+#' @family writers
+#' 
+#' @export
+make_dada2_asv_table <- function(obj, asv_table = "asv_table", asv_id = "asv_id") {
+  output <- obj$get_dataset(asv_table)
+  asv_ids <- output[[asv_id]]
+  output$taxon_id <- NULL
+  output[[asv_id]] <- NULL
+  output <- t(as.matrix(output))
+  colnames(output) <- asv_ids
+  return(output)
+}
+
+#' Make a imitation of the dada2 taxonomy matrix
+#'
+#' Attempts to save the taxonomy information assocaited with an abundance matrix in a taxmap object
+#' in the dada2 taxonomy matrix format. If the taxmap object was created using
+#' \code{\link{parse_dada2}}, then it should be able to replicate the format exactly with the
+#' default settings.
+#' 
+#' @param obj A taxmap object
+#' @param asv_table The name of the abundance matrix in the taxmap object to use.
+#' @param asv_id The name of the column in \code{asv_table} with unique ASV ids or sequences.
+#' 
+#' @return A character \code{matrix} with rows as ASVs and columns as taxonomic ranks.
+#'   
+#' @family writers
+#' 
+#' @export
+make_dada2_tax_table <- function(obj, asv_table = "asv_table", asv_id = "asv_id") {
+  asv_ids <- obj$get_dataset(asv_table)[[asv_id]]
+  output <- obj$taxonomy_table(add_id_col = TRUE, subset = taxon_ids)
+  output <- output[match(obj$get_data_taxon_ids(asv_table), output$taxon_id), ]
+  output$taxon_id <- NULL
+  output <- as.matrix(output)
+  rownames(output) <- asv_ids
+  return(output)
 }
 
 

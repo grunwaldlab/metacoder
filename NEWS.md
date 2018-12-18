@@ -8,6 +8,10 @@
 * New `heat_tree_matrix` options to change size and color of row and column labels. 
 * Fixed a bug causing the size legend not to be shown (issue [#249](https://github.com/grunwaldlab/metacoder/issues/249).
 
+### New features
+
+* Added parser for `dada2` results called `parse_dada2` and writers to convert back called `make_dada2_asv_table` and `make_dada2_tax_table`.
+
 ##  metacoder 0.3.0
 
 ### Bug fixes

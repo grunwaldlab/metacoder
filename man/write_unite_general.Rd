@@ -52,8 +52,10 @@ ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT.
 }
 }
 \seealso{
-Other writers: \code{\link{write_greengenes}},
+Other writers: \code{\link{make_dada2_asv_table}},
+  \code{\link{make_dada2_tax_table}},
+  \code{\link{write_greengenes}},
   \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}
+  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}}
 }
 \concept{writers}
