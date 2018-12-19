@@ -50,7 +50,8 @@ Imports:
     Rcpp,
     crayon,
     svglite,
-    phyloseq
+    phyloseq,
+    viridisLite
 Suggests:
     knitr,
     rmarkdown,
