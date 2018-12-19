@@ -562,13 +562,22 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
   
   #| ### Parse arguments
   
-  if (is.null(node_color_interval) && length(get_numerics(node_color)) > 0) {
-    node_color_interval <- range(get_numerics(node_color),
-                                 na.rm = TRUE, finite = TRUE)
+  if (is.null(node_color_interval)) {
+    if (! is.null(edge_color_interval) && all(node_color == edge_color)) {
+      node_color_interval <- edge_color_interval
+    } else if (length(get_numerics(node_color)) > 0) {
+      node_color_interval <- range(get_numerics(node_color),
+                                   na.rm = TRUE, finite = TRUE)
+    }
   }
-  if (is.null(edge_color_interval) && length(get_numerics(edge_color)) > 0) {
-    edge_color_interval <- range(get_numerics(edge_color),
-                                 na.rm = TRUE, finite = TRUE)
+  
+  if (is.null(edge_color_interval)) {
+    if (! is.null(node_color_interval) && all(node_color == edge_color)) {
+      edge_color_interval <- node_color_interval
+    } else if (length(get_numerics(edge_color)) > 0) {
+      edge_color_interval <- range(get_numerics(edge_color),
+                                   na.rm = TRUE, finite = TRUE)
+    }
   }
   
   #| ### Standardize source data ==================================================================
