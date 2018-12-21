@@ -11,7 +11,7 @@ r_check_args: "--as-cran"
 
 bioc_required: true
 bioc_use_devel: true
-bioc-packages: BiocInstaller, zlibbioc
+bioc-packages: BiocManager, zlibbioc
 
 sudo: false
 cran: http://cran.at.r-project.org
