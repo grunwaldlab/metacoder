@@ -177,7 +177,7 @@ write_rdp <- function(obj, file,
 #'   sequence fasta file. This is optional.
 #' @param tax_names (\code{character} named by taxon ids) The names of taxa
 #' @param ids (\code{character} named by taxon ids) Sequence ids
-#' @param scores TBD
+#' @param scores (\code{numeric} named by taxon ids) 
 #'   
 #' @family writers
 #'   
@@ -185,16 +185,15 @@ write_rdp <- function(obj, file,
 write_mothur_taxonomy <- function(obj, file,
                                   tax_names = obj$get_data("taxon_names")[[1]],
                                   ids = obj$get_data("sequence_id")[[1]],
-                                  scores = obj$get_data("score")[[1]]) {
+                                  scores = NULL) {
   # non-standard argument evaluation
   my_data_used_func <- obj$data_used # needed to avoid errors when testing for some reason
   data_used <- eval(substitute(my_data_used_func(obj, tax_names, ids, scores)))
   tax_names <- rlang::eval_tidy(rlang::enquo(tax_names), data = data_used)
   ids <- rlang::eval_tidy(rlang::enquo(ids), data = data_used)
-  if (length(data_used) > 2) {
-    scores <- rlang::eval_tidy(rlang::enquo(scores), data = data_used)
-  } else {
-    scores <- NULL
+  scores <- rlang::eval_tidy(rlang::enquo(scores), data = data_used)
+  if (is.null(scores) && "score" %in% obj$all_names()) {
+    scores <- obj$get_data("score")[[1]]
   }
   
   # Create sequence file
