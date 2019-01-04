@@ -15,7 +15,7 @@
 
 ### Changes
 
-* Started using the viridis colors for `heat_tree` by default (issue [#133](https://github.com/grunwaldlab/metacoder/issues/133).
+* Started using the `viridis` colors for `heat_tree` by default (issue [#133](https://github.com/grunwaldlab/metacoder/issues/133).
 
 ##  metacoder 0.3.0
 
