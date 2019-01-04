@@ -2,7 +2,7 @@
 
 * local desktop: ubuntu 16.04 install, R 3.5.1
 * on travis-ci: ubuntu 14.04.5 + R 3.5.1, devel, bioc-release
-* win-builder
+* win-builder R 3.5.2 and development
 
 ## R CMD check results
 
@@ -12,9 +12,19 @@
 
 There were no ERRORs, WARNINGs or NOTEs.
 
-### travis-ci bioc-release:
+### travis-ci devel and bioc-release:
 
 There were no ERRORs, WARNINGs or NOTEs.
+
+### travis-ci release:
+
+Could not test since the bioconductor could not be installed:
+
+```
+Error: Bioconductor version '3.9' requires R version '3.6'; see
+  https://bioconductor.org/install
+Execution halted
+```
 
 ### On winbuilder:
 
