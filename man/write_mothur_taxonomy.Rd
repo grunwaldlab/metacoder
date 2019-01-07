@@ -6,8 +6,7 @@
 \usage{
 write_mothur_taxonomy(obj, file,
   tax_names = obj$get_data("taxon_names")[[1]],
-  ids = obj$get_data("sequence_id")[[1]],
-  scores = obj$get_data("score")[[1]])
+  ids = obj$get_data("sequence_id")[[1]], scores = NULL)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -19,7 +18,7 @@ sequence fasta file. This is optional.}
 
 \item{ids}{(\code{character} named by taxon ids) Sequence ids}
 
-\item{scores}{TBD}
+\item{scores}{(\code{numeric} named by taxon ids)}
 }
 \description{
 Attempts to save taxonomic information of a taxmap object in the
@@ -49,8 +48,10 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
 }
 }
 \seealso{
-Other writers: \code{\link{write_greengenes}},
-  \code{\link{write_rdp}},
+Other writers: \code{\link{make_dada2_asv_table}},
+  \code{\link{make_dada2_tax_table}},
+  \code{\link{write_greengenes}}, \code{\link{write_rdp}},
+  \code{\link{write_silva_fasta}},
   \code{\link{write_unite_general}}
 }
 \concept{writers}

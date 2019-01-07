@@ -58,7 +58,8 @@ taxon	total	A	B	C
 }
 }
 \seealso{
-Other parsers: \code{\link{parse_edge_list}},
+Other parsers: \code{\link{parse_dada2}},
+  \code{\link{parse_edge_list}},
   \code{\link{parse_greengenes}},
   \code{\link{parse_mothur_taxonomy}},
   \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},

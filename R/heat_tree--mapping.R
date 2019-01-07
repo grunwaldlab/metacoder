@@ -64,7 +64,7 @@ apply_color_scale <- function(values, color_series, interval = NULL, no_color_in
 #' 
 #' @export
 quantative_palette <- function() {
-  return(c("grey", "#018571", "#80cdc1", "#dfc27d", "#a6611a"))
+  return(c("#BBBBBB", rev(viridisLite::viridis(7, begin = .4, end = .9))))
 }
 
 

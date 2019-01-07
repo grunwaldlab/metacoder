@@ -1,10 +1,21 @@
 # News 
 
-## Current
+##  metacoder 0.3.1
 
 ### Bug fixes
 
 * `calc_taxon_abund` no longer errors when a taxon has no observations associated with it.
+* New `heat_tree_matrix` options to change size and color of row and column labels. 
+* Fixed a bug causing the size legend not to be shown (issue [#249](https://github.com/grunwaldlab/metacoder/issues/249).
+* Now when a node_color_interval is set but a edge_color_interval is not and edge_color is not used, the edge_color_interval is the same as the node_color_interval.
+
+### New features
+
+* Added parser for `dada2` results called `parse_dada2` and writers to convert back called `make_dada2_asv_table` and `make_dada2_tax_table`.
+
+### Changes
+
+* Started using the `viridis` colors for `heat_tree` by default (issue [#133](https://github.com/grunwaldlab/metacoder/issues/133).
 
 ##  metacoder 0.3.0
 

@@ -5,7 +5,10 @@
 \title{Plot a matrix of heat trees}
 \usage{
 heat_tree_matrix(obj, data, label_small_trees = FALSE, key_size = 0.6,
-  seed = 1, output_file = NULL, ..., dataset = NULL)
+  seed = 1, output_file = NULL,
+  row_label_color = diverging_palette()[3],
+  col_label_color = diverging_palette()[1], row_label_size = 12,
+  col_label_size = 12, ..., dataset = NULL)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -24,6 +27,16 @@ example, 0.5 means half the width/height of the graph.}
 \item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
 The type of the file will be determined by the extension given.
 Default: Do not save plot.}
+
+\item{row_label_color}{The color of the row labels on the right side of the matrix. Default:
+based on the node_color_range.}
+
+\item{col_label_color}{The color of the columns labels along the top of the matrix. Default:
+based on the node_color_range.}
+
+\item{row_label_size}{The size of the row labels on the right side of the matrix. Default: 12.}
+
+\item{col_label_size}{The size of the columns labels along the top of the matrix. Default: 12.}
 
 \item{...}{Passed to \code{\link{heat_tree}}. Some options will be overwritten.}
 

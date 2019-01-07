@@ -14,20 +14,15 @@ names. There must be a capture group (a pair of parentheses) for each item
 in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
 how this works.}
 
-\item{class_key}{(\code{character} of length 1) The identity of the capturing
-groups defined using \code{class_regex}. The length of \code{class_key} must be equal
-to the number of capturing groups specified in \code{class_regex}. Any names
-added to the terms will be used as column names in the output. At least
-one \code{"taxon_name"} must be specified. Only \code{"info"} can be used
-multiple times. Each term must be one of those described below:
-\itemize{
-\item \code{taxon_name}: The name of a taxon. Not necessarily unique, but are
-interpretable by a particular \code{database}. Requires an internet connection.
-\item \code{taxon_rank}: The rank of the taxon. This will be used to add rank info
-into the output object that can be accessed by \code{out$taxon_ranks()}.
-\item \code{info}: Arbitrary taxon info you want included in the output. Can be used
-more than once.
-}}
+\item{class_key}{(\code{character} of length 1) The identity of the capturing groups defined using
+\code{class_regex}. The length of \code{class_key} must be equal to the number of capturing groups
+specified in \code{class_regex}. Any names added to the terms will be used as column names in the
+output. At least one \code{"taxon_name"} must be specified. Only \code{"info"} can be used multiple
+times. Each term must be one of those described below: * \code{taxon_name}: The name of a taxon. Not
+necessarily unique, but are interpretable by a particular \code{database}. Requires an internet
+connection. * \code{taxon_rank}: The rank of the taxon. This will be used to add rank info into the
+output object that can be accessed by \code{out$taxon_ranks()}. * \code{info}: Arbitrary taxon info you
+want included in the output. Can be used more than once.}
 }
 \value{
 A taxmap object
@@ -58,7 +53,8 @@ heat_tree(x,
 
 }
 \seealso{
-Other parsers: \code{\link{parse_edge_list}},
+Other parsers: \code{\link{parse_dada2}},
+  \code{\link{parse_edge_list}},
   \code{\link{parse_greengenes}},
   \code{\link{parse_mothur_tax_summary}},
   \code{\link{parse_mothur_taxonomy}},
