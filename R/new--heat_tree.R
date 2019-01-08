@@ -7,161 +7,8 @@
 #' are many options, perhaps an overwheliming number, but typically only a few need to be used to
 #' make an effective plot.
 #'
-#' @param obj An object of type \code{\link[taxa]{Taxmap}}. This typically contains all of the data
-#'   that will be plotted. Any data that is to be plotted that is not contained in this object will
-#'   need to named by the taxon ids used in this object or be the same length as the number of taxa
-#'   in this object.
-#'
-#' @param node_label Labels associated with nodes. See the "labels" section below for more
-#'   information. Default: no node labels.
-#' @param edge_label Labels associated with edges. See the "labels" section below for more
-#'   information. Default: no edge labels.
-#' @param tree_label Labels associated with subtrees. When there are multiple roots to the taxonomy,
-#'   multiple trees are printed, one for each root, and they are automatically arranged on the same
-#'   graph using the same color/size scales. This option allows each subtree to be labeled. Values
-#'   assocaited with the roots and given to this option will be used for the subtree labels. See the
-#'   "labels" section below for more information. Default: no subtree labels.
-#'
-#' @param node_size A numeric value used to determine relative node size. See the "size" section
-#'   below for more information. Default: constant size.
-#' @param edge_size A numeric value used to determine relative edge size. Although edges connect two
-#'   nodes, in this function, their relative width is associated with a single taxon, represented by
-#'   the node the edge leads to. For this reason, root taxa do not have edges. Keep in mind that
-#'   edges will look odd if they are bigger than their assocaited node. See the "size" section below
-#'   for more information. Default: half of node size.
-#' @param node_label_size A numeric value used to determine relative node label size. See the "size"
-#'   section below for more information. Default: relative to node size.
-#' @param edge_label_size A numeric value used to determine relative edge label size. See the "size"
-#'   section below for more information. Default: relative to edge size.
-#' @param tree_label_size A numeric value used to determine relative tree label size. See the "size"
-#'   section below for more information. Default: relative to subtree size.
-#'
-#' @param node_color A numeric value used to determine relative node color or a character value
-#'   representing a color, either hex code or color name. See the "color" section below for more
-#'   information. Default: grey.
-#' @param edge_color  A numeric value used to determine relative edge color or a character value
-#'   representing a color, either hex code or color name. See the "color" section below for more
-#'   information. Default: same as node color.
-#' @param node_label_color A numeric value used to determine relative node label color or a
-#'   character value representing a color, either hex code or color name. See the "color" section
-#'   below for more information.. Default: black.
-#' @param edge_label_color A numeric value used to determine relative edge label color or a
-#'   character value representing a color, either hex code or color name. See the "color" section
-#'   below for more information. Default: black.
-#' @param tree_label_color A numeric value used to determine relative subtree label color or a
-#'   character value representing a color, either hex code or color name. See the "color" section
-#'   below for more information. Default: black.
-#'
-#' @param node_size_trans How the numbers used to determine node size is transformed before being
-#'   mapped to node size. See details on transformations. Default: \code{"area"}.
-#' @param edge_size_trans How the numbers used to determine edge size is transformed before being
-#'   mapped to edge size. See details on transformations. Default: same as \code{node_size_trans}.
-#' @param node_label_size_trans How the numbers used to determine node label size is transformed
-#'   before being mapped to node label size. See details on transformations. Default: same as
-#'   \code{node_size_trans}.
-#' @param edge_label_size_trans How the numbers used to determine edge label size is transformed
-#'   before being mapped to edge label size. See details on transformations. See details on
-#'   transformations. Default: same as \code{edge_size_trans}.
-#' @param tree_label_size_trans How the numbers used to determine subtree label size is transformed
-#'   before being mapped to subtree label size. See details on transformations. See details on
-#'   transformations. Default: \code{"area"}.
-#' @param node_color_trans How the numbers used to determine node color is transformed before being
-#'   mapped to node color. See details on transformations. Default: \code{"linear"}.
-#' @param edge_color_trans How the numbers used to determine edge color is transformed before being
-#'   mapped to edge color. See details on transformations. Default: same as node color
-#'   transformation.
-#' @param node_label_color_trans How the numbers used to determine node label color is transformed
-#'   before being mapped to node label color. See details on transformations. Default:
-#'   \code{"linear"}.
-#' @param edge_label_color_trans How the numbers used to determine edge label color is transformed
-#'   before being mapped to edge label color. See details on transformations. Default:
-#'   \code{"linear"}.
-#' @param tree_label_color_trans How the numbers used to determine subtree label color is
-#'   transformed before being mapped to subtree label color. See details on transformations.
-#'   Default: \code{"linear"}.
-#'
-#' @param node_size_range The minimum and maximum diameter of nodes, as a length 2 numeric vector,
-#'   in units of proportion of graph size. For example \code{c(0.01, 0.02)} would make nodes between
-#'   1% and 2% of graph size. See details on size ranges. Default: Optimize to balance overlaps and
-#'   range size.
-#' @param edge_size_range The minimum and maximum width of edges, as a length 2 numeric vector, in
-#'   units of proportion of graph size. For example \code{c(0.01, 0.02)} would make edge widths
-#'   between 1% and 2% of graph size. See details on size ranges. Default: One half of node
-#'   diameter.
-#' @param node_label_size_range The minimum and maximum size of node label text, as a length 2
-#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
-#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
-#'   node size.
-#' @param edge_label_size_range The minimum and maximum size of edge label text, as a length 2
-#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
-#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
-#'   edge size.
-#' @param tree_label_size_range The minimum and maximum size of tree label text, as a length 2
-#'   numeric vector, in units of proportion of graph size. For example \code{c(0.01, 0.02)} would
-#'   make text between 1% and 2% of graph size. See details on size ranges. Default: Relative to
-#'   subtree size.
-#'
-#' @param node_color_range A series of colors used to make the color ramp used for nodes, as a
-#'   character vector of colors. See details on color ranges below for more information. Default:
-#'   Color-blind friendly palette.
-#' @param edge_color_range A series of colors used to make the color ramp used for edges, as a
-#'   character vector of colors. See details on color ranges below for more information. Default:
-#'   Color-blind friendly palette.
-#' @param node_label_color_range A series of colors used to make the color ramp used for node
-#'   labels, as a character vector of colors. See details on color ranges below for more
-#'   information. Default: Color-blind friendly palette.
-#' @param edge_label_color_range A series of colors used to make the color ramp used for edge
-#'   labels, as a character vector of colors. See details on color ranges below for more
-#'   information. Default: Color-blind friendly palette.
-#' @param tree_label_color_range A series of colors used to make the color ramp used for subtree
-#'   labels, as a character vector of colors. See details on color ranges below for more
-#'   information. Default: Color-blind friendly palette.
-#'
-#' @param node_size_interval A numeric vector of length 2 that sets the minimum and maximum values
-#'   represented by node size. See details on intervals below for more information. Default: The
-#'   range of values in \code{node_size}.
-#' @param node_color_interval A numeric vector of length 2 that sets the minimum and maximum values
-#'   represented by node color. See details on intervals below for more information. Default: The
-#'   range of values in \code{node_color}.
-#' @param edge_size_interval A numeric vector of length 2 that sets the minimum and maximum values
-#'   represented by edge size. See details on intervals below for more information. Default: The
-#'   range of values in \code{edge_size}.
-#' @param edge_color_interval A numeric vector of length 2 that sets the minimum and maximum values
-#'   represented by edge color. See details on intervals below for more information. Default: The
-#'   range of values in \code{edge_color}.
-#'
-#' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins, measured in
-#'   proportion of graphic area. c(left, right, bottom, top). Default: \code{0, 0, 0, 0}.
-#' @param aspect_ratio The aspect_ratio of the plot. Default: determined by layout. 
-#'
-#' @param layout The layout algorithm used to position nodes. See details on layouts. Default:
-#'   \code{"reingold-tilford"}.
-#' @param initial_layout he layout algorithm used to set the initial position of nodes, passed as
-#'   input to the \code{layout} algorithm. See details on layouts. Default: Not used.
-#'
-#' @param make_node_legend if TRUE, make legend for node size/color mappings. Default: TRUE.
-#' @param make_edge_legend if TRUE, make legend for edge size/color mappings. Default: TRUE.
-#' @param title Text to print above the graph.
-#' @param title_size The size of the title relative to the rest of the graph. For example a value of
-#'   \code{.05} will make the title text's height 5% of the graph's size.
-#' @param node_color_axis_label The label on the scale axis corresponding to \code{node_color}.
-#'   Default: The expression given to \code{node_color}.
-#' @param node_size_axis_label The label on the scale axis corresponding to \code{node_size}.
-#'   Default: The expression given to \code{node_size}.
-#' @param edge_color_axis_label The label on the scale axis corresponding to \code{edge_color}.
-#'   Default: The expression given to \code{edge_color}.
-#' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
-#'   Default: The expression given to \code{edge_size}.
-#' @param background_color The background color of the plot. Default: Transparent
-#' @param output_file The path to one or more files to save the plot in using
-#'   \code{\link[ggplot2]{ggsave}}. The type of the file will be determined by the extension given.
-#'   Default: Do not save plot.
-#'
-#' @param repel_labels If \code{TRUE}, use code from the ggrepel package to spread out labels. Default: TRUE.
-#' @param repel_force The force of which overlapping labels will be repelled from eachother. Default: 1.
-#' @param repel_iter The number of iterations used when repelling labels. Default: 1000.
-#'
-#' @param ... (other named arguments) Passed to the \code{\link{igraph}} layout function used.
+#' @inheritParams heat_tree_data
+#' @inheritParams heat_tree_plot
 #'
 #' @section labels:
 #'
@@ -406,5 +253,317 @@ heat_tree <- function(obj,
                       repel_labels = TRUE,
                       repel_force = 1,
                       repel_iter = 1000) {
+  
+}
+
+
+#' Make data for plotting a heat tree using \code{\link{heat_tree_plot}}
+#'
+#' This makes a \code{\link[taxa]{taxmap}} object containing all the information
+#' needed to plot a heat tree. Using \code{\link{heat_tree_data}} and
+#' \code{\link{heat_tree_plot}} is intended for advanced users when
+#' customizations of the plot must be scripted.
+#'
+#' @param obj An object of type \code{\link[taxa]{Taxmap}}. This typically
+#'   contains all of the data that will be plotted. Any data that is to be
+#'   plotted that is not contained in this object will need to named by the
+#'   taxon ids used in this object or be the same length as the number of taxa
+#'   in this object.
+#'
+#' @param node_label Labels associated with nodes. See the "labels" section
+#'   below for more information. Default: no node labels.
+#' @param edge_label Labels associated with edges. See the "labels" section
+#'   below for more information. Default: no edge labels.
+#' @param tree_label Labels associated with subtrees. When there are multiple
+#'   roots to the taxonomy, multiple trees are printed, one for each root, and
+#'   they are automatically arranged on the same graph using the same color/size
+#'   scales. This option allows each subtree to be labeled. Values assocaited
+#'   with the roots and given to this option will be used for the subtree
+#'   labels. See the "labels" section below for more information. Default: no
+#'   subtree labels.
+#'
+#' @param node_size A numeric value used to determine relative node size. See
+#'   the "size" section below for more information. Default: constant size.
+#' @param edge_size A numeric value used to determine relative edge size.
+#'   Although edges connect two nodes, in this function, their relative width is
+#'   associated with a single taxon, represented by the node the edge leads to.
+#'   For this reason, root taxa do not have edges. Keep in mind that edges will
+#'   look odd if they are bigger than their assocaited node. See the "size"
+#'   section below for more information. Default: half of node size.
+#' @param node_label_size A numeric value used to determine relative node label
+#'   size. See the "size" section below for more information. Default: relative
+#'   to node size.
+#' @param edge_label_size A numeric value used to determine relative edge label
+#'   size. See the "size" section below for more information. Default: relative
+#'   to edge size.
+#' @param tree_label_size A numeric value used to determine relative tree label
+#'   size. See the "size" section below for more information. Default: relative
+#'   to subtree size.
+#'
+#' @param node_color A numeric value used to determine relative node color or a
+#'   character value representing a color, either hex code or color name. See
+#'   the "color" section below for more information. Default: grey.
+#' @param edge_color  A numeric value used to determine relative edge color or a
+#'   character value representing a color, either hex code or color name. See
+#'   the "color" section below for more information. Default: same as node
+#'   color.
+#' @param node_label_color A numeric value used to determine relative node label
+#'   color or a character value representing a color, either hex code or color
+#'   name. See the "color" section below for more information.. Default: black.
+#' @param edge_label_color A numeric value used to determine relative edge label
+#'   color or a character value representing a color, either hex code or color
+#'   name. See the "color" section below for more information. Default: black.
+#' @param tree_label_color A numeric value used to determine relative subtree
+#'   label color or a character value representing a color, either hex code or
+#'   color name. See the "color" section below for more information. Default:
+#'   black.
+#'
+#' @param node_size_trans How the numbers used to determine node size is
+#'   transformed before being mapped to node size. See details on
+#'   transformations. Default: \code{"area"}.
+#' @param edge_size_trans How the numbers used to determine edge size is
+#'   transformed before being mapped to edge size. See details on
+#'   transformations. Default: same as \code{node_size_trans}.
+#' @param node_label_size_trans How the numbers used to determine node label
+#'   size is transformed before being mapped to node label size. See details on
+#'   transformations. Default: same as \code{node_size_trans}.
+#' @param edge_label_size_trans How the numbers used to determine edge label
+#'   size is transformed before being mapped to edge label size. See details on
+#'   transformations. See details on transformations. Default: same as
+#'   \code{edge_size_trans}.
+#' @param tree_label_size_trans How the numbers used to determine subtree label
+#'   size is transformed before being mapped to subtree label size. See details
+#'   on transformations. See details on transformations. Default: \code{"area"}.
+#' @param node_color_trans How the numbers used to determine node color is
+#'   transformed before being mapped to node color. See details on
+#'   transformations. Default: \code{"linear"}.
+#' @param edge_color_trans How the numbers used to determine edge color is
+#'   transformed before being mapped to edge color. See details on
+#'   transformations. Default: same as node color transformation.
+#' @param node_label_color_trans How the numbers used to determine node label
+#'   color is transformed before being mapped to node label color. See details
+#'   on transformations. Default: \code{"linear"}.
+#' @param edge_label_color_trans How the numbers used to determine edge label
+#'   color is transformed before being mapped to edge label color. See details
+#'   on transformations. Default: \code{"linear"}.
+#' @param tree_label_color_trans How the numbers used to determine subtree label
+#'   color is transformed before being mapped to subtree label color. See
+#'   details on transformations. Default: \code{"linear"}.
+#'
+#' @param node_size_range The minimum and maximum diameter of nodes, as a length
+#'   2 numeric vector, in units of proportion of graph size. For example
+#'   \code{c(0.01, 0.02)} would make nodes between 1% and 2% of graph size. See
+#'   details on size ranges. Default: Optimize to balance overlaps and range
+#'   size.
+#' @param edge_size_range The minimum and maximum width of edges, as a length 2
+#'   numeric vector, in units of proportion of graph size. For example
+#'   \code{c(0.01, 0.02)} would make edge widths between 1% and 2% of graph
+#'   size. See details on size ranges. Default: One half of node diameter.
+#' @param node_label_size_range The minimum and maximum size of node label text,
+#'   as a length 2 numeric vector, in units of proportion of graph size. For
+#'   example \code{c(0.01, 0.02)} would make text between 1% and 2% of graph
+#'   size. See details on size ranges. Default: Relative to node size.
+#' @param edge_label_size_range The minimum and maximum size of edge label text,
+#'   as a length 2 numeric vector, in units of proportion of graph size. For
+#'   example \code{c(0.01, 0.02)} would make text between 1% and 2% of graph
+#'   size. See details on size ranges. Default: Relative to edge size.
+#' @param tree_label_size_range The minimum and maximum size of tree label text,
+#'   as a length 2 numeric vector, in units of proportion of graph size. For
+#'   example \code{c(0.01, 0.02)} would make text between 1% and 2% of graph
+#'   size. See details on size ranges. Default: Relative to subtree size.
+#'
+#' @param node_color_range A series of colors used to make the color ramp used
+#'   for nodes, as a character vector of colors. See details on color ranges
+#'   below for more information. Default: Color-blind friendly palette.
+#' @param edge_color_range A series of colors used to make the color ramp used
+#'   for edges, as a character vector of colors. See details on color ranges
+#'   below for more information. Default: Color-blind friendly palette.
+#' @param node_label_color_range A series of colors used to make the color ramp
+#'   used for node labels, as a character vector of colors. See details on color
+#'   ranges below for more information. Default: Color-blind friendly palette.
+#' @param edge_label_color_range A series of colors used to make the color ramp
+#'   used for edge labels, as a character vector of colors. See details on color
+#'   ranges below for more information. Default: Color-blind friendly palette.
+#' @param tree_label_color_range A series of colors used to make the color ramp
+#'   used for subtree labels, as a character vector of colors. See details on
+#'   color ranges below for more information. Default: Color-blind friendly
+#'   palette.
+#'
+#' @param node_size_interval A numeric vector of length 2 that sets the minimum
+#'   and maximum values represented by node size. See details on intervals below
+#'   for more information. Default: The range of values in \code{node_size}.
+#' @param node_color_interval A numeric vector of length 2 that sets the minimum
+#'   and maximum values represented by node color. See details on intervals
+#'   below for more information. Default: The range of values in
+#'   \code{node_color}.
+#' @param edge_size_interval A numeric vector of length 2 that sets the minimum
+#'   and maximum values represented by edge size. See details on intervals below
+#'   for more information. Default: The range of values in \code{edge_size}.
+#' @param edge_color_interval A numeric vector of length 2 that sets the minimum
+#'   and maximum values represented by edge color. See details on intervals
+#'   below for more information. Default: The range of values in
+#'   \code{edge_color}.
+#'
+#' @param layout The layout algorithm used to position nodes. See details on
+#'   layouts. Default: \code{"reingold-tilford"}.
+#' @param initial_layout he layout algorithm used to set the initial position of
+#'   nodes, passed as input to the \code{layout} algorithm. See details on
+#'   layouts. Default: Not used.
+#'
+#' @param make_node_legend if TRUE, make legend for node size/color mappings.
+#'   Default: TRUE.
+#' @param make_edge_legend if TRUE, make legend for edge size/color mappings.
+#'   Default: TRUE.
+#' @param title Text to print above the graph.
+#' @param title_size The size of the title relative to the rest of the graph.
+#'   For example a value of \code{.05} will make the title text's height 5% of
+#'   the graph's size.
+#' @param node_color_axis_label The label on the scale axis corresponding to
+#'   \code{node_color}. Default: The expression given to \code{node_color}.
+#' @param node_size_axis_label The label on the scale axis corresponding to
+#'   \code{node_size}. Default: The expression given to \code{node_size}.
+#' @param edge_color_axis_label The label on the scale axis corresponding to
+#'   \code{edge_color}. Default: The expression given to \code{edge_color}.
+#' @param edge_size_axis_label The label on the scale axis corresponding to
+#'   \code{edge_size}. Default: The expression given to \code{edge_size}.
+#'
+#' @param repel_labels If \code{TRUE}, use code from the ggrepel package to
+#'   spread out labels. Default: TRUE.
+#' @param repel_force The force of which overlapping labels will be repelled
+#'   from eachother. Default: 1.
+#' @param repel_iter The number of iterations used when repelling labels.
+#'   Default: 1000.
+#'
+#' @param ... (other named arguments) Passed to the \code{\link{igraph}} layout
+#'   function used.
+#'
+#' @examples
+#' # See examples in the `heat_tree` function
+#'
+#' @export
+heat_tree_data <- function(obj,
+                           node_label = NULL,
+                           edge_label = NULL,
+                           tree_label = NULL,
+                           node_size = n_subtaxa,
+                           edge_size = node_size,
+                           node_label_size = node_size,
+                           edge_label_size = edge_size,
+                           tree_label_size = node_size,
+                           node_color = 'grey',
+                           edge_color = node_color,
+                           node_label_color = 'black',
+                           edge_label_color = 'black',
+                           tree_label_color = 'black',
+                           node_size_trans = 'area',
+                           edge_size_trans = node_size_trans,
+                           node_label_size_trans = "linear",
+                           edge_label_size_trans = "linear",
+                           tree_label_size_trans = "linear",
+                           node_color_trans = "linear",
+                           edge_color_trans = node_color_trans,
+                           node_label_color_trans = "linear",
+                           edge_label_color_trans = "linear",
+                           tree_label_color_trans = "linear",
+                           node_size_range = NULL,
+                           edge_size_range = node_size_range,
+                           node_label_size_range = node_size_range,
+                           edge_label_size_range = NULL,
+                           tree_label_size_range = NULL,
+                           node_color_range = quantative_palette(),
+                           edge_color_range = node_color_range,
+                           node_label_color_range = NULL,
+                           edge_label_color_range = NULL,
+                           tree_label_color_range = NULL,
+                           node_size_interval = NULL,
+                           node_color_interval = NULL,
+                           edge_size_interval = NULL,
+                           edge_color_interval = NULL,
+                           margin_size = 0,
+                           aspect_ratio = 1,
+                           layout = "reingold-tilford",
+                           initial_layout = NULL,
+                           make_node_legend = TRUE,
+                           make_edge_legend = TRUE,
+                           title = NULL,
+                           title_size = 0.1,
+                           node_color_axis_label = NULL,
+                           node_size_axis_label = NULL,
+                           edge_color_axis_label = NULL,
+                           edge_size_axis_label = NULL,
+                           background_color = "#FFFFFF00",
+                           output_file = NULL,
+                           repel_labels = TRUE,
+                           repel_force = 1,
+                           repel_iter = 1000) {
+  
+  
+  # Verify arguments make sense
+  heat_tree_validate_arguments()
+  
+  # Reformat input data to taxmap object 
+  output <- heat_tree_init_taxmap()
+  
+  # Apply statistic transformations
+  output$data$transformed <- heat_tree_transform_data(output)
+  
+  # Make node position layout
+  output$data$layout <- heat_tree_make_layout(output)
+  
+  # Choose colors to display
+  output$data$color <- heat_tree_calc_edge_size(output)
+  
+  # Calculate the coordinates for the verticies in node shapes
+  output$data$nodes <- heat_tree_make_node_shapes(output)
+  
+  # Calculate the coordinates for the verticies in edge shapes
+  output$data$edges <- heat_tree_make_edge_shapes(output)
+  
+  # Choose size range to display
+  output$data$size <- heat_tree_calc_sizes(output)
+  
+  # Modifiy layout to reduce overlaps and gaps
+  output$data$layout <- heat_tree_repel_nodes(output)
+  
+  # Add info needed to plot node, edge, and tree labels
+  output$data$labels <- heat_tree_make_labels(output)
+  
+  # Make labels and shape data for legends
+  legend_data <- heat_tree_make_legends(output)
+  output$data$legend_labels <- legend_data$labels
+  output$data$legend_shapes <- legend_data$shapes
+  
+  # Combine and sort info needed top plot shapes (nodes, edges, legends, etc)
+  output$data$shapes <- heat_tree_combine_shapes(output)
+  output$data$labels <- heat_tree_combine_labels(output)
+  
+  # Remove intermediate data from object
+  if (preserve_intermediate) {
+    output$data <- output$data[c("shapes", "labels")]
+  }
+  
+  return(output)
+}
+
+#' Plots the object made by \code{\link{heat_tree_data}}
+#' 
+#' Uses the data in \code{\link{heat_tree_data}} to make a ggplot2 plot of a heat tree.
+#' Using \code{\link{heat_tree_data}} and \code{\link{heat_tree_plot}} is
+#' intended for advanced users when customizations of the plot must be scripted.
+#' 
+#' @param margin_size (\code{numeric} of length 2) The horizontal and vertical margins, measured in
+#'   proportion of graphic area. c(left, right, bottom, top). Default: \code{0, 0, 0, 0}.
+#' @param aspect_ratio The aspect_ratio of the plot. Default: determined by layout. 
+#' @param background_color The background color of the plot. Default: Transparent
+#' @param output_file The path to one or more files to save the plot in using
+#'   \code{\link[ggplot2]{ggsave}}. The type of the file will be determined by the extension given.
+#'   Default: Do not save plot.
+#'   
+#' @export
+heat_tree_plot <- function(obj,
+                           margin_size = 0,
+                           aspect_ratio = 1,
+                           background_color = "#FFFFFF00",
+                           output_file = NULL) {
   
 }
