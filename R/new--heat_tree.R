@@ -253,7 +253,7 @@ heat_tree <- function(obj,
                       repel_labels = TRUE,
                       repel_force = 1,
                       repel_iter = 1000) {
-  
+  heat_tree_plot(heat_tree_data())
 }
 
 
@@ -495,11 +495,15 @@ heat_tree_data <- function(obj,
                            output_file = NULL,
                            repel_labels = TRUE,
                            repel_force = 1,
-                           repel_iter = 1000) {
-  
+                           repel_iter = 1000,
+                           ...) {
+  # Non-standard evaluation 
+  raw_arguments <- as.list(match.call()[-1])
+  input_data_used <- .input$data_used(raw_arguments)
+  arguments <- c(lazyeval::lazy_eval(raw_arguments, data = data))
   
   # Verify arguments make sense
-  heat_tree_validate_arguments()
+  heat_tree_validate_arguments(arguments)
   
   # Reformat input data to taxmap object 
   output <- heat_tree_init_taxmap()
@@ -508,7 +512,7 @@ heat_tree_data <- function(obj,
   output$data$transformed <- heat_tree_transform_data(output)
   
   # Make node position layout
-  output$data$layout <- heat_tree_make_layout(output)
+  output$data$layout <- heat_tree_make_layout(output, ...)
   
   # Choose colors to display
   output$data$color <- heat_tree_calc_edge_size(output)
