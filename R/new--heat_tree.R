@@ -202,7 +202,7 @@ heat_tree <- function(obj,
                       node_label = NULL,
                       edge_label = NULL,
                       tree_label = NULL,
-                      node_size = n_subtaxa,
+                      node_size = NULL,
                       edge_size = node_size,
                       node_label_size = node_size,
                       edge_label_size = edge_size,
@@ -506,7 +506,7 @@ heat_tree_data <- function(obj,
                            node_label = NULL,
                            edge_label = NULL,
                            tree_label = NULL,
-                           node_size = n_subtaxa,
+                           node_size = NULL,
                            edge_size = node_size,
                            node_label_size = node_size,
                            edge_label_size = edge_size,
@@ -568,50 +568,50 @@ heat_tree_data <- function(obj,
   }
 
   # Verify arguments make sense
-  heat_tree_validate_arguments(obj, arguments)
+  arguments <- heat_tree_validate_arguments(obj, arguments)
   
-  # Reformat input data to taxmap object 
-  output <- heat_tree_init_taxmap(obj, arguments)
-  
-  # Apply statistic transformations
-  output$data$transformed <- heat_tree_transform_data(output)
-  
-  # Make node position layout
-  output$data$layout <- heat_tree_make_layout(output, ...)
-  
-  # Choose colors to display
-  output$data$color <- heat_tree_calc_edge_size(output)
-  
-  # Calculate the coordinates for the verticies in node shapes
-  output$data$nodes <- heat_tree_make_node_shapes(output)
-  
-  # Calculate the coordinates for the verticies in edge shapes
-  output$data$edges <- heat_tree_make_edge_shapes(output)
-  
-  # Choose size range to display
-  output$data$size <- heat_tree_calc_sizes(output)
-  
-  # Modifiy layout to reduce overlaps and gaps
-  output$data$layout <- heat_tree_repel_nodes(output)
-  
-  # Add info needed to plot node, edge, and tree labels
-  output$data$labels <- heat_tree_make_labels(output)
-  
-  # Make labels and shape data for legends
-  legend_data <- heat_tree_make_legends(output)
-  output$data$legend_labels <- legend_data$labels
-  output$data$legend_shapes <- legend_data$shapes
-  
-  # Combine and sort info needed top plot shapes (nodes, edges, legends, etc)
-  output$data$shapes <- heat_tree_combine_shapes(output)
-  output$data$labels <- heat_tree_combine_labels(output)
-  
-  # Remove intermediate data from object
-  if (preserve_intermediate) {
-    output$data <- output$data[c("shapes", "labels")]
-  }
-  
-  return(output)
+  # # Reformat input data to taxmap object 
+  # output <- heat_tree_init_taxmap(obj, arguments)
+  # 
+  # # Apply statistic transformations
+  # output$data$transformed <- heat_tree_transform_data(output)
+  # 
+  # # Make node position layout
+  # output$data$layout <- heat_tree_make_layout(output, ...)
+  # 
+  # # Choose colors to display
+  # output$data$color <- heat_tree_calc_edge_size(output)
+  # 
+  # # Calculate the coordinates for the verticies in node shapes
+  # output$data$nodes <- heat_tree_make_node_shapes(output)
+  # 
+  # # Calculate the coordinates for the verticies in edge shapes
+  # output$data$edges <- heat_tree_make_edge_shapes(output)
+  # 
+  # # Choose size range to display
+  # output$data$size <- heat_tree_calc_sizes(output)
+  # 
+  # # Modifiy layout to reduce overlaps and gaps
+  # output$data$layout <- heat_tree_repel_nodes(output)
+  # 
+  # # Add info needed to plot node, edge, and tree labels
+  # output$data$labels <- heat_tree_make_labels(output)
+  # 
+  # # Make labels and shape data for legends
+  # legend_data <- heat_tree_make_legends(output)
+  # output$data$legend_labels <- legend_data$labels
+  # output$data$legend_shapes <- legend_data$shapes
+  # 
+  # # Combine and sort info needed top plot shapes (nodes, edges, legends, etc)
+  # output$data$shapes <- heat_tree_combine_shapes(output)
+  # output$data$labels <- heat_tree_combine_labels(output)
+  # 
+  # # Remove intermediate data from object
+  # if (preserve_intermediate) {
+  #   output$data <- output$data[c("shapes", "labels")]
+  # }
+  # 
+  # return(output)
 }
 
 #' Plots the object made by \code{\link{heat_tree_data}}

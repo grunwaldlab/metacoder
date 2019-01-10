@@ -5,7 +5,7 @@
 \title{Make data for plotting a heat tree using \code{\link{heat_tree_plot}}}
 \usage{
 heat_tree_data(obj, node_label = NULL, edge_label = NULL,
-  tree_label = NULL, node_size = n_subtaxa, edge_size = node_size,
+  tree_label = NULL, node_size = NULL, edge_size = node_size,
   node_label_size = node_size, edge_label_size = edge_size,
   tree_label_size = node_size, node_color = "grey",
   edge_color = node_color, node_label_color = "black",
