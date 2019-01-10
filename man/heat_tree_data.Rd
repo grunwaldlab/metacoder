@@ -30,7 +30,7 @@ heat_tree_data(obj, node_label = NULL, edge_label = NULL,
   node_color_axis_label = NULL, node_size_axis_label = NULL,
   edge_color_axis_label = NULL, edge_size_axis_label = NULL,
   background_color = "#FFFFFF00", output_file = NULL,
-  repel_labels = TRUE, repel_force = 1, repel_iter = 1000)
+  repel_labels = TRUE, repel_force = 1, repel_iter = 1000, ...)
 }
 \arguments{
 \item{obj}{An object of type \code{\link[taxa]{Taxmap}}. This typically

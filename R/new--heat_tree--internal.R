@@ -9,3 +9,4 @@ heat_tree_validate_arguments <- function()
 {
   
 }
+

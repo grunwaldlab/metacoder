@@ -253,8 +253,69 @@ heat_tree <- function(obj,
                       repel_labels = TRUE,
                       repel_force = 1,
                       repel_iter = 1000) {
-  heat_tree_plot(heat_tree_data())
+  
+  data <- heat_tree_data(obj = obj,
+                         node_label = !! rlang::enquo(node_label),
+                         edge_label = !! rlang::enquo(edge_label),
+                         tree_label = !! rlang::enquo(tree_label),
+                         node_size = !! rlang::enquo(node_size),
+                         edge_size = !! rlang::enquo(edge_size),
+                         node_label_size = !! rlang::enquo(node_label_size),
+                         edge_label_size = !! rlang::enquo(edge_label_size),
+                         tree_label_size = !! rlang::enquo(tree_label_size),
+                         node_color = !! rlang::enquo(node_color),
+                         edge_color = !! rlang::enquo(edge_color),
+                         node_label_color = !! rlang::enquo(node_label_color),
+                         edge_label_color = !! rlang::enquo(edge_label_color),
+                         tree_label_color = !! rlang::enquo(tree_label_color),
+                         node_size_trans = !! rlang::enquo(node_size_trans),
+                         edge_size_trans = !! rlang::enquo(edge_size_trans),
+                         node_label_size_trans = !! rlang::enquo(node_label_size_trans),
+                         edge_label_size_trans = !! rlang::enquo(edge_label_size_trans),
+                         tree_label_size_trans = !! rlang::enquo(tree_label_size_trans),
+                         node_color_trans = !! rlang::enquo(node_color_trans),
+                         edge_color_trans = !! rlang::enquo(edge_color_trans),
+                         node_label_color_trans = !! rlang::enquo(node_label_color_trans),
+                         edge_label_color_trans = !! rlang::enquo(edge_label_color_trans),
+                         tree_label_color_trans = !! rlang::enquo(tree_label_color_trans),
+                         node_size_range = !! rlang::enquo(node_size_range),
+                         edge_size_range = !! rlang::enquo(edge_size_range),
+                         node_label_size_range = !! rlang::enquo(node_label_size_range),
+                         edge_label_size_range = !! rlang::enquo(edge_label_size_range),
+                         tree_label_size_range = !! rlang::enquo(tree_label_size_range),
+                         node_color_range = !! rlang::enquo(node_color_range),
+                         edge_color_range = !! rlang::enquo(edge_color_range),
+                         node_label_color_range = !! rlang::enquo(node_label_color_range),
+                         edge_label_color_range = !! rlang::enquo(edge_label_color_range),
+                         tree_label_color_range = !! rlang::enquo(tree_label_color_range),
+                         node_size_interval = !! rlang::enquo(node_size_interval),
+                         node_color_interval = !! rlang::enquo(node_color_interval),
+                         edge_size_interval = !! rlang::enquo(edge_size_interval),
+                         edge_color_interval = !! rlang::enquo(edge_color_interval),
+                         margin_size = !! rlang::enquo(margin_size),
+                         aspect_ratio = !! rlang::enquo(aspect_ratio),
+                         layout = !! rlang::enquo(layout),
+                         initial_layout = !! rlang::enquo(initial_layout),
+                         make_node_legend = !! rlang::enquo(make_node_legend),
+                         make_edge_legend = !! rlang::enquo(make_edge_legend),
+                         title = !! rlang::enquo(title),
+                         title_size = !! rlang::enquo(title_size),
+                         node_color_axis_label = !! rlang::enquo(node_color_axis_label),
+                         node_size_axis_label = !! rlang::enquo(node_size_axis_label),
+                         edge_color_axis_label = !! rlang::enquo(edge_color_axis_label),
+                         edge_size_axis_label = !! rlang::enquo(edge_size_axis_label),
+                         background_color = !! rlang::enquo(background_color),
+                         output_file = !! rlang::enquo(output_file),
+                         repel_labels = !! rlang::enquo(repel_labels),
+                         repel_force = !! rlang::enquo(repel_force),
+                         repel_iter = !! rlang::enquo(repel_iter))
+  heat_tree_plot(obj = data,
+                 margin_size = !! rlang::enquo(margin_size),
+                 aspect_ratio = !! rlang::enquo(aspect_ratio),
+                 background_color = !! rlang::enquo(background_color),
+                 output_file = !! rlang::enquo(output_file))
 }
+
 
 
 #' Make data for plotting a heat tree using \code{\link{heat_tree_plot}}
@@ -497,16 +558,20 @@ heat_tree_data <- function(obj,
                            repel_force = 1,
                            repel_iter = 1000,
                            ...) {
+  
   # Non-standard evaluation 
   raw_arguments <- as.list(match.call()[-1])
-  input_data_used <- .input$data_used(raw_arguments)
-  arguments <- c(lazyeval::lazy_eval(raw_arguments, data = data))
-  
+  arguments <- obj$eval_many(!!! rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments)))))
+  names(arguments) <- names(raw_arguments)
+  for (i in seq_along(arguments)) {
+    assign(names(arguments)[i], arguments[[i]])
+  }
+
   # Verify arguments make sense
-  heat_tree_validate_arguments(arguments)
+  heat_tree_validate_arguments(obj, arguments)
   
   # Reformat input data to taxmap object 
-  output <- heat_tree_init_taxmap()
+  output <- heat_tree_init_taxmap(obj, arguments)
   
   # Apply statistic transformations
   output$data$transformed <- heat_tree_transform_data(output)
