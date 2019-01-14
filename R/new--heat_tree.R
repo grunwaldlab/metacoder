@@ -252,7 +252,18 @@ heat_tree <- function(obj,
                       output_file = NULL,
                       repel_labels = TRUE,
                       repel_force = 1,
-                      repel_iter = 1000) {
+                      repel_iter = 1000,
+                      overlap_avoidance = NULL,
+                      ...) {
+  
+  # Non-standard evaluation 
+  raw_arguments <- as.list(match.call()[-1])
+  arguments <- obj$eval_many(!!! rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments)))))
+  names(arguments) <- names(raw_arguments)
+  for (i in seq_along(arguments)) {
+    assign(names(arguments)[i], arguments[[i]])
+  }
+  
   
   data <- heat_tree_data(obj = obj,
                          node_label = !! rlang::enquo(node_label),
@@ -308,7 +319,8 @@ heat_tree <- function(obj,
                          output_file = !! rlang::enquo(output_file),
                          repel_labels = !! rlang::enquo(repel_labels),
                          repel_force = !! rlang::enquo(repel_force),
-                         repel_iter = !! rlang::enquo(repel_iter))
+                         repel_iter = !! rlang::enquo(repel_iter),
+                         ...)
   heat_tree_plot(obj = data,
                  margin_size = !! rlang::enquo(margin_size),
                  aspect_ratio = !! rlang::enquo(aspect_ratio),
@@ -495,6 +507,10 @@ heat_tree <- function(obj,
 #' @param repel_iter The number of iterations used when repelling labels.
 #'   Default: 1000.
 #'
+#' @param overlap_avoidance The "overlap_avoidance" argument is depreciated and
+#'   will be ignored. Use the "*_size_range" arguments to manually specify a
+#'   size range if the default does not work well.
+#'
 #' @param ... (other named arguments) Passed to the \code{\link{igraph}} layout
 #'   function used.
 #'
@@ -557,6 +573,7 @@ heat_tree_data <- function(obj,
                            repel_labels = TRUE,
                            repel_force = 1,
                            repel_iter = 1000,
+                           overlap_avoidance = NULL,
                            ...) {
   
   # Non-standard evaluation 

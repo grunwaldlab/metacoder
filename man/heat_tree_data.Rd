@@ -30,7 +30,8 @@ heat_tree_data(obj, node_label = NULL, edge_label = NULL,
   node_color_axis_label = NULL, node_size_axis_label = NULL,
   edge_color_axis_label = NULL, edge_size_axis_label = NULL,
   background_color = "#FFFFFF00", output_file = NULL,
-  repel_labels = TRUE, repel_force = 1, repel_iter = 1000, ...)
+  repel_labels = TRUE, repel_force = 1, repel_iter = 1000,
+  overlap_avoidance = NULL, ...)
 }
 \arguments{
 \item{obj}{An object of type \code{\link[taxa]{Taxmap}}. This typically
@@ -242,6 +243,10 @@ from eachother. Default: 1.}
 
 \item{repel_iter}{The number of iterations used when repelling labels.
 Default: 1000.}
+
+\item{overlap_avoidance}{The "overlap_avoidance" argument is depreciated and
+will be ignored. Use the "*_size_range" arguments to manually specify a
+size range if the default does not work well.}
 
 \item{...}{(other named arguments) Passed to the \code{\link{igraph}} layout
 function used.}

@@ -11,6 +11,9 @@ check_length_or_id(obj, args)
 
 \item{args}{A list of arguments}
 }
+\value{
+A named list of argument values, potentially modified
+}
 \description{
 Check that inputs are named by taxon ID or are the same length as the number of taxa.
 Print a message if an argument does not have a taxon ID but is same length as the number of taxa.
