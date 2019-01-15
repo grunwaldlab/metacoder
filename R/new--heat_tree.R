@@ -257,13 +257,13 @@ heat_tree <- function(obj,
                       ...) {
   
   # Non-standard evaluation 
-  raw_arguments <- as.list(match.call()[-1])
-  arguments <- obj$eval_many(!!! rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments)))))
-  names(arguments) <- names(raw_arguments)
+  raw_arguments <- as.list(sys.call())[-c(1, 2)]
+  quo_arguments <- rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments))))
+  names(quo_arguments) <- names(raw_arguments)
+  arguments <- obj$eval_many(!!! quo_arguments)
   for (i in seq_along(arguments)) {
     assign(names(arguments)[i], arguments[[i]])
   }
-  
   
   data <- heat_tree_data(obj = obj,
                          node_label = !! rlang::enquo(node_label),
@@ -320,6 +320,7 @@ heat_tree <- function(obj,
                          repel_labels = !! rlang::enquo(repel_labels),
                          repel_force = !! rlang::enquo(repel_force),
                          repel_iter = !! rlang::enquo(repel_iter),
+                         overlap_avoidance =  !! rlang::enquo(overlap_avoidance),
                          ...)
   heat_tree_plot(obj = data,
                  margin_size = !! rlang::enquo(margin_size),
@@ -577,13 +578,25 @@ heat_tree_data <- function(obj,
                            ...) {
   
   # Non-standard evaluation 
-  raw_arguments <- as.list(match.call()[-1])
-  arguments <- obj$eval_many(!!! rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments)))))
-  names(arguments) <- names(raw_arguments)
+  raw_arguments <- as.list(sys.call())[-c(1, 2)]
+  quo_arguments <- rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments))))
+  names(quo_arguments) <- names(raw_arguments)
+  arguments <- obj$eval_many(!!! quo_arguments)
   for (i in seq_along(arguments)) {
     assign(names(arguments)[i], arguments[[i]])
   }
-
+  
+  # Add default values for unused parameters
+  default_args <- as.list(formals())[-c(1, length(formals()))]
+  arguments <- lapply(names(default_args), function(x) {
+    if (x %in% names(arguments)) {
+      return(arguments[[x]])
+    } else {
+      return(eval(default_args[[x]]))
+    }
+  })
+  names(arguments) <- names(default_args)
+  
   # Verify arguments make sense
   arguments <- heat_tree_validate_arguments(obj, arguments)
   

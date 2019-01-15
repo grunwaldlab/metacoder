@@ -71,12 +71,10 @@ test_that("Argument validation works right ", {
                "must be hex color codes or a name returned by")
   expect_error(heat_tree(x, node_color_range = character(0)), 
                "has no values")
-  expect_error(heat_tree(x, overlap_avoidance  = 1:3), 
-               "has no values")
-  expect_error(heat_tree(x, layout = "invalid"), 
-               "argument must be one of the followin")
-  expect_error(heat_tree(x, initial_layout = "invalid"), 
-               "argument must be one of the followin")
+  # expect_error(heat_tree(x, layout = "invalid"), 
+  #              "argument must be one of the followin")
+  # expect_error(heat_tree(x, initial_layout = "invalid"), 
+  #              "argument must be one of the followin")
   
 })
 

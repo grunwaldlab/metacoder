@@ -12,6 +12,20 @@
 #' @keywords internal
 heat_tree_validate_arguments <- function(obj, args)
 {
+  # Check that the main input is a taxonomy with at least one taxon
+  if (! "Taxonomy" %in% class(obj)) {
+    stop(call. = FALSE, '"obj" is not a Taxonomy or Taxmap object: ', class(obj)[1])
+  }
+  if (length(obj$taxon_ids()) <= 0) {
+    stop(call. = FALSE, '"obj" contains no taxa to plot.')
+  }
+  
+  # Check that a taxmap/taxonomy object was not accidentally passed to another parameter
+  is_taxonomy <- purrr::map_lgl(args, function(x) "Taxonomy" %in% class(x))
+  if (any(is_taxonomy)) {
+    stop(call. = FALSE, 'Argument "', names(args)[is_taxonomy][1], '" was given a "', class(args[is_taxonomy][[1]])[1], 
+         '" object. This usually happens when you try to pass an object with "%>%" and also supply it in the function call.')
+  }
   
   # Check that inputs are named by taxon ID or are the same length as the number of taxa
   to_check <- c("node_size", 
