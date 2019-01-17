@@ -605,9 +605,9 @@ heat_tree_data <- function(obj,
   # Reformat input data to taxmap object
   output <- heat_tree_init_taxmap(obj, arguments)
 
-  # # Apply statistic transformations
-  # output$data$transformed <- heat_tree_transform_data(output)
-  # 
+  # Apply statistic transformations
+  output <- heat_tree_transform_data(output)
+
   # # Make node position layout
   # output$data$layout <- heat_tree_make_layout(output, ...)
   # 

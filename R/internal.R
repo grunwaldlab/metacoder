@@ -298,6 +298,16 @@ make_fasta_with_u_replaced <- function(file_path) {
   
   # Return path to temporary file
   return(output_path)
-  
 }
 
+
+#' Test if a vector/list is colors 
+#' 
+#' Test each element of a list is a hex color code or a color from colors()
+#' 
+#' @param input A vector or list
+#' 
+#' @keywords internal
+is_color_char <- function(input) {
+  grepl("^#[0-9a-fA-F]{3,8}$", input) | input %in% grDevices::colors()
+}

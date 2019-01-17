@@ -63,13 +63,21 @@ heat_tree_validate_arguments <- function(obj, args)
                 "tree_label")
   args[to_check] <- check_for_na(args[to_check], warn = FALSE)
   
-  # Check values of arguments specifying node sizes
+  # Check values of arguments specifying sizes
   to_check <- c("node_size",
                 "edge_size",
                 "node_label_size", 
                 "edge_label_size", 
                 "tree_label_size")
   args[to_check] <- check_size(args[to_check])
+  
+  # Check values of arguments specifying colors
+  to_check <- c("node_color",
+                "edge_color",
+                "node_label_color", 
+                "edge_label_color", 
+                "tree_label_color")
+  args[to_check] <- check_color(args[to_check])
   
   # Check value of arguments for labels 
   to_check <- c("node_label",
@@ -253,21 +261,51 @@ check_size <- function(args) {
     if (any(!is.na(value) & is.na(as.numeric(value)))) {
       stop("Argument '", name, "' is not numeric.", call. = FALSE)
     }
-    if (any(is.infinite(value))) {
-      is_real <- ! is.infinite(value) & ! is.na(value)
+    is_infinite <- purrr::map_lgl(value, is.infinite)
+    if (any(is_infinite)) {
+      is_real <- ! is_infinite & ! is.na(value)
       if (any(is_real))
       {
         message('Infinite values found for "', name,
                 '". These will be graphed in the same way as the largest (Inf) or smallest (-Inf) real number supplied.')
-        value[is.infinite(value) & value < 0] <- min(value[is_real], na.rm = TRUE)
-        value[is.infinite(value) & value > 0] <- max(value[is_real], na.rm = TRUE)
+        value[is_infinite & value < 0] <- min(value[is_real], na.rm = TRUE)
+        value[is_infinite & value > 0] <- max(value[is_real], na.rm = TRUE)
       } else {
         stop('Argument "', name, '" has no finite, non-NA values.', call. = FALSE)
       }
     }
-    return(value)
+    return(as.list(value))
   }
   
+  
+  stats::setNames(purrr::map2(names(args), args, check_one),
+                  names(args))
+}
+
+
+#' Check color arguments
+#' 
+#' Check that arguments specifying color make sense
+#' 
+#' @param args A list of arguments
+#' 
+#' @return A named list of argument values, potentially modified
+#' 
+#' @keywords internal
+check_color <- function(args) {
+  
+  check_one <- function(name, value) {
+    if (is.null(value)) {
+      return(value)
+    }
+    is_char <- purrr::map_lgl(value, is.character)
+    is_num <- purrr::map_lgl(value, is.numeric)
+    if (any(is_num) && (any(is_char & ! is_color_char(value)))) {
+      stop(call. = FALSE,
+           'Values given to color argument "', name, '" have numbers and non-color character values. Color values must be either numbers or categories, perhaps mixed with explicit colors, but not both numbers and categories.')
+    }
+    return(as.list(value))
+  }
   
   stats::setNames(purrr::map2(names(args), args, check_one),
                   names(args))
@@ -353,12 +391,12 @@ check_trans <- function(args) {
     if (is.null(value)) {
       return(value)
     }
-    if (! is.function(value) && ! value %in% transform_data()) {
+    if (! value %in% names(heat_tree_transform_funcs())) {
       stop(call. = FALSE, 'Transformation argument "', name,
-           '" must be a function or the name of a built-in transformation function:\n',
+           '" must be the name of a built-in transformation function:\n',
            limited_print(transform_data(), prefix = "  ", type = "silent"))
     }
-    return(value)
+    return(heat_tree_transform_funcs()[[value]])
   }
   
   stats::setNames(purrr::map2(names(args), args, check_one),
@@ -384,7 +422,7 @@ check_color_range <- function(args) {
     if (length(value) == 0) {
       stop(call. = FALSE, 'Color range argument "', name, '" has no values.')
     }
-    if (any(! grepl("^#[0-9a-fA-F]{3,8}$", value) & ! value %in% grDevices::colors())) {
+    if (any(! is_color_char(value))) {
       stop(call. = FALSE, 'Color range argument "', name, '" must be hex color codes or a name returned by "colors()"')
     }
     return(value)

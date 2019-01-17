@@ -201,16 +201,12 @@ verify_label_count <- function(args) {
 
 #' Transformation functions
 #' 
-#' Functions used by plotting functions to transform data.
-#' Calling the function with no parameters returns available function names.
-#' Calling with just the function name returns the transformation function
+#' Functions used by plotting functions to transform data and their inverses.
 #' 
-#' @param data (\code{numeric}) Data to transform
-#' @param func (\code{character}) Name of transformation to apply.
-#' @param inverse (\code{logical} of length 1) If \code{TRUE}, return the inverse of the selected function.
+#' @param inverse (\code{logical} of length 1) If \code{TRUE}, return the inverse of the functions.
 #' 
 #' @keywords internal
-transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
+heat_tree_transform_funcs <- function(inverse = FALSE) {
   sign <- function(x) {
     ifelse(x < 0, -1, 1)
   }
@@ -232,24 +228,11 @@ transform_data <- function(func = NULL, data = NULL, inverse = FALSE) {
                         "log10 area" = function(x) {pi * (abs(10 ^ x) ^ 2)},
                         "log2 area" = function(x) {pi * (abs(2 ^ x) ^ 2)},
                         "ln area" =  function(x) {pi * (abs(exp(1) ^ x) ^ 2)})
-  
-  
-  if (is.null(data) & is.null(func)) {
-    return(names(funcs))
-  }
-  
+
   if (inverse) {
-    returned_funcs <- inverse_funcs
+    return(inverse_funcs)
   } else {
-    returned_funcs <- funcs
-  }
-  
-  if (is.null(data)) {
-    return(returned_funcs[[func]])
-  } else if (is.numeric(data)) {
-    return(vapply(X = data, FUN = returned_funcs[[func]], FUN.VALUE = numeric(1)))
-  } else {
-    return(data)
+    return(funcs)
   }
 }
 

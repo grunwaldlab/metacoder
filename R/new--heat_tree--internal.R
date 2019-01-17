@@ -20,7 +20,7 @@ heat_tree_init_taxmap <- function(obj, arguments)
   aes_args <- arguments[is_aes_arg]
   aes_table <- tibble::tibble(taxon_id = unlist(purrr::map(aes_args[! purrr::map_lgl(aes_args, is.null)], names)),
                               setting = rep(names(aes_args), purrr::map_int(aes_args, length)),
-                              user = unlist(aes_args))
+                              user = unname(do.call(c, aes_args)))
   
   # Put all labels in a table
   is_label_arg <- names(arguments) %in% c("node_label", "edge_label", "tree_label")
@@ -55,4 +55,30 @@ heat_tree_init_taxmap <- function(obj, arguments)
   
   return(output)
 }
+
+
+#' Apply transformations
+#'
+#' Apply transformations to user-supplied data contained in a taxmap object.
+#' Used in the heat_tree function.
+#' 
+#' @param obj The input taxmap object
+#' 
+#' @return a taxmap
+#' 
+#' @keywords internal
+heat_tree_transform_data <- function(obj) {
+  obj$data$aes$transformed <- purrr::map2_dbl(obj$data$aes$setting, obj$data$aes$user,
+                                              function(setting, value) {
+                                                if (is.numeric(value)) {
+                                                  obj$data$trans[[setting]](value)
+                                                } else {
+                                                  as.numeric(NA)
+                                                }
+                                              })
+  return(obj)
+}
+
+
+
 
