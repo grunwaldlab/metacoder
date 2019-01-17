@@ -71,15 +71,31 @@ heat_tree_validate_arguments <- function(obj, args)
                 "tree_label_size")
   args[to_check] <- check_size(args[to_check])
   
+  # Check value of arguments for labels 
+  to_check <- c("node_label",
+                "edge_label",
+                "tree_label", 
+                "node_color_axis_label", 
+                "node_size_axis_label",
+                "edge_color_axis_label",
+                "edge_size_axis_label",
+                "title")
+  args[to_check] <- check_labels(args[to_check])
+  
   # Check values of arguments specifying size ranges  
   to_check <- c("node_size_range",  
                 "edge_size_range", 
                 "node_label_size_range",
                 "edge_label_size_range", 
-                "tree_label_size_range",
+                "tree_label_size_range")
+  args[to_check] <- check_size_range(args[to_check])
+  
+  # Check values of arguments specifying intervals
+  to_check <- c("node_color_interval", 
+                "edge_color_interval",
                 "node_size_interval", 
                 "edge_size_interval")
-  args[to_check] <- check_size_range(args[to_check])
+  args[to_check] <- check_intervals(args[to_check])
   
   # Check values of arguments specifying transformations
   to_check <- c("node_size_trans", 
@@ -118,7 +134,7 @@ heat_tree_validate_arguments <- function(obj, args)
     stop(call. = FALSE, 'The initial_layout argument must be one of the following:\n',
          limited_print(layout_functions(), prefix = "  ", type = "silent"))
   }
-  if (args[["initial_layout"]] == args[["layout"]]) {
+  if (! is.null(args[["initial_layout"]]) && args[["initial_layout"]] == args[["layout"]]) {
     message('The "layout" and "initial_layout" arguments are the same, so the "initial_layout" will be ignored.')
     args["initial_layout"] <- NULL
   }
@@ -279,6 +295,41 @@ check_size_range <- function(args) {
     if (all(!is.na(value)) && value[2] < value[1]) {
       stop(call. = FALSE, 'The min value of size range argument "', name, '" is greater than its max.')
     }
+    if (any(value > 1) || any(value < 0)) {
+      stop(call. = FALSE, 'The min value of size range argument "', name, '" is not between 0 and 1. A value larger than 1 means that it should be bigger than the plotted area and less than 0 does not make sense.')
+    }
+    if (all(is.na(value))) {
+      value = NULL
+    }
+    return(value)
+  }
+  
+  stats::setNames(purrr::map2(names(args), args, check_one),
+                  names(args))
+}
+
+
+#' Verify interval parameters
+#' 
+#' Verify interval parameters
+#' 
+#' @param args A list of arguments
+#' 
+#' @return A named list of argument values, potentially modified
+#' 
+#' @keywords internal
+check_intervals <- function(args) {
+  
+  check_one <- function(name, value) {
+    if (is.null(value)) {
+      return(value)
+    }
+    if (length(value) != 2) {
+      stop(call. = FALSE, 'Interval range argument "', name, '" must be of length 2.')
+    }
+    if (all(!is.na(value)) && value[2] < value[1]) {
+      stop(call. = FALSE, 'The min value of interval argument "', name, '" is greater than its max.')
+    }
     return(value)
   }
   
@@ -336,6 +387,35 @@ check_color_range <- function(args) {
     if (any(! grepl("^#[0-9a-fA-F]{3,8}$", value) & ! value %in% grDevices::colors())) {
       stop(call. = FALSE, 'Color range argument "', name, '" must be hex color codes or a name returned by "colors()"')
     }
+    return(value)
+  }
+  
+  stats::setNames(purrr::map2(names(args), args, check_one),
+                  names(args))
+}
+
+
+
+#' Verify label parameters
+#' 
+#' Verify label parameters
+#' 
+#' @param args A list of arguments
+#' 
+#' @return A named list of argument values, potentially modified
+#' 
+#' @keywords internal
+check_labels <- function(args) {
+  
+  check_one <- function(name, value) {
+    if (is.null(value)) {
+      return(value)
+    }
+    if (length(value) == 0) {
+      stop(call. = FALSE, 'Label argument "', name, '" has no values.')
+    }
+    value <- stats::setNames(as.character(value),
+                             names(value))
     return(value)
   }
   

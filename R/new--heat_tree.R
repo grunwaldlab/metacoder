@@ -257,7 +257,12 @@ heat_tree <- function(obj,
                       ...) {
   
   # Non-standard evaluation 
-  raw_arguments <- as.list(sys.call())[-c(1, 2)]
+  raw_arguments <- as.list(sys.call())
+  raw_arguments <- raw_arguments[-c(1, 2)]
+  is_dots <- purrr::map_lgl(raw_arguments, function(x) length(x) == 1 && as.character(x) == "...")
+  raw_arguments <- raw_arguments[! is_dots]
+  default_args <- as.list(formals())[-c(1, length(formals()))]
+  raw_arguments <- c(raw_arguments, default_args[! names(default_args) %in% names(raw_arguments)])
   quo_arguments <- rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments))))
   names(quo_arguments) <- names(raw_arguments)
   arguments <- obj$eval_many(!!! quo_arguments)
@@ -322,6 +327,7 @@ heat_tree <- function(obj,
                          repel_iter = !! rlang::enquo(repel_iter),
                          overlap_avoidance =  !! rlang::enquo(overlap_avoidance),
                          ...)
+  return(data)
   heat_tree_plot(obj = data,
                  margin_size = !! rlang::enquo(margin_size),
                  aspect_ratio = !! rlang::enquo(aspect_ratio),
@@ -578,31 +584,27 @@ heat_tree_data <- function(obj,
                            ...) {
   
   # Non-standard evaluation 
-  raw_arguments <- as.list(sys.call())[-c(1, 2)]
+  raw_arguments <- as.list(sys.call())
+  raw_arguments <- raw_arguments[-c(1, 2)]
+  is_dots <- purrr::map_lgl(raw_arguments, function(x) length(x) == 1 && as.character(x) == "...")
+  raw_arguments <- raw_arguments[! is_dots]
+  default_args <- as.list(formals())[-c(1, length(formals()))]
+  raw_arguments <- c(raw_arguments, default_args[! names(default_args) %in% names(raw_arguments)])
   quo_arguments <- rlang::eval_tidy(rlang::call2(rlang::enquos, !!! rlang::syms(names(raw_arguments))))
   names(quo_arguments) <- names(raw_arguments)
   arguments <- obj$eval_many(!!! quo_arguments)
+  
+  # Verify arguments make sense and do some standardiation
+  arguments <- heat_tree_validate_arguments(obj, arguments)
+  
+  # Assign evaluated and verified arguments
   for (i in seq_along(arguments)) {
     assign(names(arguments)[i], arguments[[i]])
   }
-  
-  # Add default values for unused parameters
-  default_args <- as.list(formals())[-c(1, length(formals()))]
-  arguments <- lapply(names(default_args), function(x) {
-    if (x %in% names(arguments)) {
-      return(arguments[[x]])
-    } else {
-      return(eval(default_args[[x]]))
-    }
-  })
-  names(arguments) <- names(default_args)
-  
-  # Verify arguments make sense
-  arguments <- heat_tree_validate_arguments(obj, arguments)
-  
-  # # Reformat input data to taxmap object 
-  # output <- heat_tree_init_taxmap(obj, arguments)
-  # 
+
+  # Reformat input data to taxmap object
+  output <- heat_tree_init_taxmap(obj, arguments)
+
   # # Apply statistic transformations
   # output$data$transformed <- heat_tree_transform_data(output)
   # 
@@ -641,7 +643,7 @@ heat_tree_data <- function(obj,
   #   output$data <- output$data[c("shapes", "labels")]
   # }
   # 
-  # return(output)
+  return(output)
 }
 
 #' Plots the object made by \code{\link{heat_tree_data}}
