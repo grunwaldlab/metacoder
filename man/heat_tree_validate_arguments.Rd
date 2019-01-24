@@ -15,7 +15,7 @@ heat_tree_validate_arguments(obj, args)
 A named list of argument values, potentially modified
 }
 \description{
-Validate arguments given to \code{\link{heat_tree}} or
+Validate and standardize arguments given to \code{\link{heat_tree}} or
 \code{\link{heat_tree_data}} and issue warnings or errors if things dont make
 sense.
 }

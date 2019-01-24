@@ -1,6 +1,6 @@
 #' Validate arguments given to heat_tree
 #'
-#' Validate arguments given to \code{\link{heat_tree}} or
+#' Validate and standardize arguments given to \code{\link{heat_tree}} or
 #' \code{\link{heat_tree_data}} and issue warnings or errors if things dont make
 #' sense.
 #' 
@@ -34,15 +34,14 @@ heat_tree_validate_arguments <- function(obj, args)
                 "edge_label_size",  
                 "tree_label_size",
                 "node_color", 
-                "edge_color", 
-                "tree_color",
+                "edge_color",
                 "node_label_color", 
                 "edge_label_color", 
                 "tree_label_color",
                 "node_label", 
                 "edge_label", 
                 "tree_label")
-  args[to_check] <- check_length_or_id(obj, args[to_check])
+  args[to_check] <- check_aes_input(obj, args[to_check])
   
   # Look for NAs in values and taxon names
   to_check <- c("node_size",
@@ -52,7 +51,6 @@ heat_tree_validate_arguments <- function(obj, args)
                 "tree_label_size",
                 "node_color", 
                 "edge_color", 
-                "tree_color",
                 "node_label_color",
                 "edge_label_color", 
                 "tree_label_color")
@@ -155,6 +153,7 @@ heat_tree_validate_arguments <- function(obj, args)
 #' 
 #' Check that inputs are named by taxon ID or are the same length as the number of taxa.
 #' Print a message if an argument does not have a taxon ID but is same length as the number of taxa. 
+#' Converts all values to lists.
 #' 
 #' @param obj taxmap object
 #' @param args A list of arguments
@@ -162,7 +161,7 @@ heat_tree_validate_arguments <- function(obj, args)
 #' @return A named list of argument values, potentially modified
 #' 
 #' @keywords internal
-check_length_or_id <- function(obj, args) {
+check_aes_input <- function(obj, args) {
   
   check_one <- function(name, value) {
     if (is.null(value)) {
@@ -201,9 +200,17 @@ check_length_or_id <- function(obj, args) {
     return(value)
   }
   
-  stats::setNames(purrr::map2(names(args), args, check_one),
-                  names(args))
-  
+  output <- stats::setNames(purrr::map2(names(args), args, check_one),
+                            names(args))
+  output <- stats::setNames(purrr::map(output, function(x) {
+    if (is.null(x)) {
+      return(NULL)
+    } else {
+      return(as.list(x))
+    }
+  }),
+                            names(args))
+  return(output)
 }
 
 #' Check for NAs
@@ -244,13 +251,15 @@ check_for_na <- function(args, warn) {
 
 
 #' Check size arguments
-#' 
-#' Check that arguments specifying size make sense
-#' 
+#'
+#' Check that arguments specifying size make sense. Parmeters specifying size must be numeric and
+#' not NA and at least one must be finite. Infinite values will be converted to the max/min of finite values.
+#'
+#'
 #' @param args A list of arguments
-#' 
+#'
 #' @return A named list of argument values, potentially modified
-#' 
+#'
 #' @keywords internal
 check_size <- function(args) {
   
@@ -284,13 +293,14 @@ check_size <- function(args) {
 
 
 #' Check color arguments
-#' 
-#' Check that arguments specifying color make sense
-#' 
+#'
+#' Check that arguments specifying color make sense. They must be either numbers or a character
+#' representing a hex color code and a color name in colors()
+#'
 #' @param args A list of arguments
-#' 
+#'
 #' @return A named list of argument values, potentially modified
-#' 
+#'
 #' @keywords internal
 check_color <- function(args) {
   
@@ -302,7 +312,8 @@ check_color <- function(args) {
     is_num <- purrr::map_lgl(value, is.numeric)
     if (any(is_num) && (any(is_char & ! is_color_char(value)))) {
       stop(call. = FALSE,
-           'Values given to color argument "', name, '" have numbers and non-color character values. Color values must be either numbers or categories, perhaps mixed with explicit colors, but not both numbers and categories.')
+           'Values given to color argument "', name, 
+           '" have numbers and non-color character values. Color values must be either numbers or categories, perhaps mixed with explicit colors, but not both numbers and categories.')
     }
     return(as.list(value))
   }
@@ -314,7 +325,7 @@ check_color <- function(args) {
 
 #' Verify size range parameters
 #' 
-#' Verify size range parameters
+#' Verify size range parameters. 
 #' 
 #' @param args A list of arguments
 #' 

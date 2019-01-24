@@ -13,6 +13,7 @@ check_color(args)
 A named list of argument values, potentially modified
 }
 \description{
-Check that arguments specifying color make sense
+Check that arguments specifying color make sense. They must be either numbers or a character
+representing a hex color code and a color name in colors()
 }
 \keyword{internal}

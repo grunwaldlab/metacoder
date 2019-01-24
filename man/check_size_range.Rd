@@ -13,6 +13,6 @@ check_size_range(args)
 A named list of argument values, potentially modified
 }
 \description{
-Verify size range parameters
+Verify size range parameters.
 }
 \keyword{internal}

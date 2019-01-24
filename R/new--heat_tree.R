@@ -598,51 +598,51 @@ heat_tree_data <- function(obj,
   arguments <- heat_tree_validate_arguments(obj, arguments)
   
   # Assign evaluated and verified arguments
-  for (i in seq_along(arguments)) {
-    assign(names(arguments)[i], arguments[[i]])
-  }
+  # for (i in seq_along(arguments)) {
+  #   assign(names(arguments)[i], arguments[[i]])
+  # }
 
   # Reformat input data to taxmap object
   output <- heat_tree_init_taxmap(obj, arguments)
 
   # Apply statistic transformations
   output <- heat_tree_transform_data(output)
+  
+  # Calculate size plotting parameters
+  output <- heat_tree_sizes(output)
+  
+  # Calculate color plotting parameters
+  output <- heat_tree_colors(output)
 
-  # # Make node position layout
-  # output$data$layout <- heat_tree_make_layout(output, ...)
-  # 
-  # # Choose colors to display
-  # output$data$color <- heat_tree_calc_edge_size(output)
-  # 
-  # # Calculate the coordinates for the verticies in node shapes
+  # Calculate shape plotting parameters
+  output <- heat_tree_shapes(output)
+  
+  # Calculate the coordinates for the verticies in node shapes
   # output$data$nodes <- heat_tree_make_node_shapes(output)
-  # 
-  # # Calculate the coordinates for the verticies in edge shapes
+  
+  # Make node position layout and node size range
+  output <- heat_tree_make_layout(output, ...)
+
+  # Calculate the coordinates for the verticies in edge shapes
   # output$data$edges <- heat_tree_make_edge_shapes(output)
-  # 
-  # # Choose size range to display
-  # output$data$size <- heat_tree_calc_sizes(output)
-  # 
-  # # Modifiy layout to reduce overlaps and gaps
-  # output$data$layout <- heat_tree_repel_nodes(output)
-  # 
+
   # # Add info needed to plot node, edge, and tree labels
   # output$data$labels <- heat_tree_make_labels(output)
-  # 
-  # # Make labels and shape data for legends
+
+  # Make labels and shape data for legends
   # legend_data <- heat_tree_make_legends(output)
   # output$data$legend_labels <- legend_data$labels
   # output$data$legend_shapes <- legend_data$shapes
-  # 
-  # # Combine and sort info needed top plot shapes (nodes, edges, legends, etc)
+
+  # Combine and sort info needed top plot shapes (nodes, edges, legends, etc)
   # output$data$shapes <- heat_tree_combine_shapes(output)
   # output$data$labels <- heat_tree_combine_labels(output)
-  # 
-  # # Remove intermediate data from object
+
+  # Remove intermediate data from object
   # if (preserve_intermediate) {
   #   output$data <- output$data[c("shapes", "labels")]
   # }
-  # 
+  
   return(output)
 }
 

@@ -13,6 +13,7 @@ check_size(args)
 A named list of argument values, potentially modified
 }
 \description{
-Check that arguments specifying size make sense
+Check that arguments specifying size make sense. Parmeters specifying size must be numeric and
+not NA and at least one must be finite. Infinite values will be converted to the max/min of finite values.
 }
 \keyword{internal}
