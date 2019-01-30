@@ -83,6 +83,12 @@ get_numeric_cols <- function(obj, data, cols = NULL) {
 #' @keywords internal
 do_calc_on_num_cols <- function(obj, data, func, cols = NULL, groups = NULL,
                                 other_cols = FALSE, out_names = NULL) {
+  
+  # Warn if groups is used with no cols specified
+  if (is.null(cols) && !is.null(groups)) {
+    message('NOTE: Using the "groups" option without the "cols" option can yeild incorrect results if the column order is different from the group order.\n')
+  }
+  
   # Get input table
   input <- get_taxmap_table(obj, data)
   

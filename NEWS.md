@@ -1,5 +1,9 @@
 # News 
 
+## Development version
+
+* calculation functions that use the `groups` option now warn if `groups` is used without `cols`.
+
 ##  metacoder 0.3.1
 
 ### Bug fixes
