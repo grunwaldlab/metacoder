@@ -26,7 +26,7 @@ vector of group IDs (e.g. character, integer) the same length as
 will be one column in the output for each unique value in \code{groups}.}
 
 \item{out_names}{The names of count columns in the output. Must be the same
-length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 
 \item{dataset}{DEPRECIATED. use "data" instead.}
 }

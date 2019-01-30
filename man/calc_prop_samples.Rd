@@ -37,7 +37,7 @@ will be preserved in the front. Takes one of the following inputs:
 \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns corresponding to \code{TRUE} values.}}}
 
 \item{out_names}{The names of count columns in the output. Must be the same
-length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
+length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).}
 
 \item{drop}{If \code{groups} is not used, return a vector of the results instead
 of a table with one column.}

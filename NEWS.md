@@ -3,6 +3,7 @@
 ## Development version
 
 * calculation functions that use the `groups` option now warn if `groups` is used without `cols`.
+* Fixed a bug in calculation functions that would name columns incorrectly in some data sets when the `groups` option was used. (issue [#233](https://github.com/grunwaldlab/metacoder/issues/233)).
 
 ##  metacoder 0.3.1
 

@@ -76,7 +76,7 @@ get_numeric_cols <- function(obj, data, cols = NULL) {
 #'   \item{Numeric vector:}{The indexes of columns to preserve}
 #'   \item{Vector of TRUE/FALSE of length equal to the number of columns:}{Preserve the columns corresponding to \code{TRUE} values.}}
 #' @param out_names The names of count columns in the output. Must be the same
-#'   length as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).
+#'   length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is used).
 #'
 #' @return A tibble
 #'
@@ -142,6 +142,7 @@ do_calc_on_num_cols <- function(obj, data, func, cols = NULL, groups = NULL,
     result <- NULL
   } else {
     result <- func(input[, cols], cols = cols, groups = groups)
+    result <- result[, as.character(unique(groups)), drop = FALSE] 
     colnames(result) <- out_names
   }
   

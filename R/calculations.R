@@ -249,7 +249,7 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
   do_calc_on_num_cols(obj, data, cols = cols, groups = groups,
                       other_cols = other_cols, out_names = out_names,
                       func =  function(count_table, cols = cols, groups = groups) {
-                        as.data.frame(lapply(split(cols, groups), function(col_index) {
+                        tibble::as.tibble(lapply(split(cols, groups), function(col_index) {
                           apply(count_table[, col_index], MARGIN = 1, FUN = func)
                         }))
                       }
@@ -418,6 +418,7 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
       }
       count_table[to_zero] <- 0
     }
+    names(count_table) <- groups # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
     return(count_table)
   }
   
@@ -488,7 +489,9 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
                           sample_size <- min(colSums(count_table)) # Calculate minimum count if no sample size is given
                           my_print("Rarefying to ", sample_size, " since that is the lowest sample total.")
                         }
-                        as.data.frame(t(vegan::rrarefy(t(count_table), sample = sample_size)))
+                        output <- tibble::as.tibble(t(vegan::rrarefy(t(count_table), sample = sample_size)))
+                        names(output) <- groups # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
+                        return(output)
                       }
   )
 }
@@ -771,7 +774,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
         }
       }, numeric(1))
     })
-    output <- as.data.frame(output, stringsAsFactors = FALSE)
+    output <- tibble::as.tibble(output, stringsAsFactors = FALSE)
     
     return(output)
   }
