@@ -10,6 +10,7 @@ heat_tree_data(obj, node_label = NULL, edge_label = NULL,
   tree_label_size = node_size, node_color = "grey",
   edge_color = node_color, node_label_color = "black",
   edge_label_color = "black", tree_label_color = "black",
+  node_shape = "circle", edge_shape = "default",
   node_size_trans = "area", edge_size_trans = node_size_trans,
   node_label_size_trans = "linear", edge_label_size_trans = "linear",
   tree_label_size_trans = "linear", node_color_trans = "linear",
@@ -22,16 +23,17 @@ heat_tree_data(obj, node_label = NULL, edge_label = NULL,
   node_color_range = quantative_palette(),
   edge_color_range = node_color_range, node_label_color_range = NULL,
   edge_label_color_range = NULL, tree_label_color_range = NULL,
-  node_size_interval = NULL, node_color_interval = NULL,
-  edge_size_interval = NULL, edge_color_interval = NULL,
-  margin_size = 0, aspect_ratio = 1, layout = "reingold-tilford",
-  initial_layout = NULL, make_node_legend = TRUE,
-  make_edge_legend = TRUE, title = NULL, title_size = 0.1,
-  node_color_axis_label = NULL, node_size_axis_label = NULL,
-  edge_color_axis_label = NULL, edge_size_axis_label = NULL,
-  background_color = "#FFFFFF00", output_file = NULL,
-  repel_labels = TRUE, repel_force = 1, repel_iter = 1000,
-  overlap_avoidance = NULL, ...)
+  node_shape_range = node_shape_functions(),
+  edge_shape_range = edge_shape_functions(), node_size_interval = NULL,
+  node_color_interval = NULL, edge_size_interval = NULL,
+  edge_color_interval = NULL, margin_size = 0, aspect_ratio = 1,
+  layout = "reingold-tilford", initial_layout = NULL,
+  make_node_legend = TRUE, make_edge_legend = TRUE, title = NULL,
+  title_size = 0.1, node_color_axis_label = NULL,
+  node_size_axis_label = NULL, edge_color_axis_label = NULL,
+  edge_size_axis_label = NULL, background_color = "#FFFFFF00",
+  output_file = NULL, repel_labels = TRUE, repel_force = 1,
+  repel_iter = 1000, overlap_avoidance = NULL, ...)
 }
 \arguments{
 \item{obj}{An object of type \code{\link[taxa]{Taxmap}}. This typically
@@ -97,6 +99,16 @@ name. See the "color" section below for more information. Default: black.}
 label color or a character value representing a color, either hex code or
 color name. See the "color" section below for more information. Default:
 black.}
+
+\item{node_shape}{A character or factor that determines the shapes used to plot nodes. Character
+values must be the name of one of the built-in node functions or a custom function defined in
+\code{node_shape_range}. Factors are used to plot categorical data and each unique value will
+be assigned a shape from \code{node_shape_range}.}
+
+\item{edge_shape}{A character or factor that determines the shapes used to plot edges. Character
+values must be the name of one of the built-in node functions or a custom function defined in
+\code{edge_shape_range}. Factors are used to plot categorical data and each unique value will
+be assigned a shape from \code{edge_shape_range}.}
 
 \item{node_size_trans}{How the numbers used to determine node size is
 transformed before being mapped to node size. See details on
@@ -185,6 +197,14 @@ ranges below for more information. Default: Color-blind friendly palette.}
 used for subtree labels, as a character vector of colors. See details on
 color ranges below for more information. Default: Color-blind friendly
 palette.}
+
+\item{node_shape_range}{A list/vector of character values matching a built-in node shape-drawing
+function or named functions defining custom node shape drawers. See details on shape ranges
+below for more information.}
+
+\item{edge_shape_range}{A list/vector of character values matching a built-in edge shape-drawing
+function or named functions defining custom edge shape drawers. See details on shape ranges
+below for more information.}
 
 \item{node_size_interval}{A numeric vector of length 2 that sets the minimum
 and maximum values represented by node size. See details on intervals below

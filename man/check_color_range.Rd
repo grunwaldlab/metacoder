@@ -4,10 +4,12 @@
 \alias{check_color_range}
 \title{Verify color range parameters}
 \usage{
-check_color_range(args)
+check_color_range(ranges, args)
 }
 \arguments{
-\item{args}{A list of arguments}
+\item{ranges}{A list of range arguments to check}
+
+\item{args}{A list of all arguments}
 }
 \value{
 A named list of argument values, potentially modified

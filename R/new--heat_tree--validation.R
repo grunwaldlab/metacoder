@@ -40,7 +40,9 @@ heat_tree_validate_arguments <- function(obj, args)
                 "tree_label_color",
                 "node_label", 
                 "edge_label", 
-                "tree_label")
+                "tree_label",
+                "node_shape",
+                "edge_shape")
   args[to_check] <- check_aes_input(obj, args[to_check])
   
   # Look for NAs in values and taxon names
@@ -53,7 +55,9 @@ heat_tree_validate_arguments <- function(obj, args)
                 "edge_color", 
                 "node_label_color",
                 "edge_label_color", 
-                "tree_label_color")
+                "tree_label_color",
+                "node_shape",
+                "edge_shape")
   args[to_check] <- check_for_na(args[to_check], warn = TRUE)
   
   to_check <- c("node_label",
@@ -76,6 +80,14 @@ heat_tree_validate_arguments <- function(obj, args)
                 "edge_label_color", 
                 "tree_label_color")
   args[to_check] <- check_color(args[to_check])
+  
+  # Check value of arguments specifying shape ranges
+  args["node_shape_range"] <- check_shape_range(args["node_shape_range"], node_shape_functions())
+  args["edge_shape_range"] <- check_shape_range(args["edge_shape_range"], edge_shape_functions())
+  
+  # Check values of arguments specifying shapes
+  args["node_shape"] <- check_shape(args["node_shape"], args, names(node_shape_functions()))
+  args["edge_shape"] <- check_shape(args["edge_shape"], args, names(edge_shape_functions()))
   
   # Check value of arguments for labels 
   to_check <- c("node_label",
@@ -101,7 +113,7 @@ heat_tree_validate_arguments <- function(obj, args)
                 "edge_color_interval",
                 "node_size_interval", 
                 "edge_size_interval")
-  args[to_check] <- check_intervals(args[to_check])
+  args[to_check] <- check_intervals(args[to_check], args)
   
   # Check values of arguments specifying transformations
   to_check <- c("node_size_trans", 
@@ -124,7 +136,7 @@ heat_tree_validate_arguments <- function(obj, args)
                 "node_label_color_range", 
                 "edge_label_color_range", 
                 "tree_label_color_range")
-  args[to_check] <- check_color_range(args[to_check])
+  args[to_check] <- check_color_range(args[to_check], args)
   
   # check overlap avoidance argument
   if (! is.null(args[["overlap_avoidance"]])) {
@@ -202,16 +214,23 @@ check_aes_input <- function(obj, args) {
   
   output <- stats::setNames(purrr::map2(names(args), args, check_one),
                             names(args))
+  
+  # convert to lists
   output <- stats::setNames(purrr::map(output, function(x) {
     if (is.null(x)) {
       return(NULL)
     } else {
-      return(as.list(x))
+      if (is.factor(x)) {
+        return(stats::setNames(as.list(unname(x)), names(x)))
+      } else {
+        return(as.list(x))
+      }
     }
   }),
-                            names(args))
+  names(args))
   return(output)
 }
+
 
 #' Check for NAs
 #' 
@@ -292,6 +311,46 @@ check_size <- function(args) {
 }
 
 
+#' Check shape arguments
+#'
+#' Check that arguments specifying shapes make sense.
+#'
+#' @param shape_args A list of arguments specifying shapes
+#' @param args All args
+#' @param default_shapes A character vector of built-in function names for shapes
+#'
+#' @return A named list of argument values, potentially modified
+#'
+#' @keywords internal
+check_shape <- function(shape_args, args, default_shapes) {
+  
+  check_one <- function(name, value) {
+    if (is.null(value) || length(value) == 0) {
+      stop('Argument "', name, '" has no values.', call. = FALSE)
+    }
+    
+    # Check that character values are specified in the range functions or are a built in function
+    range_param <- args[[paste0(name, "_range")]]
+    char_values <- get_characters(value)
+    valid_values <- c(default_shapes, names(range_param))
+    invalid_values <- char_values[! char_values %in% names(range_param)]
+    if (length(invalid_values) > 0) {
+      stop('Shape parameter "', names, '" has ', length(invalid_values), 
+           ' invalid character value', ifelse(length(invalid_values) > 1, 's', ''), ':\n',
+           limited_print(unique(invalid_values), prefix = '  ', type = 'silent'), '\n',
+           'Valid choices include:\n',
+           limited_print(valid_values, prefix = '  ', type = 'silent'))
+    }
+    
+    return(as.list(value))
+  }
+  
+  
+  stats::setNames(purrr::map2(names(shape_args), shape_args, check_one),
+                  names(shape_args))
+}
+
+
 #' Check color arguments
 #'
 #' Check that arguments specifying color make sense. They must be either numbers or a character
@@ -336,7 +395,7 @@ check_size_range <- function(args) {
   
   check_one <- function(name, value) {
     if (is.null(value)) {
-      return(value)
+      return(c(NA_real_, NA_real_))
     }
     if (length(value) != 2) {
       stop(call. = FALSE, 'Size range argument "', name, '" must be of length 2.')
@@ -345,10 +404,10 @@ check_size_range <- function(args) {
       stop(call. = FALSE, 'The min value of size range argument "', name, '" is greater than its max.')
     }
     if (any(value > 1) || any(value < 0)) {
-      stop(call. = FALSE, 'The min value of size range argument "', name, '" is not between 0 and 1. A value larger than 1 means that it should be bigger than the plotted area and less than 0 does not make sense.')
+      stop(call. = FALSE, 'A value of size range argument "', name, '" is not between 0 and 1. A value larger than 1 means that it should be bigger than the plotted area and less than 0 does not make sense.')
     }
     if (all(is.na(value))) {
-      value = NULL
+      return(c(NA_real_, NA_real_))
     }
     return(value)
   }
@@ -362,28 +421,42 @@ check_size_range <- function(args) {
 #' 
 #' Verify interval parameters
 #' 
-#' @param args A list of arguments
+#' @param intervals A list of arguments specifying intervals
+#' @param args A list of all the args
 #' 
 #' @return A named list of argument values, potentially modified
 #' 
 #' @keywords internal
-check_intervals <- function(args) {
+check_intervals <- function(intervals, args) {
   
   check_one <- function(name, value) {
+    aes_values <- get_numerics(args[[sub(name, pattern = "_interval$", replacement = "")]])
     if (is.null(value)) {
-      return(value)
+      if (length(aes_values) > 0) {
+        return(range(aes_values, na.rm = TRUE))
+      } else {
+        return(NULL)
+      }
     }
     if (length(value) != 2) {
-      stop(call. = FALSE, 'Interval range argument "', name, '" must be of length 2.')
+      stop(call. = FALSE, 'Interval argument "', name, '" must be of length 2.')
     }
     if (all(!is.na(value)) && value[2] < value[1]) {
       stop(call. = FALSE, 'The min value of interval argument "', name, '" is greater than its max.')
     }
+    if (length(aes_values) > 0) {
+      if (is.na(value[1])) {
+        value[1] <- min(aes_values, na.rm = TRUE)
+      }
+      if (is.na(value[2])) {
+        value[2] <- max(aes_values, na.rm = TRUE)
+      }
+    }
     return(value)
   }
   
-  stats::setNames(purrr::map2(names(args), args, check_one),
-                  names(args))
+  stats::setNames(purrr::map2(names(intervals), intervals, check_one),
+                  names(intervals))
 }
 
 
@@ -419,16 +492,25 @@ check_trans <- function(args) {
 #' 
 #' Verify color range parameters
 #' 
-#' @param args A list of arguments
+#' @param ranges A list of range arguments to check
+#' @param args A list of all arguments
 #' 
 #' @return A named list of argument values, potentially modified
 #' 
 #' @keywords internal
-check_color_range <- function(args) {
+check_color_range <- function(ranges, args) {
+  
+  # Identify color range arguments
+  aes_args <- args[sub(names(ranges), pattern = "_range$", replacement = "")]
+  names(aes_args) <- names(ranges)
   
   check_one <- function(name, value) {
     if (is.null(value)) {
-      return(value)
+      if (is_categorical(aes_args[[name]])) {
+        return(qualitative_palette())
+      } else {
+        return(quantative_palette())
+      }
     }
     if (length(value) == 0) {
       stop(call. = FALSE, 'Color range argument "', name, '" has no values.')
@@ -439,10 +521,9 @@ check_color_range <- function(args) {
     return(value)
   }
   
-  stats::setNames(purrr::map2(names(args), args, check_one),
-                  names(args))
+  stats::setNames(purrr::map2(names(ranges), ranges, check_one),
+                  names(ranges))
 }
-
 
 
 #' Verify label parameters
@@ -470,4 +551,58 @@ check_labels <- function(args) {
   
   stats::setNames(purrr::map2(names(args), args, check_one),
                   names(args))
+}
+
+
+#' Verify shape range parameters
+#' 
+#' Verify shape range parameters. These should be either character or named functions in a list.
+#' 
+#' @param args A list of arguments
+#' 
+#' @return A named list of argument values, potentially modified
+#' 
+#' @keywords internal
+check_shape_range <- function(args, valid_shapes) {
+  
+  check_one <- function(name, value) {
+    
+    # Check that there is at least one value
+    if (is.null(value)|| length(value) == 0) {
+      stop(call. = FALSE, 'Shape range argument "', name, '" has no values.')
+    }
+    
+    # Check that all inputs are either characters or named functions
+    is_valid_format <- purrr::map_lgl(seq_len(length(value)), function(i) {
+      is.character(value[[i]]) || (is.function(value[[i]]) && ! is.null(names(value)[[i]]))
+    })
+    if (any(! is_valid_format)) {
+      stop('Shape range parameter "', names, '" has ', sum(! is_valid_format),' invalid values.',
+           'Values must be either named functions or the name of a built-in function.')
+           
+    }
+    
+    # Check that character values are the name of a built-in function
+    char_values <- get_characters(value)
+    invalid_values <- char_values[! char_values %in% names(valid_shapes)]
+    if (length(invalid_values) > 0) {
+      stop('Shape range parameter "', names, '" has ', length(invalid_values), 
+           ' invalid character value', ifelse(length(invalid_values) > 1, 's', ''), ':\n',
+           limited_print(unique(invalid_values), prefix = '  ', type = 'silent'), '\n',
+           'Valid choices include:\n',
+           limited_print(names(valid_shapes), prefix = '  ', type = 'silent'))
+    }
+    
+    # Convert characeter values to the functions they specify
+    to_replace <- purrr::map_lgl(value, is.character)
+    names(value)[to_replace] <- value[to_replace]
+    value[to_replace] <- valid_shapes[unlist(value[to_replace])]
+    
+    # Convert to list of functions
+    return(as.list(value))
+  }
+  
+  stats::setNames(purrr::map2(names(args), args, check_one),
+                  names(args))
+  
 }

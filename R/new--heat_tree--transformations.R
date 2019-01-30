@@ -16,7 +16,10 @@ heat_tree_transform_data <- function(obj) {
         return(obj$data$trans[[n]](obj$data$aes[[n]]))
       }
       if (is.list(obj$data$aes[[n]])) {
-        return(purrr::map(obj$data$aes[[n]], obj$data$trans[[n]]))
+        is_num <- purrr::map_lgl(obj$data$aes[[n]], is.numeric)
+        output <- obj$data$aes[[n]]
+        output[is_num] <- purrr::map(output[is_num], obj$data$trans[[n]])
+        return(output)
       }
       warning(call. = FALSE, 'Could not transform parameter "', n, '"')
     }

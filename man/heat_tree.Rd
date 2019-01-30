@@ -10,6 +10,7 @@ heat_tree(obj, node_label = NULL, edge_label = NULL,
   tree_label_size = node_size, node_color = "grey",
   edge_color = node_color, node_label_color = "black",
   edge_label_color = "black", tree_label_color = "black",
+  node_shape = "circle", edge_shape = "default",
   node_size_trans = "area", edge_size_trans = node_size_trans,
   node_label_size_trans = "linear", edge_label_size_trans = "linear",
   tree_label_size_trans = "linear", node_color_trans = "linear",
@@ -22,16 +23,17 @@ heat_tree(obj, node_label = NULL, edge_label = NULL,
   node_color_range = quantative_palette(),
   edge_color_range = node_color_range, node_label_color_range = NULL,
   edge_label_color_range = NULL, tree_label_color_range = NULL,
-  node_size_interval = NULL, node_color_interval = NULL,
-  edge_size_interval = NULL, edge_color_interval = NULL,
-  margin_size = 0, aspect_ratio = 1, layout = "reingold-tilford",
-  initial_layout = NULL, make_node_legend = TRUE,
-  make_edge_legend = TRUE, title = NULL, title_size = 0.1,
-  node_color_axis_label = NULL, node_size_axis_label = NULL,
-  edge_color_axis_label = NULL, edge_size_axis_label = NULL,
-  background_color = "#FFFFFF00", output_file = NULL,
-  repel_labels = TRUE, repel_force = 1, repel_iter = 1000,
-  overlap_avoidance = NULL, ...)
+  node_shape_range = node_shape_functions(),
+  edge_shape_range = edge_shape_functions(), node_size_interval = NULL,
+  node_color_interval = NULL, edge_size_interval = NULL,
+  edge_color_interval = NULL, margin_size = 0, aspect_ratio = 1,
+  layout = "reingold-tilford", initial_layout = NULL,
+  make_node_legend = TRUE, make_edge_legend = TRUE, title = NULL,
+  title_size = 0.1, node_color_axis_label = NULL,
+  node_size_axis_label = NULL, edge_color_axis_label = NULL,
+  edge_size_axis_label = NULL, background_color = "#FFFFFF00",
+  output_file = NULL, repel_labels = TRUE, repel_force = 1,
+  repel_iter = 1000, overlap_avoidance = NULL, ...)
 }
 \arguments{
 \item{obj}{An object of type \code{\link[taxa]{Taxmap}}. This typically
@@ -97,6 +99,16 @@ name. See the "color" section below for more information. Default: black.}
 label color or a character value representing a color, either hex code or
 color name. See the "color" section below for more information. Default:
 black.}
+
+\item{node_shape}{A character or factor that determines the shapes used to plot nodes. Character
+values must be the name of one of the built-in node functions or a custom function defined in
+\code{node_shape_range}. Factors are used to plot categorical data and each unique value will
+be assigned a shape from \code{node_shape_range}.}
+
+\item{edge_shape}{A character or factor that determines the shapes used to plot edges. Character
+values must be the name of one of the built-in node functions or a custom function defined in
+\code{edge_shape_range}. Factors are used to plot categorical data and each unique value will
+be assigned a shape from \code{edge_shape_range}.}
 
 \item{node_size_trans}{How the numbers used to determine node size is
 transformed before being mapped to node size. See details on
@@ -185,6 +197,14 @@ ranges below for more information. Default: Color-blind friendly palette.}
 used for subtree labels, as a character vector of colors. See details on
 color ranges below for more information. Default: Color-blind friendly
 palette.}
+
+\item{node_shape_range}{A list/vector of character values matching a built-in node shape-drawing
+function or named functions defining custom node shape drawers. See details on shape ranges
+below for more information.}
+
+\item{edge_shape_range}{A list/vector of character values matching a built-in edge shape-drawing
+function or named functions defining custom edge shape drawers. See details on shape ranges
+below for more information.}
 
 \item{node_size_interval}{A numeric vector of length 2 that sets the minimum
 and maximum values represented by node size. See details on intervals below
@@ -311,6 +331,15 @@ make an effective plot.
   *_color_range options.
 }
 
+\section{shapes}{
+
+
+  The way nodes and edges are plotted. The input can be \code{character} values indicating which
+  shape to use for each element or a factor representing categories to plot with different
+  shapes. The possible shapes are defined by the \code{*_shape_range} options. Functions that
+  define custom node shapes can be defined in the \code{*_shape_range} options as well.
+}
+
 \section{transformations}{
 
 
@@ -345,50 +374,53 @@ make an effective plot.
   \href{https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}{hexadecimal color codes}.
 }
 
+\section{shape ranges}{
+
+
+  The different shapes that nodes or edges can be. They can either be built-in functions
+  specified by name or custom functions in a named list. Custom functions can take any size,
+  color, or label argument and recieve those values for each taxon.
+}
+
 \section{layout}{
 
 
-Layouts determine the position of node elements on the graph.
-They are implemented using the \code{\link{igraph}} package.
-Any additional arguments passed to \code{heat_tree} are passed to the  \code{\link{igraph}}
-function used.
-The following \code{character} values are understood:
+  Layouts determine the position of node elements on the graph. They are implemented using the
+  \code{\link{igraph}} package. Any additional arguments passed to \code{heat_tree} are passed to
+  the  \code{\link{igraph}} function used. The following \code{character} values are understood:
 
-\describe{
-  \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose the layout.}
-  \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like layout.}
-  \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated annealing.}
-  \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
+  \describe{ \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose
+  the layout.} \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like
+  layout.} \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated
+  annealing.} \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
   \item{"graphopt"}{Use \code{\link[igraph]{with_graphopt}}. A force-directed layout.}
   \item{"mds"}{Use \code{\link[igraph]{with_mds}}. Multidimensional scaling.}
   \item{"fruchterman-reingold"}{Use \code{\link[igraph]{with_fr}}. A force-directed layout.}
-  \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of springs.}
-  \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
-  \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
-}
+  \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of
+  springs.} \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
+  \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.} }
 }
 
 \section{intervals}{
 
 
-This is the minimum and maximum of values displayed on the legend scales.
-Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
-Any value below the minimum will be graphically represented the same as a value at the
-minimum.  Any value above the maximum will likewise be 
-represented the same way a value at the maximum value would be.
-Setting a custom interval is useful for stopping a few outliers from obscuring other differences.
-Note that this is different from the *_range options, which determine the actual size/color of graphed elements.
+  This is the minimum and maximum of values displayed on the legend scales. Intervals are
+  specified by supplying a \code{numeric} vector with two values: the minimum and maximum. Any
+  value below the minimum will be graphically represented the same as a value at the minimum.
+  Any value above the maximum will likewise be represented the same way a value at the maximum
+  value would be. Setting a custom interval is useful for stopping a few outliers from obscuring
+  other differences. Note that this is different from the *_range options, which determine the
+  actual size/color of graphed elements.
 }
 
 \section{Acknowledgements}{
 
 
-This package includes code from the R package ggrepel to handle label overlap
-avoidance with permission from the author of ggrepel Kamil Slowikowski. We
-included the code instead of depending on ggrepel because we are using
-internal functions to ggrepel that might change in the future. We thank Kamil
-Slowikowski for letting us use his code and would like to acknowledge his
-implementation of the label overlap avoidance used in metacoder.
+  This package includes code from the R package ggrepel to handle label overlap avoidance with
+  permission from the author of ggrepel Kamil Slowikowski. We included the code instead of
+  depending on ggrepel because we are using internal functions to ggrepel that might change in
+  the future. We thank Kamil Slowikowski for letting us use his code and would like to
+  acknowledge his implementation of the label overlap avoidance used in metacoder.
 }
 
 \examples{
@@ -397,19 +429,19 @@ implementation of the label overlap avoidance used in metacoder.
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
-                   
+
 # Default appearance:
 #  No parmeters are needed, but the default tree is not too useful
 heat_tree(x)
 
 # A good place to start:
-#  There will always be "taxon_names" and "n_obs" variables, so this is a 
-#  good place to start. This will shown the number of OTUs in this case. 
+#  There will always be "taxon_names" and "n_obs" variables, so this is a
+#  good place to start. This will shown the number of OTUs in this case.
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
 
 # Plotting read depth:
 #  To plot read depth, you first need to add up the number of reads per taxon.
-#  The function `calc_taxon_abund` is good for this. 
+#  The function `calc_taxon_abund` is good for this.
 x$data$taxon_counts <- calc_taxon_abund(x, data = "tax_data")
 x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
 heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
@@ -433,15 +465,15 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 # Axis labels:
 #  You can add custom labeles to the legends
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
-          edge_color = n_samples, node_size_axis_label = "Number of OTUs", 
+          edge_color = n_samples, node_size_axis_label = "Number of OTUs",
           node_color_axis_label = "Number of reads",
           edge_color_axis_label = "Number of samples")
-          
+
 # Overlap avoidance:
 #  You can change how much node overlap avoidance is used.
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           overlap_avoidance = .5)
-          
+
 # Label overlap avoidance
 #  You can modfiy how label scattering is handled using the `replel_force` and
 `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
@@ -450,7 +482,7 @@ heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
           repel_labels = FALSE)
 
-# Setting the size of graph elements: 
+# Setting the size of graph elements:
 #  You can force nodes, edges, and lables to be a specific size/color range instead
 #  of letting the function optimize it. These options end in `_range`.
 heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,

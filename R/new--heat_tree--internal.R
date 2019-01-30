@@ -16,7 +16,7 @@ heat_tree_init_taxmap <- function(obj, arguments)
   output$edge_list <- obj$edge_list
   
   # Put all plot aesthetics in a list
-  is_aes_arg <- grepl(names(arguments), pattern = "(node|edge|tree).+(size|color)$")
+  is_aes_arg <- grepl(names(arguments), pattern = "(node|edge|tree).+(size|color|shape)$")
   aes_args <- arguments[is_aes_arg]
   # aes_table <- tibble::tibble(taxon_id = unlist(purrr::map(aes_args[! purrr::map_lgl(aes_args, is.null)], names)),
   #                             setting = rep(names(aes_args), purrr::map_int(aes_args, length)),
@@ -67,9 +67,25 @@ heat_tree_init_taxmap <- function(obj, arguments)
 #' 
 #' @keywords internal
 heat_tree_sizes <- function(obj) {
+  
+  # make a table with standardized versions of size parameters
   size_params <- grep("size", names(obj$data$aes_trans), value = TRUE)
-  obj$data$aes_table <- tibble::tibble(.rows = length(obj$taxa))
-  obj$data$aes_table[size_params] <- purrr::map(obj$data$aes_trans[size_params], function(x) group_list_by_taxa(obj, x, as.numeric))
+  obj$data$aes_table <- tibble::as.tibble(purrr::map(obj$data$aes_trans[size_params],
+                                                     function(x) group_list_by_taxa(obj, x, as.numeric)))
+  
+  # transform to proportion of plot size and apply intervals
+  obj$data$aes_table[size_params] <- purrr::map(size_params, function(param) {
+    if (param %in% names(obj$data$intervals)) {
+      interval <- obj$data$intervals[[param]]
+    } else {
+      interval <- range(get_numerics(obj$data$aes_table[[param]]), na.rm = TRUE, finite = TRUE)
+    }
+    purrr::map(obj$data$aes_table[[param]], function(values) {
+      rescale(values, to = c(0, 1), from = interval)
+    })
+  })
+  
+  return(obj)
 }
 
 
@@ -83,7 +99,88 @@ heat_tree_sizes <- function(obj) {
 #' 
 #' @keywords internal
 heat_tree_colors <- function(obj) {
-  print(1:3)
+  
+  # Identify color parameters
+  color_params <- grep("color", names(obj$data$aes_trans), value = TRUE)
+
+  # Apply intervals and rescale to 0-1 for numeric values
+  color_data <- purrr::map(color_params, function(param) {
+    purrr::map(obj$data$aes_trans[[param]], function(values) {
+      if (is.numeric(values)) {
+        return(apply_color_scale(values,
+                                 color_series = obj$data$ranges[[param]],
+                                 interval = obj$data$intervals[[param]])) 
+      } else {
+        return(values)
+      }
+    })
+  })
+  names(color_data) <- color_params
+  
+  # Reformat to per-taxon list 
+  color_data <- purrr::map(color_data, function(x) group_list_by_taxa(obj, x, as.character))
+  
+  # Add results to aesthetics table
+  obj$data$aes_table[color_params] <- color_data
+  return(obj)
+}
+
+
+#' Determine labels used in heat_tree
+#' 
+#' Determine the labels used in a heat_tree
+#' 
+#' @param obj a taxmap
+#' 
+#' @return a taxmap
+#' 
+#' @keywords internal
+heat_tree_labels <- function(obj) {
+  
+  # Get label data
+  label_data <- obj$data$labels
+  
+  # Reformat to per-taxon list 
+  label_data <- purrr::map(label_data, function(x) group_list_by_taxa(obj, x, as.character))
+  
+  # Add to aesthetics table
+  obj$data$aes_table[names(label_data)] <- label_data
+  return(obj)
+}
+
+
+#' Determine shpaes used in heat_tree
+#' 
+#' Determine the shapes used in a heat_tree
+#' 
+#' @param obj a taxmap
+#' 
+#' @return a taxmap
+#' 
+#' @keywords internal
+heat_tree_shapes <- function(obj) {
+  
+  node_shapes <- obj$data$aes$node_shape
+  edge_shapes <- obj$data$aes$edge_shape
+  
+  # Convert factors to shapes
+  is_factor <- purrr::map_lgl(node_shapes, is.factor)
+  node_shapes[is_factor] <- purrr::map_chr(node_shapes[is_factor], function(x) {
+    names(obj$data$ranges$node_shape)[as.integer(x)]
+  })
+  is_factor <- purrr::map_lgl(edge_shapes, is.factor)
+  edge_shapes[is_factor] <- purrr::map_chr(edge_shapes[is_factor], function(x) {
+    names(obj$data$ranges$edge_shap)[as.integer(x)]
+  })
+  
+  # Reformat to per-taxon list 
+  node_shapes <- group_list_by_taxa(obj, node_shapes, as.character)
+  edge_shapes <- group_list_by_taxa(obj, edge_shapes, as.character)
+  
+  # Add results to aesthetics table
+  obj$data$aes_table[c("node_shape", "edge_shape")] <- list(node_shapes, edge_shapes)
+  return(obj)
+  
 }
 
 
@@ -114,3 +211,79 @@ group_list_by_taxa <- function(obj, a_list, def_type_func) {
   return(output)
 }
 
+
+#' Return numeric values from a list or vector
+#' 
+#' Return numeric values from a list or vector
+#' 
+#' @param x A list or vector
+#' 
+#' @return a numeric vector
+#' 
+#' @keywords internal
+get_numerics <- function(x) {
+  if (is.vector(x) && is.numeric(x)) {
+    return(x)
+  }
+  if (is.list(x)) {
+    is_num <- purrr::map_lgl(x, is.numeric)
+    if (sum(is_num) > 0) {
+      return(unlist(x[is_num]))
+    }
+  }
+  return(numeric(0))
+}
+
+
+#' Return character values from a list or vector
+#' 
+#' Return character values from a list or vector
+#' 
+#' @param x A list or vector
+#' 
+#' @return a character vector
+#' 
+#' @keywords internal
+get_characters <- function(x) {
+  if (is.vector(x) && is.character(x)) {
+    return(x)
+  }
+  if (is.list(x)) {
+    is_char <- purrr::map_lgl(x, is.character)
+    if (sum(is_char) > 0) {
+      return(unlist(x[is_char]))
+    }
+  }
+  return(character(0))
+}
+
+
+#' Return factors from a list or vector
+#' 
+#' Return factors from a list or vector
+#' 
+#' @param x A list or vector
+#' 
+#' @return a factor vector
+#' 
+#' @keywords internal
+get_factors <- function(x) {
+  if (is.vector(x) && is.factor(x)) {
+    return(x)
+  }
+  if (is.list(x)) {
+    is_num <- purrr::map_lgl(x, is.factor)
+    if (sum(is_num) > 0) {
+      return(unlist(x[is_num]))
+    }
+  }
+  return(factor())
+}
+
+
+#' Check if a list/vector is categorical
+#' 
+#' Check if a list/vector that is the value for a color aesthetic is composed of factors and perhaps characters, but not numbers.
+is_categorical <- function(x) {
+  return(length(get_factors(x)) > 1 && length(get_numerics(x)) == 0)
+}

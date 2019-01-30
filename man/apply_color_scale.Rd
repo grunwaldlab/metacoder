@@ -4,7 +4,7 @@
 \alias{apply_color_scale}
 \title{Covert numbers to colors}
 \usage{
-apply_color_scale(values, color_series, interval = NULL,
+apply_color_scale(values, color_series, interval,
   no_color_in_palette = 1000)
 }
 \arguments{

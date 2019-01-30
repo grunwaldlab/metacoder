@@ -4,10 +4,12 @@
 \alias{check_intervals}
 \title{Verify interval parameters}
 \usage{
-check_intervals(args)
+check_intervals(intervals, args)
 }
 \arguments{
-\item{args}{A list of arguments}
+\item{intervals}{A list of arguments specifying intervals}
+
+\item{args}{A list of all the args}
 }
 \value{
 A named list of argument values, potentially modified

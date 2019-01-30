@@ -45,6 +45,13 @@
 #'   that will be graphically represented as the same color as the minimum/maximum defined by the
 #'   *_color_range options.
 #'
+#' @section shapes:
+#'
+#'   The way nodes and edges are plotted. The input can be \code{character} values indicating which
+#'   shape to use for each element or a factor representing categories to plot with different
+#'   shapes. The possible shapes are defined by the \code{*_shape_range} options. Functions that
+#'   define custom node shapes can be defined in the \code{*_shape_range} options as well.
+#'
 #' @section transformations:
 #'
 #'   Before any conditions specified are mapped to an element property (color/size), they can be
@@ -72,71 +79,72 @@
 #'   vector of two or more colors. Colors can be specified as color names (any returned by
 #'   \code{\link[grDevices]{colors}}) or
 #'   \href{https://en.wikipedia.org/wiki/Web_colors#Hex_triplet}{hexadecimal color codes}.
+#'
+#' @section shape ranges:
+#'
+#'   The different shapes that nodes or edges can be. They can either be built-in functions
+#'   specified by name or custom functions in a named list. Custom functions can take any size,
+#'   color, or label argument and recieve those values for each taxon.
 #'   
 #' @section layout:
-#' 
-#' Layouts determine the position of node elements on the graph.
-#' They are implemented using the \code{\link{igraph}} package.
-#' Any additional arguments passed to \code{heat_tree} are passed to the  \code{\link{igraph}}
-#' function used.
-#' The following \code{character} values are understood:
-#' 
-#' \describe{
-#'   \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose the layout.}
-#'   \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like layout.}
-#'   \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated annealing.}
-#'   \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
+#'
+#'   Layouts determine the position of node elements on the graph. They are implemented using the
+#'   \code{\link{igraph}} package. Any additional arguments passed to \code{heat_tree} are passed to
+#'   the  \code{\link{igraph}} function used. The following \code{character} values are understood:
+#'
+#'   \describe{ \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose
+#'   the layout.} \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like
+#'   layout.} \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated
+#'   annealing.} \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
 #'   \item{"graphopt"}{Use \code{\link[igraph]{with_graphopt}}. A force-directed layout.}
 #'   \item{"mds"}{Use \code{\link[igraph]{with_mds}}. Multidimensional scaling.}
 #'   \item{"fruchterman-reingold"}{Use \code{\link[igraph]{with_fr}}. A force-directed layout.}
-#'   \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of springs.}
-#'   \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
-#'   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
-#' }
-#' 
-#' 
+#'   \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of
+#'   springs.} \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
+#'   \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.} }
+#'
+#'
 #' @section intervals:
-#' 
-#' This is the minimum and maximum of values displayed on the legend scales.
-#' Intervals are specified by supplying a \code{numeric} vector with two values: the minimum and maximum.
-#' Any value below the minimum will be graphically represented the same as a value at the
-#' minimum.  Any value above the maximum will likewise be 
-#' represented the same way a value at the maximum value would be.
-#' Setting a custom interval is useful for stopping a few outliers from obscuring other differences.
-#' Note that this is different from the *_range options, which determine the actual size/color of graphed elements.
-#' 
+#'
+#'   This is the minimum and maximum of values displayed on the legend scales. Intervals are
+#'   specified by supplying a \code{numeric} vector with two values: the minimum and maximum. Any
+#'   value below the minimum will be graphically represented the same as a value at the minimum.
+#'   Any value above the maximum will likewise be represented the same way a value at the maximum
+#'   value would be. Setting a custom interval is useful for stopping a few outliers from obscuring
+#'   other differences. Note that this is different from the *_range options, which determine the
+#'   actual size/color of graphed elements.
+#'
 #' @section Acknowledgements:
-#' 
-#' This package includes code from the R package ggrepel to handle label overlap
-#' avoidance with permission from the author of ggrepel Kamil Slowikowski. We
-#' included the code instead of depending on ggrepel because we are using
-#' internal functions to ggrepel that might change in the future. We thank Kamil
-#' Slowikowski for letting us use his code and would like to acknowledge his
-#' implementation of the label overlap avoidance used in metacoder.
-#' 
+#'
+#'   This package includes code from the R package ggrepel to handle label overlap avoidance with
+#'   permission from the author of ggrepel Kamil Slowikowski. We included the code instead of
+#'   depending on ggrepel because we are using internal functions to ggrepel that might change in
+#'   the future. We thank Kamil Slowikowski for letting us use his code and would like to
+#'   acknowledge his implementation of the label overlap avoidance used in metacoder.
+#'
 #' @examples
 #' \dontrun{
 #' # Parse dataset for plotting
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
-#'                    
+#'
 #' # Default appearance:
 #' #  No parmeters are needed, but the default tree is not too useful
 #' heat_tree(x)
-#' 
+#'
 #' # A good place to start:
-#' #  There will always be "taxon_names" and "n_obs" variables, so this is a 
-#' #  good place to start. This will shown the number of OTUs in this case. 
+#' #  There will always be "taxon_names" and "n_obs" variables, so this is a
+#' #  good place to start. This will shown the number of OTUs in this case.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs)
-#' 
+#'
 #' # Plotting read depth:
 #' #  To plot read depth, you first need to add up the number of reads per taxon.
-#' #  The function `calc_taxon_abund` is good for this. 
+#' #  The function `calc_taxon_abund` is good for this.
 #' x$data$taxon_counts <- calc_taxon_abund(x, data = "tax_data")
 #' x$data$taxon_counts$total <- rowSums(x$data$taxon_counts[, -1]) # -1 = taxon_id column
 #' heat_tree(x, node_label = taxon_names, node_size = total, node_color = total)
-#' 
+#'
 #' # Plotting multiple variables:
 #' #  You can plot up to 4 quantative variables use node/edge size/color, but it
 #' #  is usually best to use 2 or 3. The plot below uses node size for number of
@@ -144,7 +152,7 @@
 #' x$data$n_samples <- calc_n_samples(x, data = "taxon_counts")
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
 #'           edge_color = n_samples)
-#' 
+#'
 #' # Different layouts:
 #' #  You can use any layout implemented by igraph. You can also specify an
 #' #  initial layout to seed the main layout with.
@@ -152,19 +160,19 @@
 #'           layout = "davidson-harel")
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           layout = "davidson-harel", initial_layout = "reingold-tilford")
-#' 
+#'
 #' # Axis labels:
 #' #  You can add custom labeles to the legends
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = total,
-#'           edge_color = n_samples, node_size_axis_label = "Number of OTUs", 
+#'           edge_color = n_samples, node_size_axis_label = "Number of OTUs",
 #'           node_color_axis_label = "Number of reads",
 #'           edge_color_axis_label = "Number of samples")
-#'           
+#'
 #' # Overlap avoidance:
 #' #  You can change how much node overlap avoidance is used.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           overlap_avoidance = .5)
-#'           
+#'
 #' # Label overlap avoidance
 #' #  You can modfiy how label scattering is handled using the `replel_force` and
 #' `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
@@ -172,8 +180,8 @@
 #'           repel_force = 2, repel_iter = 20000)
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           repel_labels = FALSE)
-#' 
-#' # Setting the size of graph elements: 
+#'
+#' # Setting the size of graph elements:
 #' #  You can force nodes, edges, and lables to be a specific size/color range instead
 #' #  of letting the function optimize it. These options end in `_range`.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
@@ -182,21 +190,21 @@
 #'           edge_color_range = c("black", "#FFFFFF"))
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           node_label_size_range = c(0.02, 0.02))
-#' 
+#'
 #' # Setting the transformation used:
 #' #  You can change how raw statistics are converted to color/size using options
 #' #  ending in _trans.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           node_size_trans = "log10 area")
-#' 
+#'
 #' # Setting the interval displayed:
 #' #  By default, the whole range of the statistic provided will be displayed.
 #' #  You can set what range of values are displayed using options ending in `_interval`.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           node_size_interval = c(10, 100))
-#' 
+#'
 #' }
-#' 
+#'
 #' @export
 heat_tree <- function(obj,
                       node_label = NULL,
@@ -212,6 +220,8 @@ heat_tree <- function(obj,
                       node_label_color = 'black',
                       edge_label_color = 'black',
                       tree_label_color = 'black',
+                      node_shape = 'circle',
+                      edge_shape = 'default',
                       node_size_trans = 'area',
                       edge_size_trans = node_size_trans,
                       node_label_size_trans = "linear",
@@ -232,6 +242,8 @@ heat_tree <- function(obj,
                       node_label_color_range = NULL,
                       edge_label_color_range = NULL,
                       tree_label_color_range = NULL,
+                      node_shape_range = node_shape_functions(),
+                      edge_shape_range = edge_shape_functions(),
                       node_size_interval = NULL,
                       node_color_interval = NULL,
                       edge_size_interval = NULL,
@@ -284,6 +296,8 @@ heat_tree <- function(obj,
                          node_label_color = !! rlang::enquo(node_label_color),
                          edge_label_color = !! rlang::enquo(edge_label_color),
                          tree_label_color = !! rlang::enquo(tree_label_color),
+                         node_shape = !! rlang::enquo(node_shape),
+                         edge_shape = !! rlang::enquo(edge_shape),
                          node_size_trans = !! rlang::enquo(node_size_trans),
                          edge_size_trans = !! rlang::enquo(edge_size_trans),
                          node_label_size_trans = !! rlang::enquo(node_label_size_trans),
@@ -304,6 +318,8 @@ heat_tree <- function(obj,
                          node_label_color_range = !! rlang::enquo(node_label_color_range),
                          edge_label_color_range = !! rlang::enquo(edge_label_color_range),
                          tree_label_color_range = !! rlang::enquo(tree_label_color_range),
+                         node_shape_range = !! rlang::enquo(node_shape_range),
+                         edge_shape_range = !! rlang::enquo(edge_shape_range),
                          node_size_interval = !! rlang::enquo(node_size_interval),
                          node_color_interval = !! rlang::enquo(node_color_interval),
                          edge_size_interval = !! rlang::enquo(edge_size_interval),
@@ -397,6 +413,14 @@ heat_tree <- function(obj,
 #'   label color or a character value representing a color, either hex code or
 #'   color name. See the "color" section below for more information. Default:
 #'   black.
+#' @param node_shape A character or factor that determines the shapes used to plot nodes. Character
+#'   values must be the name of one of the built-in node functions or a custom function defined in
+#'   \code{node_shape_range}. Factors are used to plot categorical data and each unique value will
+#'   be assigned a shape from \code{node_shape_range}.
+#' @param edge_shape A character or factor that determines the shapes used to plot edges. Character
+#'   values must be the name of one of the built-in node functions or a custom function defined in
+#'   \code{edge_shape_range}. Factors are used to plot categorical data and each unique value will
+#'   be assigned a shape from \code{edge_shape_range}.
 #'
 #' @param node_size_trans How the numbers used to determine node size is
 #'   transformed before being mapped to node size. See details on
@@ -468,6 +492,12 @@ heat_tree <- function(obj,
 #'   used for subtree labels, as a character vector of colors. See details on
 #'   color ranges below for more information. Default: Color-blind friendly
 #'   palette.
+#' @param node_shape_range A list/vector of character values matching a built-in node shape-drawing
+#'   function or named functions defining custom node shape drawers. See details on shape ranges
+#'   below for more information.
+#' @param edge_shape_range A list/vector of character values matching a built-in edge shape-drawing
+#'   function or named functions defining custom edge shape drawers. See details on shape ranges
+#'   below for more information.
 #'
 #' @param node_size_interval A numeric vector of length 2 that sets the minimum
 #'   and maximum values represented by node size. See details on intervals below
@@ -539,6 +569,8 @@ heat_tree_data <- function(obj,
                            node_label_color = 'black',
                            edge_label_color = 'black',
                            tree_label_color = 'black',
+                           node_shape = 'circle',
+                           edge_shape = 'default',
                            node_size_trans = 'area',
                            edge_size_trans = node_size_trans,
                            node_label_size_trans = "linear",
@@ -559,6 +591,8 @@ heat_tree_data <- function(obj,
                            node_label_color_range = NULL,
                            edge_label_color_range = NULL,
                            tree_label_color_range = NULL,
+                           node_shape_range = node_shape_functions(),
+                           edge_shape_range = edge_shape_functions(),
                            node_size_interval = NULL,
                            node_color_interval = NULL,
                            edge_size_interval = NULL,
@@ -614,6 +648,9 @@ heat_tree_data <- function(obj,
   # Calculate color plotting parameters
   output <- heat_tree_colors(output)
 
+  # Add info needed to plot node, edge, and tree labels
+  output <- heat_tree_labels(output)
+  
   # Calculate shape plotting parameters
   output <- heat_tree_shapes(output)
   
@@ -626,8 +663,6 @@ heat_tree_data <- function(obj,
   # Calculate the coordinates for the verticies in edge shapes
   # output$data$edges <- heat_tree_make_edge_shapes(output)
 
-  # # Add info needed to plot node, edge, and tree labels
-  # output$data$labels <- heat_tree_make_labels(output)
 
   # Make labels and shape data for legends
   # legend_data <- heat_tree_make_legends(output)
