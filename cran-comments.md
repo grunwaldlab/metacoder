@@ -1,6 +1,6 @@
 ## Test environments
 
-* local desktop: ubuntu 16.04 install, R 3.5.1
+* local desktop: ubuntu 16.04 install, R 3.5.3
 * on travis-ci: ubuntu 14.04.5 + R 3.5.1, devel, bioc-release
 * win-builder R 3.5.2 and development
 
