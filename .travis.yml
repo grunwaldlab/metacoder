@@ -3,6 +3,7 @@ r:
   - release
   - devel
   - bioc-release
+  - bioc-devel
   
 r_github_packages:
   - jimhester/covr
