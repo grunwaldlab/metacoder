@@ -61,7 +61,7 @@ Suggests:
     BiocManager
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
-Date: 2018-12-20
+Date: 2019-04-04
 Encoding: UTF-8
 biocViews: 
 LinkingTo: Rcpp
