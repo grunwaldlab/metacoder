@@ -655,7 +655,7 @@ heat_tree_data <- function(obj,
   output <- heat_tree_shapes(output)
   
   # Calculate the coordinates for the verticies in node shapes
-  # output$data$nodes <- heat_tree_make_node_shapes(output)
+  output$data$nodes <- heat_tree_make_node_shapes(output)
   
   # Make node position layout and node size range
   output <- heat_tree_make_layout(output, ...)

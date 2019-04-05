@@ -329,17 +329,43 @@ check_shape <- function(shape_args, args, default_shapes) {
       stop('Argument "', name, '" has no values.', call. = FALSE)
     }
     
+    # Check that values are either characters or factors
+    is_char <- purrr::map_lgl(value, function(x) {
+      all(is.character(x))
+    })
+    is_fact <- purrr::map_lgl(value, function(x) {
+      all(is.factor(x))
+    })
+    invalid_values <- value[! (is_char | is_fact)]
+    if (length(invalid_values) > 0) {
+      stop('Shape parameter "', name, '" has ', length(invalid_values), 
+           ' invalid values', ifelse(length(invalid_values) > 1, 's', ''), ':\n',
+           limited_print(unique(unlist(invalid_values)), prefix = '  ', type = 'silent'), '\n',
+           'Values must either be characters indicating the shape to use or factors indicating categories to assign shapes to.')
+    }
+    
     # Check that character values are specified in the range functions or are a built in function
     range_param <- args[[paste0(name, "_range")]]
     char_values <- get_characters(value)
-    valid_values <- c(default_shapes, names(range_param))
+    valid_values <- unique(c(default_shapes, names(range_param)))
     invalid_values <- char_values[! char_values %in% names(range_param)]
     if (length(invalid_values) > 0) {
-      stop('Shape parameter "', names, '" has ', length(invalid_values), 
+      stop(call. = FALSE,
+           'Shape parameter "', name, '" has ', length(invalid_values), 
            ' invalid character value', ifelse(length(invalid_values) > 1, 's', ''), ':\n',
            limited_print(unique(invalid_values), prefix = '  ', type = 'silent'), '\n',
            'Valid choices include:\n',
            limited_print(valid_values, prefix = '  ', type = 'silent'))
+    }
+    
+    # Check that there are enough shape types to plot all of the unique factors values
+    fact_values <- unique(get_factors(value))
+    if (length(fact_values) > length(valid_values)) {
+      stop(call. = FALSE,
+           'Shape parameter "', name, '" has more unique factor values (', length(fact_values), 
+           ') than unique shapes available to represent them (', length(valid_values), ').',
+           ' Either reduce the number of unique factor values to be plotted or define new shape functions using the "',
+           paste0(name, "_range"), '" argument.')
     }
     
     return(as.list(value))

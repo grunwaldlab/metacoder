@@ -4,8 +4,19 @@
 \alias{node_shape_circle}
 \title{Node shape function: circle}
 \usage{
-node_shape_circle(node_color = "grey", n_verticies = 30)
+node_shape_circle(node_color = "grey", n_verticies = 30, angle = 0)
+}
+\arguments{
+\item{node_color}{The color of the circle fill}
+
+\item{n_verticies}{The number of verticies used to simulate a circle using a regular polygon.}
+
+\item{angle}{(\code{numeric} of length 1) Angle to rotate points around the center of the circle.}
 }
 \description{
 A function used to plot nodes in a heat tree. This function plots a simple circle in a solid color.
+}
+\details{
+Inspired by (i.e. stolen from) https://gist.github.com/baptiste/2224724, which was
+itself inspired from a post by William Dunlap on r-help (10/09/09)
 }
