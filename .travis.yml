@@ -1,6 +1,5 @@
 language: r
 r:
-  - release
   - devel
   - bioc-release
   - bioc-devel
