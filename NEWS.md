@@ -1,5 +1,10 @@
 # News 
 
+## Current
+
+* Fixed a bug in `calc_n_samples` and `calc_prop_samples` that caused an error when group names had spaces in them.
+* `calc_prop_samples` default output column name changed from "n_samples" to "prop_samples".
+
 ##  metacoder 0.3.2
 
 * calculation functions that use the `groups` option now warn if `groups` is used without `cols`.

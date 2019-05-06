@@ -867,7 +867,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
     output <- lapply(split(cols, groups), function(col_index) {
       vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > more_than), integer(1))
     })
-    as.data.frame(output, stringsAsFactors = FALSE)
+    dplyr::as_tibble(output)
   }
   
   output <- do_calc_on_num_cols(obj, data, cols = cols, groups = groups, 
@@ -931,7 +931,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' }
 #' 
 #' @export
-calc_prop_samples <- function(obj, data, cols = NULL, groups = "n_samples",
+calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
                               other_cols = FALSE, out_names = NULL, drop = FALSE,
                               more_than = 0, dataset = NULL) {
   
@@ -958,7 +958,7 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "n_samples",
     output <- lapply(split(cols, groups), function(col_index) {
       vapply(seq_len(nrow(count_table)), function(i) sum(count_table[i, col_index] > more_than), integer(1)) / length(col_index)
     })
-    as.data.frame(output, stringsAsFactors = FALSE)
+    dplyr::as_tibble(output, stringsAsFactors = FALSE)
   }
   
   output <- do_calc_on_num_cols(obj, data, cols = cols, groups = groups, 

@@ -4,7 +4,7 @@
 \alias{calc_prop_samples}
 \title{Calculate the proportion of samples}
 \usage{
-calc_prop_samples(obj, data, cols = NULL, groups = "n_samples",
+calc_prop_samples(obj, data, cols = NULL, groups = "prop_samples",
   other_cols = FALSE, out_names = NULL, drop = FALSE,
   more_than = 0, dataset = NULL)
 }
