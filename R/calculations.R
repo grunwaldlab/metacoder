@@ -16,7 +16,7 @@
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'
 #' # Calculate the means for each group
@@ -78,7 +78,7 @@ calc_group_mean <- function(obj, data, groups, cols = NULL,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'
 #' # Calculate the RSD for each group
@@ -138,7 +138,7 @@ calc_group_rsd <- function(obj, data, groups, cols = NULL,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'
 #' # Calculate the medians for each group
@@ -201,7 +201,7 @@ calc_group_median <- function(obj, data, groups, cols = NULL,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'
 #' # Apply a function to every value without grouping 
@@ -277,7 +277,7 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Calculate proportions for all numeric columns
@@ -363,7 +363,7 @@ calc_obs_props <- function(obj, data, cols = NULL, groups = NULL,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Default use
@@ -449,7 +449,7 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Rarefy all numeric columns
@@ -557,7 +557,7 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #' \dontrun{
 #' # Parse data for plotting
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #' 
 #' # Convert counts to proportions
@@ -712,7 +712,7 @@ compare_groups <- function(obj, data, cols, groups,
 #' @examples \dontrun{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Calculate the taxon abundance for each numeric column (i.e. sample)
@@ -811,7 +811,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 #' \dontrun{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Count samples with at least one read
@@ -902,7 +902,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' \dontrun{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Count samples with at least one read
@@ -996,7 +996,7 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'
 #' # Convert count to presence/absence

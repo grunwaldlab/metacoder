@@ -41,7 +41,7 @@ verify_taxmap <- function(obj) {
 #' \dontrun{
 #' # Parse data
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Get data set by name
@@ -150,7 +150,7 @@ get_taxmap_table <- function(obj, data) {
 #' \dontrun{
 #' # Parse data
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #'                    
 #' # Get all col names
@@ -260,7 +260,7 @@ get_taxmap_cols <- function(obj, data, cols = NULL) {
 #' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                    class_regex = "^(.+)__(.+)$")
 #' 
 #' # If all cols are used, there are no other cols, only "taxon_id"

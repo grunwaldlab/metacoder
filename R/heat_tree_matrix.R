@@ -28,7 +28,7 @@
 #' \dontrun{
 #' # Parse dataset for plotting
 #' x <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                     class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+#'                     class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
 #'                     class_regex = "^(.+)__(.+)$")
 #' 
 #' # Convert counts to proportions
