@@ -49,6 +49,13 @@ as_phyloseq <- function(obj,
                         otu_table = NULL, otu_id_col = "otu_id",
                         sample_data = NULL, sample_id_col = "sample_id",
                         phy_tree = NULL) {
+  
+  # Check that phyloseq is intalled
+  if (! requireNamespace("phyloseq", quietly = TRUE)) {
+    stop('The "phyloseq" package needs to be installed for this function to work.',
+         call. = FALSE)
+  }
+  
   # Get and check OTU table
   otu_table <- get_expected_data(obj, input = otu_table, default = "otu_table",
                                  expected_class = "data.frame")

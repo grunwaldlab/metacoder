@@ -42,7 +42,7 @@ each column for each taxon. This is useful to convert per-observation counts
 \dontrun{
 # Parse data for example
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
                    
 # Calculate the taxon abundance for each numeric column (i.e. sample)
