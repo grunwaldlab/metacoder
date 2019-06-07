@@ -570,13 +570,18 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #' x$data$diff_table <- compare_groups(x, data = "tax_table",
 #'                                     cols = hmp_samples$sample_id,
 #'                                     groups = hmp_samples$body_site)
+#' 
+#' # Adjust p values for multiple comparisons
+#' x <- mutate_obs(x, "diff_table",
+#'                 wilcox_p_value = p.adjust(wilcox_p_value, method = "fdr"))
 #'
 #' # Plot results (might take a few minutes)
 #' heat_tree_matrix(x,
 #'                  data = "diff_table",
 #'                  node_size = n_obs,
 #'                  node_label = taxon_names,
-#'                  node_color = log2_median_ratio,
+#'                  node_color = ifelse(is.na(wilcox_p_value) | wilcox_p_value < 0.05,
+#'                                      0, log2_median_ratio),
 #'                  node_color_range = diverging_palette(),
 #'                  node_color_trans = "linear",
 #'                  node_color_interval = c(-3, 3),

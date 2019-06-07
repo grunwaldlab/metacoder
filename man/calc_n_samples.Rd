@@ -57,7 +57,7 @@ samples (i.e. columns) with greater than a minimum value.
 \dontrun{
 # Parse data for example
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
                    
 # Count samples with at least one read
@@ -87,7 +87,8 @@ calc_n_samples(x, data = "tax_data", other_cols = "otu_id")
 
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
+Other calculations: \code{\link{calc_diff_abund_deseq2}},
+  \code{\link{calc_group_mean}},
   \code{\link{calc_group_median}},
   \code{\link{calc_group_rsd}},
   \code{\link{calc_group_stat}},

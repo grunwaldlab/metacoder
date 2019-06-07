@@ -51,7 +51,7 @@ grouping factor and return row medians in a table.
 \dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
 
 # Calculate the medians for each group
@@ -78,7 +78,8 @@ calc_group_median(x, "tax_data", groups = hmp_samples$sex,
 }
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
+Other calculations: \code{\link{calc_diff_abund_deseq2}},
+  \code{\link{calc_group_mean}},
   \code{\link{calc_group_rsd}},
   \code{\link{calc_group_stat}},
   \code{\link{calc_n_samples}},

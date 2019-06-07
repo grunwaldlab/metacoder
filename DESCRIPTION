@@ -58,7 +58,8 @@ Suggests:
     rmarkdown,
     testthat,
     zlibbioc,
-    BiocManager
+    BiocManager,
+    DESeq2
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 Date: 2019-04-04

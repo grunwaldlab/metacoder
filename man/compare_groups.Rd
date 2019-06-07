@@ -72,7 +72,7 @@ these results.
 \dontrun{
 # Parse data for plotting
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
 
 # Convert counts to proportions
@@ -86,12 +86,17 @@ x$data$diff_table <- compare_groups(x, data = "tax_table",
                                     cols = hmp_samples$sample_id,
                                     groups = hmp_samples$body_site)
 
+# Adjust p values for multiple comparisons
+x <- mutate_obs(x, "diff_table",
+                wilcox_p_value = p.adjust(wilcox_p_value, method = "fdr"))
+
 # Plot results (might take a few minutes)
 heat_tree_matrix(x,
                  data = "diff_table",
                  node_size = n_obs,
                  node_label = taxon_names,
-                 node_color = log2_median_ratio,
+                 node_color = ifelse(is.na(wilcox_p_value) | wilcox_p_value < 0.05,
+                                     0, log2_median_ratio),
                  node_color_range = diverging_palette(),
                  node_color_trans = "linear",
                  node_color_interval = c(-3, 3),
@@ -103,7 +108,8 @@ heat_tree_matrix(x,
 
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
+Other calculations: \code{\link{calc_diff_abund_deseq2}},
+  \code{\link{calc_group_mean}},
   \code{\link{calc_group_median}},
   \code{\link{calc_group_rsd}},
   \code{\link{calc_group_stat}},

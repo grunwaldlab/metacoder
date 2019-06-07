@@ -58,7 +58,7 @@ below a minimum number to zero. This is useful for effectively removing
 \dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "info", tax_name = "taxon_name"),
+                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
                    class_regex = "^(.+)__(.+)$")
                    
 # Default use
@@ -83,7 +83,8 @@ zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 }
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
+Other calculations: \code{\link{calc_diff_abund_deseq2}},
+  \code{\link{calc_group_mean}},
   \code{\link{calc_group_median}},
   \code{\link{calc_group_rsd}},
   \code{\link{calc_group_stat}},
