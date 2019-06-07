@@ -65,7 +65,7 @@
 #'                  node_color_interval = c(-3, 3),
 #'                  edge_color_interval = c(-3, 3),
 #'                  node_size_axis_label = "Number of OTUs",
-#'                  node_color_axis_label = "Log2 ratio median proportions")
+#'                  node_color_axis_label = "Log2 fold change")
 #'
 #' }
 #'
