@@ -59,7 +59,7 @@
 #'                  data = "diff_table",
 #'                  node_size = n_obs,
 #'                  node_label = taxon_names,
-#'                  node_color = ifelse(is.na(padj) | padj < 0.05, 0, log2FoldChange),
+#'                  node_color = ifelse(is.na(padj) | padj > 0.05, 0, log2FoldChange),
 #'                  node_color_range = diverging_palette(),
 #'                  node_color_trans = "linear",
 #'                  node_color_interval = c(-3, 3),
