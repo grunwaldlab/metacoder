@@ -522,7 +522,7 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #'   order and length as \code{cols}.
 #' @param func The function to apply for each comparison. For each row in 
 #'   \code{data}, for each combination of groups, this function will 
-#'   receive the data for each treatment, passed as two character vectors.
+#'   receive the data for each treatment, passed as two vectors.
 #'   Therefore the function must take at least 2 arguments corresponding to the
 #'   two groups compared. The function should return a vector or list of
 #'   results of a fixed length. If named, the names will be used in the output.
