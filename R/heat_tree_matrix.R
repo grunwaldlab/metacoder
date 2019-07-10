@@ -85,6 +85,28 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
     layout_matrix[combinations[index, 1], combinations[index, 2]] <- index
   }
   
+  # Check that all combinations have data
+  pair_count <- apply(combinations, MARGIN = 1, function(x) {
+    sum((treat_1 == treatments[x[1]] & treat_2 == treatments[x[2]]) |
+          (treat_1 == treatments[x[2]] & treat_2 == treatments[x[1]]))
+  })
+  is_invalid_len <- pair_count != 0 & pair_count != length(taxon_names(obj))
+  pair_names <- apply(combinations, MARGIN = 1, function(x) {
+    paste0(treatments[x[1]], ' vs. ', treatments[x[2]])
+  })
+  if (any(is_invalid_len)) {
+    stop(call. = FALSE,
+         'All pairs being compared should have one value per taxon. The following do not:\n',
+         limited_print(prefix = '  ', type = 'silent',
+                       paste0(pair_names[is_invalid_len], ' (', pair_count[is_invalid_len], ')')))
+  }
+  if (any(pair_count == 0)) {
+    warning(call. = FALSE,
+            'The following possible pairs do not have any data so nothing will be plotted:\n',
+            limited_print(prefix = '  ', type = 'silent', pair_names[pair_count == 0]))
+    
+  }
+  
   # Make individual plots
   plot_sub_plot <- ifelse(label_small_trees, # This odd thing is used to overwrite options without evaluation
     function(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
@@ -97,14 +119,19 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   
   sub_plots <- lapply(seq_len(nrow(combinations)),
                       function(index) {
-                        set.seed(seed)
-                        obj %>%
-                          taxa::filter_obs(data,
-                                           (treat_1 == treatments[combinations[index, 1]] &
-                                              treat_2 == treatments[combinations[index, 2]]) |
-                                             (treat_1 == treatments[combinations[index, 2]] &
-                                                treat_2 == treatments[combinations[index, 1]])) %>%
-                          plot_sub_plot(...)
+                        if (pair_count[index] == 0) {
+                          return(NULL)
+                        } else {
+                          set.seed(seed)
+                          obj %>%
+                            taxa::filter_obs(data,
+                                             (treat_1 == treatments[combinations[index, 1]] &
+                                                treat_2 == treatments[combinations[index, 2]]) |
+                                               (treat_1 == treatments[combinations[index, 2]] &
+                                                  treat_2 == treatments[combinations[index, 1]])) %>%
+                            plot_sub_plot(...) %>%
+                            return()
+                        }
                       })
   
   # Make key plot
@@ -161,11 +188,13 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
                        hjust = "center", vjust = "bottom", angle = -90) +
     ggplot2::theme(aspect.ratio = 1)
   for (i in seq_along(sub_plots)) {
-    matrix_plot <- matrix_plot + cowplot::draw_plot(sub_plots[[i]], 
-                                                    x = matrix_data[i, "x"],
-                                                    y = matrix_data[i, "y"],
-                                                    width = subgraph_width,
-                                                    height = subgraph_height)
+    if (! is.null(sub_plots[[i]])) {
+      matrix_plot <- matrix_plot + cowplot::draw_plot(sub_plots[[i]], 
+                                                      x = matrix_data[i, "x"],
+                                                      y = matrix_data[i, "y"],
+                                                      width = subgraph_width,
+                                                      height = subgraph_height)
+    }
   }
   
   # Save plot

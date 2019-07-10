@@ -98,6 +98,13 @@ heat_tree_matrix(x,
                  edge_color_interval = c(-3, 3),
                  node_size_axis_label = "Number of OTUs",
                  node_color_axis_label = "Log2 ratio median proportions")
+                 
+# How to get results for only some pairs of groups
+compare_groups(x, data = "tax_table",
+               cols = hmp_samples$sample_id,
+               groups = hmp_samples$body_site,
+               combinations = list(c('Nose', 'Saliva'),
+                                   c('Skin', 'Throat')))
 
 }
 
