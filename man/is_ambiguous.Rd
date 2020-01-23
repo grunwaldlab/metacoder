@@ -4,14 +4,19 @@
 \alias{is_ambiguous}
 \title{Find ambiguous taxon names}
 \usage{
-is_ambiguous(taxon_names, unknown = TRUE, uncultured = TRUE,
-  name_regex = ".", ignore_case = TRUE)
+is_ambiguous(
+  taxon_names,
+  unknown = TRUE,
+  uncultured = TRUE,
+  name_regex = ".",
+  ignore_case = TRUE
+)
 }
 \arguments{
 \item{taxon_names}{A \code{\link[taxa]{taxmap}} object}
 
-\item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
-placeholders for unknown taxa (e.g. "unknown ...").}
+\item{unknown}{If \code{TRUE}, add "^" to front and "$" to the back of each
+pattern to indicate they are to match whole words.}
 
 \item{uncultured}{If \code{TRUE}, Remove taxa with names the suggest they are
 assigned to uncultured organisms (e.g. "uncultured ...").}

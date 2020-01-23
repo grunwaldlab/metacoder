@@ -37,15 +37,18 @@ This function was inspired by the tutorial created by Geoffrey Zahn at
 http://geoffreyzahn.com/getting-your-otu-table-into-r/.
 }
 \seealso{
-Other parsers: \code{\link{parse_dada2}},
-  \code{\link{parse_edge_list}},
-  \code{\link{parse_greengenes}},
-  \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
-  \code{\link{parse_phylo}}, \code{\link{parse_rdp}},
-  \code{\link{parse_silva_fasta}},
-  \code{\link{parse_ubiome}},
-  \code{\link{parse_unite_general}}
+Other parsers: 
+\code{\link{parse_dada2}()},
+\code{\link{parse_edge_list}()},
+\code{\link{parse_greengenes}()},
+\code{\link{parse_mothur_tax_summary}()},
+\code{\link{parse_mothur_taxonomy}()},
+\code{\link{parse_newick}()},
+\code{\link{parse_phyloseq}()},
+\code{\link{parse_phylo}()},
+\code{\link{parse_rdp}()},
+\code{\link{parse_silva_fasta}()},
+\code{\link{parse_ubiome}()},
+\code{\link{parse_unite_general}()}
 }
 \concept{parsers}

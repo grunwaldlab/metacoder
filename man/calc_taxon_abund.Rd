@@ -4,8 +4,14 @@
 \alias{calc_taxon_abund}
 \title{Sum observation values for each taxon}
 \usage{
-calc_taxon_abund(obj, data, cols = NULL, groups = NULL,
-  out_names = NULL, dataset = NULL)
+calc_taxon_abund(
+  obj,
+  data,
+  cols = NULL,
+  groups = NULL,
+  out_names = NULL,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -77,16 +83,18 @@ calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
 
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{compare_groups}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{compare_groups}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}
 \keyword{internal}

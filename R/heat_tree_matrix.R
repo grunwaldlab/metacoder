@@ -96,7 +96,8 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   })
   if (any(is_invalid_len)) {
     stop(call. = FALSE,
-         'All pairs being compared should have one value per taxon. The following do not:\n',
+         'All pairs being compared should have one value per taxon (', length(taxon_names(obj)),
+         '). The following do not:\n',
          limited_print(prefix = '  ', type = 'silent',
                        paste0(pair_names[is_invalid_len], ' (', pair_count[is_invalid_len], ')')))
   }

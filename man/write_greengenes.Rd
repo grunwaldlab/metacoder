@@ -4,11 +4,15 @@
 \alias{write_greengenes}
 \title{Write an imitation of the Greengenes database}
 \usage{
-write_greengenes(obj, tax_file = NULL, seq_file = NULL,
+write_greengenes(
+  obj,
+  tax_file = NULL,
+  seq_file = NULL,
   tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("gg_rank")[[1]],
   ids = obj$get_data("gg_id")[[1]],
-  sequences = obj$get_data("gg_seq")[[1]])
+  sequences = obj$get_data("gg_seq")[[1]]
+)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -53,10 +57,12 @@ AGAGTTTGATCCTGGCTCAGAATGAACGCTGGCGGCGTGCCTAACACATGCAAGTCGTACGAGAAATCCCGAGC...
 }
 }
 \seealso{
-Other writers: \code{\link{make_dada2_asv_table}},
-  \code{\link{make_dada2_tax_table}},
-  \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}},
-  \code{\link{write_unite_general}}
+Other writers: 
+\code{\link{make_dada2_asv_table}()},
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_mothur_taxonomy}()},
+\code{\link{write_rdp}()},
+\code{\link{write_silva_fasta}()},
+\code{\link{write_unite_general}()}
 }
 \concept{writers}

@@ -21,7 +21,8 @@ from women. "Right_Antecubital_fossa" was renamed to "Skin" and
 "Anterior_nares" to "Nose".
 }
 \seealso{
-Other hmp_data: \code{\link{hmp_otus}}
+Other hmp_data: 
+\code{\link{hmp_otus}}
 }
 \concept{hmp_data}
 \keyword{data}

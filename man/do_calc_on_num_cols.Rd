@@ -4,8 +4,15 @@
 \alias{do_calc_on_num_cols}
 \title{Run some function to produce new columns.}
 \usage{
-do_calc_on_num_cols(obj, data, func, cols = NULL, groups = NULL,
-  other_cols = FALSE, out_names = NULL)
+do_calc_on_num_cols(
+  obj,
+  data,
+  func,
+  cols = NULL,
+  groups = NULL,
+  other_cols = FALSE,
+  out_names = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}

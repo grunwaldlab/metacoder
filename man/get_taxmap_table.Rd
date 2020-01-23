@@ -26,10 +26,11 @@ Get a table from a taxmap object and complain if it does not exist.
 This is intended to be used to parse options in other functions.
 }
 \seealso{
-Other option parsers: \code{\link{get_taxmap_cols}},
-  \code{\link{get_taxmap_data}},
-  \code{\link{get_taxmap_other_cols}},
-  \code{\link{verify_taxmap}}
+Other option parsers: 
+\code{\link{get_taxmap_cols}()},
+\code{\link{get_taxmap_data}()},
+\code{\link{get_taxmap_other_cols}()},
+\code{\link{verify_taxmap}()}
 }
 \concept{option parsers}
 \keyword{internal}

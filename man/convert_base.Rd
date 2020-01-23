@@ -4,8 +4,12 @@
 \alias{convert_base}
 \title{Converts decimal numbers to other bases}
 \usage{
-convert_base(numbers, symbols = letters, base = length(symbols),
-  min_length = 0)
+convert_base(
+  numbers,
+  symbols = letters,
+  base = length(symbols),
+  min_length = 0
+)
 }
 \arguments{
 \item{numbers}{One or more numbers to convert.}

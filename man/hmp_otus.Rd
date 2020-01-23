@@ -19,7 +19,8 @@ treatments: "Saliva", "Throat", "Stool", "Right_Antecubital_fossa",
 from women.
 }
 \seealso{
-Other hmp_data: \code{\link{hmp_samples}}
+Other hmp_data: 
+\code{\link{hmp_samples}}
 }
 \concept{hmp_data}
 \keyword{data}

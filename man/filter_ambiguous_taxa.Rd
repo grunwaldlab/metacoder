@@ -4,15 +4,23 @@
 \alias{filter_ambiguous_taxa}
 \title{Filter ambiguous taxon names}
 \usage{
-filter_ambiguous_taxa(obj, unknown = TRUE, uncultured = TRUE,
-  name_regex = ".", ignore_case = TRUE, subtaxa = FALSE,
-  drop_obs = TRUE, reassign_obs = TRUE, reassign_taxa = TRUE)
+filter_ambiguous_taxa(
+  obj,
+  unknown = TRUE,
+  uncultured = TRUE,
+  name_regex = ".",
+  ignore_case = TRUE,
+  subtaxa = FALSE,
+  drop_obs = TRUE,
+  reassign_obs = TRUE,
+  reassign_taxa = TRUE
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
-placeholders for unknown taxa (e.g. "unknown ...").}
+\item{unknown}{If \code{TRUE}, add "^" to front and "$" to the back of each
+pattern to indicate they are to match whole words.}
 
 \item{uncultured}{If \code{TRUE}, Remove taxa with names the suggest they are
 assigned to uncultured organisms (e.g. "uncultured ...").}
@@ -28,7 +36,7 @@ subtaxa of taxa passing the filter. Positive numbers indicate the number of
 ranks below the target taxa to return. \code{0} is equivalent to \code{FALSE}.
 Negative numbers are equivalent to \code{TRUE}.}
 
-\item{drop_obs}{(\code{logical})  This option only applies to \code{\link[=taxmap]{taxmap()}} objects.
+\item{drop_obs}{(\code{logical})  This option only applies to \code{\link[taxa:taxmap]{taxmap()}} objects.
 If \code{FALSE}, include observations (i.e. user-defined data in \code{obj$data})
 even if the taxon they are assigned to is filtered out. Observations
 assigned to removed taxa will be assigned to \code{NA}. This option can be
@@ -39,7 +47,7 @@ or more data sets in \code{obj$data}. For example, \code{c(abundance = FALSE, st
 option below for further complications.}
 
 \item{reassign_obs}{(\code{logical} of length 1) This option only applies to
-\code{\link[=taxmap]{taxmap()}} objects. If \code{TRUE}, observations (i.e. user-defined data in
+\code{\link[taxa:taxmap]{taxmap()}} objects. If \code{TRUE}, observations (i.e. user-defined data in
 \code{obj$data}) assigned to removed taxa will be reassigned to the closest
 supertaxon that passed the filter. If there are no supertaxa of such an
 observation that passed the filter, they will be filtered out if \code{drop_obs}

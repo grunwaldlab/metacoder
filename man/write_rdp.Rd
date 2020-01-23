@@ -4,11 +4,15 @@
 \alias{write_rdp}
 \title{Write an imitation of the RDP FASTA database}
 \usage{
-write_rdp(obj, file, tax_names = obj$get_data("taxon_names")[[1]],
+write_rdp(
+  obj,
+  file,
+  tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("rdp_rank")[[1]],
   ids = obj$get_data("rdp_id")[[1]],
   info = obj$get_data("seq_name")[[1]],
-  sequences = obj$get_data("rdp_seq")[[1]])
+  sequences = obj$get_data("rdp_seq")[[1]]
+)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -45,11 +49,12 @@ tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
 }
 }
 \seealso{
-Other writers: \code{\link{make_dada2_asv_table}},
-  \code{\link{make_dada2_tax_table}},
-  \code{\link{write_greengenes}},
-  \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_silva_fasta}},
-  \code{\link{write_unite_general}}
+Other writers: 
+\code{\link{make_dada2_asv_table}()},
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_greengenes}()},
+\code{\link{write_mothur_taxonomy}()},
+\code{\link{write_silva_fasta}()},
+\code{\link{write_unite_general}()}
 }
 \concept{writers}

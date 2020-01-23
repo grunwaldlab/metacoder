@@ -4,8 +4,14 @@
 \alias{get_optimal_range}
 \title{Find optimal range}
 \usage{
-get_optimal_range(max_range, min_range, resolution, opt_crit, choose_best,
-  minimize = TRUE)
+get_optimal_range(
+  max_range,
+  min_range,
+  resolution,
+  opt_crit,
+  choose_best,
+  minimize = TRUE
+)
 }
 \arguments{
 \item{max_range}{(\code{numeric} of length 2) The min and max boundaries to the search space for

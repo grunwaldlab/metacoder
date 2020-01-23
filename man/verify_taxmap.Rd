@@ -14,10 +14,11 @@ Check that an object is a taxmap
 This is intended to be used to parse options in other functions.
 }
 \seealso{
-Other option parsers: \code{\link{get_taxmap_cols}},
-  \code{\link{get_taxmap_data}},
-  \code{\link{get_taxmap_other_cols}},
-  \code{\link{get_taxmap_table}}
+Other option parsers: 
+\code{\link{get_taxmap_cols}()},
+\code{\link{get_taxmap_data}()},
+\code{\link{get_taxmap_other_cols}()},
+\code{\link{get_taxmap_table}()}
 }
 \concept{option parsers}
 \keyword{internal}

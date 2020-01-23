@@ -4,8 +4,7 @@
 \alias{parse_edge_list}
 \title{Convert a table with an edge list to taxmap}
 \usage{
-parse_edge_list(input, taxon_id, supertaxon_id, taxon_name,
-  taxon_rank = NULL)
+parse_edge_list(input, taxon_id, supertaxon_id, taxon_name, taxon_rank = NULL)
 }
 \arguments{
 \item{input}{A table containing an edge list encoded by two columns.}
@@ -21,16 +20,19 @@ The contents of the edge list will be used as taxon IDs.
 The whole table will be included as a data set in the output object.
 }
 \seealso{
-Other parsers: \code{\link{parse_dada2}},
-  \code{\link{parse_greengenes}},
-  \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
-  \code{\link{parse_phylo}},
-  \code{\link{parse_qiime_biom}}, \code{\link{parse_rdp}},
-  \code{\link{parse_silva_fasta}},
-  \code{\link{parse_ubiome}},
-  \code{\link{parse_unite_general}}
+Other parsers: 
+\code{\link{parse_dada2}()},
+\code{\link{parse_greengenes}()},
+\code{\link{parse_mothur_tax_summary}()},
+\code{\link{parse_mothur_taxonomy}()},
+\code{\link{parse_newick}()},
+\code{\link{parse_phyloseq}()},
+\code{\link{parse_phylo}()},
+\code{\link{parse_qiime_biom}()},
+\code{\link{parse_rdp}()},
+\code{\link{parse_silva_fasta}()},
+\code{\link{parse_ubiome}()},
+\code{\link{parse_unite_general}()}
 }
 \concept{parsers}
 \keyword{internal}

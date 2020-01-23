@@ -4,8 +4,16 @@
 \alias{compare_groups}
 \title{Compare groups of samples}
 \usage{
-compare_groups(obj, data, cols, groups, func = NULL,
-  combinations = NULL, other_cols = FALSE, dataset = NULL)
+compare_groups(
+  obj,
+  data,
+  cols,
+  groups,
+  func = NULL,
+  combinations = NULL,
+  other_cols = FALSE,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -110,15 +118,17 @@ compare_groups(x, data = "tax_table",
 
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}

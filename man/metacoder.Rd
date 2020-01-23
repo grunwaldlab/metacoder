@@ -3,7 +3,6 @@
 \docType{package}
 \name{metacoder}
 \alias{metacoder}
-\alias{metacoder-package}
 \title{Metacoder}
 \description{
 A package for planning and analysis of amplicon metagenomics research projects.
