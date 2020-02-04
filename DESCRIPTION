@@ -60,7 +60,7 @@ Suggests:
     BiocManager,
     phyloseq
 VignetteBuilder: knitr
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2.9000
 Date: 2019-07-17
 Encoding: UTF-8
 biocViews: 
