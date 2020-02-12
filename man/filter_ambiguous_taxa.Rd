@@ -19,8 +19,8 @@ filter_ambiguous_taxa(
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
 
-\item{unknown}{If \code{TRUE}, add "^" to front and "$" to the back of each
-pattern to indicate they are to match whole words.}
+\item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
+placeholders for unknown taxa (e.g. "unknown ...").}
 
 \item{uncultured}{If \code{TRUE}, Remove taxa with names the suggest they are
 assigned to uncultured organisms (e.g. "uncultured ...").}

@@ -2,60 +2,69 @@
 #'
 #' This function stores the regex patterns for ambiguous taxa.
 #'
+#' @param unknown If \code{TRUE}, include names that suggest they are
+#'   placeholders for unknown taxa (e.g. "unknown ...").
+#' @param uncultured If \code{TRUE}, include names that suggest they are
+#'   assigned to uncultured organisms (e.g. "uncultured ...").
+#' @param case_variations If \code{TRUE}, include variations of letter case. 
+#'
+#' @export
+ambiguous_synonyms <- function(unknown = TRUE, uncultured = TRUE, case_variations = FALSE) {
+  unknown_syns <- c(
+    'unknown',
+    'unidentified',
+    'incertae sedis',
+    'ambiguous',
+    'ambiguous_taxa',
+    'unassigned',
+    'possible',
+    'putative'
+  )
+  uncultured_syns <- c(
+    'uncultured',
+    'candidatus',
+    'metagenome'
+  )
+  output <- c()
+  if (unknown) {
+    output <- c(output, unknown_syns)
+  }
+  if (uncultured) {
+    output <- c(output, uncultured_syns)
+  }
+  if (case_variations) {
+    output <- c(output,
+                capitalize(output),
+                toupper(output))
+  }
+  return(output)
+}
+
+
+
+#' Get patterns for ambiguous taxa
+#'
+#' This function stores the regex patterns for ambiguous taxa.
+#'
 #' @param unknown If \code{TRUE}, Remove taxa with names the suggest they are
 #'   placeholders for unknown taxa (e.g. "unknown ...").
 #' @param uncultured If \code{TRUE}, Remove taxa with names the suggest they are
 #'   assigned to uncultured organisms (e.g. "uncultured ...").
-#' @param unknown If \code{TRUE}, add "^" to front and "$" to the back of each
+#' @param case_variations If \code{TRUE}, include variations of letter case. 
+#' @param whole_match If \code{TRUE}, add "^" to front and "$" to the back of each
 #'   pattern to indicate they are to match whole words.
 #' @param name_regex The regex code to match a valid character in a taxon name.
 #'   For example, "[a-z]" would mean taxon names can only be lower case letters.
 #'
 #' @keywords internal
-ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE,
+ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE, case_variations = FALSE,
                                whole_match = FALSE, name_regex = ".") {
   # Initialize output vector
-  output <- c()
-  
-  # Add patterns for unknown taxa
-  if (unknown) {
-    output <- c(output, 
-                paste0(name_regex, "*", "unknown", name_regex, "*"),
-                paste0(name_regex, "*", "Unknown", name_regex, "*"),
-                paste0(name_regex, "*", "UNKNOWN", name_regex, "*"),
-                paste0(name_regex, "*", "unidentified", name_regex, "*"),
-                paste0(name_regex, "*", "Unidentified", name_regex, "*"),
-                paste0(name_regex, "*", "UNIDENTIFIED", name_regex, "*"),
-                paste0(name_regex, "*", "Incertae Sedis", name_regex, "*"),
-                paste0(name_regex, "*", "incertae sedis", name_regex, "*"),
-                paste0(name_regex, "*", "INCERTAE SEDIS", name_regex, "*"),
-                paste0(name_regex, "*", "ambiguous", name_regex, "*"),
-                paste0(name_regex, "*", "Ambiguous", name_regex, "*"),
-                paste0(name_regex, "*", "Ambiguous_taxa", name_regex, "*"),
-                paste0(name_regex, "*", "AMBIGUOUS", name_regex, "*"),
-                paste0(name_regex, "*", "unassigned", name_regex, "*"),
-                paste0(name_regex, "*", "Unassigned", name_regex, "*"),
-                paste0(name_regex, "*", "UNASSIGNED", name_regex, "*"),
-                paste0(name_regex, "*", "possible", name_regex, "*"),
-                paste0(name_regex, "*", "Possible", name_regex, "*"),
-                paste0(name_regex, "*", "POSSIBLE", name_regex, "*")
-    )
-  }
-  
-  # Add patterns for uncultured taxa Incertae Sedis
-  if (uncultured) {
-    output <- c(output, 
-                paste0(name_regex, "*", "uncultured", name_regex, "*"),
-                paste0(name_regex, "*", "Uncultured", name_regex, "*"),
-                paste0(name_regex, "*", "UNCULTURED", name_regex, "*"), 
-                paste0(name_regex, "*", "candidatus", name_regex, "*"),
-                paste0(name_regex, "*", "Candidatus", name_regex, "*"),
-                paste0(name_regex, "*", "CANDIDATUS", name_regex, "*"),
-                paste0(name_regex, "*", "metagenome", name_regex, "*"),
-                paste0(name_regex, "*", "Metagenome", name_regex, "*"),
-                paste0(name_regex, "*", "METAGENOME", name_regex, "*")
-    )
-  }
+  output <-  paste0(name_regex, "*",
+                    ambiguous_synonyms(unknown = unknown,
+                                       uncultured = uncultured,
+                                       case_variations = case_variations),
+                    name_regex, "*")
   
   # Add regex code for full matches
   if (whole_match) {

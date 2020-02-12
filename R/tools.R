@@ -137,3 +137,16 @@ reverse <- function(seqs) {
   
   return(result)
 }
+
+
+#' Capitalize
+#' 
+#' Make the first letter uppercase
+#' 
+#' @param text Some text
+#' 
+#' @keywords internal
+capitalize <- function(text) {
+  paste0(toupper(substr(text, 1, 1)), 
+         substr(text, vapply(text, FUN.VALUE = numeric(1), function(x) min(c(2, nchar(x)))), nchar(text)))
+}
