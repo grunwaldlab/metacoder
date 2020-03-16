@@ -471,7 +471,9 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
   
   # Remove unneeded columns
   output$data$tax_data$input <- NULL
-  output$data$tax_data$tax_string <- NULL
+  if ("tax_string" %in% names( output$data$tax_data)) {
+    output$data$tax_data$tax_string <- NULL
+  }
   
   # Add sequences 
   if (include_seqs) {

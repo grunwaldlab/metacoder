@@ -6,16 +6,17 @@
 #'   placeholders for unknown taxa (e.g. "unknown ...").
 #' @param uncultured If \code{TRUE}, include names that suggest they are
 #'   assigned to uncultured organisms (e.g. "uncultured ...").
+#' @param regex If \code{TRUE}, includes regex syntax to make matching things like spaces more robust.
 #' @param case_variations If \code{TRUE}, include variations of letter case. 
 #'
 #' @export
-ambiguous_synonyms <- function(unknown = TRUE, uncultured = TRUE, case_variations = FALSE) {
+ambiguous_synonyms <- function(unknown = TRUE, uncultured = TRUE, regex = TRUE, case_variations = FALSE) {
   unknown_syns <- c(
     'unknown',
     'unidentified',
     'incertae sedis',
     'ambiguous',
-    'ambiguous_taxa',
+    'ambiguous taxa',
     'unassigned',
     'possible',
     'putative'
@@ -36,6 +37,9 @@ ambiguous_synonyms <- function(unknown = TRUE, uncultured = TRUE, case_variation
     output <- c(output,
                 capitalize(output),
                 toupper(output))
+  }
+  if (regex) {
+    output <- gsub(output, pattern = ' ', replacement = '[_ -]+')
   }
   return(output)
 }

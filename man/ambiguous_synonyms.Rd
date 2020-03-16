@@ -4,7 +4,12 @@
 \alias{ambiguous_synonyms}
 \title{Get patterns for ambiguous taxa}
 \usage{
-ambiguous_synonyms(unknown = TRUE, uncultured = TRUE, case_variations = FALSE)
+ambiguous_synonyms(
+  unknown = TRUE,
+  uncultured = TRUE,
+  regex = TRUE,
+  case_variations = FALSE
+)
 }
 \arguments{
 \item{unknown}{If \code{TRUE}, include names that suggest they are
@@ -12,6 +17,8 @@ placeholders for unknown taxa (e.g. "unknown ...").}
 
 \item{uncultured}{If \code{TRUE}, include names that suggest they are
 assigned to uncultured organisms (e.g. "uncultured ...").}
+
+\item{regex}{If \code{TRUE}, includes regex syntax to make matching things like spaces more robust.}
 
 \item{case_variations}{If \code{TRUE}, include variations of letter case.}
 }
