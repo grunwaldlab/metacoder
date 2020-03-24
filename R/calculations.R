@@ -416,7 +416,11 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
       } else {
         my_print('No counts found less than ', min_count, '.')
       }
-      count_table[to_zero] <- 0
+      count_table[seq_len(ncol(to_zero))] <- lapply(seq_len(ncol(to_zero)), function(i) {
+        out <- count_table[[i]]
+        out[to_zero[, i]] <- 0
+        out
+      })
     }
     names(count_table) <- as.character(groups) # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
     return(count_table)
