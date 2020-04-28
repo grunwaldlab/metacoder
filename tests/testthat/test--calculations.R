@@ -100,7 +100,7 @@ test_that("Observation proportions", {
 test_that("Summing counts per taxon", {
   # Calculate the taxon abundance for each numeric column (i.e. sample)
   result <- calc_taxon_abund(x, "tax_data")
-  expect_equal(sum(x$data$tax_data$`700035949`), result$`700035949`[1])
+  expect_equivalent(sum(x$data$tax_data$`700035949`), result$`700035949`[1])
   
   # Calculate the taxon abundance for a subset of columns
   expect_equal(calc_taxon_abund(x, "tax_data", cols = 4:5), 
@@ -123,7 +123,7 @@ test_that("Summing counts per taxon", {
   # Geting a total for all columns 
   result <- calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
                              groups = rep("total", nrow(hmp_samples)))
-  expect_equal(total_counts, result$total[1])
+  expect_equivalent(total_counts, result$total[1])
   
   # Cols can be factors
   result <- calc_taxon_abund(x, data = "tax_data", cols = hmp_samples$sample_id[1])
