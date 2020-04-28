@@ -1,8 +1,9 @@
 # News 
 
-## Current
+##  metacoder 0.3.4
 
 * Added parsing of taxon ranks to the UNITE parser
+* Versious minor bug fixes
 
 ## metacoder 0.3.3
 
