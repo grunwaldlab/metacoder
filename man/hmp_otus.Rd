@@ -3,7 +3,9 @@
 \name{hmp_otus}
 \alias{hmp_otus}
 \title{A HMP subset}
-\format{A 1,000 x 52 tibble.}
+\format{
+A 1,000 x 52 tibble.
+}
 \source{
 Subset from data available at https://www.hmpdacc.org/hmp/HMQCP/
 }
