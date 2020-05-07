@@ -19,4 +19,3 @@ predicted amplicons and their associated information.
 \seealso{
 \code{\link{run_primersearch}}
 }
-\keyword{internal}
