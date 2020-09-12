@@ -53,7 +53,7 @@ Many of these operations can be done using other packages like `phyloseq`, which
 Citation
 --------
 
-If you use metcoder in a publication, please cite our [article in PLOS Computational Biology](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
+If you use metacoder in a publication, please cite our [article in PLOS Computational Biology](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
 
 Foster ZSL, Sharpton TJ, Grünwald NJ (2017) Metacoder: An R package for visualization and manipulation of community taxonomic diversity data. PLOS Computational Biology 13(2): e1005404. <https://doi.org/10.1371/journal.pcbi.1005404>
 

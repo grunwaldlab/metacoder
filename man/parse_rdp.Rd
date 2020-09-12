@@ -4,8 +4,7 @@
 \alias{parse_rdp}
 \title{Parse RDP FASTA release}
 \usage{
-parse_rdp(input = NULL, file = NULL, include_seqs = TRUE,
-  add_species = FALSE)
+parse_rdp(input = NULL, file = NULL, include_seqs = TRUE, add_species = FALSE)
 }
 \arguments{
 \item{input}{(\code{character}) One of the following: 
@@ -47,16 +46,18 @@ tctggagaagcgacatccgcgctggaccgtgtacaagtctcttggaaaagagcgtcgtagagggtgacaatcccgtcttt
 }
 }
 \seealso{
-Other parsers: \code{\link{parse_dada2}},
-  \code{\link{parse_edge_list}},
-  \code{\link{parse_greengenes}},
-  \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
-  \code{\link{parse_phylo}},
-  \code{\link{parse_qiime_biom}},
-  \code{\link{parse_silva_fasta}},
-  \code{\link{parse_ubiome}},
-  \code{\link{parse_unite_general}}
+Other parsers: 
+\code{\link{parse_dada2}()},
+\code{\link{parse_edge_list}()},
+\code{\link{parse_greengenes}()},
+\code{\link{parse_mothur_tax_summary}()},
+\code{\link{parse_mothur_taxonomy}()},
+\code{\link{parse_newick}()},
+\code{\link{parse_phyloseq}()},
+\code{\link{parse_phylo}()},
+\code{\link{parse_qiime_biom}()},
+\code{\link{parse_silva_fasta}()},
+\code{\link{parse_ubiome}()},
+\code{\link{parse_unite_general}()}
 }
 \concept{parsers}

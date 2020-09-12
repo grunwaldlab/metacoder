@@ -55,10 +55,11 @@ metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3,
 }
 }
 \seealso{
-Other option parsers: \code{\link{get_taxmap_cols}},
-  \code{\link{get_taxmap_data}},
-  \code{\link{get_taxmap_table}},
-  \code{\link{verify_taxmap}}
+Other option parsers: 
+\code{\link{get_taxmap_cols}()},
+\code{\link{get_taxmap_data}()},
+\code{\link{get_taxmap_table}()},
+\code{\link{verify_taxmap}()}
 }
 \concept{option parsers}
 \keyword{internal}

@@ -4,8 +4,13 @@
 \alias{read_lines_apply}
 \title{Apply a function to chunks of a file}
 \usage{
-read_lines_apply(file_path, func, buffer_size = 1000, simplify = FALSE,
-  skip = 0)
+read_lines_apply(
+  file_path,
+  func,
+  buffer_size = 1000,
+  simplify = FALSE,
+  skip = 0
+)
 }
 \arguments{
 \item{file_path}{(\code{character} of length 1) The path to a file to read.}

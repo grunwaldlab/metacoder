@@ -4,8 +4,15 @@
 \alias{calc_obs_props}
 \title{Calculate proportions from observation counts}
 \usage{
-calc_obs_props(obj, data, cols = NULL, groups = NULL,
-  other_cols = FALSE, out_names = NULL, dataset = NULL)
+calc_obs_props(
+  obj,
+  data,
+  cols = NULL,
+  groups = NULL,
+  other_cols = FALSE,
+  out_names = NULL,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -83,16 +90,18 @@ calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
 }
 }
 \seealso{
-Other calculations: \code{\link{calc_diff_abund_deseq2}},
-  \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{compare_groups}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{compare_groups}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}

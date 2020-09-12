@@ -4,8 +4,12 @@
 \alias{apply_color_scale}
 \title{Covert numbers to colors}
 \usage{
-apply_color_scale(values, color_series, interval = NULL,
-  no_color_in_palette = 1000)
+apply_color_scale(
+  values,
+  color_series,
+  interval = NULL,
+  no_color_in_palette = 1000
+)
 }
 \arguments{
 \item{values}{(\code{numeric}) The numbers to represent as colors}

@@ -4,8 +4,13 @@
 \alias{parse_dada2}
 \title{Convert the output of dada2 to a taxmap object}
 \usage{
-parse_dada2(seq_table, tax_table, class_key = "taxon_name",
-  class_regex = "(.*)", include_match = TRUE)
+parse_dada2(
+  seq_table,
+  tax_table,
+  class_key = "taxon_name",
+  class_regex = "(.*)",
+  include_match = TRUE
+)
 }
 \arguments{
 \item{seq_table}{The ASV abundance matrix, with rows as samples and columns as ASV ids or
@@ -42,15 +47,18 @@ the input format can be found by following the dada2 tutorial here:
 shttps://benjjneb.github.io/dada2/tutorial.html
 }
 \seealso{
-Other parsers: \code{\link{parse_edge_list}},
-  \code{\link{parse_greengenes}},
-  \code{\link{parse_mothur_tax_summary}},
-  \code{\link{parse_mothur_taxonomy}},
-  \code{\link{parse_newick}}, \code{\link{parse_phyloseq}},
-  \code{\link{parse_phylo}},
-  \code{\link{parse_qiime_biom}}, \code{\link{parse_rdp}},
-  \code{\link{parse_silva_fasta}},
-  \code{\link{parse_ubiome}},
-  \code{\link{parse_unite_general}}
+Other parsers: 
+\code{\link{parse_edge_list}()},
+\code{\link{parse_greengenes}()},
+\code{\link{parse_mothur_tax_summary}()},
+\code{\link{parse_mothur_taxonomy}()},
+\code{\link{parse_newick}()},
+\code{\link{parse_phyloseq}()},
+\code{\link{parse_phylo}()},
+\code{\link{parse_qiime_biom}()},
+\code{\link{parse_rdp}()},
+\code{\link{parse_silva_fasta}()},
+\code{\link{parse_ubiome}()},
+\code{\link{parse_unite_general}()}
 }
 \concept{parsers}

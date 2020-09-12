@@ -71,7 +71,7 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5,
 #' @return A data frame with each row corresponding to amplicon data
 #' @seealso \code{\link{run_primersearch}}
 #' 
-#' @keywords internal
+#' @export
 parse_primersearch <- function(file_path) {
   # Split output into chunks for each primer
   raw_output <- readLines(file_path)

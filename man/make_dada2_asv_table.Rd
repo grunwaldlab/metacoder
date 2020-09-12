@@ -23,10 +23,12 @@ dada2 ASV abundance matrix format. If the taxmap object was created using
 exactly with the default settings.
 }
 \seealso{
-Other writers: \code{\link{make_dada2_tax_table}},
-  \code{\link{write_greengenes}},
-  \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}},
-  \code{\link{write_unite_general}}
+Other writers: 
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_greengenes}()},
+\code{\link{write_mothur_taxonomy}()},
+\code{\link{write_rdp}()},
+\code{\link{write_silva_fasta}()},
+\code{\link{write_unite_general}()}
 }
 \concept{writers}

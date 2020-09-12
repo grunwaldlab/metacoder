@@ -4,8 +4,13 @@
 \alias{ambiguous_patterns}
 \title{Get patterns for ambiguous taxa}
 \usage{
-ambiguous_patterns(unknown = TRUE, uncultured = TRUE,
-  whole_match = FALSE, name_regex = ".")
+ambiguous_patterns(
+  unknown = TRUE,
+  uncultured = TRUE,
+  case_variations = FALSE,
+  whole_match = FALSE,
+  name_regex = "."
+)
 }
 \arguments{
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
@@ -14,11 +19,13 @@ placeholders for unknown taxa (e.g. "unknown ...").}
 \item{uncultured}{If \code{TRUE}, Remove taxa with names the suggest they are
 assigned to uncultured organisms (e.g. "uncultured ...").}
 
+\item{case_variations}{If \code{TRUE}, include variations of letter case.}
+
+\item{whole_match}{If \code{TRUE}, add "^" to front and "$" to the back of each
+pattern to indicate they are to match whole words.}
+
 \item{name_regex}{The regex code to match a valid character in a taxon name.
 For example, "[a-z]" would mean taxon names can only be lower case letters.}
-
-\item{unknown}{If \code{TRUE}, add "^" to front and "$" to the back of each
-pattern to indicate they are to match whole words.}
 }
 \description{
 This function stores the regex patterns for ambiguous taxa.

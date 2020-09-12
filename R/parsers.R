@@ -207,6 +207,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
     # replace taxon names
     my_taxon_names <- output$map_data_(output$taxon_ids(),
                                        output$get_data("taxon")[[1]])
+    my_taxon_names <- as.character(my_taxon_names)
     output$taxa <- stats::setNames(lapply(seq_len(length(output$taxa)),
                                           function(i) {
                                             my_taxon <- output$taxa[[i]]
@@ -464,13 +465,15 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
                                            unite_type = "info",
                                            tax_string = "class"),
                                    class_regex = "^(.*)__(.*)$",
-                                   class_key = c(unite_rank = "info",
+                                   class_key = c(unite_rank = "taxon_rank",
                                                  name = "taxon_name"),
                                    class_sep = ";")
   
   # Remove unneeded columns
   output$data$tax_data$input <- NULL
-  output$data$tax_data$tax_string <- NULL
+  if ("tax_string" %in% names( output$data$tax_data)) {
+    output$data$tax_data$tax_string <- NULL
+  }
   
   # Add sequences 
   if (include_seqs) {

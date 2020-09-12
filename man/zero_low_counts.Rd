@@ -4,9 +4,16 @@
 \alias{zero_low_counts}
 \title{Replace low counts with zero}
 \usage{
-zero_low_counts(obj, data, min_count = 2, use_total = FALSE,
-  cols = NULL, other_cols = FALSE, out_names = NULL,
-  dataset = NULL)
+zero_low_counts(
+  obj,
+  data,
+  min_count = 2,
+  use_total = FALSE,
+  cols = NULL,
+  other_cols = FALSE,
+  out_names = NULL,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -83,17 +90,18 @@ zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 }
 }
 \seealso{
-Other calculations: \code{\link{calc_diff_abund_deseq2}},
-  \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{compare_groups}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}
+Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{compare_groups}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()}
 }
 \concept{calculations}

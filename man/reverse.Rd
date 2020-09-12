@@ -20,7 +20,8 @@ reverse(c("aagtgGGTGaa", "AAGTGGT"))
 
 }
 \seealso{
-Other sequence transformations: \code{\link{complement}},
-  \code{\link{rev_comp}}
+Other sequence transformations: 
+\code{\link{complement}()},
+\code{\link{rev_comp}()}
 }
 \concept{sequence transformations}

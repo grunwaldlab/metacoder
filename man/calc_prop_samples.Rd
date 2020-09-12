@@ -4,9 +4,17 @@
 \alias{calc_prop_samples}
 \title{Calculate the proportion of samples}
 \usage{
-calc_prop_samples(obj, data, cols = NULL, groups = "prop_samples",
-  other_cols = FALSE, out_names = NULL, drop = FALSE,
-  more_than = 0, dataset = NULL)
+calc_prop_samples(
+  obj,
+  data,
+  cols = NULL,
+  groups = "prop_samples",
+  other_cols = FALSE,
+  out_names = NULL,
+  drop = FALSE,
+  more_than = 0,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -87,16 +95,18 @@ calc_prop_samples(x, data = "tax_data", other_cols = "otu_id")
 
 }
 \seealso{
-Other calculations: \code{\link{calc_diff_abund_deseq2}},
-  \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{compare_groups}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{compare_groups}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}

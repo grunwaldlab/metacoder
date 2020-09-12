@@ -4,8 +4,13 @@
 \alias{layout_functions}
 \title{Layout functions}
 \usage{
-layout_functions(name = NULL, graph = NULL, intitial_coords = NULL,
-  effort = 1, ...)
+layout_functions(
+  name = NULL,
+  graph = NULL,
+  intitial_coords = NULL,
+  effort = 1,
+  ...
+)
 }
 \arguments{
 \item{name}{(\code{character} of length 1 OR NULL) name of algorithm. Leave \code{NULL} to 

@@ -4,8 +4,13 @@
 \alias{is_ambiguous}
 \title{Find ambiguous taxon names}
 \usage{
-is_ambiguous(taxon_names, unknown = TRUE, uncultured = TRUE,
-  name_regex = ".", ignore_case = TRUE)
+is_ambiguous(
+  taxon_names,
+  unknown = TRUE,
+  uncultured = TRUE,
+  name_regex = ".",
+  ignore_case = TRUE
+)
 }
 \arguments{
 \item{taxon_names}{A \code{\link[taxa]{taxmap}} object}

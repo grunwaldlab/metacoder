@@ -4,13 +4,16 @@
 \alias{write_silva_fasta}
 \title{Write an imitation of the SILVA FASTA database}
 \usage{
-write_silva_fasta(obj, file,
+write_silva_fasta(
+  obj,
+  file,
   tax_names = obj$get_data("taxon_names")[[1]],
   other_names = obj$get_data("other_name")[[1]],
   ids = obj$get_data("ncbi_id")[[1]],
   start = obj$get_data("start_pos")[[1]],
   end = obj$get_data("end_pos")[[1]],
-  sequences = obj$get_data("silva_seq")[[1]])
+  sequences = obj$get_data("silva_seq")[[1]]
+)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -50,11 +53,12 @@ ACCGUUUGACCCGGAGAUCUCCGAAUGGGGCAACCCACCCGUUGUAAGGCGGGUAUCACCGACUGAAUCCAUAGGUCGGU
 }
 }
 \seealso{
-Other writers: \code{\link{make_dada2_asv_table}},
-  \code{\link{make_dada2_tax_table}},
-  \code{\link{write_greengenes}},
-  \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}},
-  \code{\link{write_unite_general}}
+Other writers: 
+\code{\link{make_dada2_asv_table}()},
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_greengenes}()},
+\code{\link{write_mothur_taxonomy}()},
+\code{\link{write_rdp}()},
+\code{\link{write_unite_general}()}
 }
 \concept{writers}

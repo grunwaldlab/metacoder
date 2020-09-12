@@ -3,7 +3,9 @@
 \name{hmp_samples}
 \alias{hmp_samples}
 \title{Sample information for HMP subset}
-\format{A 50 x 3 tibble.}
+\format{
+A 50 x 3 tibble.
+}
 \source{
 Subset from data available at https://www.hmpdacc.org/hmp/HMQCP/
 }
@@ -21,7 +23,8 @@ from women. "Right_Antecubital_fossa" was renamed to "Skin" and
 "Anterior_nares" to "Nose".
 }
 \seealso{
-Other hmp_data: \code{\link{hmp_otus}}
+Other hmp_data: 
+\code{\link{hmp_otus}}
 }
 \concept{hmp_data}
 \keyword{data}

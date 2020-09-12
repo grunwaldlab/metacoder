@@ -4,14 +4,17 @@
 \alias{write_unite_general}
 \title{Write an imitation of the UNITE general FASTA database}
 \usage{
-write_unite_general(obj, file,
+write_unite_general(
+  obj,
+  file,
   tax_names = obj$get_data("taxon_names")[[1]],
   ranks = obj$get_data("unite_rank")[[1]],
   sequences = obj$get_data("unite_seq")[[1]],
   seq_name = obj$get_data("organism")[[1]],
   ids = obj$get_data("unite_id")[[1]],
   gb_acc = obj$get_data("acc_num")[[1]],
-  type = obj$get_data("unite_type")[[1]])
+  type = obj$get_data("unite_type")[[1]]
+)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -52,10 +55,12 @@ ATAATTTGCCGAACCTAGCGTTAGCGCGAGGTTCTGCGATCAACACTTATATTTAAAACCCAACTCTTAAATTTTGTAT.
 }
 }
 \seealso{
-Other writers: \code{\link{make_dada2_asv_table}},
-  \code{\link{make_dada2_tax_table}},
-  \code{\link{write_greengenes}},
-  \code{\link{write_mothur_taxonomy}},
-  \code{\link{write_rdp}}, \code{\link{write_silva_fasta}}
+Other writers: 
+\code{\link{make_dada2_asv_table}()},
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_greengenes}()},
+\code{\link{write_mothur_taxonomy}()},
+\code{\link{write_rdp}()},
+\code{\link{write_silva_fasta}()}
 }
 \concept{writers}

@@ -4,11 +4,20 @@
 \alias{heat_tree_matrix}
 \title{Plot a matrix of heat trees}
 \usage{
-heat_tree_matrix(obj, data, label_small_trees = FALSE, key_size = 0.6,
-  seed = 1, output_file = NULL,
+heat_tree_matrix(
+  obj,
+  data,
+  label_small_trees = FALSE,
+  key_size = 0.6,
+  seed = 1,
+  output_file = NULL,
   row_label_color = diverging_palette()[3],
-  col_label_color = diverging_palette()[1], row_label_size = 12,
-  col_label_size = 12, ..., dataset = NULL)
+  col_label_color = diverging_palette()[1],
+  row_label_size = 12,
+  col_label_size = 12,
+  ...,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}

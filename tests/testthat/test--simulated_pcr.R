@@ -25,9 +25,9 @@ test_that("primersearch works", {
   
   # Primer start indexes
   expect_equal(result$f_start[1], nchar("AA") + 1)
-  expect_equal(result$r_start[1], nchar(paste0("AA", primer_1_site, amplicon)) + 1)
+  expect_equivalent(result$r_start[1], nchar(paste0("AA", primer_1_site, amplicon)) + 1)
   expect_equal(result$f_start[2], nchar("AAAA") + 1)
-  expect_equal(result$r_start[2], nchar(paste0("AAAA", primer_2_site, amplicon)) + 1)
+  expect_equivalent(result$r_start[2], nchar(paste0("AAAA", primer_2_site, amplicon)) + 1)
   
   # Primer end indexes
   expect_true(all(result$f_end == result$f_start + nchar(result$f_primer) - 1))
@@ -42,10 +42,10 @@ test_that("primersearch works", {
   expect_equal(result$amplicon[2], rev_comp(amplicon))
   
   # Primer binding sites
-  expect_equal(result$f_match[1], primer_1_site)
-  expect_equal(result$f_match[2], primer_2_site)
-  expect_equal(result$r_match[1], primer_2_site)
-  expect_equal(result$r_match[2], primer_1_site)
+  expect_equivalent(result$f_match[1], primer_1_site)
+  expect_equivalent(result$f_match[2], primer_2_site)
+  expect_equivalent(result$r_match[1], primer_2_site)
+  expect_equivalent(result$r_match[2], primer_1_site)
   
   # Mismatches
   expect_equal(result$f_mismatch[1], 1)
@@ -73,7 +73,7 @@ test_that("primersearch works", {
                                     mismatch = 10)
   
   # Check that all input types return the same object
-  expect_equal(file_result, seqinr_result)
+  expect_equivalent(lapply(file_result, unname), lapply(seqinr_result, unname))
   # expect_equal(ape_result, seqinr_result) # (Current example file has U instead of T and this breaks ape)
   
   })

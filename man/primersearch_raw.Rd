@@ -4,8 +4,7 @@
 \alias{primersearch_raw}
 \title{Use EMBOSS primersearch for in silico PCR}
 \usage{
-primersearch_raw(input = NULL, file = NULL, forward, reverse,
-  mismatch = 5)
+primersearch_raw(input = NULL, file = NULL, forward, reverse, mismatch = 5)
 }
 \arguments{
 \item{input}{(\code{character}) One of the following: 

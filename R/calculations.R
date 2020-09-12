@@ -249,7 +249,7 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
   do_calc_on_num_cols(obj, data, cols = cols, groups = groups,
                       other_cols = other_cols, out_names = out_names,
                       func =  function(count_table, cols = cols, groups = groups) {
-                        tibble::as.tibble(lapply(split(cols, groups), function(col_index) {
+                        tibble::as_tibble(lapply(split(cols, groups), function(col_index) {
                           apply(count_table[, col_index], MARGIN = 1, FUN = func)
                         }))
                       }
@@ -416,9 +416,13 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
       } else {
         my_print('No counts found less than ', min_count, '.')
       }
-      count_table[to_zero] <- 0
+      count_table[seq_len(ncol(to_zero))] <- lapply(seq_len(ncol(to_zero)), function(i) {
+        out <- count_table[[i]]
+        out[to_zero[, i]] <- 0
+        out
+      })
     }
-    names(count_table) <- groups # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
+    names(count_table) <- as.character(groups) # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
     return(count_table)
   }
   
@@ -489,8 +493,8 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
                           sample_size <- min(colSums(count_table)) # Calculate minimum count if no sample size is given
                           my_print("Rarefying to ", sample_size, " since that is the lowest sample total.")
                         }
-                        output <- tibble::as.tibble(t(vegan::rrarefy(t(count_table), sample = sample_size)))
-                        names(output) <- groups # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
+                        output <- tibble::as_tibble(t(vegan::rrarefy(t(count_table), sample = sample_size)))
+                        names(output) <- as.character(groups) # needed because do_calc_on_num_cols assumes column named by groups even though this function does not use groups currently
                         return(output)
                       }
   )
@@ -522,7 +526,7 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #'   order and length as \code{cols}.
 #' @param func The function to apply for each comparison. For each row in 
 #'   \code{data}, for each combination of groups, this function will 
-#'   receive the data for each treatment, passed as two character vectors.
+#'   receive the data for each treatment, passed as two vectors.
 #'   Therefore the function must take at least 2 arguments corresponding to the
 #'   two groups compared. The function should return a vector or list of
 #'   results of a fixed length. If named, the names will be used in the output.
@@ -588,6 +592,13 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #'                  edge_color_interval = c(-3, 3),
 #'                  node_size_axis_label = "Number of OTUs",
 #'                  node_color_axis_label = "Log2 ratio median proportions")
+#'                  
+#' # How to get results for only some pairs of groups
+#' compare_groups(x, data = "tax_table",
+#'                cols = hmp_samples$sample_id,
+#'                groups = hmp_samples$body_site,
+#'                combinations = list(c('Nose', 'Saliva'),
+#'                                    c('Skin', 'Throat')))
 #' 
 #' }
 #' 
@@ -779,7 +790,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
         }
       }, numeric(1))
     })
-    output <- tibble::as.tibble(output, stringsAsFactors = FALSE)
+    output <- tibble::as_tibble(output, stringsAsFactors = FALSE)
     
     return(output)
   }

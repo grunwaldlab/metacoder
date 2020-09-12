@@ -4,8 +4,16 @@
 \alias{compare_groups}
 \title{Compare groups of samples}
 \usage{
-compare_groups(obj, data, cols, groups, func = NULL,
-  combinations = NULL, other_cols = FALSE, dataset = NULL)
+compare_groups(
+  obj,
+  data,
+  cols,
+  groups,
+  func = NULL,
+  combinations = NULL,
+  other_cols = FALSE,
+  dataset = NULL
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -28,7 +36,7 @@ order and length as \code{cols}.}
 
 \item{func}{The function to apply for each comparison. For each row in 
 \code{data}, for each combination of groups, this function will 
-receive the data for each treatment, passed as two character vectors.
+receive the data for each treatment, passed as two vectors.
 Therefore the function must take at least 2 arguments corresponding to the
 two groups compared. The function should return a vector or list of
 results of a fixed length. If named, the names will be used in the output.
@@ -103,21 +111,30 @@ heat_tree_matrix(x,
                  edge_color_interval = c(-3, 3),
                  node_size_axis_label = "Number of OTUs",
                  node_color_axis_label = "Log2 ratio median proportions")
+                 
+# How to get results for only some pairs of groups
+compare_groups(x, data = "tax_table",
+               cols = hmp_samples$sample_id,
+               groups = hmp_samples$body_site,
+               combinations = list(c('Nose', 'Saliva'),
+                                   c('Skin', 'Throat')))
 
 }
 
 }
 \seealso{
-Other calculations: \code{\link{calc_diff_abund_deseq2}},
-  \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}

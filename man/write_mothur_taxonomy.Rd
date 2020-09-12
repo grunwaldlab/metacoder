@@ -4,9 +4,13 @@
 \alias{write_mothur_taxonomy}
 \title{Write an imitation of the Mothur taxonomy file}
 \usage{
-write_mothur_taxonomy(obj, file,
+write_mothur_taxonomy(
+  obj,
+  file,
   tax_names = obj$get_data("taxon_names")[[1]],
-  ids = obj$get_data("sequence_id")[[1]], scores = NULL)
+  ids = obj$get_data("sequence_id")[[1]],
+  scores = NULL
+)
 }
 \arguments{
 \item{obj}{A taxmap object}
@@ -48,10 +52,12 @@ AY457911	Bacteria;Firmicutes;Clostridiales;Ruminococcus_et_rel.;...
 }
 }
 \seealso{
-Other writers: \code{\link{make_dada2_asv_table}},
-  \code{\link{make_dada2_tax_table}},
-  \code{\link{write_greengenes}}, \code{\link{write_rdp}},
-  \code{\link{write_silva_fasta}},
-  \code{\link{write_unite_general}}
+Other writers: 
+\code{\link{make_dada2_asv_table}()},
+\code{\link{make_dada2_tax_table}()},
+\code{\link{write_greengenes}()},
+\code{\link{write_rdp}()},
+\code{\link{write_silva_fasta}()},
+\code{\link{write_unite_general}()}
 }
 \concept{writers}

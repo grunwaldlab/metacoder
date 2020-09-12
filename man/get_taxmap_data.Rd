@@ -46,10 +46,11 @@ print(metacoder:::get_taxmap_table(x, c(T, F, F))) # invalid
 }
 }
 \seealso{
-Other option parsers: \code{\link{get_taxmap_cols}},
-  \code{\link{get_taxmap_other_cols}},
-  \code{\link{get_taxmap_table}},
-  \code{\link{verify_taxmap}}
+Other option parsers: 
+\code{\link{get_taxmap_cols}()},
+\code{\link{get_taxmap_other_cols}()},
+\code{\link{get_taxmap_table}()},
+\code{\link{verify_taxmap}()}
 }
 \concept{option parsers}
 \keyword{internal}

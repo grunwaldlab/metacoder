@@ -4,12 +4,24 @@
 \alias{ncbi_taxon_sample}
 \title{Download representative sequences for a taxon}
 \usage{
-ncbi_taxon_sample(name = NULL, id = NULL, target_rank,
-  min_counts = NULL, max_counts = NULL, interpolate_min = TRUE,
-  interpolate_max = TRUE, min_children = NULL, max_children = NULL,
-  seqrange = "1:3000", getrelated = FALSE, fuzzy = TRUE,
-  limit = 10, entrez_query = NULL, hypothetical = FALSE,
-  verbose = TRUE)
+ncbi_taxon_sample(
+  name = NULL,
+  id = NULL,
+  target_rank,
+  min_counts = NULL,
+  max_counts = NULL,
+  interpolate_min = TRUE,
+  interpolate_max = TRUE,
+  min_children = NULL,
+  max_children = NULL,
+  seqrange = "1:3000",
+  getrelated = FALSE,
+  fuzzy = TRUE,
+  limit = 10,
+  entrez_query = NULL,
+  hypothetical = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{name}{(\code{character} of length 1) The taxon to download a sample of sequences for.}
@@ -42,31 +54,32 @@ rank must have for its sequences to be searched. The names correspond to taxonom
 \item{max_children}{(named \code{numeric}) The maximum number sub-taxa of taxa for a given
 rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
 
-\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of 
+\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of
 sequence lengths to search for. So \code{"1:1000"} means search for sequences from 1 to 1000
 characters in length.}
 
 \item{getrelated}{(logical) If \code{TRUE}, gets the longest sequences of a species
-in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match 
+in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match
 found.}
 
-\item{fuzzy}{(logical) Whether to do fuzzy taxonomic ID search or exact search. If \code{TRUE},
-we use \code{xXarbitraryXx[porgn:__txid<ID>]}, but if \code{FALSE}, we use \code{txid<ID>}.
-Default: \code{FALSE}}
+\item{fuzzy}{(logical) Whether to do fuzzy taxonomic ID search or exact
+search. If \code{TRUE}, we use \code{xXarbitraryXx[porgn:__txid<ID>]},
+but if \code{FALSE}, we use \code{txid<ID>}. Default: \code{FALSE}}
 
-\item{limit}{(\code{numeric}) Number of sequences to search for and return. Max of 10,000.
-If you search for 6000 records, and only 5000 are found, you will of course
-only get 5000 back.}
+\item{limit}{(\code{numeric}) Number of sequences to search for and return.
+Max of 10,000. If you search for 6000 records, and only 5000 are found,
+you will of course only get 5000 back.}
 
-\item{entrez_query}{(\code{character}; length 1) An Entrez-format query to filter results with.
-This is useful to search for sequences with specific characteristics. The format is the same
-as the one used to seach genbank.
+\item{entrez_query}{(\code{character}; length 1) An Entrez-format query to
+filter results with. This is useful to search for sequences with specific
+characteristics. The format is the same as the one used to seach genbank.
 (\url{https://www.ncbi.nlm.nih.gov/books/NBK3837/#EntrezHelp.Entrez_Searching_Options})}
 
-\item{hypothetical}{(\code{logical}; length 1) If \code{FALSE}, an attempt will be made to not
-return hypothetical or predicted sequences judging from accession number prefixs (XM and XR).
-This can result in less than the \code{limit} being returned even if there are more sequences
-available, since this filtering is done after searching NCBI.}
+\item{hypothetical}{(\code{logical}; length 1) If \code{FALSE}, an attempt
+will be made to not return hypothetical or predicted sequences judging from
+accession number prefixs (XM and XR). This can result in less than the
+\code{limit} being returned even if there are more sequences available,
+since this filtering is done after searching NCBI.}
 
 \item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
 }

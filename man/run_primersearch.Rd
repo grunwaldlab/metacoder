@@ -4,8 +4,14 @@
 \alias{run_primersearch}
 \title{Execute EMBOSS Primersearch}
 \usage{
-run_primersearch(seq_path, primer_path, mismatch = 5,
-  output_path = tempfile(), program_path = "primersearch", ...)
+run_primersearch(
+  seq_path,
+  primer_path,
+  mismatch = 5,
+  output_path = tempfile(),
+  program_path = "primersearch",
+  ...
+)
 }
 \arguments{
 \item{seq_path}{A character vector of length 1. The path to the fasta file containing reference

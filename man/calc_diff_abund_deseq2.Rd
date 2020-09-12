@@ -4,8 +4,15 @@
 \alias{calc_diff_abund_deseq2}
 \title{Differential abundance with DESeq2}
 \usage{
-calc_diff_abund_deseq2(obj, data, cols, groups, other_cols = FALSE,
-  lfc_shrinkage = c("none", "normal", "ashr"), ...)
+calc_diff_abund_deseq2(
+  obj,
+  data,
+  cols,
+  groups,
+  other_cols = FALSE,
+  lfc_shrinkage = c("none", "normal", "ashr"),
+  ...
+)
 }
 \arguments{
 \item{obj}{A \code{\link[taxa]{taxmap}} object}
@@ -86,16 +93,18 @@ heat_tree_matrix(x,
 
 }
 \seealso{
-Other calculations: \code{\link{calc_group_mean}},
-  \code{\link{calc_group_median}},
-  \code{\link{calc_group_rsd}},
-  \code{\link{calc_group_stat}},
-  \code{\link{calc_n_samples}},
-  \code{\link{calc_obs_props}},
-  \code{\link{calc_prop_samples}},
-  \code{\link{calc_taxon_abund}},
-  \code{\link{compare_groups}},
-  \code{\link{counts_to_presence}},
-  \code{\link{rarefy_obs}}, \code{\link{zero_low_counts}}
+Other calculations: 
+\code{\link{calc_group_mean}()},
+\code{\link{calc_group_median}()},
+\code{\link{calc_group_rsd}()},
+\code{\link{calc_group_stat}()},
+\code{\link{calc_n_samples}()},
+\code{\link{calc_obs_props}()},
+\code{\link{calc_prop_samples}()},
+\code{\link{calc_taxon_abund}()},
+\code{\link{compare_groups}()},
+\code{\link{counts_to_presence}()},
+\code{\link{rarefy_obs}()},
+\code{\link{zero_low_counts}()}
 }
 \concept{calculations}

@@ -4,8 +4,14 @@
 \alias{as_phyloseq}
 \title{Convert taxmap to phyloseq}
 \usage{
-as_phyloseq(obj, otu_table = NULL, otu_id_col = "otu_id",
-  sample_data = NULL, sample_id_col = "sample_id", phy_tree = NULL)
+as_phyloseq(
+  obj,
+  otu_table = NULL,
+  otu_id_col = "otu_id",
+  sample_data = NULL,
+  sample_id_col = "sample_id",
+  phy_tree = NULL
+)
 }
 \arguments{
 \item{obj}{The taxmap object.}
