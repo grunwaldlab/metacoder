@@ -701,7 +701,7 @@ compare_groups <- function(obj, data, cols, groups,
   output <- do.call(rbind, output)
   
   # Convert to tibble and return
-  dplyr::as.tbl(output)
+  tibble::as_tibble(output)
 }
 
 
@@ -799,7 +799,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
                   output)
   
   # # Convert to tibble and return
-  dplyr::as.tbl(output)
+  tibble::as_tibble(output)
 }
 
 

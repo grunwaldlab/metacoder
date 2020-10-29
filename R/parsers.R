@@ -737,7 +737,7 @@ parse_phylo  <- function(obj) {
   taxon_ids <- taxon_ids[!is.na(taxon_ids)]
   output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxa::taxon),
                                  taxon_ids)
-  tax_data <- dplyr::as.tbl(data.frame(stringsAsFactors = FALSE,
+  tax_data <- tibble::as_tibble(data.frame(stringsAsFactors = FALSE,
                                        taxon_id = edge_list$to,
                                        edge_length = edge_length,
                                        tip_label = tip_label))

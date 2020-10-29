@@ -1,5 +1,9 @@
 # News 
 
+## Current 
+
+* Replaced depreciated `as.tbl` function from `dplyr`
+
 ##  metacoder 0.3.4
 
 * Added parsing of taxon ranks to the UNITE parser
