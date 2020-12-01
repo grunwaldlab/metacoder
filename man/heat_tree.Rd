@@ -64,6 +64,8 @@ heat_tree(...)
   make_edge_legend = TRUE,
   title = NULL,
   title_size = 0.08,
+  node_legend_title = "Nodes",
+  edge_legend_title = "Edges",
   node_color_axis_label = NULL,
   node_size_axis_label = NULL,
   edge_color_axis_label = NULL,
@@ -246,6 +248,12 @@ Default: Not used.}
 \item{title}{Name to print above the graph.}
 
 \item{title_size}{The size of the title relative to the rest of the graph.}
+
+\item{node_legend_title}{The title of the legend for node data. Can be `NA`
+or `NULL` to remove the title.}
+
+\item{edge_legend_title}{The title of the legend for edge data. Can be `NA`
+or `NULL` to remove the title.}
 
 \item{node_color_axis_label}{The label on the scale axis corresponding to \code{node_color}.
 Default: The expression given to \code{node_color}.}

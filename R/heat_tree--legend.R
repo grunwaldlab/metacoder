@@ -35,6 +35,11 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
                              title_size = 0.11, axis_label_size = 0.11,
                              color_axis_label = NULL, size_axis_label = NULL, hide_size = FALSE,
                              hide_color = FALSE) {
+  # NA is the same as NULL or '' for titles
+  if (! is.null(title) && all(is.na(title))) {
+    title = NULL
+  }
+  
   # if the color is defined explicitly, do not print color scale labels
   explicit_color_scale <- any(is.character(color_stat_range)) || is.null(color_stat_range)
   if (explicit_color_scale) {

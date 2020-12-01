@@ -2,7 +2,8 @@
 
 ## Current 
 
-* Replaced depreciated `as.tbl` function from `dplyr`
+* Replaced depreciated `as.tbl` function from `dplyr`'
+* Added `node_legend_title` and `edge_legend_title` options to `heat_tree` to specify the title for each legend.
 
 ##  metacoder 0.3.4
 

@@ -54,12 +54,12 @@ rank must have for its sequences to be searched. The names correspond to taxonom
 \item{max_children}{(named \code{numeric}) The maximum number sub-taxa of taxa for a given
 rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
 
-\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of 
+\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of
 sequence lengths to search for. So \code{"1:1000"} means search for sequences from 1 to 1000
 characters in length.}
 
 \item{getrelated}{(logical) If \code{TRUE}, gets the longest sequences of a species
-in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match 
+in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match
 found.}
 
 \item{fuzzy}{(logical) Whether to do fuzzy taxonomic ID search or exact

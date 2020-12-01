@@ -204,6 +204,11 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @param title Name to print above the graph.
 #' @param title_size The size of the title relative to the rest of the graph. 
 #' 
+#' @param node_legend_title The title of the legend for node data. Can be `NA`
+#'   or `NULL` to remove the title.
+#' @param edge_legend_title The title of the legend for edge data. Can be `NA`
+#'   or `NULL` to remove the title.
+#' 
 #' @param node_color_axis_label The label on the scale axis corresponding to \code{node_color}.
 #' Default: The expression given to \code{node_color}.
 #' @param node_size_axis_label The label on the scale axis corresponding to \code{node_size}.
@@ -498,6 +503,9 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               make_edge_legend = TRUE,
                               title = NULL,
                               title_size = 0.08,
+                              
+                              node_legend_title = "Nodes",
+                              edge_legend_title = "Edges",
                               
                               node_color_axis_label = NULL, 
                               node_size_axis_label = NULL,
@@ -1075,7 +1083,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                       color_trans_range = node_color_interval_trans,
                                       color_stat_range = node_color_interval, 
                                       color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
-                                      title = "Nodes",
+                                      title = node_legend_title,
                                       color_axis_label = node_color_axis_label,
                                       size_axis_label = node_size_axis_label,
                                       hide_size = missing(node_size),
@@ -1103,7 +1111,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                       color_trans_range = edge_color_interval_trans,
                                       color_stat_range = edge_color_interval, 
                                       color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
-                                      title = "Edges",
+                                      title = edge_legend_title,
                                       color_axis_label = edge_color_axis_label,
                                       size_axis_label = edge_size_axis_label,
                                       hide_size = missing(edge_size),
