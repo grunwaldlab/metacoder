@@ -153,8 +153,8 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   }
   
   # remove empty column/row
-  layout_matrix <- layout_matrix[! apply(layout_matrix, MARGIN = 1, function(x) all(is.na(x))), ]
-  layout_matrix <- layout_matrix[ , ! apply(layout_matrix, MARGIN = 2, function(x) all(is.na(x)))]
+  layout_matrix <- layout_matrix[! apply(layout_matrix, MARGIN = 1, function(x) all(is.na(x))), , drop = FALSE]
+  layout_matrix <- layout_matrix[ , ! apply(layout_matrix, MARGIN = 2, function(x) all(is.na(x))), drop = FALSE]
   
   # Get subplot layout data
   matrix_data <- calc_subplot_coords(layout_matrix, x1 = 0.2, y1 = 0.2, x2 = 0.95, y2 = 0.95)
