@@ -4,6 +4,7 @@
 
 * Replaced depreciated `as.tbl` function from `dplyr`'
 * Added `node_legend_title` and `edge_legend_title` options to `heat_tree` to specify the title for each legend.
+* Added options to `heat_tree` to set the number of significant fingures used for the numbers in the legend.
 
 ##  metacoder 0.3.4
 

@@ -218,6 +218,15 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' @param edge_size_axis_label The label on the scale axis corresponding to \code{edge_size}.
 #' Default: The expression given to \code{edge_size}.
 #' 
+#' @param node_color_digits The number of significant figures used for the numbers on the scale axis corresponding to \code{node_color}.
+#' Default: 3.
+#' @param node_size_digits The number of significant figures used for the numbers on the scale axis corresponding to \code{node_size}.
+#' Default: 3.
+#' @param edge_color_digits The number of significant figures used for the numbers on the scale axis corresponding to \code{edge_color}.
+#' Default: 3.
+#' @param edge_size_digits The number of significant figures used for the numbers on the scale axis corresponding to \code{edge_size}.
+#' Default: 3.
+#' 
 #' @param background_color The background color of the plot.
 #' Default: Transparent
 #' @param output_file The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
@@ -511,6 +520,11 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                               node_size_axis_label = NULL,
                               edge_color_axis_label = NULL, 
                               edge_size_axis_label = NULL,
+                              
+                              node_color_digits = 3, 
+                              node_size_digits = 3,
+                              edge_color_digits = 3, 
+                              edge_size_digits = 3,
                               
                               background_color = "#FFFFFF00",
                               output_file = NULL,
@@ -1077,11 +1091,13 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                       width_range = vsr_plot * 2, 
                                       width_trans_range = range(data$vs_trans) * 2,
                                       width_stat_range =  node_size_interval,
+                                      width_sig_fig = node_size_digits,
                                       group_prefix = "node_legend",
                                       width_stat_trans = transform_data(func = node_size_trans, inverse = TRUE),
                                       color_range = node_color_range,
                                       color_trans_range = node_color_interval_trans,
                                       color_stat_range = node_color_interval, 
+                                      color_sig_fig = node_color_digits,
                                       color_stat_trans =  transform_data(func = node_color_trans, inverse = TRUE),
                                       title = node_legend_title,
                                       color_axis_label = node_color_axis_label,
@@ -1105,11 +1121,13 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                       width_range = esr_plot * 2, 
                                       width_trans_range = range(data$vs_trans) * 2,
                                       width_stat_range =  edge_size_interval,
+                                      width_sig_fig = edge_size_digits,
                                       group_prefix = "edge_legend",
                                       width_stat_trans = transform_data(func = edge_size_trans, inverse = TRUE),
                                       color_range = edge_color_range,
                                       color_trans_range = edge_color_interval_trans,
                                       color_stat_range = edge_color_interval, 
+                                      color_sig_fig = edge_color_digits,
                                       color_stat_trans =  transform_data(func = edge_color_trans, inverse = TRUE),
                                       title = edge_legend_title,
                                       color_axis_label = edge_color_axis_label,

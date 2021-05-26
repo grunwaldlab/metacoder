@@ -70,6 +70,10 @@ heat_tree(...)
   node_size_axis_label = NULL,
   edge_color_axis_label = NULL,
   edge_size_axis_label = NULL,
+  node_color_digits = 3,
+  node_size_digits = 3,
+  edge_color_digits = 3,
+  edge_size_digits = 3,
   background_color = "#FFFFFF00",
   output_file = NULL,
   aspect_ratio = 1,
@@ -266,6 +270,18 @@ Default: The expression given to \code{edge_color}.}
 
 \item{edge_size_axis_label}{The label on the scale axis corresponding to \code{edge_size}.
 Default: The expression given to \code{edge_size}.}
+
+\item{node_color_digits}{The number of significant figures used for the numbers on the scale axis corresponding to \code{node_color}.
+Default: 3.}
+
+\item{node_size_digits}{The number of significant figures used for the numbers on the scale axis corresponding to \code{node_size}.
+Default: 3.}
+
+\item{edge_color_digits}{The number of significant figures used for the numbers on the scale axis corresponding to \code{edge_color}.
+Default: 3.}
+
+\item{edge_size_digits}{The number of significant figures used for the numbers on the scale axis corresponding to \code{edge_size}.
+Default: 3.}
 
 \item{background_color}{The background color of the plot.
 Default: Transparent}

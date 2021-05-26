@@ -109,14 +109,14 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   }
   
   # Text output ====================================================================================
-  format_label <- function(n) {
-    as.character(format(signif(n, digits = 3), scientific = FALSE))
+  format_label <- function(n, digits = 3) {
+    as.character(format(signif(n, digits = digits), scientific = FALSE))
   }
   
   scale_undo_trans <- function(points, my_range, my_trans) {
     pre_scaled <- points#rescale(points, to = c(1, 2)) # needed to avoid giving log inverses big inputs
     trans_points <- my_trans(pre_scaled)
-    format_label(rescale(trans_points, to = my_range))
+    rescale(trans_points, to = my_range)
   }
   
   label_color = "#000000"
@@ -125,9 +125,10 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   
   # Size axis labels -------------------------------------------------------------------------------
   if (!hide_size) {
+    label_tick_text <- scale_undo_trans(label_point_y, width_stat_range, width_stat_trans)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(label_point_y, width_stat_range, width_stat_trans),
+                                   label = format_label(label_tick_text, digits = width_sig_fig),
                                    x = max(width_range) * 1.1,
                                    y = rev(label_point_y),
                                    size = label_size,
@@ -139,9 +140,10 @@ make_plot_legend <- function(x, y, length, width_range, width_trans_range = NULL
   }
   # Color axis labels ------------------------------------------------------------------------------
   if (!hide_color) {
+    label_tick_text <- scale_undo_trans(rescale(label_point_y, to = color_trans_range), color_stat_range, color_stat_trans)
     label_data <- rbind(label_data, 
                         data.frame(stringsAsFactors = FALSE, 
-                                   label = scale_undo_trans(rescale(label_point_y, to = color_trans_range), color_stat_range, color_stat_trans),
+                                   label = format_label(label_tick_text, digits = color_sig_fig),
                                    x = 0 - max(width_range) * 0.1,
                                    y = rev(label_point_y),
                                    size = label_size,
