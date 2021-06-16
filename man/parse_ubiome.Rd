@@ -33,6 +33,8 @@ The input file has a format like:
 }
 \seealso{
 Other parsers: 
+\code{\link{extract_tax_data}()},
+\code{\link{lookup_tax_data}()},
 \code{\link{parse_dada2}()},
 \code{\link{parse_edge_list}()},
 \code{\link{parse_greengenes}()},
@@ -44,6 +46,7 @@ Other parsers:
 \code{\link{parse_qiime_biom}()},
 \code{\link{parse_rdp}()},
 \code{\link{parse_silva_fasta}()},
+\code{\link{parse_tax_data}()},
 \code{\link{parse_unite_general}()}
 }
 \concept{parsers}

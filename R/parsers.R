@@ -5,9 +5,9 @@
 #' @param obj A phyloseq object
 #' @param class_regex A regular expression used to parse data in the taxon
 #'   names. There must be a capture group (a pair of parentheses) for each item
-#'   in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
+#'   in \code{class_key}. See \code{\link{parse_tax_data}} for examples of
 #'   how this works.
-#' @inheritParams taxa::parse_tax_data
+#' @inheritParams parse_tax_data
 #'
 #' @return A taxmap object
 #'
@@ -42,7 +42,7 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   mappings <- c()
   
   # Parse taxonomic data
-  possible_ranks <- unique(unlist(strsplit(taxa::ranks_ref$ranks, split = ",")))
+  possible_ranks <- unique(unlist(strsplit(ranks_ref$ranks, split = ",")))
   tax_data <- as.data.frame(obj@tax_table, stringsAsFactors = FALSE)
   tax_cols <- colnames(tax_data)
   tax_data <- cbind(data.frame(otu_id = rownames(tax_data), stringsAsFactors = FALSE), tax_data)
@@ -84,7 +84,7 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   }
   
   # Construct output
-  output <- taxa::parse_tax_data(tax_data = tax_data, 
+  output <- parse_tax_data(tax_data = tax_data, 
                                  datasets = datasets,
                                  class_cols = tax_cols, 
                                  mappings = mappings,
@@ -201,7 +201,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
   
   if (is_detailed) {
     # parse raw table
-    output <- taxa::parse_tax_data(tax_data = raw_data,
+    output <- parse_tax_data(tax_data = raw_data,
                                    class_cols = "rankID",
                                    class_sep = ".")
     # replace taxon names
@@ -216,7 +216,7 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
                                           }),
                                    names(output$taxa))
   } else { # is simple format
-    output <- taxa::parse_tax_data(tax_data = raw_data,
+    output <- parse_tax_data(tax_data = raw_data,
                                    class_cols = "taxon",
                                    class_sep = ";")
   }
@@ -281,7 +281,7 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
   
   # Parse raw lines
   if (has_scores) {
-    output <- taxa::extract_tax_data(tax_data = raw_lines,
+    output <- extract_tax_data(tax_data = raw_lines,
                                      class_sep = ";",
                                      key = c("sequence_id" = "info",
                                              raw_tax = "class"),
@@ -290,7 +290,7 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
                                                    score = "info"),
                                      class_regex = "^(.+)\\(([0-9]+)\\)$")
   } else {
-    output <- taxa::extract_tax_data(tax_data = raw_lines,
+    output <- extract_tax_data(tax_data = raw_lines,
                                      class_sep = ";",
                                      key = c("sequence_id" = "info",
                                              raw_tax = "class"),
@@ -317,9 +317,9 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' @param file (\code{character} of length 1) The file path to the input file.
 #' @param class_regex A regular expression used to parse data in the taxon
 #'   names. There must be a capture group (a pair of parentheses) for each item
-#'   in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
+#'   in \code{class_key}. See \code{\link{parse_tax_data}} for examples of
 #'   how this works.
-#' @inheritParams taxa::parse_tax_data
+#' @inheritParams parse_tax_data
 #' 
 #' @return A taxmap object
 #' 
@@ -364,7 +364,7 @@ parse_qiime_biom <- function(file, class_regex = "(.*)",
   
   # Create a taxmap object
   if (is.data.frame(taxonomy)) {
-    output <- taxa::parse_tax_data(tax_data = taxonomy,
+    output <- parse_tax_data(tax_data = taxonomy,
                                    class_cols = colnames(taxonomy),
                                    datasets = list(otu_table = otu_table),
                                    mappings = c("{{name}}" = "{{name}}"),
@@ -372,7 +372,7 @@ parse_qiime_biom <- function(file, class_regex = "(.*)",
                                    class_regex = class_regex,
                                    class_key = class_key)
   } else {
-    output <- taxa::parse_tax_data(tax_data = taxonomy,
+    output <- parse_tax_data(tax_data = taxonomy,
                                    datasets = list(otu_table = otu_table),
                                    mappings = c("{{name}}" = "{{name}}"),
                                    include_tax_data = FALSE,
@@ -457,7 +457,7 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
   headers <- names(seqs)
 
   # Create taxmap object
-  output <- taxa::extract_tax_data(tax_data = headers,
+  output <- extract_tax_data(tax_data = headers,
                                    regex = "^(.*)\\|(.*)\\|(.*)\\|(.*)\\|(.*)$",
                                    key = c(organism = "info",
                                            acc_num = "info",
@@ -531,7 +531,7 @@ parse_rdp <- function(input = NULL, file = NULL, include_seqs = TRUE, add_specie
   }
   
   # Create taxmap object
-  output <- taxa::extract_tax_data(tax_data = headers,
+  output <- extract_tax_data(tax_data = headers,
                                    regex = "^(.*?) (.*)\\tLineage=(.*)$",
                                    key = c(rdp_id = "info", seq_name = "info",
                                            tax_string = "class"),
@@ -598,7 +598,7 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
   headers <- gsub(headers, pattern = "\\[|\\]", replacement = "")
   
   # Create taxmap object
-  output <- taxa::extract_tax_data(tax_data = headers,
+  output <- extract_tax_data(tax_data = headers,
                                    regex = "^(.*)\\.([0-9]*)\\.([0-9]*) (.*)$",
                                    key = c(ncbi_id = "info",
                                            start_pos = "info",
@@ -670,7 +670,7 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
   # Parse taxonomy file
   tax_data <- utils::read.table(tax_file, sep = "\t")
   colnames(tax_data) <- c("gg_id", "classification")
-  result <- taxa::parse_tax_data(tax_data, class_cols = "classification", 
+  result <- parse_tax_data(tax_data, class_cols = "classification", 
                                  class_sep = "; ",
                                  class_regex = "^([a-z]{1})__(.*)$", 
                                  class_key = c("gg_rank" = "info", "name" = "taxon_name"))
@@ -731,11 +731,11 @@ parse_phylo  <- function(obj) {
   tip_label[is_tip] <- obj$tip.label
   
   # Build taxmap object
-  output <- taxa::taxmap()
+  output <- taxmap()
   output$edge_list <- edge_list
   taxon_ids <- unique(unlist(output$edge_list))
   taxon_ids <- taxon_ids[!is.na(taxon_ids)]
-  output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxa::taxon),
+  output$taxa <- stats::setNames(lapply(paste0("node_", taxon_ids), taxon),
                                  taxon_ids)
   tax_data <- tibble::as_tibble(data.frame(stringsAsFactors = FALSE,
                                        taxon_id = edge_list$to,
@@ -802,7 +802,7 @@ parse_ubiome <- function(file = NULL, table = NULL) {
 
 #' Convert a table with an edge list to taxmap
 #'
-#' Converts a table containing an edge list into a [taxa::taxmap()] object.
+#' Converts a table containing an edge list into a [taxmap()] object.
 #' An "edge list" is two columns in a table, where each row defines a taxon-supertaxon relationship.
 #' The contents of the edge list will be used as taxon IDs.
 #' The whole table will be included as a data set in the output object.
@@ -860,7 +860,7 @@ parse_edge_list <- function(input, taxon_id, supertaxon_id, taxon_name, taxon_ra
 #'   sequences
 #' @param tax_table The table with taxonomic classifications for ASVs, with ASVs in rows and
 #'   taxonomic ranks as columns.
-#' @inheritParams taxa::parse_tax_data
+#' @inheritParams parse_tax_data
 #'
 #' @return \code{\link{taxmap}}
 #'
@@ -876,7 +876,7 @@ parse_dada2 <- function(seq_table, tax_table, class_key = "taxon_name", class_re
   tax_table <- dplyr::as_tibble(cbind(asv_id = rownames(tax_table), tax_table))
   
   # Convert to taxmap format
-  output <- taxa::parse_tax_data(tax_table,
+  output <- parse_tax_data(tax_table,
                                  class_cols = -1,
                                  named_by_rank = TRUE,
                                  class_key = class_key,

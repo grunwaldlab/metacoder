@@ -16,7 +16,7 @@ compare_groups(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj} that contains data for each 
 sample in columns.}

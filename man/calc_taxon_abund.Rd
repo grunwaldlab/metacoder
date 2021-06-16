@@ -14,7 +14,7 @@ calc_taxon_abund(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data}.}
 
@@ -40,7 +40,7 @@ length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is u
 A tibble
 }
 \description{
-For a given table in a \code{\link[taxa]{taxmap}} object, sum the values in
+For a given table in a \code{\link{taxmap}} object, sum the values in
 each column for each taxon. This is useful to convert per-observation counts
 (e.g. OTU counts) to per-taxon counts.
 }

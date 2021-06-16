@@ -17,7 +17,7 @@ calc_prop_samples(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data}.}
 
@@ -58,7 +58,7 @@ of a table with one column.}
 A tibble
 }
 \description{
-For a given table in a \code{\link[taxa]{taxmap}} object, calculate the
+For a given table in a \code{\link{taxmap}} object, calculate the
 proportion of samples (i.e. columns) with greater than a minimum value.
 }
 \examples{

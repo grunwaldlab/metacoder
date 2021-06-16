@@ -344,7 +344,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' Use EMBOSS primersearch for in silico PCR
 #' 
 #' A pair of primers are aligned against a set of sequences. A
-#' \code{\link[taxa]{taxmap}} object with two tables is returned: a table with
+#' \code{\link{taxmap}} object with two tables is returned: a table with
 #' information for each predicted amplicon, quality of match, and predicted
 #' amplicons, and a table with per-taxon amplification statistics. Requires the
 #' EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
@@ -383,7 +383,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' sequence. See the example code in \code{\link{primersearch_raw}} for a
 #' demonstration of this.
 #' 
-#' @param obj A \code{\link[taxa]{taxmap}} object.
+#' @param obj A \code{\link{taxmap}} object.
 #' @param seqs The sequences to do in silico PCR on. This can be any variable in
 #'   \code{obj$data} listed in \code{all_names(obj)} or an external variable. If
 #'   an external variable (i.e. not in \code{obj$data}), it must be named by
@@ -393,7 +393,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #'   functions). If \code{FALSE}, the input will be changed without saving the result, which uses less RAM.
 #' @inheritParams primersearch_raw
 #' 
-#' @return A copy of the input \code{\link[taxa]{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
+#' @return A copy of the input \code{\link{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
 #' 
 #' \preformatted{
 #'            (f_primer)

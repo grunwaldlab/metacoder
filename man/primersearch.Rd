@@ -7,7 +7,7 @@
 primersearch(obj, seqs, forward, reverse, mismatch = 5, clone = TRUE)
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object.}
+\item{obj}{A \code{\link{taxmap}} object.}
 
 \item{seqs}{The sequences to do in silico PCR on. This can be any variable in
 \code{obj$data} listed in \code{all_names(obj)} or an external variable. If
@@ -25,7 +25,7 @@ Currently, only character vectors are accepted.}
 functions). If \code{FALSE}, the input will be changed without saving the result, which uses less RAM.}
 }
 \value{
-A copy of the input \code{\link[taxa]{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
+A copy of the input \code{\link{taxmap}} object with two tables added. One table contains amplicon information with one row per predicted amplicon with the following info:
 
 \preformatted{
            (f_primer)
@@ -79,7 +79,7 @@ The other table contains per-taxon information about the PCR, with one row per t
 }
 \description{
 A pair of primers are aligned against a set of sequences. A
-\code{\link[taxa]{taxmap}} object with two tables is returned: a table with
+\code{\link{taxmap}} object with two tables is returned: a table with
 information for each predicted amplicon, quality of match, and predicted
 amplicons, and a table with per-taxon amplification statistics. Requires the
 EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.

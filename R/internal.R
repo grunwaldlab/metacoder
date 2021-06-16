@@ -140,9 +140,9 @@ check_for_pkg <- function(package) {
 #' @return `NULL`
 #'
 #' @examples
-#' taxa:::limited_print(1:100)
-#' taxa:::limited_print(1:10000)
-#' taxa:::limited_print(1:10000, prefix = "stuff:")
+#' limited_print(1:100)
+#' limited_print(1:10000)
+#' limited_print(1:10000, prefix = "stuff:")
 #'
 #' @keywords internal
 limited_print <- function(chars, prefix = "",

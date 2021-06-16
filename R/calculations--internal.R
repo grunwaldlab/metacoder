@@ -51,7 +51,7 @@ get_numeric_cols <- function(obj, data, cols = NULL) {
 #' columns. This function handles all of the option parsing and formatting of
 #' the result.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
+#' @param obj A \code{\link{taxmap}} object
 #' @param data The name of a table in \code{obj$data}.
 #' @param func The function to apply. Should have the following form:
 #'   \code{function(count_table, cols = cols, groups = groups)} and return a table.

@@ -13,7 +13,7 @@ is_ambiguous(
 )
 }
 \arguments{
-\item{taxon_names}{A \code{\link[taxa]{taxmap}} object}
+\item{taxon_names}{A \code{\link{taxmap}} object}
 
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
 placeholders for unknown taxa (e.g. "unknown ...").}

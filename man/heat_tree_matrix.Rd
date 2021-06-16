@@ -20,7 +20,7 @@ heat_tree_matrix(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data} that is the output of 
 \code{\link{compare_groups}} or in the same format.}

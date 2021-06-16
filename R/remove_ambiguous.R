@@ -87,7 +87,7 @@ ambiguous_patterns <- function(unknown = TRUE, uncultured = TRUE, case_variation
 #' If you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #'
-#' @param taxon_names A \code{\link[taxa]{taxmap}} object
+#' @param taxon_names A \code{\link{taxmap}} object
 #' @inheritParams ambiguous_patterns
 #' @param ignore_case If \code{TRUE}, dont consider the case of the text when
 #'   determining a match.
@@ -115,17 +115,17 @@ is_ambiguous <- function(taxon_names, unknown = TRUE, uncultured = TRUE,
 #'
 #' Filter out taxa with ambiguous names, such as "unknown" or "uncultured".
 #' NOTE: some parameters of this function are passed to
-#' \code{\link[taxa]{filter_taxa}} with the "invert" option set to \code{TRUE}.
-#' Works the same way as \code{\link[taxa]{filter_taxa}} for the most part.
+#' \code{\link{filter_taxa}} with the "invert" option set to \code{TRUE}.
+#' Works the same way as \code{\link{filter_taxa}} for the most part.
 #' 
 #' If you encounter a taxon name that represents an ambiguous taxon that is not
 #' filtered out by this function, let us know and we will add it.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
+#' @param obj A \code{\link{taxmap}} object
 #' @inheritParams is_ambiguous
-#' @inheritParams taxa::filter_taxa
+#' @inheritParams filter_taxa
 #'
-#' @return A \code{\link[taxa]{taxmap}} object
+#' @return A \code{\link{taxmap}} object
 #'
 #' @examples 
 #' obj <- parse_tax_data(c("Plantae;Solanaceae;Solanum;lycopersicum",
@@ -145,7 +145,7 @@ filter_ambiguous_taxa <- function(obj, unknown = TRUE, uncultured = TRUE,
                             uncultured = uncultured, name_regex = name_regex,
                             ignore_case = ignore_case)
   
-  taxa::filter_taxa(obj, to_remove, invert = TRUE, 
+  filter_taxa(obj, to_remove, invert = TRUE, 
                     subtaxa = subtaxa, drop_obs = drop_obs,
                     reassign_obs = reassign_obs, reassign_taxa = reassign_taxa)
 }

@@ -1,6 +1,6 @@
 #' Calculate means of groups of columns
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' For a given table in a \code{\link{taxmap}} object, split columns by a
 #' grouping factor and return row means in a table.
 #'
 #' @inheritParams do_calc_on_num_cols
@@ -59,7 +59,7 @@ calc_group_mean <- function(obj, data, groups, cols = NULL,
 
 #' Relative standard deviations of groups of columns
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' For a given table in a \code{\link{taxmap}} object, split columns by a
 #' grouping factor and return the relative standard deviation for each row in a
 #' table. The relative standard deviation is the standard deviation divided by
 #' the mean of a set of numbers. It is useful for comparing the variation when
@@ -122,7 +122,7 @@ calc_group_rsd <- function(obj, data, groups, cols = NULL,
 
 #' Calculate medians of groups of columns
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+#' For a given table in a \code{\link{taxmap}} object, split columns by a
 #' grouping factor and return row medians in a table.
 #'
 #' @inheritParams do_calc_on_num_cols
@@ -180,7 +180,7 @@ calc_group_median <- function(obj, data, groups, cols = NULL,
 
 #' Apply a function to groups of columns
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
+#' For a given table in a \code{\link{taxmap}} object, apply a function to
 #' rows in groups of columns. The result of the function is used to create new
 #' columns. This is equivalent to splitting columns of a table by a factor and
 #' using \code{apply} on each group.
@@ -259,7 +259,7 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
 
 #' Calculate proportions from observation counts
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, convert one or more
+#' For a given table in a \code{\link{taxmap}} object, convert one or more
 #' columns containing counts to proportions. This is meant to be used with
 #' counts associated with observations (e.g. OTUs), as opposed to counts that
 #' have already been summed per taxon.
@@ -338,7 +338,7 @@ calc_obs_props <- function(obj, data, cols = NULL, groups = NULL,
 
 #' Replace low counts with zero
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, convert all counts
+#' For a given table in a \code{\link{taxmap}} object, convert all counts
 #' below a minimum number to zero. This is useful for effectively removing
 #' "singletons", "doubletons", or other low abundance counts.
 #'
@@ -433,7 +433,7 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
 
 #' Calculate rarefied observation counts
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, rarefy counts to a constant total. This
+#' For a given table in a \code{\link{taxmap}} object, rarefy counts to a constant total. This
 #' is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 #' which columns are numeric and handles the reformatting needed to use tibbles.
 #'
@@ -510,7 +510,7 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #' plotting function \code{\link{heat_tree_matrix}} is useful for visualizing
 #' these results.
 #' 
-#' @param obj A \code{\link[taxa]{taxmap}} object
+#' @param obj A \code{\link{taxmap}} object
 #' @param data The name of a table in \code{obj} that contains data for each 
 #'   sample in columns.
 #' @param cols The names/indexes of columns in \code{data} to use. By
@@ -707,7 +707,7 @@ compare_groups <- function(obj, data, cols, groups,
 
 #' Sum observation values for each taxon
 #' 
-#' For a given table in a \code{\link[taxa]{taxmap}} object, sum the values in
+#' For a given table in a \code{\link{taxmap}} object, sum the values in
 #' each column for each taxon. This is useful to convert per-observation counts
 #' (e.g. OTU counts) to per-taxon counts.
 #' 
@@ -805,7 +805,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 
 #' Count the number of samples
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, count the number of
+#' For a given table in a \code{\link{taxmap}} object, count the number of
 #' samples (i.e. columns) with greater than a minimum value.
 #' 
 #' @inheritParams do_calc_on_num_cols
@@ -896,7 +896,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 
 #' Calculate the proportion of samples
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, calculate the
+#' For a given table in a \code{\link{taxmap}} object, calculate the
 #' proportion of samples (i.e. columns) with greater than a minimum value.
 #' 
 #' @inheritParams do_calc_on_num_cols
@@ -987,7 +987,7 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
 
 #' Apply a function to groups of columns
 #'
-#' For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
+#' For a given table in a \code{\link{taxmap}} object, apply a function to
 #' rows in groups of columns. The result of the function is used to create new
 #' columns. This is equivalent to splitting columns of a table by a factor and
 #' using \code{apply} on each group.

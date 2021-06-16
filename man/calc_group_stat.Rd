@@ -16,7 +16,7 @@ calc_group_stat(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data}.}
 
@@ -56,7 +56,7 @@ length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is u
 A tibble
 }
 \description{
-For a given table in a \code{\link[taxa]{taxmap}} object, apply a function to
+For a given table in a \code{\link{taxmap}} object, apply a function to
 rows in groups of columns. The result of the function is used to create new
 columns. This is equivalent to splitting columns of a table by a factor and
 using \code{apply} on each group.

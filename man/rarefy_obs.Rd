@@ -15,7 +15,7 @@ rarefy_obs(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data}.}
 
@@ -50,7 +50,7 @@ length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is u
 A tibble
 }
 \description{
-For a given table in a \code{\link[taxa]{taxmap}} object, rarefy counts to a constant total. This
+For a given table in a \code{\link{taxmap}} object, rarefy counts to a constant total. This
 is a wrapper around \code{\link[vegan]{rrarefy}} that automatically detects
 which columns are numeric and handles the reformatting needed to use tibbles.
 }

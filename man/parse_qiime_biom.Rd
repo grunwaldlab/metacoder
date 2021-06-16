@@ -11,17 +11,17 @@ parse_qiime_biom(file, class_regex = "(.*)", class_key = "taxon_name")
 
 \item{class_regex}{A regular expression used to parse data in the taxon
 names. There must be a capture group (a pair of parentheses) for each item
-in \code{class_key}. See \code{\link[taxa]{parse_tax_data}} for examples of
+in \code{class_key}. See \code{\link{parse_tax_data}} for examples of
 how this works.}
 
-\item{class_key}{(\code{character} of length 1) The identity of the capturing groups defined using
-\code{class_regex}. The length of \code{class_key} must be equal to the number of capturing groups
-specified in \code{class_regex}. Any names added to the terms will be used as column names in the
-output. At least one \code{"taxon_name"} must be specified. Only \code{"info"} can be used multiple
-times. Each term must be one of those described below: * \code{taxon_name}: The name of a taxon. Not
-necessarily unique, but are interpretable by a particular \code{database}. Requires an internet
-connection. * \code{taxon_rank}: The rank of the taxon. This will be used to add rank info into the
-output object that can be accessed by \code{out$taxon_ranks()}. * \code{info}: Arbitrary taxon info you
+\item{class_key}{(`character` of length 1) The identity of the capturing groups defined using
+`class_regex`. The length of `class_key` must be equal to the number of capturing groups
+specified in `class_regex`. Any names added to the terms will be used as column names in the
+output. At least one `"taxon_name"` must be specified. Only `"info"` can be used multiple
+times. Each term must be one of those described below: * `taxon_name`: The name of a taxon. Not
+necessarily unique, but are interpretable by a particular `database`. Requires an internet
+connection. * `taxon_rank`: The rank of the taxon. This will be used to add rank info into the
+output object that can be accessed by `out$taxon_ranks()`. * `info`: Arbitrary taxon info you
 want included in the output. Can be used more than once.}
 }
 \value{
@@ -38,6 +38,8 @@ http://geoffreyzahn.com/getting-your-otu-table-into-r/.
 }
 \seealso{
 Other parsers: 
+\code{\link{extract_tax_data}()},
+\code{\link{lookup_tax_data}()},
 \code{\link{parse_dada2}()},
 \code{\link{parse_edge_list}()},
 \code{\link{parse_greengenes}()},
@@ -48,6 +50,7 @@ Other parsers:
 \code{\link{parse_phylo}()},
 \code{\link{parse_rdp}()},
 \code{\link{parse_silva_fasta}()},
+\code{\link{parse_tax_data}()},
 \code{\link{parse_ubiome}()},
 \code{\link{parse_unite_general}()}
 }

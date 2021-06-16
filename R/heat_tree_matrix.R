@@ -4,7 +4,7 @@
 #' labelled tree serves as a key for the matrix of smaller unlabelled trees. The
 #' data for this function is typically created with \code{\link{compare_groups}},
 #' 
-#' @param obj A \code{\link[taxa]{taxmap}} object
+#' @param obj A \code{\link{taxmap}} object
 #' @param data The name of a table in \code{obj$data} that is the output of 
 #'   \code{\link{compare_groups}} or in the same format.
 #' @param label_small_trees If \code{TRUE} add labels to small trees as well as 
@@ -125,7 +125,7 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
                         } else {
                           set.seed(seed)
                           obj %>%
-                            taxa::filter_obs(data,
+                            filter_obs(data,
                                              (treat_1 == treatments[combinations[index, 1]] &
                                                 treat_2 == treatments[combinations[index, 2]]) |
                                                (treat_1 == treatments[combinations[index, 2]] &

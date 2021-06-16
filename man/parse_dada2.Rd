@@ -19,24 +19,24 @@ sequences}
 \item{tax_table}{The table with taxonomic classifications for ASVs, with ASVs in rows and
 taxonomic ranks as columns.}
 
-\item{class_key}{(\code{character} of length 1) The identity of the capturing groups defined using
-\code{class_regex}. The length of \code{class_key} must be equal to the number of capturing groups
-specified in \code{class_regex}. Any names added to the terms will be used as column names in the
-output. At least one \code{"taxon_name"} must be specified. Only \code{"info"} can be used multiple
-times. Each term must be one of those described below: * \code{taxon_name}: The name of a taxon. Not
-necessarily unique, but are interpretable by a particular \code{database}. Requires an internet
-connection. * \code{taxon_rank}: The rank of the taxon. This will be used to add rank info into the
-output object that can be accessed by \code{out$taxon_ranks()}. * \code{info}: Arbitrary taxon info you
+\item{class_key}{(`character` of length 1) The identity of the capturing groups defined using
+`class_regex`. The length of `class_key` must be equal to the number of capturing groups
+specified in `class_regex`. Any names added to the terms will be used as column names in the
+output. At least one `"taxon_name"` must be specified. Only `"info"` can be used multiple
+times. Each term must be one of those described below: * `taxon_name`: The name of a taxon. Not
+necessarily unique, but are interpretable by a particular `database`. Requires an internet
+connection. * `taxon_rank`: The rank of the taxon. This will be used to add rank info into the
+output object that can be accessed by `out$taxon_ranks()`. * `info`: Arbitrary taxon info you
 want included in the output. Can be used more than once.}
 
-\item{class_regex}{(\code{character} of length 1) A regular expression with capturing groups
-indicating the locations of data for each taxon in the \code{class} term in the \code{key} argument. The
-identity of the information must be specified using the \code{class_key} argument. The \code{class_sep}
+\item{class_regex}{(`character` of length 1) A regular expression with capturing groups
+indicating the locations of data for each taxon in the `class` term in the `key` argument. The
+identity of the information must be specified using the `class_key` argument. The `class_sep`
 option can be used to split the classification into data for each taxon before matching. If
-\code{class_sep} is \code{NULL}, each match of \code{class_regex} defines a taxon in the classification.}
+`class_sep` is `NULL`, each match of `class_regex` defines a taxon in the classification.}
 
-\item{include_match}{(\code{logical} of length 1) If \code{TRUE}, include the part of the input matched by
-\code{class_regex} in the output object.}
+\item{include_match}{(`logical` of length 1) If `TRUE`, include the part of the input matched by
+`class_regex` in the output object.}
 }
 \value{
 \code{\link{taxmap}}
@@ -48,6 +48,8 @@ shttps://benjjneb.github.io/dada2/tutorial.html
 }
 \seealso{
 Other parsers: 
+\code{\link{extract_tax_data}()},
+\code{\link{lookup_tax_data}()},
 \code{\link{parse_edge_list}()},
 \code{\link{parse_greengenes}()},
 \code{\link{parse_mothur_tax_summary}()},
@@ -58,6 +60,7 @@ Other parsers:
 \code{\link{parse_qiime_biom}()},
 \code{\link{parse_rdp}()},
 \code{\link{parse_silva_fasta}()},
+\code{\link{parse_tax_data}()},
 \code{\link{parse_ubiome}()},
 \code{\link{parse_unite_general}()}
 }

@@ -17,7 +17,7 @@ filter_ambiguous_taxa(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{unknown}{If \code{TRUE}, Remove taxa with names the suggest they are
 placeholders for unknown taxa (e.g. "unknown ...").}
@@ -31,44 +31,45 @@ For example, "[a-z]" would mean taxon names can only be lower case letters.}
 \item{ignore_case}{If \code{TRUE}, dont consider the case of the text when
 determining a match.}
 
-\item{subtaxa}{(\code{logical} or \code{numeric} of length 1) If \code{TRUE}, include
+\item{subtaxa}{(`logical` or `numeric` of length 1) If `TRUE`, include
 subtaxa of taxa passing the filter. Positive numbers indicate the number of
-ranks below the target taxa to return. \code{0} is equivalent to \code{FALSE}.
-Negative numbers are equivalent to \code{TRUE}.}
+ranks below the target taxa to return. `0` is equivalent to `FALSE`.
+Negative numbers are equivalent to `TRUE`.}
 
-\item{drop_obs}{(\code{logical})  This option only applies to \code{\link[taxa:taxmap]{taxmap()}} objects.
-If \code{FALSE}, include observations (i.e. user-defined data in \code{obj$data})
+\item{drop_obs}{(`logical`)  This option only applies to [taxmap()] objects.
+If `FALSE`, include observations (i.e. user-defined data in `obj$data`)
 even if the taxon they are assigned to is filtered out. Observations
 assigned to removed taxa will be assigned to \code{NA}. This option can be
-either simply \code{TRUE}/\code{FALSE}, meaning that all data sets will be treated
+either simply `TRUE`/`FALSE`, meaning that all data sets will be treated
 the same, or a logical vector can be supplied with names corresponding one
-or more data sets in \code{obj$data}. For example, \code{c(abundance = FALSE, stats = TRUE)} would include observations whose taxon was filtered out in
-\code{obj$data$abundance}, but not in \code{obj$data$stats}. See the \code{reassign_obs}
+or more data sets in `obj$data`. For example, `c(abundance = FALSE, stats =
+TRUE)` would include observations whose taxon was filtered out in
+`obj$data$abundance`, but not in `obj$data$stats`. See the `reassign_obs`
 option below for further complications.}
 
-\item{reassign_obs}{(\code{logical} of length 1) This option only applies to
-\code{\link[taxa:taxmap]{taxmap()}} objects. If \code{TRUE}, observations (i.e. user-defined data in
-\code{obj$data}) assigned to removed taxa will be reassigned to the closest
+\item{reassign_obs}{(`logical` of length 1) This option only applies to
+[taxmap()] objects. If `TRUE`, observations (i.e. user-defined data in
+`obj$data`) assigned to removed taxa will be reassigned to the closest
 supertaxon that passed the filter. If there are no supertaxa of such an
-observation that passed the filter, they will be filtered out if \code{drop_obs}
-is \code{TRUE}. This option can be either simply \code{TRUE}/\code{FALSE}, meaning that
+observation that passed the filter, they will be filtered out if `drop_obs`
+is `TRUE`. This option can be either simply `TRUE`/`FALSE`, meaning that
 all data sets will be treated the same, or a logical vector can be supplied
-with names corresponding one or more data sets in \code{obj$data}. For example,
-\code{c(abundance = TRUE, stats = FALSE)} would reassign observations in
-\code{obj$data$abundance}, but not in \code{obj$data$stats}.}
+with names corresponding one or more data sets in `obj$data`. For example,
+`c(abundance = TRUE, stats = FALSE)` would reassign observations in
+`obj$data$abundance`, but not in `obj$data$stats`.}
 
-\item{reassign_taxa}{(\code{logical} of length 1) If \code{TRUE}, subtaxa of removed
+\item{reassign_taxa}{(`logical` of length 1) If `TRUE`, subtaxa of removed
 taxa will be reassigned to the closest supertaxon that passed the filter.
 This is useful for removing intermediate levels of a taxonomy.}
 }
 \value{
-A \code{\link[taxa]{taxmap}} object
+A \code{\link{taxmap}} object
 }
 \description{
 Filter out taxa with ambiguous names, such as "unknown" or "uncultured".
 NOTE: some parameters of this function are passed to
-\code{\link[taxa]{filter_taxa}} with the "invert" option set to \code{TRUE}.
-Works the same way as \code{\link[taxa]{filter_taxa}} for the most part.
+\code{\link{filter_taxa}} with the "invert" option set to \code{TRUE}.
+Works the same way as \code{\link{filter_taxa}} for the most part.
 }
 \details{
 If you encounter a taxon name that represents an ambiguous taxon that is not

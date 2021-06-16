@@ -15,7 +15,7 @@ calc_group_median(
 )
 }
 \arguments{
-\item{obj}{A \code{\link[taxa]{taxmap}} object}
+\item{obj}{A \code{\link{taxmap}} object}
 
 \item{data}{The name of a table in \code{obj$data}.}
 
@@ -51,7 +51,7 @@ length and order as \code{cols} (or \code{unique(groups)}, if \code{groups} is u
 A tibble
 }
 \description{
-For a given table in a \code{\link[taxa]{taxmap}} object, split columns by a
+For a given table in a \code{\link{taxmap}} object, split columns by a
 grouping factor and return row medians in a table.
 }
 \examples{
