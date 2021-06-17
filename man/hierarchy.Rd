@@ -62,14 +62,6 @@ On initialization, taxa are sorted if they have ranks with a known
 res$taxa
 res$ranklist
 
-# pop off a rank
-pop(res, ranks("family"))
-
-# pick a rank
-(res <- hierarchy(z, y, x))
-pick(res, ranks("family"))
-
-
 # null taxa
 x <- taxon(NULL)
 (res <- hierarchy(x, x, x))

@@ -1,6 +1,5 @@
 ## Testing `taxonomy` class
 
-library(taxa)
 library(testthat)
 context("taxonomy")
 

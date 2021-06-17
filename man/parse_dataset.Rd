@@ -24,3 +24,4 @@ The indexes for the datasets selected
 \description{
 Parse options specifying datasets in taxmap objects
 }
+\keyword{internal}

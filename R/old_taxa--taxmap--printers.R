@@ -13,10 +13,6 @@
 #' @param prefix (`numeric` of length 1) What to print in front of each
 #'   line.
 #'
-#' @examples
-#' taxa:::print_item(ex_taxmap, ex_taxmap$data$info)
-#' taxa:::print_item(ex_taxmap, 1:100)
-#'
 #' @keywords internal
 print_item <- function(obj, data, name = NULL, max_rows = 3, max_items = 3,
                        max_width = getOption("width") - 10, prefix = "") {

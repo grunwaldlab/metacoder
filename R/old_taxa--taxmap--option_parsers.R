@@ -10,6 +10,8 @@
 #' @param rm_na If TRUE, then invalid datasets do result in NAs in the output.
 #'
 #' @return The indexes for the datasets selected
+#' 
+#' @keywords internal
 parse_dataset = function(obj, data, must_be_valid = TRUE, needed = TRUE, rm_na = TRUE) {
 
   output <- NULL

@@ -34,9 +34,4 @@ line.}
 \description{
 Used to print each item in the `taxmap` print method.
 }
-\examples{
-taxa:::print_item(ex_taxmap, ex_taxmap$data$info)
-taxa:::print_item(ex_taxmap, 1:100)
-
-}
 \keyword{internal}

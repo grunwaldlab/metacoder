@@ -20,7 +20,7 @@ parse_edge_list(input, taxon_id, supertaxon_id, taxon_name, taxon_rank = NULL)
 \item{taxon_rank}{xxx}
 }
 \description{
-Converts a table containing an edge list into a [taxa::taxmap()] object.
+Converts a table containing an edge list into a [taxmap()] object.
 An "edge list" is two columns in a table, where each row defines a taxon-supertaxon relationship.
 The contents of the edge list will be used as taxon IDs.
 The whole table will be included as a data set in the output object.

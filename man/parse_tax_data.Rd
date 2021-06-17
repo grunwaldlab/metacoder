@@ -95,7 +95,7 @@ Cannot be used with the `sep`, `class_regex`, or `class_key` options.}
 }
 \description{
 Reads taxonomic information and associated data in tables, lists, and vectors and stores it in a
-[taxa::taxmap()] object. [Taxonomic
+[taxmap()] object. [Taxonomic
 classifications](https://en.wikipedia.org/wiki/Taxonomy_(biology)#Classifying_organisms) must be
 present.
 }

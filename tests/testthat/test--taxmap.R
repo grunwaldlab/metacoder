@@ -1,6 +1,5 @@
 ## Testing `taxmap` class
 
-library(taxa)
 library(testthat)
 context("taxmap")
 
@@ -215,8 +214,7 @@ test_that("Print methods works", {
   expect_output(print(x),
                 "<Taxmap>.+17 taxa.+17 edges.+1 functions.+reaction")
   x$data$new_vec <- rep(paste0(rep(c("l", "o", "n", "g"), each = 30), collapse = ""), 5)
-  expect_output(print(x),
-                "\\[truncated\\] \\.\\.\\. ")
+  expect_output(print(x),"truncated")
   x$data <- c(x$data, list(1:100, a = 1:10, b = 1:100))
   expect_output(print(x), "more data sets")
 

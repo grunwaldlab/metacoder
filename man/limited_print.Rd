@@ -53,14 +53,4 @@ printed depend on the width of the screen by default.
 Prints the start and end values for a character vector. The number of values
 printed depend on the width of the screen by default.
 }
-\examples{
-limited_print(1:100)
-limited_print(1:10000)
-limited_print(1:10000, prefix = "stuff:")
-
-taxa:::limited_print(1:100)
-taxa:::limited_print(1:10000)
-taxa:::limited_print(1:10000, prefix = "stuff:")
-
-}
 \keyword{internal}

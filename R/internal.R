@@ -139,11 +139,6 @@ check_for_pkg <- function(package) {
 #'
 #' @return `NULL`
 #'
-#' @examples
-#' limited_print(1:100)
-#' limited_print(1:10000)
-#' limited_print(1:10000, prefix = "stuff:")
-#'
 #' @keywords internal
 limited_print <- function(chars, prefix = "",
                           max_chars = getOption("width") - nchar(prefix) - 5,

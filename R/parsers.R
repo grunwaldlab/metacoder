@@ -33,7 +33,6 @@
 #'
 #' }
 #'
-#' @import taxa
 #'
 #' @export
 parse_phyloseq <- function(obj, class_regex = "(.*)",
@@ -259,8 +258,6 @@ parse_mothur_tax_summary <- function(file = NULL, text = NULL, table = NULL) {
 #' 
 #' @family parsers
 #' 
-#' @import taxa
-#' 
 #' @export
 parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
   # Check that both `file` and `text` are not used together
@@ -324,8 +321,6 @@ parse_mothur_taxonomy <- function(file = NULL, text = NULL) {
 #' @return A taxmap object
 #' 
 #' @family parsers
-#' 
-#' @import taxa
 #' 
 #' @export
 parse_qiime_biom <- function(file, class_regex = "(.*)",
@@ -402,8 +397,6 @@ parse_qiime_biom <- function(file, class_regex = "(.*)",
 #' 
 #' @family parsers
 #' 
-#' @import taxa
-#' 
 #' @export
 parse_newick <- function(file = NULL, text = NULL) {
   # Check that `file` and `text` and `table` are not used together
@@ -447,8 +440,6 @@ parse_newick <- function(file = NULL, text = NULL) {
 #'   
 #' @family parsers
 #'   
-#' @import taxa
-#' 
 #' @export
 parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) {
   
@@ -509,8 +500,6 @@ parse_unite_general <- function(input = NULL, file = NULL, include_seqs = TRUE) 
 #'   
 #' @family parsers
 #'   
-#' @import taxa
-#' 
 #' @export
 parse_rdp <- function(input = NULL, file = NULL, include_seqs = TRUE, add_species = FALSE) {
   
@@ -574,8 +563,6 @@ parse_rdp <- function(input = NULL, file = NULL, include_seqs = TRUE, add_specie
 #' @return \code{\link{taxmap}}
 #'
 #' @family parsers
-#'
-#' @import taxa
 #'
 #' @export
 parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
@@ -663,8 +650,6 @@ parse_silva_fasta <- function(file = NULL, input = NULL, include_seqs = TRUE) {
 #'   
 #' @family parsers
 #'   
-#' @import taxa
-#' 
 #' @export
 parse_greengenes <- function(tax_file, seq_file = NULL) {
   # Parse taxonomy file
@@ -701,8 +686,6 @@ parse_greengenes <- function(tax_file, seq_file = NULL) {
 #'   
 #' @family parsers
 #'   
-#' @import taxa
-#' 
 #' @export
 parse_phylo  <- function(obj) {
   # Parse edge list

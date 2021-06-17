@@ -1,4 +1,3 @@
-library(taxa)
 library(testthat)
 context("taxmap parsers")
 

@@ -94,7 +94,7 @@ n <- taxon(
 
 (hrs <- hierarchies(hier1, hier2, hier3))
 
-taxonomy(hier1, hier2, hier3)
+ex_taxonomy <- taxonomy(hier1, hier2, hier3)
 }
 \seealso{
 Other classes: 

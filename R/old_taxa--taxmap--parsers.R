@@ -1,6 +1,6 @@
 #' Convert a table with an edge list to taxmap
 #'
-#' Converts a table containing an edge list into a [taxa::taxmap()] object.
+#' Converts a table containing an edge list into a [taxmap()] object.
 #' An "edge list" is two columns in a table, where each row defines a taxon-supertaxon relationship.
 #' The contents of the edge list will be used as taxon IDs.
 #' The whole table will be included as a data set in the output object.
@@ -53,7 +53,7 @@ parse_edge_list <- function(input, taxon_id, supertaxon_id, taxon_name, taxon_ra
 #' Convert one or more data sets to taxmap
 #'
 #' Reads taxonomic information and associated data in tables, lists, and vectors and stores it in a
-#' [taxa::taxmap()] object. [Taxonomic
+#' [taxmap()] object. [Taxonomic
 #' classifications](https://en.wikipedia.org/wiki/Taxonomy_(biology)#Classifying_organisms) must be
 #' present.
 #'

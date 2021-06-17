@@ -15,11 +15,6 @@
 #'
 #' @return `NULL`
 #'
-#' @examples
-#' taxa:::limited_print(1:100)
-#' taxa:::limited_print(1:10000)
-#' taxa:::limited_print(1:10000, prefix = "stuff:")
-#'
 #' @keywords internal
 limited_print <- function(chars, prefix = "", sep = ", ", mid = " ... ",
                           trunc_char = "[truncated]",
