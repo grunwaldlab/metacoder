@@ -39,7 +39,6 @@ Imports:
     magrittr,
     readr,
     rlang,
-    biomformat,
     phylotate,
     ggfittext,
     vegan,
@@ -59,7 +58,8 @@ Suggests:
     testthat,
     zlibbioc,
     BiocManager,
-    phyloseq
+    phyloseq,
+    biomformat
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 Date: 2020-04-28
