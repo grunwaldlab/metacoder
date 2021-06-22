@@ -8,9 +8,12 @@ r_github_packages:
 
 r_check_args: "--as-cran"
 
+before_install:
+  - Rscript -e 'BiocManager::install(version = '3.12')'
+
 bioc_required: false
 bioc_use_devel: true
-bioc-packages: BiocManager, zlibbioc, phyloseq, biomformat
+bioc-packages: zlibbioc, phyloseq, biomformat
 
 sudo: false
 cran: http://cran.at.r-project.org
@@ -27,3 +30,6 @@ notifications:
   email:
     on_success: change
     on_failure: always
+    
+  
+  
