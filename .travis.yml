@@ -10,7 +10,7 @@ r_check_args: "--as-cran"
 
 before_install:
   - Rscript -e "install.packages('BiocManager')"
-  - Rscript -e "BiocManager::install(c('zlibbioc', 'phyloseq', 'biomformat'), version = '3.14')"
+  - Rscript -e "BiocManager::install(c('zlibbioc', 'phyloseq', 'biomformat'), version = 'devel')"
 
 # bioc_required: false
 # bioc_use_devel: true
