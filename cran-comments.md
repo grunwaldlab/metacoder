@@ -22,23 +22,6 @@ Error: Bioconductor does not yet build and check packages for R version 4.2
 However, all of the bioconductor packages are optional and not needed for most functionality.
 
 
-
-
-
-
-
-
-
-
-
-### Win builder: R devel
-
-0 errors | 0 warnings | 0 notes
-
-### Win builder: R version 4.0.0 (2020-04-24)
-
-0 errors | 0 warnings | 0 notes
-
 ## Downstream dependencies
 
 There are currently no downstream dependencies for this package.
