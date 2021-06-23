@@ -12,18 +12,6 @@
 #' @keywords data
 NULL
 
-#' An example Taxonomy object
-#'
-#' An example Taxonomy object built from the ground up.
-#'
-#' @name ex_taxonomy
-#' @format A [taxonomy()] object.
-#' @source Created from the example code in the [taxonomy()]
-#'   documentation.
-#' @family taxa-datasets
-#' @keywords data
-NULL
-
 #' An example Hierarchy object
 #'
 #' An example Hierarchy object built from the ground up.

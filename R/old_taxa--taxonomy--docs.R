@@ -911,10 +911,8 @@ NULL
 #'
 #' @examples
 #' # Get specific values
-#' get_data_frame(ex_taxonomy, c("taxon_names", "taxon_indexes", "is_stem"))
+#' get_data_frame(ex_taxmap, c("taxon_names", "taxon_indexes", "is_stem"))
 #'
-#' # Get all values
-#' get_data_frame(ex_taxonomy)
 #'
 #' @family accessors
 #'
