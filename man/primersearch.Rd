@@ -133,7 +133,7 @@ Open up a terminal and type:
 
 \strong{Mac OSX:}
 
-The easiest way to install EMBOSS on OSX is to use \href{http://brew.sh/}{homebrew}.
+The easiest way to install EMBOSS on OSX is to use \href{https://brew.sh/}{homebrew}.
 After installing homebrew, open up a terminal and type:
 
 \code{brew install homebrew/science/emboss}

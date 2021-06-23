@@ -9,14 +9,17 @@
 
 0 errors | 0 warnings | 0 notes
 
+### Rhub: Ubuntu Linux 20.04.1 LTS, R-release, GCC
 
-### Rhub: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+0 errors | 0 warnings | 0 notes
+
+### All testing platforms using R devel (rhub, winbuilder)
 
 Some bioconductor packages in Suggests seem to not be available for R 4.2. I get the following error on R devel builds: 
 
 Error: Bioconductor does not yet build and check packages for R version 4.2
 
-However, all of the bioconductor pacakges are optional and not needed for most functionality.
+However, all of the bioconductor packages are optional and not needed for most functionality.
 
 
 

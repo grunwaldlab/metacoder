@@ -5,9 +5,9 @@
 Status](https://travis-ci.com/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.com/grunwaldlab/metacoder?branch=master)
 [![codecov.io](https://codecov.io/github/grunwaldlab/metacoder/coverage.svg?branch=master)](https://codecov.io/github/grunwaldlab/metacoder?branch=master)
 [![Downloads from Rstudio mirror per
-month](http://cranlogs.r-pkg.org/badges/metacoder)](http://www.r-pkg.org/pkg/metacoder)
+month](http://cranlogs.r-pkg.org/badges/metacoder)](https://www.r-pkg.org:443/pkg/metacoder)
 [![Downloads from Rstudio
-mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](http://www.r-pkg.org/pkg/metacoder)
+mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](https://www.r-pkg.org:443/pkg/metacoder)
 [![CRAN
 version](http://www.r-pkg.org/badges/version/metacoder)](https://cran.r-project.org/package=metacoder)
 
@@ -24,17 +24,17 @@ color and size. It also provides various functions to do common tasks in
 microbiome bioinformatics on data in the `taxmap` format defined by the
 `taxa` package, such as:
 
-  - Summing read counts/abundance per taxon
-  - Converting counts to proportions and rarefaction of counts using
+-   Summing read counts/abundance per taxon
+-   Converting counts to proportions and rarefaction of counts using
     `vegan`
-  - Comparing the abundance (or other characteristics) of groups of
+-   Comparing the abundance (or other characteristics) of groups of
     samples (e.g., experimental treatments) per taxon
-  - Combining data for groups of samples
-  - Simulated PCR, via EMBOSS primersearch, for testing primer
+-   Combining data for groups of samples
+-   Simulated PCR, via EMBOSS primersearch, for testing primer
     specificity and coverage of taxonomic groups
-  - Converting common microbiome formats for data and reference
+-   Converting common microbiome formats for data and reference
     databases into the objects defined by the `taxa` package.
-  - Converting to and from the `phyloseq` format and the `taxa` format
+-   Converting to and from the `phyloseq` format and the `taxa` format
 
 ## Installation
 
@@ -83,7 +83,7 @@ converting between the two data types when needed.
 
 If you use metcoder in a publication, please cite our [article in PLOS
 Computational
-Biology](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
+Biology](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
 
 Foster ZSL, Sharpton TJ, Grünwald NJ (2017) Metacoder: An R package for
 visualization and manipulation of community taxonomic diversity data.
@@ -95,14 +95,14 @@ PLOS Computational Biology 13(2): e1005404.
 Metacoder is under active development and many new features are planned.
 Some improvements that are being explored include:
 
-  - Barcoding gap analysis and associated plotting functions
-  - A function to aid in retrieving appropriate sequence data from NCBI
+-   Barcoding gap analysis and associated plotting functions
+-   A function to aid in retrieving appropriate sequence data from NCBI
     for *in silico* PCR from whole genome sequences
-  - Graphing of different node shapes in heat trees, possibly including
+-   Graphing of different node shapes in heat trees, possibly including
     pie graphs or [PhyloPics](http://phylopic.org/).
-  - Adding the ability to plot specific edge lengths in the heat trees
+-   Adding the ability to plot specific edge lengths in the heat trees
     so they can be used for phylogenetic trees.
-  - Adding more data import and export functions to make parsing and
+-   Adding more data import and export functions to make parsing and
     writing common formats easier.
 
 To see the details of what is being worked on, check out the

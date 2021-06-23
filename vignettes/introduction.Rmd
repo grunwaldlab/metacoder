@@ -7,6 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-See the documentation at http://grunwaldlab.github.io/metacoder_documentation.
+See the documentation at https://grunwaldlab.github.io/metacoder_documentation/.
 
 
