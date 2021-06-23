@@ -1,36 +1,32 @@
 ## Test environments and check results
 
-Some packages seem to not be avaialble for R 4.0.0. I am not sure what to do about this. It works on my computer and winbuilder.
 
-### local: ubuntu 18.04, R 3.6.3
+### local: Pop!_OS 20.04 LTS, R 4.0.3 
 
 0 errors | 0 warnings | 0 notes
 
-### travis-ci: ubuntu 14.04.05, R development
+### travis-ci: release
 
-Warning message:
-
-package ‘BiocManager, zlibbioc’ is not available (for R Under development) 
-
-The command "Rscript -e 'install.packages(c("BiocManager, zlibbioc"));if (!all(c("BiocManager, zlibbioc") %in% installed.packages())) { q(status = 1, save = "no")}'" failed and exited with 1 during .
-
-### travis-ci: ubuntu 14.04.05, bioc-release
-
-Warning message:
-
-package ‘BiocManager, zlibbioc’ is not available (for R version 4.0.0) 
-
-The command "Rscript -e 'install.packages(c("BiocManager, zlibbioc"));if (!all(c("BiocManager, zlibbioc") %in% installed.packages())) { q(status = 1, save = "no")}'" failed and exited with 1 during .
+0 errors | 0 warnings | 0 notes
 
 
 ### Rhub: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
 
-* checking package dependencies ... ERROR
-Packages required but not available:
-  'taxa', 'stringr', 'ggplot2', 'igraph', 'scales', 'taxize', 'seqinr',
-  'reshape2', 'zoo', 'traits', 'RCurl', 'ape', 'reshape', 'lazyeval',
-  'dplyr', 'readr', 'rlang', 'biomformat', 'ggfittext', 'vegan',
-  'ggrepel', 'cowplot', 'GA', 'Rcpp', 'svglite', 'tibble'
+Some bioconductor packages in Suggests seem to not be available for R 4.2. I get the following error on R devel builds: 
+
+Error: Bioconductor does not yet build and check packages for R version 4.2
+
+However, all of the bioconductor pacakges are optional and not needed for most functionality.
+
+
+
+
+
+
+
+
+
+
 
 ### Win builder: R devel
 

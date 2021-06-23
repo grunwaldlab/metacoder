@@ -11,4 +11,4 @@ bibentry(bibtype = "Article",
          pages = "1-15",
          number = "2",
          doi = "10.1371/journal.pcbi.1005404",
-         url = "http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404")
+         url = "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404")

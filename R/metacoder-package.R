@@ -17,7 +17,7 @@
 #' 
 #' @section Documentation:
 #' 
-#' The full documentation can be found online at \url{http://grunwaldlab.github.io/metacoder_documentation}.
+#' The full documentation can be found online at \url{https://grunwaldlab.github.io/metacoder_documentation/}.
 #' 
 #' There is also a short vignette included for offline use that can be accessed  by the following code:
 #' 

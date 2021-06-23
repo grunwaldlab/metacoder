@@ -1,10 +1,12 @@
 # News 
 
-## Current 
+## metacoder 0.3.5 
 
 * Replaced depreciated `as.tbl` function from `dplyr`'
 * Added `node_legend_title` and `edge_legend_title` options to `heat_tree` to specify the title for each legend.
 * Added options to `heat_tree` to set the number of significant fingures used for the numbers in the legend.
+* Reintegrated the functionality of the `taxa` package in order to prepare for releasing a rewritten version of taxa.
+* Reduced the number of dependencies and made some optional. 
 
 ##  metacoder 0.3.4
 
@@ -102,8 +104,8 @@
 * Added functions to identift and remove taxa with ambiguous names like "unknown"
 * code from [ggrepel](https://github.com/slowkow/ggrepel) package now used to avoid overlapping labels. Thanks Kamil Slowikowski!
 * New function `heat_tree_matrix` to make plotting a pairwise matrix of heat trees for comparing treatments.
-* New parser named `parse_mothur_tax_summary` for mothur *.tax.summary file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).
-* New parser named `parse_mothur_taxonomy` for mothur *.taxonomy file made by [classify.seqs](https://www.mothur.org/wiki/Classify.seqs).
+* New parser named `parse_mothur_tax_summary` for mothur *.tax.summary file made by [classify.seqs](https://mothur.org/wiki/Classify.seqs).
+* New parser named `parse_mothur_taxonomy` for mothur *.taxonomy file made by [classify.seqs](https://mothur.org/wiki/Classify.seqs).
 * New parser named `parse_qiime_biom` for the QIIME BIOM output.
 * New parser named `parse_phyloseq` to convert phyloseq objects.
 * New parser named `parse_newick` to parse newick files.

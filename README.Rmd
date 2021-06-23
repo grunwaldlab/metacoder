@@ -14,8 +14,8 @@ knitr::opts_chunk$set(
 
 
 [![Build Status](https://travis-ci.com/grunwaldlab/metacoder.png?branch=master)](https://travis-ci.com/grunwaldlab/metacoder?branch=master) [![codecov.io](https://codecov.io/github/grunwaldlab/metacoder/coverage.svg?branch=master)](https://codecov.io/github/grunwaldlab/metacoder?branch=master)
-[![Downloads from Rstudio mirror per month](http://cranlogs.r-pkg.org/badges/metacoder)](http://www.r-pkg.org/pkg/metacoder)
-[![Downloads from Rstudio mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](http://www.r-pkg.org/pkg/metacoder)
+[![Downloads from Rstudio mirror per month](http://cranlogs.r-pkg.org/badges/metacoder)](https://www.r-pkg.org:443/pkg/metacoder)
+[![Downloads from Rstudio mirror](http://cranlogs.r-pkg.org/badges/grand-total/metacoder)](https://www.r-pkg.org:443/pkg/metacoder)
 [![CRAN version](http://www.r-pkg.org/badges/version/metacoder)](https://cran.r-project.org/package=metacoder)
 
 ![](man/figures/readme_figure.jpg)
@@ -78,7 +78,7 @@ You can also combine the two in a single analysis by converting between the two 
 
 ## Citation
 
-If you use metcoder in a publication, please cite our [article in PLOS Computational Biology](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
+If you use metcoder in a publication, please cite our [article in PLOS Computational Biology](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005404):
 
 Foster ZSL, Sharpton TJ, Grünwald NJ (2017) Metacoder: An R package for visualization and manipulation of community taxonomic diversity data. PLOS Computational Biology 13(2): e1005404. https://doi.org/10.1371/journal.pcbi.1005404
 

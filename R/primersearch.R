@@ -179,7 +179,7 @@ parse_primersearch <- function(file_path) {
 #' 
 #' \strong{Mac OSX:}
 #' 
-#' The easiest way to install EMBOSS on OSX is to use \href{http://brew.sh/}{homebrew}.
+#' The easiest way to install EMBOSS on OSX is to use \href{https://brew.sh/}{homebrew}.
 #' After installing homebrew, open up a terminal and type:
 #' 
 #' \code{brew install homebrew/science/emboss}
@@ -458,7 +458,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' 
 #' \strong{Mac OSX:}
 #' 
-#' The easiest way to install EMBOSS on OSX is to use \href{http://brew.sh/}{homebrew}.
+#' The easiest way to install EMBOSS on OSX is to use \href{https://brew.sh/}{homebrew}.
 #' After installing homebrew, open up a terminal and type:
 #' 
 #' \code{brew install homebrew/science/emboss}
