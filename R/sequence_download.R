@@ -1,36 +1,63 @@
 #' Download representative sequences for a taxon
-#' 
-#' Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-#' Can be used to get a shallow sampling of vast groups. 
-#' \strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
-#' can take a very long time. 
-#' Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-#' Use a downloaded database and a parser from the \code{taxa} package when possible.
-#' 
-#' @param name (\code{character} of length 1) The taxon to download a sample of sequences for.
-#' @param id (\code{character} of length 1) The taxon id to download a sample of sequences for.
-#' @param target_rank (\code{character} of length 1) The finest taxonomic rank at which
-#'   to sample. The finest rank at which replication occurs. Must be a finer rank than 
-#'   \code{taxon}. 
-#' @param min_counts (named \code{numeric}) The minimum number of sequences to download for each
-#'   taxonomic rank. The names correspond to taxonomic ranks. 
-#' @param max_counts (named \code{numeric}) The maximum number of sequences to download for each
-#'   taxonomic rank. The names correspond to taxonomic ranks. 
-#' @param interpolate_min (\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
-#'   and \code{min_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of specified ranks will be used to determine
-#'   values of unspecified ranks.
-#' @param interpolate_max (\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
-#'   and \code{max_children} will be used to infer the values of intermediate ranks not
-#'   specified. Linear interpolation between values of specified ranks will be used to determine
-#'   values of unspecified ranks.
-#' @param min_children (named \code{numeric}) The minimum number sub-taxa of taxa for a given
-#' rank must have for its sequences to be searched. The names correspond to taxonomic ranks. 
-#' @param max_children (named \code{numeric}) The maximum number sub-taxa of taxa for a given
-#' rank must have for its sequences to be searched. The names correspond to taxonomic ranks.
-#' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be printed.
-#' @inheritParams  traits::ncbi_searcher
-#' 
+#'
+#' Downloads a sample of sequences meant to evenly capture the diversity of a
+#' given taxon. Can be used to get a shallow sampling of vast groups.
+#' \strong{CAUTION:} This function can make MANY queries to Genbank depending on
+#' arguments given and can take a very long time. Choose your arguments
+#' carefully to avoid long waits and needlessly stressing NCBI's servers. Use a
+#' downloaded database and a parser from the \code{taxa} package when possible.
+#'
+#' @param name (\code{character} of length 1) The taxon to download a sample of
+#'   sequences for.
+#' @param id (\code{character} of length 1) The taxon id to download a sample of
+#'   sequences for.
+#' @param target_rank (\code{character} of length 1) The finest taxonomic rank
+#'   at which to sample. The finest rank at which replication occurs. Must be a
+#'   finer rank than \code{taxon}.
+#' @param min_counts (named \code{numeric}) The minimum number of sequences to
+#'   download for each taxonomic rank. The names correspond to taxonomic ranks.
+#' @param max_counts (named \code{numeric}) The maximum number of sequences to
+#'   download for each taxonomic rank. The names correspond to taxonomic ranks.
+#' @param interpolate_min (\code{logical}) If \code{TRUE}, values supplied to
+#'   \code{min_counts} and \code{min_children} will be used to infer the values
+#'   of intermediate ranks not specified. Linear interpolation between values of
+#'   specified ranks will be used to determine values of unspecified ranks.
+#' @param interpolate_max (\code{logical}) If \code{TRUE}, values supplied to
+#'   \code{max_counts} and \code{max_children} will be used to infer the values
+#'   of intermediate ranks not specified. Linear interpolation between values of
+#'   specified ranks will be used to determine values of unspecified ranks.
+#' @param min_children (named \code{numeric}) The minimum number sub-taxa of
+#'   taxa for a given rank must have for its sequences to be searched. The names
+#'   correspond to taxonomic ranks.
+#' @param max_children (named \code{numeric}) The maximum number sub-taxa of
+#'   taxa for a given rank must have for its sequences to be searched. The names
+#'   correspond to taxonomic ranks.
+#' @param seqrange (character) Sequence range, as e.g., "1:1000". This is the
+#'   range of sequence lengths to search for. So "1:1000" means search for
+#'   sequences from 1 to 1000 characters in length.
+#' @param getrelated (logical) If TRUE, gets the longest sequences of a species
+#'   in the same genus as the one searched for. If FALSE, returns nothing if no
+#'   match found.
+#' @param fuzzy (logical) Whether to do fuzzy taxonomic ID search or exact
+#'   search. If \code{TRUE}, we use \code{xXarbitraryXx[porgn:__txid<ID>]}, but
+#'   if \code{FALSE}, we use \code{txid<ID>}. Default: \code{FALSE}
+#' @param limit (\code{numeric}) Number of sequences to search for and return.
+#'   Max of 10,000. If you search for 6000 records, and only 5000 are found, you
+#'   will of course only get 5000 back.
+#' @param entrez_query (\code{character}; length 1) An Entrez-format query to
+#'   filter results with. This is useful to search for sequences with specific
+#'   characteristics. The format is the same as the one used to seach genbank.
+#'   (\url{https://www.ncbi.nlm.nih.gov/books/NBK3837/#EntrezHelp.Entrez_Searching_Options})
+#'
+#'
+#' @param hypothetical (\code{logical}; length 1) If \code{FALSE}, an attempt
+#'   will be made to not return hypothetical or predicted sequences judging from
+#'   accession number prefixs (XM and XR). This can result in less than the
+#'   \code{limit} being returned even if there are more sequences available,
+#'   since this filtering is done after searching NCBI.
+#' @param verbose (\code{logical}) If \code{TRUE}, progress messages will be
+#'   printed.
+#'   
 #' @examples
 #' 
 #' \dontrun{
@@ -54,6 +81,8 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                               seqrange = "1:3000", getrelated = FALSE,
                               fuzzy = TRUE, limit = 10, entrez_query = NULL,
                               hypothetical = FALSE, verbose = TRUE) {
+  # Check that the "traits" package has been installed
+  check_for_pkg("traits")
  
   run_once <- function(name, id) {
     default_target_max <- 20
@@ -115,7 +144,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
                                                       along.with = between))
           return(NULL)
         }
-        zoo::rollapply(names(user_limits), width = 2, set_default_counts)    
+        lapply(seq_len(length(names(user_limits)) - 1), function(i) set_default_counts(names(user_limits)[i:(i+1)]))
       }
       
       # Extend boundry values to adjacent undefined values - - - - - - - - - - - - - - - - - - - - - -
@@ -142,7 +171,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     level_min_children <- get_level_limit(min_children, 0, target_rank, interpolate_min,
                                           extend_min = TRUE)
     
-    # Recursivly sample taxon ------------------------------------------------------------------------
+    # Recursively sample taxon ------------------------------------------------------------------------
     recursive_sample <- function(id, rank, name) {
       cat("Processing '", name, "' (uid: ", id, ", rank: ", as.character(rank), ")", "\n",
           sep = "")

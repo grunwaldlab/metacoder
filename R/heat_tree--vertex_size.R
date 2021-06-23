@@ -17,9 +17,9 @@
 molten_dist <- function(x, y) {
   data <- as.matrix(stats::dist(cbind(x, y)))
   data[!lower.tri(data)] <- NA
-  data <- reshape2::melt(data)
-  names(data) <- c("index_1", "index_2", "distance")
-  data[!is.na(data$distance), ]    
+  molten_data <- data.frame(index_1 = rep(1:nrow(data), ncol(data)), index_2 = rep(1:nrow(data), each = ncol(data)))
+  molten_data$distance <- mapply(function(i1, i2) data[i1, i2], molten_data$index_1, molten_data$index_2)
+  molten_data[!is.na(molten_data$distance), ]    
 }
 
 #===================================================================================================

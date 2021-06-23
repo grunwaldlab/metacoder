@@ -208,7 +208,6 @@
 #'   Checkout the vignette
 #'   (`browseVignettes("taxa")`) for detailed introduction and examples.
 #'
-#' @import R6 jsonlite
 #' @name taxa-package
 #' @docType package
 #' @keywords package

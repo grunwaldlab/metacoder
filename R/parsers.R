@@ -399,6 +399,9 @@ parse_qiime_biom <- function(file, class_regex = "(.*)",
 #' 
 #' @export
 parse_newick <- function(file = NULL, text = NULL) {
+  # Check that the "phylotate" package has been installed
+  check_for_pkg("phylotate")
+  
   # Check that `file` and `text` and `table` are not used together
  if (sum(c(is.null(file), is.null(text))) != 1) {
     stop(paste0('Either "file" or "text" must be supplied, but not both.'))

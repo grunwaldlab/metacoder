@@ -24,51 +24,55 @@ ncbi_taxon_sample(
 )
 }
 \arguments{
-\item{name}{(\code{character} of length 1) The taxon to download a sample of sequences for.}
+\item{name}{(\code{character} of length 1) The taxon to download a sample of
+sequences for.}
 
-\item{id}{(\code{character} of length 1) The taxon id to download a sample of sequences for.}
+\item{id}{(\code{character} of length 1) The taxon id to download a sample of
+sequences for.}
 
-\item{target_rank}{(\code{character} of length 1) The finest taxonomic rank at which
-to sample. The finest rank at which replication occurs. Must be a finer rank than 
-\code{taxon}.}
+\item{target_rank}{(\code{character} of length 1) The finest taxonomic rank
+at which to sample. The finest rank at which replication occurs. Must be a
+finer rank than \code{taxon}.}
 
-\item{min_counts}{(named \code{numeric}) The minimum number of sequences to download for each
-taxonomic rank. The names correspond to taxonomic ranks.}
+\item{min_counts}{(named \code{numeric}) The minimum number of sequences to
+download for each taxonomic rank. The names correspond to taxonomic ranks.}
 
-\item{max_counts}{(named \code{numeric}) The maximum number of sequences to download for each
-taxonomic rank. The names correspond to taxonomic ranks.}
+\item{max_counts}{(named \code{numeric}) The maximum number of sequences to
+download for each taxonomic rank. The names correspond to taxonomic ranks.}
 
-\item{interpolate_min}{(\code{logical}) If \code{TRUE}, values supplied to \code{min_counts}
-and \code{min_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of specified ranks will be used to determine
-values of unspecified ranks.}
+\item{interpolate_min}{(\code{logical}) If \code{TRUE}, values supplied to
+\code{min_counts} and \code{min_children} will be used to infer the values
+of intermediate ranks not specified. Linear interpolation between values of
+specified ranks will be used to determine values of unspecified ranks.}
 
-\item{interpolate_max}{(\code{logical}) If \code{TRUE}, values supplied to \code{max_counts}
-and \code{max_children} will be used to infer the values of intermediate ranks not
-specified. Linear interpolation between values of specified ranks will be used to determine
-values of unspecified ranks.}
+\item{interpolate_max}{(\code{logical}) If \code{TRUE}, values supplied to
+\code{max_counts} and \code{max_children} will be used to infer the values
+of intermediate ranks not specified. Linear interpolation between values of
+specified ranks will be used to determine values of unspecified ranks.}
 
-\item{min_children}{(named \code{numeric}) The minimum number sub-taxa of taxa for a given
-rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
+\item{min_children}{(named \code{numeric}) The minimum number sub-taxa of
+taxa for a given rank must have for its sequences to be searched. The names
+correspond to taxonomic ranks.}
 
-\item{max_children}{(named \code{numeric}) The maximum number sub-taxa of taxa for a given
-rank must have for its sequences to be searched. The names correspond to taxonomic ranks.}
+\item{max_children}{(named \code{numeric}) The maximum number sub-taxa of
+taxa for a given rank must have for its sequences to be searched. The names
+correspond to taxonomic ranks.}
 
-\item{seqrange}{(character) Sequence range, as e.g., \code{"1:1000"}. This is the range of
-sequence lengths to search for. So \code{"1:1000"} means search for sequences from 1 to 1000
-characters in length.}
+\item{seqrange}{(character) Sequence range, as e.g., "1:1000". This is the
+range of sequence lengths to search for. So "1:1000" means search for
+sequences from 1 to 1000 characters in length.}
 
-\item{getrelated}{(logical) If \code{TRUE}, gets the longest sequences of a species
-in the same genus as the one searched for. If \code{FALSE}, returns nothing if no match
-found.}
+\item{getrelated}{(logical) If TRUE, gets the longest sequences of a species
+in the same genus as the one searched for. If FALSE, returns nothing if no
+match found.}
 
 \item{fuzzy}{(logical) Whether to do fuzzy taxonomic ID search or exact
-search. If \code{TRUE}, we use \code{xXarbitraryXx[porgn:__txid<ID>]},
-but if \code{FALSE}, we use \code{txid<ID>}. Default: \code{FALSE}}
+search. If \code{TRUE}, we use \code{xXarbitraryXx[porgn:__txid<ID>]}, but
+if \code{FALSE}, we use \code{txid<ID>}. Default: \code{FALSE}}
 
 \item{limit}{(\code{numeric}) Number of sequences to search for and return.
-Max of 10,000. If you search for 6000 records, and only 5000 are found,
-you will of course only get 5000 back.}
+Max of 10,000. If you search for 6000 records, and only 5000 are found, you
+will of course only get 5000 back.}
 
 \item{entrez_query}{(\code{character}; length 1) An Entrez-format query to
 filter results with. This is useful to search for sequences with specific
@@ -81,15 +85,16 @@ accession number prefixs (XM and XR). This can result in less than the
 \code{limit} being returned even if there are more sequences available,
 since this filtering is done after searching NCBI.}
 
-\item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be printed.}
+\item{verbose}{(\code{logical}) If \code{TRUE}, progress messages will be
+printed.}
 }
 \description{
-Downloads a sample of sequences meant to evenly capture the diversity of a given taxon.
-Can be used to get a shallow sampling of vast groups. 
-\strong{CAUTION:} This function can make MANY queries to Genbank depending on arguments given and
-can take a very long time. 
-Choose your arguments carefully to avoid long waits and needlessly stressing NCBI's servers.
-Use a downloaded database and a parser from the \code{taxa} package when possible.
+Downloads a sample of sequences meant to evenly capture the diversity of a
+given taxon. Can be used to get a shallow sampling of vast groups.
+\strong{CAUTION:} This function can make MANY queries to Genbank depending on
+arguments given and can take a very long time. Choose your arguments
+carefully to avoid long waits and needlessly stressing NCBI's servers. Use a
+downloaded database and a parser from the \code{taxa} package when possible.
 }
 \examples{
 

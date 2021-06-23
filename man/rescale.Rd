@@ -22,6 +22,6 @@ rescale(
 }
 \description{
 Rescale numeric vector to have specified minimum and maximum, but allow for hard boundaries.
-Light wrapper for scales::rescale
+It is a slightly modified version of scales::rescale, incorporating scales::zero_range, both by Hadley Wickham used under the conditions of the MIT license.
 }
 \keyword{internal}
