@@ -84,6 +84,7 @@ rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 }
 \seealso{
 Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
 \code{\link{calc_group_mean}()},
 \code{\link{calc_group_median}()},
 \code{\link{calc_group_rsd}()},

@@ -96,6 +96,7 @@ calc_n_samples(x, data = "tax_data", other_cols = "otu_id")
 }
 \seealso{
 Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
 \code{\link{calc_group_mean}()},
 \code{\link{calc_group_median}()},
 \code{\link{calc_group_rsd}()},

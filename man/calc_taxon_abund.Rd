@@ -84,6 +84,7 @@ calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
 }
 \seealso{
 Other calculations: 
+\code{\link{calc_diff_abund_deseq2}()},
 \code{\link{calc_group_mean}()},
 \code{\link{calc_group_median}()},
 \code{\link{calc_group_rsd}()},
