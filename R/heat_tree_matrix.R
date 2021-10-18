@@ -79,6 +79,8 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   treat_1 <- as.character(diff_table$treatment_1)
   treat_2 <- as.character(diff_table$treatment_2)
   treatments <- unique(c(treat_1, treat_2))
+  treat_counts <- sort(vapply(treatments, FUN.VALUE = numeric(1), function(x) sum(treat_1 == x)), decreasing = TRUE)
+  treatments <- names(treat_counts)
   combinations <- t(utils::combn(seq_along(treatments), 2))
   layout_matrix <- matrix(rep(NA, (length(treatments))^2), nrow = length(treatments))
   for (index in 1:nrow(combinations)) {

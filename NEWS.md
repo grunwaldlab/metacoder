@@ -1,5 +1,9 @@
 # News 
 
+## Current
+
+* When an ordered factor is supplied to the `groups` argument of `compare_groups`, the order of levels is used to arrange the results. This can be used to change the order of groups when the output is used with `heat_tree_matrix` (issue [#323](https://github.com/grunwaldlab/metacoder/issues/323)).
+
 ## metacoder 0.3.5 
 
 * Replaced depreciated `as.tbl` function from `dplyr`'

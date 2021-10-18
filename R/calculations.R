@@ -640,7 +640,12 @@ compare_groups <- function(obj, data, cols, groups,
   
   # Get every combination of groups to compare
   if (is.null(combinations)) {
-    combinations <- t(utils::combn(unique(groups), 2))
+    if (is.ordered(groups)) {
+      group_order <- factor(levels(groups), levels = levels(groups), order = TRUE)
+    } else {
+      group_order <- unique(groups)
+    }
+    combinations <- t(utils::combn(group_order, 2))
     combinations <- lapply(seq_len(nrow(combinations)), function(i) combinations[i, ])
   }
   
