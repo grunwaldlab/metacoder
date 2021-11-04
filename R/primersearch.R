@@ -89,7 +89,7 @@ parse_primersearch <- function(file_path) {
                    "\tAmplimer length: ([0-9]+) bp", sep = '\n')
   primer_data <- stringr::str_match_all(primer_chunks, pattern)
   primer_data <- as.data.frame(cbind(rep(names(primer_chunks), vapply(primer_data, nrow, numeric(1))),
-                                     do.call(rbind, primer_data)[, -1]), stringsAsFactors = FALSE)
+                                     do.call(rbind, primer_data)[, -1, drop = FALSE]), stringsAsFactors = FALSE)
   # Reformat amplicon data
   colnames(primer_data) <- c("pair_name", "amplimer", "input", "name", "f_primer", "f_start",
                              "f_mismatch",  "r_primer", "r_start", "r_mismatch")

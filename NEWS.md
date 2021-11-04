@@ -3,6 +3,8 @@
 ## Current
 
 * When an ordered factor is supplied to the `groups` argument of `compare_groups`, the order of levels is used to arrange the results. This can be used to change the order of groups when the output is used with `heat_tree_matrix` (issue [#323](https://github.com/grunwaldlab/metacoder/issues/323)).
+* Added `calc_diff_abund_deseq2` function to use DESeq2 to produce output like `compare_group` useful for `heat_tree_matrix`
+* Fixed error with `primersearch` and `primersearch_raw` when there is a single match to a single query (issue [#326](https://github.com/grunwaldlab/metacoder/issues/326))
 
 ## metacoder 0.3.5 
 
