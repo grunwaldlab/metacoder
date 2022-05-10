@@ -6,7 +6,7 @@
 startup_msg <- function() {
   my_version <- utils::packageVersion("metacoder")
   is_devel <- stringr::str_count(as.character(my_version), "\\.") == 3
-  paste0('This is metacoder verison ', my_version, ' ',
+  paste0('This is metacoder version ', my_version, ' ',
          ifelse(is_devel, crayon::bold("(development version)"), "(stable)"))#,
          # '. If you use metacoder for published research, please cite our paper:\n\n',
          # 'Foster Z, Sharpton T and Grunwald N (2017). "Metacoder: An R package for',
