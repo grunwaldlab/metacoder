@@ -61,7 +61,7 @@ parse_phyloseq <- function(obj, class_regex = "(.*)",
   # Parse sample data
   if (! is.null(obj@sam_data)) {
     sam_data <- as.data.frame(as.list(obj@sam_data), stringsAsFactors = FALSE)
-    if (! is.null(rownames(obj@sam_data))) {
+    if (! is.null(rownames(obj@sam_data)) & !"sample_id" %in% colnames(obj@sam_data)) {
       sam_data <- cbind(sample_id = rownames(obj@sam_data), sam_data)
     }
     sam_data[] <- lapply(sam_data, as.character)
