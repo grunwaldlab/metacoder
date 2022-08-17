@@ -10,7 +10,7 @@
 
 * Replaced depreciated `as.tbl` function from `dplyr`'
 * Added `node_legend_title` and `edge_legend_title` options to `heat_tree` to specify the title for each legend.
-* Added options to `heat_tree` to set the number of significant fingures used for the numbers in the legend.
+* Added options to `heat_tree` to set the number of significant figures used for the numbers in the legend.
 * Reintegrated the functionality of the `taxa` package in order to prepare for releasing a rewritten version of taxa.
 * Reduced the number of dependencies and made some optional. 
 

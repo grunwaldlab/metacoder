@@ -52,8 +52,10 @@ Convert a taxmap object to a phyloseq object.
 \examples{
 \dontrun{
 # Install phyloseq to get example data
-# source('http://bioconductor.org/biocLite.R')
-# biocLite('phyloseq')
+# if (!require("BiocManager", quietly = TRUE))
+#   install.packages("BiocManager")
+# 
+# BiocManager::install("phyloseq")
 
 # Parse example dataset
 library(phyloseq)

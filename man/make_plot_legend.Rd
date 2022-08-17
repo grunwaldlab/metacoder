@@ -13,13 +13,17 @@ make_plot_legend(
   width_stat_range,
   group_prefix,
   tick_size = 0.008,
-  width_stat_trans = function(x) {     x },
+  width_stat_trans = function(x) {
+     x
+ },
   width_title = "Size",
   width_sig_fig = 3,
   color_range,
   color_trans_range = NULL,
   color_stat_range,
-  color_stat_trans = function(x) {     x },
+  color_stat_trans = function(x) {
+     x
+ },
   color_title = "Color",
   color_sig_fig = 3,
   divisions = 100,
