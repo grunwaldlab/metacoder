@@ -110,6 +110,43 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
     
   }
   
+  # If there is only one comparison, just plot it with a single graph
+  if (length(treatments) == 2) {
+    plot <- obj %>%
+      filter_obs(data,
+                 (treat_1 == treatments[combinations[index, 1]] &
+                    treat_2 == treatments[combinations[index, 2]]) |
+                   (treat_1 == treatments[combinations[index, 2]] &
+                      treat_2 == treatments[combinations[index, 1]])) %>%
+      metacoder::heat_tree(...)
+    
+    out_plot <- cowplot::ggdraw() + 
+      cowplot::draw_plot(plot, x = 0, y = 0, width = 1, height = 1) +
+      cowplot::draw_text(gsub("_", " ", treatments[2]), 
+                         x = 0.87, y = 0.8, 
+                         size = col_label_size, colour = col_label_color,
+                         hjust = "center", vjust = "bottom") +
+      cowplot::draw_text("vs", 
+                         x = 0.87, y = 0.75,
+                         size = mean(c(row_label_size, col_label_size)),
+                         colour = '#000000',
+                         hjust = "center", vjust = "bottom") +
+      cowplot::draw_text(gsub("_", " ", treatments[1]), 
+                         x = 0.87, y = 0.7,
+                         size = row_label_size, colour = row_label_color,
+                         hjust = "center", vjust = "bottom") +
+      ggplot2::theme(aspect.ratio = 1)
+    
+    if (!is.null(output_file)) {
+      for (path in output_file) {
+        ggplot2::ggsave(path, out_plot, bg = "transparent", width = 10, height = 10)
+      }
+    }
+    
+    return(out_plot)
+  }
+  
+  
   # Make individual plots
   plot_sub_plot <- ifelse(label_small_trees, # This odd thing is used to overwrite options without evaluation
     function(..., make_node_legend = FALSE, make_edge_legend = FALSE, output_file = NULL) {
@@ -128,10 +165,10 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
                           set.seed(seed)
                           obj %>%
                             filter_obs(data,
-                                             (treat_1 == treatments[combinations[index, 1]] &
-                                                treat_2 == treatments[combinations[index, 2]]) |
-                                               (treat_1 == treatments[combinations[index, 2]] &
-                                                  treat_2 == treatments[combinations[index, 1]])) %>%
+                                       (treat_1 == treatments[combinations[index, 1]] &
+                                          treat_2 == treatments[combinations[index, 2]]) |
+                                         (treat_1 == treatments[combinations[index, 2]] &
+                                            treat_2 == treatments[combinations[index, 1]])) %>%
                             plot_sub_plot(...) %>%
                             return()
                         }
@@ -171,8 +208,12 @@ heat_tree_matrix <- function(obj, data, label_small_trees =  FALSE,
   named_col <- which(apply(layout_matrix, MARGIN = 2, function(x) all(!is.na(x))))
   horz_label_data <- matrix_data[match(layout_matrix[named_row, ], matrix_data$plot_index), ]
   vert_label_data <- matrix_data[match(layout_matrix[, named_col], matrix_data$plot_index), ]
-  subgraph_width <- abs(horz_label_data$x[1] - horz_label_data$x[2])
-  subgraph_height <- abs(vert_label_data$y[1] - vert_label_data$y[2])
+  subgraph_width <- ifelse(nrow(horz_label_data) == 1,
+                           key_size,
+                           abs(horz_label_data$x[1] - horz_label_data$x[2]))
+  subgraph_height <- ifelse(nrow(vert_label_data) == 1,
+                            key_size,
+                            abs(vert_label_data$y[1] - vert_label_data$y[2]))
   horz_label_data$label_x <- horz_label_data$x + subgraph_width / 2 # center of label
   horz_label_data$label_y <- 0.96 # bottom of label
   vert_label_data$label_x <- 0.96 # bottom of rotated label 
