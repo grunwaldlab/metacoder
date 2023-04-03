@@ -102,7 +102,7 @@ print__tbl_df <- function(obj, data, name, prefix, max_width, max_rows) {
   # Capture tibble print output
   output <- paste0(prefix, utils::capture.output(print(data, n = max_rows,
                                                        width = max_width - nchar(prefix),
-                                                       n_extra = 10)))
+                                                       max_extra_cols = 10)))
   # Remove any existing fonts
   output <- crayon::strip_style(output)
 
