@@ -342,11 +342,11 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
   if (output_format == "character") {
     if (! is.null(file)) {
       result <- read_fasta(file)
-    } else if (length(input) == 0 || class(input) == "character") {
+    } else if (length(input) == 0 || inherits(input, "character")) {
       result <- input
-    } else if (class(input) == "DNAbin") {
+    } else if (inherits(input,"DNAbin")) {
       result <- toupper(vapply(as.character(input), paste, character(1), collapse = ""))
-    } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
+    } else if (inherits(input[[1]], "SeqFastadna") || inherits(input, "list")) {
       result <- vapply(input, paste, character(1), collapse = "")
     } else {
       stop(paste0('Could not parse sequence information of class "', class(input), '".'),
@@ -366,7 +366,7 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
         file <- make_fasta_with_u_replaced(file)
       }
       result <- ape::read.FASTA(file)
-    } else if (length(input) == 0 || class(input) == "character") {
+    } else if (length(input) == 0 || inherits(input, "character")) {
       if (u_to_t) {
         input <- vapply(input, FUN = gsub, FUN.VALUE = character(1),
                         pattern = "U", replacement = "T", fixed = TRUE)
@@ -374,9 +374,9 @@ parse_seq_input <- function(input = NULL, file = NULL, output_format = "characte
                         pattern = "u", replacement = "t", fixed = TRUE)
       }
       result <- ape::as.DNAbin(strsplit(input, split = ""))
-    } else if (class(input) == "DNAbin") {
+    } else if (inherits(input,  "DNAbin")) {
       result <- input
-    } else if (class(input[[1]]) == "SeqFastadna" || class(input) == "list") {
+    } else if (inherits(input[[1]], "SeqFastadna") || inherits(input, "list")) {
       input <- lapply(input, function(x) {
         attributes(x) <- NULL
         return(x)

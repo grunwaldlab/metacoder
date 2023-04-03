@@ -1066,18 +1066,18 @@ extract_tax_data <- function(tax_data, key, regex, class_key = "taxon_name",
   class_key <- validate_regex_key_pair(class_regex, class_key, multiple_allowed = "info")
 
   # classification sep
-  if (!is.null(class_sep) && (class(class_sep) != "character" | length(class_sep) != 1)) {
+  if (!is.null(class_sep) && (! inherits(class_sep, "character") | length(class_sep) != 1)) {
     stop('"class_sep" must be a character vector of length 1 or NULL')
   }
 
   # Boolean options
-  if (class(class_rev) != "logical" | length(class_rev) != 1) {
+  if (! inherits(class_rev, "logical") | length(class_rev) != 1) {
     stop('"class_rev" must be TRUE/FALSE')
   }
-  if (class(include_match) != "logical" | length(include_match) != 1) {
+  if (! inherits(include_match, "logical") | length(include_match) != 1) {
     stop('"include_match" must be TRUE/FALSE')
   }
-  if (class(include_tax_data) != "logical" | length(include_tax_data) != 1) {
+  if (! inherits(include_tax_data, "logical") | length(include_tax_data) != 1) {
     stop('"include_tax_data" must be TRUE/FALSE')
   }
 

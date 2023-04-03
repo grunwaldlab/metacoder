@@ -641,7 +641,7 @@ compare_groups <- function(obj, data, cols, groups,
   # Get every combination of groups to compare
   if (is.null(combinations)) {
     if (is.ordered(groups)) {
-      group_order <- factor(levels(groups), levels = levels(groups), order = TRUE)
+      group_order <- factor(levels(groups), levels = levels(groups), ordered = TRUE)
     } else {
       group_order <- unique(groups)
     }

@@ -914,7 +914,7 @@ Taxmap <- R6::R6Class(
                               dataset_name, '", so there are no taxon IDs.'))
           return(NULL)
         }
-      } else if (class(data) == "list" || is.vector(data) || can_be_used_in_taxmap(data)) {
+      } else if (inherits(data, "list") || is.vector(data) || can_be_used_in_taxmap(data)) {
         if (! is.null(names(data))) {
           is_valid <- private$ids_are_valid(names(data))
           if (all(is_valid)) {

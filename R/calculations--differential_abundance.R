@@ -1,17 +1,17 @@
 #' Differential abundance with DESeq2
 #'
 #' EXPERIMENTAL: This function is still being tested and developed; use with caution. Uses the
-#' \code{\link{DESeq2}} package to conduct differential abundance analysis of count data. Counts can
+#' \code{\link[DESeq2]{DESeq2-package}} package to conduct differential abundance analysis of count data. Counts can
 #' be of OTUs/ASVs or taxa. The plotting function \code{\link{heat_tree_matrix}} is useful for
 #' visualizing these results. See details section below for considerations on preparing data for
 #' this analysis.
 #'
 #' Data should be raw read counts, not rarefied, converted to proportions, or modified with any
-#' other technique designed to correct for sample size since \code{\link{DESeq2}} is designed to be
-#' used with count data and takes into accoutn unequal sample size when determining differential
+#' other technique designed to correct for sample size since \code{\link[DESeq2]{DESeq2-package}} is designed to be
+#' used with count data and takes into account unequal sample size when determining differential
 #' abundance. Warnings will be given if the data is not integers or all sample sizes are equal.
 #'
-#' @param obj A \code{\link[taxa]{taxmap}} object
+#' @param obj A \code{\link[metacoder]{taxmap}} object
 #' @param data The name of a table in \code{obj} that contains data for each sample in columns.
 #' @param cols The names/indexes of columns in \code{data} to use. By default, all numeric columns
 #'   are used. Takes one of the following inputs: \describe{ \item{TRUE/FALSE:}{All/No columns will
@@ -28,7 +28,7 @@
 #' \describe{
 #'   \item{'none'}{No log fold change adjustments.}
 #'   \item{'normal'}{The original DESeq2 shrinkage estimator}
-#'   \item{'ashr'}{Adaptive shrinkage estimator from the \code{\link{ashr}} package, using a fitted mixture of normals prior.}
+#'   \item{'ashr'}{Adaptive shrinkage estimator from the \code{ashr} package, using a fitted mixture of normals prior.}
 #' }
 #' @param ... Passed to \code{\link[DESeq2]{results}} if the \code{lfc_shrinkage} option is "none"
 #'   and to \code{\link[DESeq2]{lfcShrink}} otherwise.
