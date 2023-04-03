@@ -115,7 +115,7 @@ calc_diff_abund_deseq2 <- function(obj, data, cols, groups, other_cols = FALSE,
   other_cols <- get_taxmap_other_cols(obj, data, cols, other_cols)
   
   # Get every combination of groups to compare
-  combinations <- t(utils::combn(unique(groups), 2))
+  combinations <- t(utils::combn(unique(as.character(groups)), 2))
   combinations <- lapply(seq_len(nrow(combinations)), function(i) combinations[i, ])
   
   # Format data for DESeq2
