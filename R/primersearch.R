@@ -105,7 +105,7 @@ parse_primersearch <- function(file_path) {
 #' 
 #' A pair of primers are aligned against a set of sequences.
 #' The location of the best hits, quality of match, and predicted amplicons are returned.
-#' Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+#' Requires the EMBOSS tool kit (\url{https://emboss.sourceforge.net/}) to be installed.
 #' 
 #' It can be confusing how the primer sequence relates to the binding sites on a
 #' reference database sequence. A simplified diagram can help. For example, if
@@ -347,7 +347,7 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' \code{\link{taxmap}} object with two tables is returned: a table with
 #' information for each predicted amplicon, quality of match, and predicted
 #' amplicons, and a table with per-taxon amplification statistics. Requires the
-#' EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+#' EMBOSS tool kit (\url{https://emboss.sourceforge.net/}) to be installed.
 #' 
 #' It can be confusing how the primer sequence relates to the binding sites on a
 #' reference database sequence. A simplified diagram can help. For example, if

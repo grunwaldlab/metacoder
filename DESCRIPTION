@@ -54,7 +54,7 @@ Suggests:
     DESeq2
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
-Date: 2021-06-23
+Date: 2023-04-03
 Encoding: UTF-8
 biocViews: 
 LinkingTo: Rcpp

@@ -1,25 +1,37 @@
 ## Test environments and check results
 
 
-### local: Pop!_OS 20.04 LTS, R 4.0.3 
+### local: Pop!_OS 22.04 LTS, R 4.2.2 
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 notes
 
-### travis-ci: release
+❯ checking dependencies in R code ... NOTE
+  Namespace in Imports field not imported from: ‘R6’
+    All declared Imports should be used.
+    
+I am not sure why this note exists. I am using `R6::` in about 10 places in the package.
+All of the classes in the package are R6 classes, so it is definitely used. 
 
-0 errors | 0 warnings | 0 notes
 
-### Rhub: Ubuntu Linux 20.04.1 LTS, R-release, GCC
+### Rhub: Windows
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 2 notes
 
-### All testing platforms using R devel (rhub, winbuilder)
+* checking dependencies in R code ... NOTE
+Namespace in Imports field not imported from: 'R6'
+  All declared Imports should be used.
+  
+I am not sure why this note exists. I am using `R6::` in about 10 places in the package.
+All of the classes in the package are R6 classes, so it is definitely used. 
 
-Some bioconductor packages in Suggests seem to not be available for R 4.2. I get the following error on R devel builds: 
+* checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException'
 
-Error: Bioconductor does not yet build and check packages for R version 4.2
+Seems to be a bug with Rhub:
 
-However, all of the bioconductor packages are optional and not needed for most functionality.
+https://github.com/r-hub/rhub/issues/503
+
 
 
 ## Downstream dependencies

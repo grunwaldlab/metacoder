@@ -53,7 +53,7 @@ input: The index of the input sequence
 \description{
 A pair of primers are aligned against a set of sequences.
 The location of the best hits, quality of match, and predicted amplicons are returned.
-Requires the EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+Requires the EMBOSS tool kit (\url{https://emboss.sourceforge.net/}) to be installed.
 }
 \details{
 It can be confusing how the primer sequence relates to the binding sites on a

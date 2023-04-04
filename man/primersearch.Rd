@@ -82,7 +82,7 @@ A pair of primers are aligned against a set of sequences. A
 \code{\link{taxmap}} object with two tables is returned: a table with
 information for each predicted amplicon, quality of match, and predicted
 amplicons, and a table with per-taxon amplification statistics. Requires the
-EMBOSS tool kit (\url{http://emboss.sourceforge.net/}) to be installed.
+EMBOSS tool kit (\url{https://emboss.sourceforge.net/}) to be installed.
 }
 \details{
 It can be confusing how the primer sequence relates to the binding sites on a
