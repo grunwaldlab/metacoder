@@ -13,7 +13,7 @@ I am not sure why this note exists. I am using `R6::` in about 10 places in the 
 All of the classes in the package are R6 classes, so it is definitely used. 
 
 
-### Rhub: Windows
+### Rhub:
 
 0 errors | 0 warnings | 2 notes
 
@@ -32,6 +32,10 @@ Seems to be a bug with Rhub:
 
 https://github.com/r-hub/rhub/issues/503
 
+
+### WinBuilder:
+
+0 errors | 0 warnings | 0 notes
 
 
 ## Downstream dependencies
