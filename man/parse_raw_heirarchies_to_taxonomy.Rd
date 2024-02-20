@@ -12,8 +12,9 @@ vectors with each vector named by ranks, include that rank info in the
 output object, so it can be accessed by `out$taxon_ranks()`. If `TRUE`,
 taxa with different ranks, but the same name and location in the taxonomy,
 will be considered different taxa.}
-
-\item{A}{list of character vectors.}
+}
+\value{
+A list of character vectors.
 }
 \description{
 Infer edge list and unique taxa from hierarchies.

@@ -44,10 +44,10 @@ Other classes:
 \code{\link{hierarchy}()},
 \code{\link{taxa}()},
 \code{\link{taxmap}()},
+\code{\link{taxon}()},
 \code{\link{taxon_database}()},
 \code{\link{taxon_id}()},
 \code{\link{taxon_rank}()},
-\code{\link{taxonomy}()},
-\code{\link{taxon}()}
+\code{\link{taxonomy}()}
 }
 \concept{classes}

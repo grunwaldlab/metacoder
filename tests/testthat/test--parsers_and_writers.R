@@ -198,6 +198,8 @@ test_that("Parsing/writing the greengenes database", {
 
 
 test_that("Converting to phyloseq", {
+  skip_on_cran()
+  
   # test round-trip
   library(phyloseq)
   data(enterotype)

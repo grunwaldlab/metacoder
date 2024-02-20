@@ -11,9 +11,9 @@ get_sort_var(data, var)
 
 \item{var}{What to get.
 * For tables, the names of columns can be used.
-* `"{{index}}"` : This means to use the index of rows/items
-* `"{{name}}"`  : This means to use row/item names.
-* `"{{value}}"` : This means to use the values in vectors or lists. Lists}
+* `"\{\{index\}\}"` : This means to use the index of rows/items
+* `"\{\{name\}\}"`  : This means to use row/item names.
+* `"\{\{value\}\}"` : This means to use the values in vectors or lists. Lists}
 }
 \description{
 Get a vector from a vector/list/table to be used in mapping

@@ -442,6 +442,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' }
 #' @method heat_tree default
 #' @rdname heat_tree
+#' @export
 heat_tree.default <- function(taxon_id, supertaxon_id, 
                               node_label = NA,
                               edge_label = NA,
@@ -660,7 +661,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     if (length(taxa) == 1) {
       # Make a graph with only a single node
       adj_matrix <- matrix(c(0), ncol = 1, dimnames =  list(taxa, taxa))
-      sub_graph <- igraph::graph.adjacency(adj_matrix)
+      sub_graph <- igraph::graph_from_adjacency_matrix(adj_matrix)
     } else {
       # Make edge list from taxon_id and supertaxon_id
       edgelist <- as.matrix(data[taxa, c("pid_user", "tid_user")])
@@ -1158,7 +1159,7 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
     
     ranges <- get_limits()
     the_plot <- ggplot2::ggplot(data = data) +
-      ggplot2::geom_polygon(data = element_data, ggplot2::aes_string(x = "x", y = "y", group = "group"),
+      ggplot2::geom_polygon(data = element_data, ggplot2::aes(x = .data[["x"]], y = .data[["y"]], group = .data[["group"]]),
                             fill = element_data$color) +
       ggplot2::guides(fill = "none") +
       ggplot2::coord_fixed(xlim = ranges$x, ylim = ranges$y) +
@@ -1186,12 +1187,12 @@ heat_tree.default <- function(taxon_id, supertaxon_id,
                                                         color = bounds$color,
                                                         padding.x = grid::unit(0, "mm"),
                                                         padding.y = grid::unit(0, "mm"),
-                                                        ggplot2::aes_string(label = "label",
-                                                                            xmin = "xmin",
-                                                                            xmax = "xmax",
-                                                                            ymin = "ymin",
-                                                                            ymax = "ymax",
-                                                                            angle = "rotation")) 
+                                                        ggplot2::aes(label = .data[["label"]],
+                                                                     xmin = .data[["xmin"]],
+                                                                     xmax = .data[["xmax"]],
+                                                                     ymin = .data[["ymin"]],
+                                                                     ymax = .data[["ymax"]],
+                                                                     angle = .data[["rotation"]])) 
       }
     }
     

@@ -2,7 +2,7 @@
 #'
 #' Infer edge list and unique taxa from hierarchies.
 #'
-#' @param A list of [hierarchy()] objects.
+#' @return A list of [hierarchy()] objects.
 #'
 #' @keywords internal
 parse_heirarchies_to_taxonomy <- function(heirarchies) {
@@ -38,12 +38,13 @@ parse_heirarchies_to_taxonomy <- function(heirarchies) {
 #'
 #' Infer edge list and unique taxa from hierarchies.
 #'
-#' @param A list of character vectors.
 #' @param named_by_rank (`TRUE`/`FALSE`) If  `TRUE` and the input is a list of
 #'   vectors with each vector named by ranks, include that rank info in the
 #'   output object, so it can be accessed by `out$taxon_ranks()`. If `TRUE`,
 #'   taxa with different ranks, but the same name and location in the taxonomy,
 #'   will be considered different taxa.
+#'   
+#' @return A list of character vectors.
 #'
 #' @keywords internal
 parse_raw_heirarchies_to_taxonomy <- function(heirarchies, named_by_rank = FALSE) {

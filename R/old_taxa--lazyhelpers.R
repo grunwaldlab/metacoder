@@ -91,6 +91,7 @@ helpers_fxn_se <- function(name, ...) {
   structure(x, class = 'taxapicker', type = name, operator = op)
 }
 
+#' @export
 print.taxapicker <- function(x, ...) {
   cat("<taxapicker>", sep = "\n")
   cat(sprintf(

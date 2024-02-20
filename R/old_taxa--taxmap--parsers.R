@@ -107,8 +107,8 @@ parse_edge_list <- function(input, taxon_id, supertaxon_id, taxon_name, taxon_ra
 #'   specified by the corresponding values of the character vector. If there are no shared
 #'   variables, you can add `NA` as a placeholder, but you could just leave that data out since it
 #'   is not benefiting from being in the taxmap object. The names/values can be one of the
-#'   following: * For tables, the names of columns can be used. * `"{{index}}"` : This means to use
-#'   the index of rows/items * `"{{name}}"`  : This means to use row/item names. * `"{{value}}"` :
+#'   following: * For tables, the names of columns can be used. * `"\{\{index\}\}"` : This means to use
+#'   the index of rows/items * `"\{\{name\}\}"`  : This means to use row/item names. * `"\{\{value\}\}"` :
 #'   This means to use the values in vectors or lists. Lists will be converted to vectors using
 #'   [unlist()].
 #' @param include_tax_data (`TRUE`/`FALSE`) Whether or not to include `tax_data` as a dataset, like
@@ -493,9 +493,9 @@ parse_tax_data <- function(tax_data, datasets = list(), class_cols = 1,
 #'   just leave that data out since it is not benefiting from being in the
 #'   taxmap object. The names/values can be one of the following:
 #'   * For tables, the names of columns can be used.
-#'   * `"{{index}}"` : This means to use the index of rows/items
-#'   * `"{{name}}"`  : This means to use row/item names.
-#'   * `"{{value}}"` : This means to use the values in vectors or lists. Lists
+#'   * `"\{\{index\}\}"` : This means to use the index of rows/items
+#'   * `"\{\{name\}\}"`  : This means to use row/item names.
+#'   * `"\{\{value\}\}"` : This means to use the values in vectors or lists. Lists
 #'   will be converted to vectors using [unlist()].
 #' @param database (`character`) The name of a database to use to look up
 #'   classifications. Options include "ncbi", "itis", "eol", "col", "tropicos",
@@ -890,9 +890,9 @@ lookup_tax_data <- function(tax_data, type, column = 1, datasets = list(),
 #' @param data A vector/list/table
 #' @param var What to get.
 #'   * For tables, the names of columns can be used.
-#'   * `"{{index}}"` : This means to use the index of rows/items
-#'   * `"{{name}}"`  : This means to use row/item names.
-#'   * `"{{value}}"` : This means to use the values in vectors or lists. Lists
+#'   * `"\{\{index\}\}"` : This means to use the index of rows/items
+#'   * `"\{\{name\}\}"`  : This means to use row/item names.
+#'   * `"\{\{value\}\}"` : This means to use the values in vectors or lists. Lists
 #'
 #' @keywords internal
 get_sort_var <- function(data, var) {

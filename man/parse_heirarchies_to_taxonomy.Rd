@@ -6,8 +6,8 @@
 \usage{
 parse_heirarchies_to_taxonomy(heirarchies)
 }
-\arguments{
-\item{A}{list of [hierarchy()] objects.}
+\value{
+A list of [hierarchy()] objects.
 }
 \description{
 Infer edge list and unique taxa from hierarchies.

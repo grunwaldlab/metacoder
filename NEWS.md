@@ -1,5 +1,9 @@
 # News 
 
+## metacoder 0.3.7
+
+* Maintenance release to fix CRAN check issues.
+
 ## metacoder 0.3.6
 
 * When an ordered factor is supplied to the `groups` argument of `compare_groups`, the order of levels is used to arrange the results. This can be used to change the order of groups when the output is used with `heat_tree_matrix` (issue [#323](https://github.com/grunwaldlab/metacoder/issues/323)).

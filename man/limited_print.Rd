@@ -34,12 +34,12 @@ limited_print(
 
 \item{mid}{What is used to indicate omitted values}
 
+\item{trunc_char}{What is appended onto truncated values}
+
 \item{max_chars}{(`numeric` of length 1) The maximum number of
 characters to print.}
 
 \item{type}{(`"error"`, `"warning"`, `"message"`, `"cat"`, `"print"`, `"silent"`, `"plain"`)}
-
-\item{trunc}{What is appended onto truncated values}
 }
 \value{
 `NULL`

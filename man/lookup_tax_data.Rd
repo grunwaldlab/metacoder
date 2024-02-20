@@ -54,9 +54,9 @@ are no shared variables, you can add `NA` as a placeholder, but you could
 just leave that data out since it is not benefiting from being in the
 taxmap object. The names/values can be one of the following:
 * For tables, the names of columns can be used.
-* `"{{index}}"` : This means to use the index of rows/items
-* `"{{name}}"`  : This means to use row/item names.
-* `"{{value}}"` : This means to use the values in vectors or lists. Lists
+* `"\{\{index\}\}"` : This means to use the index of rows/items
+* `"\{\{name\}\}"`  : This means to use row/item names.
+* `"\{\{value\}\}"` : This means to use the values in vectors or lists. Lists
 will be converted to vectors using [unlist()].}
 
 \item{database}{(`character`) The name of a database to use to look up
@@ -184,8 +184,8 @@ Other parsers:
 \code{\link{parse_mothur_tax_summary}()},
 \code{\link{parse_mothur_taxonomy}()},
 \code{\link{parse_newick}()},
-\code{\link{parse_phyloseq}()},
 \code{\link{parse_phylo}()},
+\code{\link{parse_phyloseq}()},
 \code{\link{parse_qiime_biom}()},
 \code{\link{parse_rdp}()},
 \code{\link{parse_silva_fasta}()},

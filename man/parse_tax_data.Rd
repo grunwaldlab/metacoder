@@ -79,8 +79,8 @@ specify what information in `tax_data` is shared with info in each `dataset`, wh
 specified by the corresponding values of the character vector. If there are no shared
 variables, you can add `NA` as a placeholder, but you could just leave that data out since it
 is not benefiting from being in the taxmap object. The names/values can be one of the
-following: * For tables, the names of columns can be used. * `"{{index}}"` : This means to use
-the index of rows/items * `"{{name}}"`  : This means to use row/item names. * `"{{value}}"` :
+following: * For tables, the names of columns can be used. * `"\{\{index\}\}"` : This means to use
+the index of rows/items * `"\{\{name\}\}"`  : This means to use row/item names. * `"\{\{value\}\}"` :
 This means to use the values in vectors or lists. Lists will be converted to vectors using
 [unlist()].}
 
@@ -208,8 +208,8 @@ Other parsers:
 \code{\link{parse_mothur_tax_summary}()},
 \code{\link{parse_mothur_taxonomy}()},
 \code{\link{parse_newick}()},
-\code{\link{parse_phyloseq}()},
 \code{\link{parse_phylo}()},
+\code{\link{parse_phyloseq}()},
 \code{\link{parse_qiime_biom}()},
 \code{\link{parse_rdp}()},
 \code{\link{parse_silva_fasta}()},
