@@ -24,7 +24,7 @@ as_phyloseq(
   \item{\code{FALSE}}{Do not include an OTU table, even if "otu_table" exists in `obj$data`}
 }}
 
-\item{otu_id_col}{The name of the column storing OTU IDs in the otu table.}
+\item{otu_id_col}{The name of the column storing OTU IDs in the OTU table.}
 
 \item{sample_data}{A table containing sample data with sample IDs matching
   column names in the OTU table. Must be one of the following:
@@ -37,12 +37,12 @@ as_phyloseq(
 
 \item{sample_id_col}{The name of the column storing sample IDs in the sample data table.}
 
-\item{phy_tree}{A phylogenetic tree of class \code{\link[ape:phylo]{ape::phylo}} from
-  the \code{\link{ape}} package with tip labels matching OTU ids. Must be one of the following:
+\item{phy_tree}{A phylogenetic tree of class \code{ape:phylo} from
+  the \code{ape} package with tip labels matching OTU ids. Must be one of the following:
 \describe{
   \item{\code{NULL}}{Look for a tree named "phy_tree" in `obj$data` with tip labels matching OTU ids. If it exists, use it.}
   \item{\code{character}}{The name of the tree stored in `obj$data` with tip labels matching OTU ids.}
-  \item{\code{\link[ape:phylo]{ape::phylo}}}{A tree with tip labels matching OTU ids.}
+  \item{\code{ape::phylo}}{A tree with tip labels matching OTU ids.}
   \item{\code{FALSE}}{Do not include a tree, even if "phy_tree" exists in `obj$data`}
 }}
 }
