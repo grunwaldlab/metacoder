@@ -286,7 +286,7 @@ Default: 3.}
 \item{background_color}{The background color of the plot.
 Default: Transparent}
 
-\item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2]{ggsave}}. 
+\item{output_file}{The path to one or more files to save the plot in using \code{\link[ggplot2:ggsave]{ggplot2::ggsave}}. 
 The type of the file will be determined by the extension given.
 Default: Do not save plot.}
 
@@ -402,16 +402,16 @@ function used.
 The following \code{character} values are understood:
 
 \describe{
-  \item{"automatic"}{Use \code{\link[igraph]{nicely}}. Let \code{\link{igraph}} choose the layout.}
-  \item{"reingold-tilford"}{Use \code{\link[igraph]{as_tree}}. A circular tree-like layout.}
-  \item{"davidson-harel"}{Use \code{\link[igraph]{with_dh}}. A type of simulated annealing.}
-  \item{"gem"}{Use \code{\link[igraph]{with_gem}}. A force-directed layout.}
-  \item{"graphopt"}{Use \code{\link[igraph]{with_graphopt}}. A force-directed layout.}
-  \item{"mds"}{Use \code{\link[igraph]{with_mds}}. Multidimensional scaling.}
-  \item{"fruchterman-reingold"}{Use \code{\link[igraph]{with_fr}}. A force-directed layout.}
-  \item{"kamada-kawai"}{Use \code{\link[igraph]{with_kk}}. A layout based on a physical model of springs.}
-  \item{"large-graph"}{Use \code{\link[igraph]{with_lgl}}. Meant for larger graphs.}
-  \item{"drl"}{Use \code{\link[igraph]{with_drl}}. A force-directed layout.}
+  \item{"automatic"}{Use \code{\link[igraph:nicely]{igraph::nicely}}. Let \code{\link{igraph}} choose the layout.}
+  \item{"reingold-tilford"}{Use \code{\link[igraph:as_tree]{igraph::as_tree}}. A circular tree-like layout.}
+  \item{"davidson-harel"}{Use \code{\link[igraph:with_dh]{igraph::with_dh}}. A type of simulated annealing.}
+  \item{"gem"}{Use \code{\link[igraph:with_gem]{igraph::with_gem}}. A force-directed layout.}
+  \item{"graphopt"}{Use \code{\link[igraph:with_graphopt]{igraph::with_graphopt}}. A force-directed layout.}
+  \item{"mds"}{Use \code{\link[igraph:with_mds]{igraph::with_mds}}. Multidimensional scaling.}
+  \item{"fruchterman-reingold"}{Use \code{\link[igraph:with_fr]{igraph::with_fr}}. A force-directed layout.}
+  \item{"kamada-kawai"}{Use \code{\link[igraph:with_kk]{igraph::with_kk}}. A layout based on a physical model of springs.}
+  \item{"large-graph"}{Use \code{\link[igraph:with_lgl]{igraph::with_lgl}}. Meant for larger graphs.}
+  \item{"drl"}{Use \code{\link[igraph:with_drl]{igraph::with_drl}}. A force-directed layout.}
 }
 }
 

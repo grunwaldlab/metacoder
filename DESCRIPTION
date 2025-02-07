@@ -1,6 +1,6 @@
 Package: metacoder
 Title: Tools for Parsing, Manipulating, and Graphing Taxonomic Abundance Data
-Version: 0.3.7
+Version: 0.3.8
 Authors@R: c(person("Zachary", "Foster", email =
         "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
         person("Niklaus", "Grunwald", email =
@@ -53,8 +53,7 @@ Suggests:
     biomformat,
     DESeq2
 VignetteBuilder: knitr
-RoxygenNote: 7.3.1
-Date: 2024-02-19
+RoxygenNote: 7.3.2
 Encoding: UTF-8
 biocViews: 
 LinkingTo: Rcpp
