@@ -1,5 +1,9 @@
 # News 
 
+## metacoder 0.3.8
+
+* Maintenance release to fix CRAN check issues.
+
 ## metacoder 0.3.7
 
 * Maintenance release to fix CRAN check issues.
