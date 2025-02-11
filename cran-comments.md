@@ -29,6 +29,14 @@ CRAN repository db overrides:
   X-CRAN-Comment: Archived on 2024-10-01 as issues were not corrected
     in time.
 
+Possibly misspelled words in DESCRIPTION:
+  al (32:18)
+  bioinformatics (30:16)
+  et (32:15)
+  metabarcoding (26:22)
+  metagenomics (26:56, 27:5)
+  microbiome (30:5)
+  
 Suggests or Enhances not in mainstream repositories:
   traits
 ```
@@ -38,6 +46,7 @@ Suggests or Enhances not in mainstream repositories:
 The package `traits` was also removed from CRAN because it depends on `taxize` as well.
 It is only a suggested package for `metacoder` used for one function and I expect `traits` will be returned to CRAN as well soon.
 I am not sure if it is required for all packages in "Suggests" to be on CRAN or not.
+The "Possibly misspelled words" are all real words.
 
 
 ### Response to CRAN review

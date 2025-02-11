@@ -801,6 +801,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 #' @family calculations
 #'
 #' @examples
+#' \donttest{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -829,6 +830,7 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 #' calc_n_samples(x, data = "tax_data", other_cols = TRUE)
 #' calc_n_samples(x, data = "tax_data", other_cols = 2)
 #' calc_n_samples(x, data = "tax_data", other_cols = "otu_id")
+#' }
 #' @export
 calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
                            other_cols = FALSE, out_names = NULL, drop = FALSE,
@@ -889,6 +891,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' @family calculations
 #'
 #' @examples
+#' \donttest{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -917,6 +920,7 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' calc_prop_samples(x, data = "tax_data", other_cols = TRUE)
 #' calc_prop_samples(x, data = "tax_data", other_cols = 2)
 #' calc_prop_samples(x, data = "tax_data", other_cols = "otu_id")
+#' }
 #' @export
 calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
                               other_cols = FALSE, out_names = NULL, drop = FALSE,

@@ -20,7 +20,7 @@ Authors@R:
              family = "Gilmore",
              role = "ctb"))
 Maintainer: Zachary Foster <zacharyfoster1989@gmail.com>
-Description: 'Metacoder' is a package for reading, plotting, and manipulating large
+Description: This package is for reading, plotting, and manipulating large
     taxonomic data sets, like those generated from modern high-throughput
     sequencing, like metabarcoding (i.e. amplification metagenomics, 16S
     metagenomics, etc). It provides a tree-based visualization called "heat
