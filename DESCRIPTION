@@ -20,15 +20,15 @@ Authors@R:
              family = "Gilmore",
              role = "ctb"))
 Maintainer: Zachary Foster <zacharyfoster1989@gmail.com>
-Description: This package is for reading, plotting, and manipulating large
+Description: Reads, plots, and manipulates large
     taxonomic data sets, like those generated from modern high-throughput
-    sequencing, like metabarcoding (i.e. amplification metagenomics, 16S
+    sequencing, such as metabarcoding (i.e. amplification metagenomics, 16S
     metagenomics, etc). It provides a tree-based visualization called "heat
     trees" used to depict statistics for every taxon in a taxonomy using
     color and size. It also provides various functions to do common tasks in
     microbiome bioinformatics on data in the 'taxmap' format defined by the
     'taxa' package. The 'metacoder' package is described in the publication
-    by Foster et al. (2027) <doi:10.1371/journal.pcbi.1005404>.
+    by Foster et al. (2017) <doi:10.1371/journal.pcbi.1005404>.
 Depends:
     R (>= 3.0.2)
 License: GPL-2 | GPL-3
