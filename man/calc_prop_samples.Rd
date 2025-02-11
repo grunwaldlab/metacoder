@@ -62,6 +62,7 @@ For a given table in a \code{\link{taxmap}} object, calculate the
 proportion of samples (i.e. columns) with greater than a minimum value.
 }
 \examples{
+\donttest{
 # Parse data for example
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -90,6 +91,7 @@ calc_prop_samples(x, data = "tax_data", groups = hmp_samples$body_site,
 calc_prop_samples(x, data = "tax_data", other_cols = TRUE)
 calc_prop_samples(x, data = "tax_data", other_cols = 2)
 calc_prop_samples(x, data = "tax_data", other_cols = "otu_id")
+}
 }
 \seealso{
 Other calculations: 
