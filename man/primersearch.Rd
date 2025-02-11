@@ -146,7 +146,7 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Get example FASTA file
 fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
                           package = "metacoder")

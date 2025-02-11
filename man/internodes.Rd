@@ -33,8 +33,6 @@ obj$internodes(subset = NULL, value = "taxon_indexes")
 internodes(obj, subset = NULL, value = "taxon_indexes")}
 }
 \examples{
-\dontrun{
-
 # Return indexes of branch taxa
 internodes(ex_taxmap)
 
@@ -45,7 +43,6 @@ internodes(ex_taxmap, subset = n_obs > 1)
 # Return something besides taxon indexes
 internodes(ex_taxmap, value = "taxon_names")
 
-}
 }
 \seealso{
 Other taxonomy indexing functions: 

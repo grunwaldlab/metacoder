@@ -98,8 +98,7 @@ downloaded database and a parser from the \code{taxa} package when possible.
 }
 \examples{
 
-\dontrun{
-
+\donttest{
 # Look up 5 ITS sequences from each fungal class
 data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
                           entrez_query = '"internal transcribed spacer"[All Fields]')
@@ -108,7 +107,7 @@ data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5,
 obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
 
 # Plot information
-filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
+metacoder::filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
 }
 }

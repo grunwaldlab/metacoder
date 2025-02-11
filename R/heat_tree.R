@@ -359,7 +359,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #' implementation of the label overlap avoidance used in metacoder.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Parse dataset for plotting
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -411,7 +411,7 @@ heat_tree.Taxmap <- function(.input, ...) {
 #'           
 #' # Label overlap avoidance
 #' #  You can modfiy how label scattering is handled using the `replel_force` and
-#' `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
+#' # `repel_iter` options. You can turn off label scattering using the `repel_labels` option.
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,
 #'           repel_force = 2, repel_iter = 20000)
 #' heat_tree(x, node_label = taxon_names, node_size = n_obs, node_color = n_obs,

@@ -17,10 +17,4 @@ A \code{data.frame}
 \description{
 Returns the distances between every possible combination of two points.
 }
-\examples{
-\dontrun{
-molten_dist(x = 1:5, y = 1:5)
-}
-
-}
 \keyword{internal}

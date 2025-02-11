@@ -19,10 +19,6 @@ to make sense.
 \preformatted{
 obj$names_used(...)}
 }
-\examples{
-ex_taxmap$names_used(n_legs + dangerous == invalid_expression)
-
-}
 \seealso{
 Other NSE helpers: 
 \code{\link{all_names}()},

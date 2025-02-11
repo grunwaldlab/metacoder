@@ -45,7 +45,6 @@ each column for each taxon. This is useful to convert per-observation counts
 (e.g. OTU counts) to per-taxon counts.
 }
 \examples{
-\dontrun{
 # Parse data for example
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -79,8 +78,6 @@ calc_taxon_abund(x, "tax_data", groups = hmp_samples$sex,
 # Geting a total for all columns 
 calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
                  groups = rep("total", nrow(hmp_samples)))
-}
-
 }
 \seealso{
 Other calculations: 

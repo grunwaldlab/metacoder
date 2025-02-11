@@ -25,7 +25,7 @@
 #' @param dataset DEPRECIATED. use "data" instead.
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Parse dataset for plotting
 #' x <- parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                     class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -54,7 +54,6 @@
 #'                  edge_color_interval = c(-3, 3),
 #'                  node_size_axis_label = "Number of OTUs",
 #'                  node_color_axis_label = "Log2 ratio median proportions")
-#' 
 #' }
 #' 
 #' @export

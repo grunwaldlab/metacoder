@@ -31,12 +31,7 @@ A taxmap object
 Converts a phyloseq object to a taxmap object.
 }
 \examples{
-\dontrun{
-
-# Install phyloseq to get example data
-# source('http://bioconductor.org/biocLite.R')
-# biocLite('phyloseq')
-
+\donttest{
 # Parse example dataset
 library(phyloseq)
 data(GlobalPatterns)
@@ -48,9 +43,7 @@ heat_tree(x,
           node_color = n_obs,
           node_label = taxon_names,
           tree_label = taxon_names)
-
 }
-
 
 }
 \seealso{

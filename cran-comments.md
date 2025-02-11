@@ -38,4 +38,8 @@ Suggests or Enhances not in mainstream repositories:
 The package `traits` was also removed from CRAN because it depends on `taxize` as well.
 It is only a suggested package for `metacoder` used for one function and I expect `traits` will be returned to CRAN as well soon.
 I am not sure if it is required for all packages in "Suggests" to be on CRAN or not.
-  
+
+
+### Response to CRAN review
+
+I added Scott Chamberlain and Kamil Slowikowski to authors in the DESCRIPTION.

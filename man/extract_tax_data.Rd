@@ -116,8 +116,7 @@ accepted sources of taxonomic information.
 
 \examples{
 
-\dontrun{
-
+\donttest{
   # For demonstration purposes, the following example dataset has all the
   # types of data that can be used, but any one of them alone would work.
   raw_data <- c(

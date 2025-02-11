@@ -1,15 +1,34 @@
 Package: metacoder
 Title: Tools for Parsing, Manipulating, and Graphing Taxonomic Abundance Data
 Version: 0.3.8
-Authors@R: c(person("Zachary", "Foster", email =
-        "zacharyfoster1989@gmail.com", role = c("aut", "cre")),
-        person("Niklaus", "Grunwald", email =
-        "grunwaln@science.oregonstate.edu", role = c("ths")),
-        person("Rob", "Gilmore", email = "rgilmore@ummc.edu", 
-        role = "ctb"))
+Authors@R:
+    c(person(given = "Zachary", 
+             family = "Foster",
+             role = c("aut", "cre"),
+             email = "zacharyfoster1989@gmail.com"),
+      person(given = "Niklaus",
+             family = "Grunwald", 
+             role = c("ths"),
+             email = "grunwaln@science.oregonstate.edu"),
+      person(given = "Kamil",
+             family = "Slowikowski",
+             role = c("ctb")),
+      person(given = "Scott",
+             family = "Chamberlain",
+             role = c("ctb")),
+      person(given = "Rob",
+             family = "Gilmore",
+             role = "ctb"))
 Maintainer: Zachary Foster <zacharyfoster1989@gmail.com>
-Description: A set of tools for parsing, manipulating, and graphing data
-    classified by a hierarchy (e.g. a taxonomy).
+Description: 'Metacoder' is a package for reading, plotting, and manipulating large
+    taxonomic data sets, like those generated from modern high-throughput
+    sequencing, like metabarcoding (i.e. amplification metagenomics, 16S
+    metagenomics, etc). It provides a tree-based visualization called "heat
+    trees" used to depict statistics for every taxon in a taxonomy using
+    color and size. It also provides various functions to do common tasks in
+    microbiome bioinformatics on data in the 'taxmap' format defined by the
+    'taxa' package. The 'metacoder' package is described in the publication
+    by Foster et al. (2027) <doi:10.1371/journal.pcbi.1005404>.
 Depends:
     R (>= 3.0.2)
 License: GPL-2 | GPL-3

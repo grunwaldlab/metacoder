@@ -55,7 +55,6 @@ For a given table in a \code{\link{taxmap}} object, split columns by a
 grouping factor and return row medians in a table.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -81,8 +80,6 @@ calc_group_median(x, "tax_data", groups = hmp_samples$sex,
 # Rename output columns
 calc_group_median(x, "tax_data", groups = hmp_samples$sex,
                   out_names = c("Women", "Men"))
-
-}
 }
 \seealso{
 Other calculations: 

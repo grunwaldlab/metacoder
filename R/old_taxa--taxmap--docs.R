@@ -582,7 +582,6 @@ NULL
 #'   `obj$data` to add columns to.
 #'
 #' @examples
-#' \dontrun{
 #' # Get data set by name
 #' get_dataset(ex_taxmap, "info")
 #'
@@ -591,8 +590,6 @@ NULL
 #'
 #' # Get data set by T/F vector
 #' get_dataset(ex_taxmap, startsWith(names(ex_taxmap$data), "i"))
-#'
-#' }
 #'
 #' @name get_dataset
 NULL

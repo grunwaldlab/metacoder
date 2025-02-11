@@ -50,13 +50,7 @@ as_phyloseq(
 Convert a taxmap object to a phyloseq object.
 }
 \examples{
-\dontrun{
-# Install phyloseq to get example data
-# if (!require("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-# 
-# BiocManager::install("phyloseq")
-
+\donttest{
 # Parse example dataset
 library(phyloseq)
 data(GlobalPatterns)
@@ -64,6 +58,5 @@ x <- parse_phyloseq(GlobalPatterns)
 
 # Convert back to a phylseq object
 as_phyloseq(x)
-
 }
 }

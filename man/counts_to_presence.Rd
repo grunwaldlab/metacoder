@@ -61,7 +61,6 @@ columns. This is equivalent to splitting columns of a table by a factor and
 using \code{apply} on each group.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -72,8 +71,6 @@ counts_to_presence(x, "tax_data")
 
 # Check if there are any reads in each group of samples
 counts_to_presence(x, "tax_data", groups = hmp_samples$body_site)
-
-}
 }
 \seealso{
 Other calculations: 

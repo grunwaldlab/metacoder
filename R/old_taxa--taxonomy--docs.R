@@ -308,8 +308,6 @@ NULL
 #' @return `character`
 #'
 #' @examples
-#' \dontrun{
-#'
 #' # Return indexes of branch taxa
 #' internodes(ex_taxmap)
 #'
@@ -319,8 +317,7 @@ NULL
 #'
 #' # Return something besides taxon indexes
 #' internodes(ex_taxmap, value = "taxon_names")
-#'
-#' }
+#' 
 #' @name internodes
 NULL
 
@@ -847,9 +844,6 @@ NULL
 #'
 #' @return Named `character`
 #'
-#' @examples
-#' ex_taxmap$names_used(n_legs + dangerous == invalid_expression)
-#'
 #' @family NSE helpers
 #'
 #' @name names_used
@@ -933,11 +927,6 @@ NULL
 #' @param ... One or more expressions
 #'
 #' @return `list`
-#'
-#' @examples
-#' # Get values for variables names used in expressions
-#' ex_taxmap$data_used(n_legs + dangerous == invalid_expression)
-#' ex_taxmap$data_used(length(unique(taxon_names)))
 #'
 #' @family NSE helpers
 #'

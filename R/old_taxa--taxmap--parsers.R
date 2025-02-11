@@ -519,8 +519,7 @@ parse_tax_data <- function(tax_data, datasets = list(), class_cols = 1,
 #'
 #' @family parsers
 #'
-#' @examples \dontrun{
-#'
+#' @examples \donttest{
 #'   # Look up taxon names in vector from NCBI
 #'   lookup_tax_data(c("homo sapiens", "felis catus", "Solanaceae"),
 #'                   type = "taxon_name")
@@ -533,10 +532,6 @@ parse_tax_data <- function(tax_data, datasets = list(), class_cols = 1,
 #'   my_table <- data.frame(name = c("homo sapiens", "felis catus"),
 #'                          decency = c("meh", "good"))
 #'   lookup_tax_data(my_table, type = "taxon_name", column = "name")
-#'
-#'   # Look up taxon names from NCBI with fuzzy matching
-#'   lookup_tax_data(c("homo sapienss", "feles catus", "Solanacese"),
-#'                   type = "fuzzy_name")
 #'
 #'   # Look up taxon names from a different database
 #'   lookup_tax_data(c("homo sapiens", "felis catus", "Solanaceae"),
@@ -1014,8 +1009,7 @@ get_sort_var <- function(data, var) {
 #'
 #' @examples
 #'
-#' \dontrun{
-#'
+#' \donttest{
 #'   # For demonstration purposes, the following example dataset has all the
 #'   # types of data that can be used, but any one of them alone would work.
 #'   raw_data <- c(

@@ -13,12 +13,8 @@
 #'
 #' @family parsers
 #'
-#' @examples \dontrun{
-#'
-#' # Install phyloseq to get example data
-#' # source('http://bioconductor.org/biocLite.R')
-#' # biocLite('phyloseq')
-#'
+#' @examples
+#' \donttest{
 #' # Parse example dataset
 #' library(phyloseq)
 #' data(GlobalPatterns)
@@ -30,9 +26,7 @@
 #'           node_color = n_obs,
 #'           node_label = taxon_names,
 #'           tree_label = taxon_names)
-#'
 #' }
-#'
 #'
 #' @export
 parse_phyloseq <- function(obj, class_regex = "(.*)",

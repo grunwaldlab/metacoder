@@ -23,28 +23,6 @@ NOTE: This will be replaced by the function `get_dataset` in the `taxa`
 package. Get a data set from a taxmap object and complain if it does not
 exist. This is intended to be used to parse options in other functions.
 }
-\examples{
-\dontrun{
-# Parse data
-x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-                   class_regex = "^(.+)__(.+)$")
-                   
-# Get data set by name
-print(metacoder:::get_taxmap_table(x, "tax_data"))
-print(metacoder:::get_taxmap_table(x, "invalid"))
-
-# Get data set by index
-print(metacoder:::get_taxmap_table(x, 1))
-print(metacoder:::get_taxmap_table(x, 3)) # invalid
-
-# Get data set by T/F vector
-print(metacoder:::get_taxmap_table(x, c(T, F)))
-print(metacoder:::get_taxmap_table(x, c(T, T))) # invalid
-print(metacoder:::get_taxmap_table(x, c(T, F, F))) # invalid
-                   
-}
-}
 \seealso{
 Other option parsers: 
 \code{\link{get_taxmap_cols}()},

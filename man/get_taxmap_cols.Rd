@@ -24,28 +24,6 @@ corresponding to \code{TRUE} values.}
 \description{
 Convert logical, names, or indexes to column names and check that they exist.
 }
-\examples{
-\dontrun{
-# Parse data
-x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-                   class_regex = "^(.+)__(.+)$")
-                   
-# Get all col names
-metacoder:::parse_taxmap_cols(x, "tax_data")
-
-# Get col names by index
-metacoder:::parse_taxmap_cols(x, "tax_data", 2:4)
-
-# Get col names by name (i.e. verify)
-metacoder:::parse_taxmap_cols(x, "tax_data", c("taxon_id", "lineage"))
-metacoder:::parse_taxmap_cols(x, "tax_data", c("taxon_id", "not_valid"))
-
-# Get colnames by TRUE/FALSE vector
-metacoder:::parse_taxmap_cols(x, "tax_data", startsWith(colnames(x$data$tax_data), "7"))
-                   
-}
-}
 \seealso{
 Other option parsers: 
 \code{\link{get_taxmap_data}()},

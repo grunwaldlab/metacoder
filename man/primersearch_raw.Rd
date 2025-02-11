@@ -116,8 +116,7 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 }
 
 \examples{
-\dontrun{
-
+\donttest{
 ### Dummy test data set ###
 
 primer_1_site <- "AAGTACCTTAACGGAATTATAG"
@@ -157,8 +156,7 @@ obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
 # Visualize which taxa were amplified
 #  This work because only amplicons are returned by `primersearch`
 n_amplified <- unlist(obj$obs_apply("pcr",
-                                    function(x) length(unique(x)),
-                                    value = "input"))
+    function(x) length(unique(obj$data$tax_data$input[x]))))
 prop_amped <- n_amplified / obj$n_obs()
 heat_tree(obj,
           node_label = taxon_names, 
@@ -170,7 +168,6 @@ heat_tree(obj,
           node_size_axis_label = "Number of sequences",
           layout = "da", 
           initial_layout = "re")
-
 }
 
 }

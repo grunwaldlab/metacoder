@@ -60,8 +60,7 @@
 #'   
 #' @examples
 #' 
-#' \dontrun{
-#' 
+#' \donttest{
 #' # Look up 5 ITS sequences from each fungal class
 #' data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
 #'                           entrez_query = '"internal transcribed spacer"[All Fields]')
@@ -70,7 +69,7 @@
 #' obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
 #' 
 #' # Plot information
-#' filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) %>% 
+#' metacoder::filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) %>% 
 #'   heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
 #' }
 #' @export
@@ -101,7 +100,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     # Argument parsing -------------------------------------------------------------------------------
     if (!is.null(name)) {
       result <- taxize::get_uid(name, verbose = verbose, rows = 1) #This needs attention
-      if (is.na(result)) stop(cat("Could not find taxon ", name))
+      if (is.na(result)) stop(paste0("Could not find taxon ", name))
       id <- result
     }  else {
       id <- as.character(id)
@@ -173,12 +172,11 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
     
     # Recursively sample taxon ------------------------------------------------------------------------
     recursive_sample <- function(id, rank, name) {
-      cat("Processing '", name, "' (uid: ", id, ", rank: ", as.character(rank), ")", "\n",
-          sep = "")
+      message("Processing '", name, "' (uid: ", id, ", rank: ", as.character(rank), ")", "\n",
+              sep = "")
       # Get children of taxon  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (!(rank %in% taxonomy_levels) || rank < target_rank) {
         sub_taxa <- taxize::ncbi_children(id = id)[[1]]
-        print(sub_taxa)
       }
       # Filter by subtaxon count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       if (rank %in% taxonomy_levels && rank < target_rank) {
@@ -190,7 +188,7 @@ ncbi_taxon_sample <- function(name = NULL, id = NULL, target_rank,
       }
       # Search for sequences - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -    
       if ((rank %in% taxonomy_levels && rank >= target_rank) || (!is.null(sub_taxa) && nrow(sub_taxa) == 0)) {
-        cat("Getting sequences for", name, "\n")
+        message("Getting sequences for ", name, "\n")
         result <- traits::ncbi_searcher(id = id, seqrange = seqrange, getrelated = getrelated,
                                         fuzzy = fuzzy, limit = limit, entrez_query = entrez_query,
                                         hypothetical = hypothetical, verbose = verbose)

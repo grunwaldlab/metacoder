@@ -62,7 +62,7 @@ used with count data and takes into account unequal sample size when determining
 abundance. Warnings will be given if the data is not integers or all sample sizes are equal.
 }
 \examples{
-\dontrun{
+\donttest{
 # Parse data for plotting
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),

@@ -7,12 +7,6 @@
 #' @param y (\code{numeric} of length 1) y coordinate
 #' 
 #' @return A \code{data.frame}
-#' 
-#' @examples
-#' \dontrun{
-#' molten_dist(x = 1:5, y = 1:5)
-#' }
-#' 
 #' @keywords internal
 molten_dist <- function(x, y) {
   data <- as.matrix(stats::dist(cbind(x, y)))
@@ -31,11 +25,6 @@ molten_dist <- function(x, y) {
 #' @param x (\code{numeric} of length 1) x coordinate of center
 #' @param y (\code{numeric} of length 1) y coordinate of center
 #' @param r (\code{numeric} of length 1) The diameter of the circle.
-#' 
-#' @examples
-#' \dontrun{
-#' inter_circle_gap(x = 1:5, y = 1:5, r = 1:5)
-#' }
 #' 
 #' @keywords internal
 inter_circle_gap <- function(x, y, r) {

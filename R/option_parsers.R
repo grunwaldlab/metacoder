@@ -36,28 +36,6 @@ verify_taxmap <- function(obj) {
 #' @family option parsers
 #' 
 #' @keywords internal
-#' 
-#' @examples
-#' \dontrun{
-#' # Parse data
-#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-#'                    class_regex = "^(.+)__(.+)$")
-#'                    
-#' # Get data set by name
-#' print(metacoder:::get_taxmap_table(x, "tax_data"))
-#' print(metacoder:::get_taxmap_table(x, "invalid"))
-#' 
-#' # Get data set by index
-#' print(metacoder:::get_taxmap_table(x, 1))
-#' print(metacoder:::get_taxmap_table(x, 3)) # invalid
-#' 
-#' # Get data set by T/F vector
-#' print(metacoder:::get_taxmap_table(x, c(T, F)))
-#' print(metacoder:::get_taxmap_table(x, c(T, T))) # invalid
-#' print(metacoder:::get_taxmap_table(x, c(T, F, F))) # invalid
-#'                    
-#' }
 get_taxmap_data <- function(obj, data) {
   # Check that obj is a taxmap object
   verify_taxmap(obj)
@@ -145,28 +123,6 @@ get_taxmap_table <- function(obj, data) {
 #' @keywords internal
 #' 
 #' @family option parsers
-#' 
-#' @examples
-#' \dontrun{
-#' # Parse data
-#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-#'                    class_regex = "^(.+)__(.+)$")
-#'                    
-#' # Get all col names
-#' metacoder:::parse_taxmap_cols(x, "tax_data")
-#' 
-#' # Get col names by index
-#' metacoder:::parse_taxmap_cols(x, "tax_data", 2:4)
-#' 
-#' # Get col names by name (i.e. verify)
-#' metacoder:::parse_taxmap_cols(x, "tax_data", c("taxon_id", "lineage"))
-#' metacoder:::parse_taxmap_cols(x, "tax_data", c("taxon_id", "not_valid"))
-#' 
-#' # Get colnames by TRUE/FALSE vector
-#' metacoder:::parse_taxmap_cols(x, "tax_data", startsWith(colnames(x$data$tax_data), "7"))
-#'                    
-#' }
 get_taxmap_cols <- function(obj, data, cols = NULL) {
   # Get table used. This checks the obj as well
   my_table <- get_taxmap_table(obj, data)
@@ -255,25 +211,6 @@ get_taxmap_cols <- function(obj, data, cols = NULL) {
 #' @keywords internal
 #' 
 #' @family option parsers
-#' 
-#' @examples
-#' \dontrun{
-#' # Parse data for examples
-#' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-#'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-#'                    class_regex = "^(.+)__(.+)$")
-#' 
-#' # If all cols are used, there are no other cols, only "taxon_id"
-#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = TRUE)
-#' 
-#' # If a subset of target columns is specified, the rest are returned 
-#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3)
-#' 
-#' # Additionally, a subset of other columns can be specified
-#' metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3,
-#'                                   other_cols = 4:5)
-#'                    
-#' }
 get_taxmap_other_cols <- function(obj, data, cols, other_cols = NULL) {
   # Get table used 
   my_table <- get_taxmap_table(obj, data)

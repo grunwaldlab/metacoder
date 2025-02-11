@@ -13,7 +13,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -39,8 +38,6 @@
 #' # Rename output columns
 #' calc_group_mean(x, "tax_data", groups = hmp_samples$sex,
 #'                out_names = c("Women", "Men"))
-#'
-#' }
 calc_group_mean <- function(obj, data, groups, cols = NULL,
                             other_cols = FALSE, out_names = NULL, dataset = NULL) {
   
@@ -75,7 +72,6 @@ calc_group_mean <- function(obj, data, groups, cols = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -101,8 +97,6 @@ calc_group_mean <- function(obj, data, groups, cols = NULL,
 #' # Rename output columns
 #' calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
 #'                out_names = c("Women", "Men"))
-#'
-#' }
 calc_group_rsd <- function(obj, data, groups, cols = NULL,
                              other_cols = FALSE, out_names = NULL, dataset = NULL) {
   # Check for use of "dataset"
@@ -135,7 +129,6 @@ calc_group_rsd <- function(obj, data, groups, cols = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -161,10 +154,8 @@ calc_group_rsd <- function(obj, data, groups, cols = NULL,
 #' # Rename output columns
 #' calc_group_median(x, "tax_data", groups = hmp_samples$sex,
 #'                   out_names = c("Women", "Men"))
-#'
-#' }
 calc_group_median <- function(obj, data, groups, cols = NULL,
-                            other_cols = FALSE, out_names = NULL, dataset = NULL) {
+                              other_cols = FALSE, out_names = NULL, dataset = NULL) {
   
   # Check for use of "dataset"
   if (! is.null(dataset)) {
@@ -198,7 +189,6 @@ calc_group_median <- function(obj, data, groups, cols = NULL,
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -234,8 +224,6 @@ calc_group_median <- function(obj, data, groups, cols = NULL,
 #' # Rename output columns
 #' calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
 #'                out_names = c("Women", "Men"))
-#'
-#' }
 calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
                             other_cols = FALSE, out_names = NULL, dataset = NULL) {
   
@@ -274,7 +262,6 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
 #' @export
 #' 
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -303,8 +290,6 @@ calc_group_stat <- function(obj, data, func, groups = NULL, cols = NULL,
 #' calc_obs_props(x, "tax_data", groups = hmp_samples$sex)
 #' calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
 #'                out_names = c("Women", "Men"))
-#' 
-#' }
 calc_obs_props <- function(obj, data, cols = NULL, groups = NULL,
                            other_cols = FALSE, out_names = NULL, dataset = NULL) {
 
@@ -360,7 +345,6 @@ calc_obs_props <- function(obj, data, cols = NULL, groups = NULL,
 #' @export
 #' 
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -384,8 +368,6 @@ calc_obs_props <- function(obj, data, cols = NULL, groups = NULL,
 #' # Rename output columns
 #' zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 #'                 out_names = c("a", "b", "c"))
-#' 
-#' }
 zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
                             cols = NULL, other_cols = FALSE, out_names = NULL, dataset = NULL) {
 
@@ -450,7 +432,6 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
 #' @export
 #' 
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -474,8 +455,6 @@ zero_low_counts <- function(obj, data, min_count = 2, use_total = FALSE,
 #' # Rename output columns
 #' rarefy_obs(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 #'                out_names = c("a", "b", "c"))
-#' 
-#' }
 rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
                        other_cols = FALSE, out_names = NULL, dataset = NULL) {
   
@@ -558,7 +537,7 @@ rarefy_obs <- function(obj, data, sample_size = NULL, cols = NULL,
 #' @family calculations
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Parse data for plotting
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -725,7 +704,7 @@ compare_groups <- function(obj, data, cols, groups,
 #'   
 #' @export
 #' 
-#' @examples \dontrun{
+#' @examples
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -759,8 +738,6 @@ compare_groups <- function(obj, data, cols, groups,
 #' # Geting a total for all columns 
 #' calc_taxon_abund(x, "tax_data", cols = hmp_samples$sample_id,
 #'                  groups = rep("total", nrow(hmp_samples)))
-#' }
-#' 
 #' @keywords internal
 calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
                                  out_names = NULL, dataset = NULL) {
@@ -824,7 +801,6 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 #' @family calculations
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -853,8 +829,6 @@ calc_taxon_abund <- function(obj, data, cols = NULL, groups = NULL,
 #' calc_n_samples(x, data = "tax_data", other_cols = TRUE)
 #' calc_n_samples(x, data = "tax_data", other_cols = 2)
 #' calc_n_samples(x, data = "tax_data", other_cols = "otu_id")
-#' }
-#' 
 #' @export
 calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
                            other_cols = FALSE, out_names = NULL, drop = FALSE,
@@ -915,7 +889,6 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' @family calculations
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for example
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -944,8 +917,6 @@ calc_n_samples <- function(obj, data, cols = NULL, groups = "n_samples",
 #' calc_prop_samples(x, data = "tax_data", other_cols = TRUE)
 #' calc_prop_samples(x, data = "tax_data", other_cols = 2)
 #' calc_prop_samples(x, data = "tax_data", other_cols = "otu_id")
-#' }
-#' 
 #' @export
 calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
                               other_cols = FALSE, out_names = NULL, drop = FALSE,
@@ -1009,7 +980,6 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Parse data for examples
 #' x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
 #'                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -1020,8 +990,6 @@ calc_prop_samples <- function(obj, data, cols = NULL, groups = "prop_samples",
 #'
 #' # Check if there are any reads in each group of samples
 #' counts_to_presence(x, "tax_data", groups = hmp_samples$body_site)
-#'
-#' }
 counts_to_presence <- function(obj, data, threshold = 0, groups = NULL,
                                cols = NULL, other_cols = FALSE,
                                out_names = NULL, dataset = NULL) {

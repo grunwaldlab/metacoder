@@ -57,7 +57,6 @@ counts associated with observations (e.g. OTUs), as opposed to counts that
 have already been summed per taxon.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -86,8 +85,6 @@ calc_obs_props(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 calc_obs_props(x, "tax_data", groups = hmp_samples$sex)
 calc_obs_props(x, "tax_data", groups = hmp_samples$sex,
                out_names = c("Women", "Men"))
-
-}
 }
 \seealso{
 Other calculations: 

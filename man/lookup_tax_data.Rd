@@ -90,8 +90,7 @@ associated datasets.
 }
 
 \examples{
-\dontrun{
-
+\donttest{
   # Look up taxon names in vector from NCBI
   lookup_tax_data(c("homo sapiens", "felis catus", "Solanaceae"),
                   type = "taxon_name")
@@ -104,10 +103,6 @@ associated datasets.
   my_table <- data.frame(name = c("homo sapiens", "felis catus"),
                          decency = c("meh", "good"))
   lookup_tax_data(my_table, type = "taxon_name", column = "name")
-
-  # Look up taxon names from NCBI with fuzzy matching
-  lookup_tax_data(c("homo sapienss", "feles catus", "Solanacese"),
-                  type = "fuzzy_name")
 
   # Look up taxon names from a different database
   lookup_tax_data(c("homo sapiens", "felis catus", "Solanaceae"),

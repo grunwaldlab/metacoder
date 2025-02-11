@@ -58,7 +58,6 @@ the mean of a set of numbers. It is useful for comparing the variation when
 magnitude of sets of number are very different.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -84,8 +83,6 @@ calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
 # Rename output columns
 calc_group_rsd(x, "tax_data", groups = hmp_samples$sex,
                out_names = c("Women", "Men"))
-
-}
 }
 \seealso{
 Other calculations: 

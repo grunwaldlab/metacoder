@@ -35,25 +35,6 @@ corresponding to \code{TRUE} values.}
 \description{
 Parse the other_cols option used in many calculation functions.
 }
-\examples{
-\dontrun{
-# Parse data for examples
-x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-                   class_regex = "^(.+)__(.+)$")
-
-# If all cols are used, there are no other cols, only "taxon_id"
-metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = TRUE)
-
-# If a subset of target columns is specified, the rest are returned 
-metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3)
-
-# Additionally, a subset of other columns can be specified
-metacoder:::get_taxmap_other_cols(x, data = "tax_data", cols = 2:3,
-                                  other_cols = 4:5)
-                   
-}
-}
 \seealso{
 Other option parsers: 
 \code{\link{get_taxmap_cols}()},

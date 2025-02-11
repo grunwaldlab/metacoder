@@ -62,7 +62,6 @@ below a minimum number to zero. This is useful for effectively removing
 "singletons", "doubletons", or other low abundance counts.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -86,8 +85,6 @@ zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
 # Rename output columns
 zero_low_counts(x, "tax_data", cols = c("700035949", "700097855", "700100489"),
                 out_names = c("a", "b", "c"))
-
-}
 }
 \seealso{
 Other calculations: 

@@ -25,12 +25,4 @@ regular polygon.
 Inspired by (i.e. stolen from) https://gist.github.com/baptiste/2224724, which was
 itself inspired from a post by William Dunlap on r-help (10/09/09)
 }
-\examples{
-\dontrun{
-library(ggplot2)
-ggplot(data = polygon_coords(n = 4:13, x = rnorm(10), y = rnorm(10), radius = .5)) + 
-  geom_polygon(aes(x = x, y = y, fill = group))
-}
-  
-}
 \keyword{internal}

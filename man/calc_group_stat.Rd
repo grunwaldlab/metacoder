@@ -62,7 +62,6 @@ columns. This is equivalent to splitting columns of a table by a factor and
 using \code{apply} on each group.
 }
 \examples{
-\dontrun{
 # Parse data for examples
 x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
                    class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
@@ -98,8 +97,6 @@ calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
 # Rename output columns
 calc_group_stat(x, "tax_data", mean, groups = hmp_samples$sex,
                out_names = c("Women", "Men"))
-
-}
 }
 \seealso{
 Other calculations: 

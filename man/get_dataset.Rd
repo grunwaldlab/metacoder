@@ -14,7 +14,6 @@ Get a data set from a taxmap object and complain if it does not
 exist.
 }
 \examples{
-\dontrun{
 # Get data set by name
 get_dataset(ex_taxmap, "info")
 
@@ -23,7 +22,5 @@ get_dataset(ex_taxmap, 1)
 
 # Get data set by T/F vector
 get_dataset(ex_taxmap, startsWith(names(ex_taxmap$data), "i"))
-
-}
 
 }
