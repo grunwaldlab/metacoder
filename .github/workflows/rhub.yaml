@@ -7,7 +7,7 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: ${{ 
+run-name: "${{ 
   github.event_name == 'workflow_dispatch' 
     && format('{0}: {1}', 
          github.event.inputs.id, 
@@ -18,8 +18,7 @@ run-name: ${{
          github.event_name == 'push' && 'Push' || 'PR',
          github.event_name == 'push' && github.ref_name || github.event.pull_request.title || 'Pull Request'
        )
-}}
-
+}}"
 on:
   push:
     branches: [ main, master ]
