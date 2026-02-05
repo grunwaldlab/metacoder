@@ -63,34 +63,35 @@ abundance. Warnings will be given if the data is not integers or all sample size
 }
 \examples{
 \donttest{
-# Parse data for plotting
-x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
-                   class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
-                   class_regex = "^(.+)__(.+)$")
-
-# Get per-taxon counts
-x$data$tax_table <- calc_taxon_abund(x, data = "tax_data", cols = hmp_samples$sample_id)
-
-# Calculate difference between groups
-x$data$diff_table <- calc_diff_abund_deseq2(x, data = "tax_table",
-                                    cols = hmp_samples$sample_id,
-                                    groups = hmp_samples$body_site)
-                                    
-# Plot results (might take a few minutes)
-heat_tree_matrix(x,
-                 data = "diff_table",
-                 node_size = n_obs,
-                 node_label = taxon_names,
-                 node_color = ifelse(is.na(padj) | padj > 0.05, 0, log2FoldChange),
-                 node_color_range = diverging_palette(),
-                 node_color_trans = "linear",
-                 node_color_interval = c(-3, 3),
-                 edge_color_interval = c(-3, 3),
-                 node_size_axis_label = "Number of OTUs",
-                 node_color_axis_label = "Log2 fold change")
-
+if (requireNamespace("DESeq2", quietly = TRUE)) {
+  # Parse data for plotting
+  x = parse_tax_data(hmp_otus, class_cols = "lineage", class_sep = ";",
+                     class_key = c(tax_rank = "taxon_rank", tax_name = "taxon_name"),
+                     class_regex = "^(.+)__(.+)$")
+ 
+  # Get per-taxon counts
+  x$data$tax_table <- calc_taxon_abund(x, data = "tax_data", cols = hmp_samples$sample_id)
+ 
+  # Calculate difference between groups
+  x$data$diff_table <- calc_diff_abund_deseq2(x, data = "tax_table",
+                                      cols = hmp_samples$sample_id,
+                                      groups = hmp_samples$body_site)
+                                      
+  # Plot results (might take a few minutes)
+  heat_tree_matrix(x,
+                   data = "diff_table",
+                   node_size = n_obs,
+                   node_label = taxon_names,
+                   node_color = ifelse(is.na(padj) | padj > 0.05, 0, log2FoldChange),
+                   node_color_range = diverging_palette(),
+                   node_color_trans = "linear",
+                   node_color_interval = c(-3, 3),
+                   edge_color_interval = c(-3, 3),
+                   node_size_axis_label = "Number of OTUs",
+                   node_color_axis_label = "Log2 fold change")
+ 
 }
-
+}
 }
 \seealso{
 Other calculations: 

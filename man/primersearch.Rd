@@ -176,6 +176,6 @@ if (primersearch_is_installed()) {
               node_size_axis_label = "Number of sequences",
               layout = "da", 
               initial_layout = "re")
- } 
+} 
 }
 }

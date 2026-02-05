@@ -85,13 +85,13 @@ read_fasta <- function(file_path) {
     return(character(0))
   }
   
-  # Find location of every header start 
-  split_data <- stringr::str_split(raw_data, pattern = "\n>", simplify = TRUE)
+  # Find location of every header start (handle both \n and \r\n)
+  split_data <- stringr::str_split(raw_data, pattern = "\r?\n>", simplify = TRUE)
   
-  # Split the data for each sequence into lines
-  split_data <- stringr::str_split(split_data, pattern = "\n")
+  # Split the data for each sequence into lines (handle both \n and \r\n)
+  split_data <- stringr::str_split(split_data, pattern = "\r?\n")
   
-  # The first lines are headers, so remvove those
+  # The first lines are headers, so remove those
   headers <- vapply(split_data, FUN = `[`, FUN.VALUE = character(1), 1)
   split_data <- lapply(split_data, FUN = `[`, -1)
   

@@ -51,12 +51,14 @@ Convert a taxmap object to a phyloseq object.
 }
 \examples{
 \donttest{
-# Parse example dataset
-library(phyloseq)
-data(GlobalPatterns)
-x <- parse_phyloseq(GlobalPatterns)
-
-# Convert back to a phylseq object
-as_phyloseq(x)
+if (requireNamespace("phyloseq", quietly = TRUE)) {
+  # Parse example dataset
+  library(phyloseq)
+  data(GlobalPatterns)
+  x <- parse_phyloseq(GlobalPatterns)
+  
+  # Convert back to a phylseq object
+  as_phyloseq(x)
+}
 }
 }

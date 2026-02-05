@@ -609,7 +609,7 @@ compare_groups <- function(obj, data, cols, groups,
       list(log2_median_ratio = log_ratio,
            median_diff = median_1 - median_2,
            mean_diff = mean(abund_1, na.rm = TRUE) - mean(abund_2, na.rm = TRUE),
-           wilcox_p_value = stats::wilcox.test(abund_1, abund_2)$p.value)
+           wilcox_p_value = stats::wilcox.test(abund_1, abund_2, exact = FALSE)$p.value)
     }
   }
   
