@@ -6,19 +6,8 @@
 #
 # It is unlikely that you need to modify this file manually.
 
-name: R-hub
-run-name: "${{ 
-  github.event_name == 'workflow_dispatch' 
-    && format('{0}: {1}', 
-         github.event.inputs.id, 
-         github.event.inputs.name || format('Manually run by {0}', github.triggering_actor)
-       )
-    || format('{0}: {1} ({2})',
-         github.sha,
-         github.event_name == 'push' && 'Push' || 'PR',
-         github.event_name == 'push' && github.ref_name || github.event.pull_request.title || 'Pull Request'
-       )
-}}"
+name: R-hubZ
+
 on:
   push:
     branches: [ main, master ]
@@ -49,7 +38,7 @@ jobs:
     # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
-        config: ${{ github.event.inputs.config || 'linux,windows,macos-arm64'}}
+        config: ${{ github.event.inputs.config || 'linux,windows,m1-san'}}
       id: rhub-setup
 
   linux-containers:
