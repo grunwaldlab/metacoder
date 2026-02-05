@@ -1,14 +1,14 @@
 #' Test if primersearch is installed
 #' 
-#' Test if primersearch is installed
+#' Check if primersearch is installed
 #' 
 #' @param must_be_installed (\code{logical} of length 1)
 #' If \code{TRUE}, throw an error if primersearch is not installed.
 #' 
 #' @return \code{logical} of length 1
 #' 
-#' @keywords internal
-primersearch_is_installed <- function(must_be_installed = TRUE) {
+#' @export
+primersearch_is_installed <- function(must_be_installed = FALSE) {
   test_result <- tryCatch(system2("primersearch", "--version", stdout = TRUE, stderr = TRUE),
                           error = function(e) e)
   is_installed <- grepl(pattern = "^EMBOSS", test_result)
@@ -42,7 +42,7 @@ run_primersearch <- function(seq_path, primer_path, mismatch = 5,
                              output_path = tempfile(),
                              program_path = 'primersearch', ...) {
   # Check if primersearch is installed...
-  primersearch_is_installed()
+  primersearch_is_installed(must_be_installed = TRUE)
   extra_args <- as.list(match.call(expand.dots = FALSE))$...
   if (Sys.info()['sysname'] == "Windows") {
     arguments <- c("-seqall", seq_path,
@@ -192,57 +192,59 @@ parse_primersearch <- function(file_path) {
 #' 
 #' @examples
 #' \donttest{
-#' ### Dummy test data set ###
-#' 
-#' primer_1_site <- "AAGTACCTTAACGGAATTATAG"
-#' primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
-#' amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
-#' seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
-#' seq_2 <- rev_comp(seq_1)
-#' f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
-#' r_primer <- rev_comp(primer_2_site)
-#' seqs <- c(a = seq_1, b = seq_2)
-#' 
-#' result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
-#' 
-#' 
-#' ### Real data set ###
-#' 
-#' # Get example FASTA file
-#' fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
-#'                           package = "metacoder")
-#' 
-#' # Parse the FASTA file as a taxmap object
-#' obj <- parse_silva_fasta(file = fasta_path)
-#' 
-#' # Simulate PCR with primersearch
-#' pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
-#'                                forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-#'                                reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-#'                                mismatch = 10)
-#' 
-#' # Add result to input table 
-#' #  NOTE: We want to add a function to handle running pcr on a
-#' #        taxmap object directly, but we are still trying to figure out
-#' #        the best way to implement it. For now, do the following:
-#' obj$data$pcr <- pcr_result
-#' obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
-#' 
-#' # Visualize which taxa were amplified
-#' #  This work because only amplicons are returned by `primersearch`
-#' n_amplified <- unlist(obj$obs_apply("pcr",
-#'     function(x) length(unique(obj$data$tax_data$input[x]))))
-#' prop_amped <- n_amplified / obj$n_obs()
-#' heat_tree(obj,
-#'           node_label = taxon_names, 
-#'           node_color = prop_amped, 
-#'           node_color_range = c("grey", "red", "purple", "green"),
-#'           node_color_trans = "linear",
-#'           node_color_axis_label = "Proportion amplified",
-#'           node_size = n_obs,
-#'           node_size_axis_label = "Number of sequences",
-#'           layout = "da", 
-#'           initial_layout = "re")
+#' if (primersearch_is_installed()) {
+#'   ### Dummy test data set ###
+#'   
+#'   primer_1_site <- "AAGTACCTTAACGGAATTATAG"
+#'   primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
+#'   amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
+#'   seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
+#'   seq_2 <- rev_comp(seq_1)
+#'   f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
+#'   r_primer <- rev_comp(primer_2_site)
+#'   seqs <- c(a = seq_1, b = seq_2)
+#'   
+#'   result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
+#'   
+#'   
+#'   ### Real data set ###
+#'   
+#'   # Get example FASTA file
+#'   fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+#'                             package = "metacoder")
+#'   
+#'   # Parse the FASTA file as a taxmap object
+#'   obj <- parse_silva_fasta(file = fasta_path)
+#'   
+#'   # Simulate PCR with primersearch
+#'   pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
+#'                                  forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                                  reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+#'                                  mismatch = 10)
+#'   
+#'   # Add result to input table 
+#'   #  NOTE: We want to add a function to handle running pcr on a
+#'   #        taxmap object directly, but we are still trying to figure out
+#'   #        the best way to implement it. For now, do the following:
+#'   obj$data$pcr <- pcr_result
+#'   obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
+#'   
+#'   # Visualize which taxa were amplified
+#'   #  This work because only amplicons are returned by `primersearch`
+#'   n_amplified <- unlist(obj$obs_apply("pcr",
+#'       function(x) length(unique(obj$data$tax_data$input[x]))))
+#'   prop_amped <- n_amplified / obj$n_obs()
+#'   heat_tree(obj,
+#'             node_label = taxon_names, 
+#'             node_color = prop_amped, 
+#'             node_color_range = c("grey", "red", "purple", "green"),
+#'             node_color_trans = "linear",
+#'             node_color_axis_label = "Proportion amplified",
+#'             node_size = n_obs,
+#'             node_size_axis_label = "Number of sequences",
+#'             layout = "da", 
+#'             initial_layout = "re")
+#' }
 #' }
 #' 
 #' @export
@@ -468,36 +470,37 @@ primersearch_raw <- function(input = NULL, file = NULL, forward, reverse, mismat
 #' 
 #' @examples
 #' \donttest{
-#' # Get example FASTA file
-#' fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
-#'                           package = "metacoder")
-#' 
-#' # Parse the FASTA file as a taxmap object
-#' obj <- parse_silva_fasta(file = fasta_path)
-#' 
-#' # Simulate PCR with primersearch
-#' # Have to replace Us with Ts in sequences since primersearch
-#' #   does not understand Us.
-#' obj <- primersearch(obj,
-#'                     gsub(silva_seq, pattern = "U", replace = "T"), 
-#'                     forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-#'                     reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-#'                     mismatch = 10)
-#'                            
-#' # Plot what did not ampilify                          
-#' obj %>%
-#'   filter_taxa(prop_amplified < 1) %>%
-#'   heat_tree(node_label = taxon_names, 
-#'             node_color = prop_amplified, 
-#'             node_color_range = c("grey", "red", "purple", "green"),
-#'             node_color_trans = "linear",
-#'             node_color_axis_label = "Proportion amplified",
-#'             node_size = n_obs,
-#'             node_size_axis_label = "Number of sequences",
-#'             layout = "da", 
-#'             initial_layout = "re")
+#' if (primersearch_is_installed()) {
+#'   # Get example FASTA file
+#'   fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+#'                             package = "metacoder")
+#'   
+#'   # Parse the FASTA file as a taxmap object
+#'   obj <- parse_silva_fasta(file = fasta_path)
+#'   
+#'   # Simulate PCR with primersearch
+#'   # Have to replace Us with Ts in sequences since primersearch
+#'   #   does not understand Us.
+#'   obj <- primersearch(obj,
+#'                       gsub(silva_seq, pattern = "U", replace = "T"), 
+#'                       forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+#'                       reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+#'                       mismatch = 10)
+#'                              
+#'   # Plot what did not amplify                          
+#'   obj %>%
+#'     filter_taxa(prop_amplified < 1) %>%
+#'     heat_tree(node_label = taxon_names, 
+#'               node_color = prop_amplified, 
+#'               node_color_range = c("grey", "red", "purple", "green"),
+#'               node_color_trans = "linear",
+#'               node_color_axis_label = "Proportion amplified",
+#'               node_size = n_obs,
+#'               node_size_axis_label = "Number of sequences",
+#'               layout = "da", 
+#'               initial_layout = "re")
 #' } 
-#' 
+#' }
 #' @importFrom rlang .data
 #' @export
 primersearch <- function(obj, seqs, forward, reverse, mismatch = 5, clone = TRUE) {

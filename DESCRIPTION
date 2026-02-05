@@ -72,7 +72,7 @@ Suggests:
     biomformat,
     DESeq2
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 biocViews: 
 LinkingTo: Rcpp

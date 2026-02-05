@@ -147,34 +147,35 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 
 \examples{
 \donttest{
-# Get example FASTA file
-fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
-                          package = "metacoder")
-
-# Parse the FASTA file as a taxmap object
-obj <- parse_silva_fasta(file = fasta_path)
-
-# Simulate PCR with primersearch
-# Have to replace Us with Ts in sequences since primersearch
-#   does not understand Us.
-obj <- primersearch(obj,
-                    gsub(silva_seq, pattern = "U", replace = "T"), 
-                    forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-                    reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-                    mismatch = 10)
-                           
-# Plot what did not ampilify                          
-obj \%>\%
-  filter_taxa(prop_amplified < 1) \%>\%
-  heat_tree(node_label = taxon_names, 
-            node_color = prop_amplified, 
-            node_color_range = c("grey", "red", "purple", "green"),
-            node_color_trans = "linear",
-            node_color_axis_label = "Proportion amplified",
-            node_size = n_obs,
-            node_size_axis_label = "Number of sequences",
-            layout = "da", 
-            initial_layout = "re")
-} 
-
+if (primersearch_is_installed()) {
+  # Get example FASTA file
+  fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+                            package = "metacoder")
+  
+  # Parse the FASTA file as a taxmap object
+  obj <- parse_silva_fasta(file = fasta_path)
+  
+  # Simulate PCR with primersearch
+  # Have to replace Us with Ts in sequences since primersearch
+  #   does not understand Us.
+  obj <- primersearch(obj,
+                      gsub(silva_seq, pattern = "U", replace = "T"), 
+                      forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                      reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                      mismatch = 10)
+                             
+  # Plot what did not amplify                          
+  obj \%>\%
+    filter_taxa(prop_amplified < 1) \%>\%
+    heat_tree(node_label = taxon_names, 
+              node_color = prop_amplified, 
+              node_color_range = c("grey", "red", "purple", "green"),
+              node_color_trans = "linear",
+              node_color_axis_label = "Proportion amplified",
+              node_size = n_obs,
+              node_size_axis_label = "Number of sequences",
+              layout = "da", 
+              initial_layout = "re")
+ } 
+}
 }

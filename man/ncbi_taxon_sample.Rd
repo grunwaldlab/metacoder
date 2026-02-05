@@ -97,17 +97,18 @@ carefully to avoid long waits and needlessly stressing NCBI's servers. Use a
 downloaded database and a parser from the \code{taxa} package when possible.
 }
 \examples{
-
 \donttest{
-# Look up 5 ITS sequences from each fungal class
-data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
-                          entrez_query = '"internal transcribed spacer"[All Fields]')
-
-# Look up taxonomic information for sequences
-obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
-
-# Plot information
-metacoder::filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
-  heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
+if (requireNamespace("traits", quietly = TRUE)) {
+  # Look up 5 ITS sequences from each fungal class
+  data <- ncbi_taxon_sample(name = "Fungi", target_rank = "class", limit = 5, 
+                            entrez_query = '"internal transcribed spacer"[All Fields]')
+  
+  # Look up taxonomic information for sequences
+  obj <- lookup_tax_data(data, type = "seq_id", column = "gi_no")
+  
+  # Plot information
+  metacoder::filter_taxa(obj, taxon_names == "Fungi", subtaxa = TRUE) \%>\% 
+    heat_tree(node_label = taxon_names, node_color = n_obs, node_size = n_obs)
+}
 }
 }

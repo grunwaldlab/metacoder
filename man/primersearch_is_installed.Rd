@@ -4,7 +4,7 @@
 \alias{primersearch_is_installed}
 \title{Test if primersearch is installed}
 \usage{
-primersearch_is_installed(must_be_installed = TRUE)
+primersearch_is_installed(must_be_installed = FALSE)
 }
 \arguments{
 \item{must_be_installed}{(\code{logical} of length 1)
@@ -14,6 +14,5 @@ If \code{TRUE}, throw an error if primersearch is not installed.}
 \code{logical} of length 1
 }
 \description{
-Test if primersearch is installed
+Check if primersearch is installed
 }
-\keyword{internal}

@@ -117,57 +117,59 @@ ftp://emboss.open-bio.org/pub/EMBOSS/windows/mEMBOSS-6.5.0.0-setup.exe
 
 \examples{
 \donttest{
-### Dummy test data set ###
-
-primer_1_site <- "AAGTACCTTAACGGAATTATAG"
-primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
-amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
-seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
-seq_2 <- rev_comp(seq_1)
-f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
-r_primer <- rev_comp(primer_2_site)
-seqs <- c(a = seq_1, b = seq_2)
-
-result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
-
-
-### Real data set ###
-
-# Get example FASTA file
-fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
-                          package = "metacoder")
-
-# Parse the FASTA file as a taxmap object
-obj <- parse_silva_fasta(file = fasta_path)
-
-# Simulate PCR with primersearch
-pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
-                               forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
-                               reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
-                               mismatch = 10)
-
-# Add result to input table 
-#  NOTE: We want to add a function to handle running pcr on a
-#        taxmap object directly, but we are still trying to figure out
-#        the best way to implement it. For now, do the following:
-obj$data$pcr <- pcr_result
-obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
-
-# Visualize which taxa were amplified
-#  This work because only amplicons are returned by `primersearch`
-n_amplified <- unlist(obj$obs_apply("pcr",
-    function(x) length(unique(obj$data$tax_data$input[x]))))
-prop_amped <- n_amplified / obj$n_obs()
-heat_tree(obj,
-          node_label = taxon_names, 
-          node_color = prop_amped, 
-          node_color_range = c("grey", "red", "purple", "green"),
-          node_color_trans = "linear",
-          node_color_axis_label = "Proportion amplified",
-          node_size = n_obs,
-          node_size_axis_label = "Number of sequences",
-          layout = "da", 
-          initial_layout = "re")
+if (primersearch_is_installed()) {
+  ### Dummy test data set ###
+  
+  primer_1_site <- "AAGTACCTTAACGGAATTATAG"
+  primer_2_site <- "ATTCGTTTCGTAGGTGGAGC"
+  amplicon <- "NNNAGTGGATAGATAGGGGTTCTGTGGCGTTTGGGAATTAAAGATTAGAGANNN"
+  seq_1 <- paste0("AA", primer_1_site, amplicon, primer_2_site, "AAAA")
+  seq_2 <- rev_comp(seq_1)
+  f_primer <- "ACGTACCTTAACGGAATTATAG" # Note the "C" mismatch at position 2
+  r_primer <- rev_comp(primer_2_site)
+  seqs <- c(a = seq_1, b = seq_2)
+  
+  result <- primersearch_raw(seqs, forward = f_primer, reverse = r_primer)
+  
+  
+  ### Real data set ###
+  
+  # Get example FASTA file
+  fasta_path <- system.file(file.path("extdata", "silva_subset.fa"),
+                            package = "metacoder")
+  
+  # Parse the FASTA file as a taxmap object
+  obj <- parse_silva_fasta(file = fasta_path)
+  
+  # Simulate PCR with primersearch
+  pcr_result <- primersearch_raw(obj$data$tax_data$silva_seq, 
+                                 forward = c("U519F" = "CAGYMGCCRCGGKAAHACC"),
+                                 reverse = c("Arch806R" = "GGACTACNSGGGTMTCTAAT"),
+                                 mismatch = 10)
+  
+  # Add result to input table 
+  #  NOTE: We want to add a function to handle running pcr on a
+  #        taxmap object directly, but we are still trying to figure out
+  #        the best way to implement it. For now, do the following:
+  obj$data$pcr <- pcr_result
+  obj$data$pcr$taxon_id <- obj$data$tax_data$taxon_id[pcr_result$input]
+  
+  # Visualize which taxa were amplified
+  #  This work because only amplicons are returned by `primersearch`
+  n_amplified <- unlist(obj$obs_apply("pcr",
+      function(x) length(unique(obj$data$tax_data$input[x]))))
+  prop_amped <- n_amplified / obj$n_obs()
+  heat_tree(obj,
+            node_label = taxon_names, 
+            node_color = prop_amped, 
+            node_color_range = c("grey", "red", "purple", "green"),
+            node_color_trans = "linear",
+            node_color_axis_label = "Proportion amplified",
+            node_size = n_obs,
+            node_size_axis_label = "Number of sequences",
+            layout = "da", 
+            initial_layout = "re")
+}
 }
 
 }
