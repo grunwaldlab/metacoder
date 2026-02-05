@@ -18,7 +18,7 @@ on:
       config:
         description: 'A comma separated list of R-hub platforms to use.'
         type: string
-        default: 'linux,windows,macos'
+        default: 'linux,windows,macos-latest'
       name:
         description: 'Run name. You can leave this empty now.'
         type: string
@@ -38,7 +38,7 @@ jobs:
     # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
-        config: ${{ github.event.inputs.config || 'linux,windows,macos'}}
+        config: ${{ github.event.inputs.config || 'linux,windows,macos-latest'}}
       id: rhub-setup
 
   linux-containers:
