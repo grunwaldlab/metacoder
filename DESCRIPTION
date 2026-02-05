@@ -64,7 +64,6 @@ Suggests:
     knitr,
     rmarkdown,
     testthat,
-    zlibbioc,
     BiocManager,
     phyloseq,
     phylotate,

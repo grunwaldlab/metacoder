@@ -10,6 +10,10 @@ name: R-hub
 run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
 
 on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       config:
@@ -35,7 +39,7 @@ jobs:
     # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
-        config: ${{ github.event.inputs.config }}
+        config: ${{ github.event.inputs.config || 'linux,windows,macos'}}
       id: rhub-setup
 
   linux-containers:
@@ -61,6 +65,15 @@ jobs:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
           dependencies: "'hard'"
+          extra-packages: |
+            any::knitr
+            any::rmarkdown
+            any::testthat
+            any::BiocManager
+            any::phyloseq
+            any::phylotate
+            any::biomformat
+            any::DESeq2
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -91,6 +104,15 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
           dependencies: "'hard'"
+          extra-packages: |
+            any::knitr
+            any::rmarkdown
+            any::testthat
+            any::BiocManager
+            any::phyloseq
+            any::phylotate
+            any::biomformat
+            any::DESeq2
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
