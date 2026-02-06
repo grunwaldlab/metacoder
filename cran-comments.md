@@ -1,6 +1,6 @@
 ## Test environments and check results
 
-### Local computer: Pop!_OS 22.04 LTS, R version 4.4.2
+### Local computer: Pop!_OS 22.04 LTS, R version 4.5.2
 
 0 errors | 0 warnings | 1 notes
 
@@ -11,44 +11,32 @@
 I am not sure why this note exists. I am using `R6::` in about 10 places in the package.
 All of the classes in the package are R6 classes, so it is definitely used.
 
+### R-hub, and CI results:
 
+https://github.com/grunwaldlab/metacoder/actions
 
 ### Winbuilder
 
 0 errors | 0 warnings | 1 notes
 
-```
-* checking CRAN incoming feasibility ... [16s] NOTE
+* checking CRAN incoming feasibility ... NOTE
 Maintainer: 'Zachary Foster <zacharyfoster1989@gmail.com>'
 
 New submission
 
 Package was archived on CRAN
 
-CRAN repository db overrides:
-  X-CRAN-Comment: Archived on 2024-10-01 as issues were not corrected
-    in time.
-
 Possibly misspelled words in DESCRIPTION:
   al (32:18)
   bioinformatics (30:16)
   et (32:15)
-  metabarcoding (26:22)
-  metagenomics (26:56, 27:5)
+  metabarcoding (26:25)
+  metagenomics (26:59, 27:5)
   microbiome (30:5)
-  
+
+CRAN repository db overrides:
+  X-CRAN-Comment: Archived on 2025-10-18 as issues were not corrected
+    despite reminders.
+
 Suggests or Enhances not in mainstream repositories:
   traits
-```
-
-`metacoder` was removed from CRAN because it dependency `taxize` was removed from CRAN.
-`taxize` is back on CRAN now, so `metacoder` is being resubmitted.
-The package `traits` was also removed from CRAN because it depends on `taxize` as well.
-It is only a suggested package for `metacoder` used for one function and I expect `traits` will be returned to CRAN as well soon.
-I am not sure if it is required for all packages in "Suggests" to be on CRAN or not.
-The "Possibly misspelled words" are all real words.
-
-
-### Response to CRAN review
-
-I added Scott Chamberlain and Kamil Slowikowski to authors in the DESCRIPTION.
