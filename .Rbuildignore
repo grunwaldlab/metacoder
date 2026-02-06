@@ -1,4 +1,3 @@
-^\.travis\.yml$
 ^README\.html$
 ^README\.Rmd$
 ^.+\.Rproj$
@@ -14,3 +13,4 @@
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
 .github
+^\.github$

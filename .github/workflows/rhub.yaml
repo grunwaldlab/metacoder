@@ -6,19 +6,16 @@
 #
 # It is unlikely that you need to modify this file manually.
 
-name: R-hubZ
+name: R-hub
+run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       config:
         description: 'A comma separated list of R-hub platforms to use.'
         type: string
-        default: 'linux,windows,macos-latest'
+        default: 'linux,windows,macos'
       name:
         description: 'Run name. You can leave this empty now.'
         type: string
@@ -38,7 +35,7 @@ jobs:
     # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
-        config: ${{ github.event.inputs.config || 'linux,windows,macos-latest'}}
+        config: ${{ github.event.inputs.config }}
       id: rhub-setup
 
   linux-containers:
@@ -63,7 +60,7 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-          dependencies: "'hard'"
+          dependencies: "'hard'" # needed to exclude traits, which is currently not on cran
           extra-packages: |
             any::knitr
             any::rmarkdown
@@ -103,7 +100,7 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
-          dependencies: "'hard'"
+          dependencies: "'hard'" # needed to exclude traits, which is currently not on cran
           extra-packages: |
             any::knitr
             any::rmarkdown
