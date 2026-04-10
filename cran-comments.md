@@ -1,3 +1,6 @@
+An identical version was submitted a few months ago, but `traits` was not on CRAN at the time, which complicated things.
+Now, `traits` is on CRAN again, so all issues broght up by the previous review should be addressed.
+
 ## Test environments and check results
 
 ### Local computer: Pop!_OS 22.04 LTS, R version 4.5.2
@@ -37,6 +40,3 @@ Possibly misspelled words in DESCRIPTION:
 CRAN repository db overrides:
   X-CRAN-Comment: Archived on 2025-10-18 as issues were not corrected
     despite reminders.
-
-Suggests or Enhances not in mainstream repositories:
-  traits
