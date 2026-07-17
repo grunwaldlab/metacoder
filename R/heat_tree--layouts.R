@@ -46,8 +46,13 @@ layout_functions <- function(name = NULL, graph = NULL, intitial_coords = NULL, 
                      "reingold-tilford" = list(circular = TRUE,
                                                mode = "out"),
                      "davidson-harel" = list(coords = intitial_coords,
-                                             maxiter = 10 * effort,
-                                             fineiter = max(10, log2(igraph::vcount(graph))) * effort,
+                                             maxiter = round(10 * effort),
+                                             # `fineiter` is passed to igraph::layout_with_dh(), which
+                                             # requires an integer. `log2(vcount)` is non-integer once a
+                                             # (connected component of the) graph exceeds 1024 nodes, so
+                                             # round to avoid igraph's "not representable as an integer"
+                                             # error (grunwaldlab/metacoder#362).
+                                             fineiter = round(max(10, log2(igraph::vcount(graph))) * effort),
                                              cool.fact = 0.75 - effort * 0.1,
                                              weight.node.dist = 13, #* ifelse(is.null(v_weight), 1, list(rescale(v_weight, c(.1, 10))))[[1]], #higher values spread out nodes 
                                              weight.border = 0,

@@ -1,5 +1,9 @@
 # News 
 
+## metacoder 0.3.9.9000 (development version)
+
+* Fixed `heat_tree()` erroring with `The value <x> is not representable as an integer. Invalid value` when using `layout = "davidson-harel"` on a graph with a connected component larger than 1024 nodes. The `fineiter` argument passed to `igraph::layout_with_dh()` must be an integer, but was computed as `max(10, log2(vcount(graph)))`, which is non-integer once `vcount > 1024`. It is now rounded (issue [#362](https://github.com/grunwaldlab/metacoder/issues/362)).
+
 ## metacoder 0.3.9
 
 * Maintenance release to fix CRAN check issues.
